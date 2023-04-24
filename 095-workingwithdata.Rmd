@@ -1,0 +1,14 @@
+
+# Working with data
+
+Our team works with administrative data, data not collected specifically for the purpose of evaluating the impact of new policy ideas. This means that we, and our agency collaborators, spend a **ton** of time cleaning, merging, and checking data. Here, we describe some standard practices that we have developed over time.
+
+## General questions we ask of a data set
+
+ - Are there any duplicated observations? (This mostly means rows in a rectangular data set).
+  - If there is an ID variable, are there duplicated IDs? 
+ - Are there missing data on outcomes? Why are outcomes missing?
+ - Are there missing data on our record of treatment assignment? Why might we not know whether or not a given unit was assigned the new policy intervention?
+
+
+

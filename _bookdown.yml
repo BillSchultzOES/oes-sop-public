@@ -1,0 +1,10 @@
+book_filename: "OES_SOP"
+before_chapter_script: ["before_chapter_script.R"]
+language:
+  ui:
+    chapter_name: "Chapter "
+delete_merged_file: true
+edit: https://github.com/gsa-oes/sop/edit/master/Book/%s
+output_dir: "_book"
+clean: ["sop.bbl"]
+rmd_files: ["index.Rmd", "01-causalinference.Rmd", "015-basics.Rmd", "02-randomizationinference.Rmd", "03-randomizeddesigns.Rmd", "04-analysischoices.Rmd", "055-poweranalysis.Rmd", "095-workingwithdata.Rmd", "10-glossary.Rmd", "11-appendix.Rmd", "99-references.Rmd"]

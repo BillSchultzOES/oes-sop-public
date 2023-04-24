@@ -1,0 +1,32 @@
+bookdown::gitbook:
+  css: style.css
+  pandoc_args: [ "--csl", "chicago-author-date.csl" ]
+  includes:
+    in_header: header.html
+  config:
+    toc:
+      collapse: section
+      before: |
+        <li><a href="./">The OES SOP</a></li>
+      after: |
+        <li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
+    edit: https://github.com/gsa-oes/sop/edit/master/Book/%s
+    download: ["pdf", "epub"]
+
+bookdown::pdf_book:
+  includes:
+    in_header: preamble.tex
+  latex_engine: pdflatex
+  citation_package: natbib
+  keep_tex: yes
+
+bookdown::epub_book: default
+
+bookdown::html_document2:
+  toc: yes
+  toc_float: true
+  pandoc_args: [ "--csl", "chicago-author-date.csl" ]
+  code_folding: hide
+  css: style.css
+
+

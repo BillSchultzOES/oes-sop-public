@@ -1,0 +1,75 @@
+# Statistical and causal inference for policy change
+
+Most of this this document dives into the details of our statistical decision
+making and assumes that the reader has heard of a hypothesis test and a
+statistical estimator. However, here we explain in very broad terms how tests
+and estimators help us do our job in helping the US federal government improve
+public policy.
+
+Recall that "evidence-based public policy" can refer to *both*
+"evidence-as-insight" (the use of previous scientific literature as input to
+the design of new policies) and "evidence-as-evaluation" (the careful design of
+studies to learn about how and whether a new policy worked)
+[@bowers2019better].  Our team aims to help government agencies **design** new
+policies and also to **learn** about how those new ideas work. **This document
+focuses on the learning part of our work.**
+
+How would we know whether and how a new policy worked? In an ideal and
+unrealistic case, we would know that a new policy improved the life of a single
+person, Jake, if we could compare Jake's decisions *both* under the new policy
+*and* under the status quo *at the same moment in time*. If we saw that Jake's
+decisions were better under the new policy than under the status quo, we would
+say that the new policy caused Jake to make better decisions. Since no one can
+observe Jake in both situations --- say, making health decisions both with and
+without a new procedure for visiting the doctor --- researchers try to find at
+least one other person (if not more) who represents how Jake would have acted
+if he had not been exposed to the new policy. @holland:1986a calls this problem
+the "fundamental problem of causal inference" and explains more formally about
+when we might believe that other people are a good example of how Jake would
+have acted without the new policy, for example, when we have randomized access
+to the new policy, we can claim that that the two groups are good
+counterfactuals for each other. That is, our team tends to think about the
+*causal effects* of a policy in *counterfactual* terms.
+
+What do statistics have to do with learning about the causal effect of a new
+policy idea?  We use randomized experiments to create groups of people who
+represent *both* the decisions made under the new policy and the status quo. In
+medical experiments to assess the effectiveness of new treatments, these two
+groups tend to be called the "treatment group" and the "control group" and we
+sometimes use that same language even if we are not really providing a new
+treatment, but are, instead, offering a new communication or structure for a
+decision. If we pilot the new policy with people chosen at random, we can claim
+that the people chosen and the people not chosen represent each other. In a randomized study, we
+can use what we see from one group to learn about what would have happened had
+the other group instead received the treatment or new policy intervention.
+
+Now, if our study has, say, 1000 people in it, we don't know for sure and
+exactly how the other group would have behaved. For example, if we pulled 500
+names from a hat, to divide the 1000 people into two groups, we would have one
+set of 500 people. If we were to do the experiment again, to pull another 500
+names at random, this second experiment will also be a randomized experiment,
+but the second 500 people will be different from the first 500 people. This
+means that, a single experiment offers us some information about the effect of
+the treatment, but we need to ask a question like, "How much would our best
+guess differ just because we could have pulled a different 500 people from the
+hat?" We also need to answer questions like, "What do you mean by 'best guess'?
+How do I know that this really is a good guess rather than a bad guess?"
+
+Our team uses statistical theory to produce "best guesses" or "estimates" about
+the causal effect of the new policy and we also use statistical theory to answer questions
+about information like "Could the effect really have been zero?" or "How many
+people do we need to observe in order to distinguish a positive effect from  a
+zero effect?"
+
+The rest of this document presents decisions we have made about the particulars
+of estimators and tests, as well as other tricky decisions that we have had to
+confront --- like what to do when some of data are missing. 
+
+For more on the basics of how statistics helps us answer questions about causal
+effects, we recommend chapters 1--3 of @gerber_field_2012 (which focuses on
+randomized experiments) and the first part of @rosenbaum2017 (which focuses on
+both experiments and research designs without randomization).
+
+
+
+

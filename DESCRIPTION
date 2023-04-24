@@ -1,0 +1,39 @@
+Package: gsa-oes-sop
+Type: Book
+Title: OES SOP
+Authors@R: c(
+  person("Jake", "Bowers", role=c("aut","cre") , email="jwbowers@illinois.edu"),
+  person("Ryan", "Moore", role=c("aut","cre"), email="rtm@american.edu")
+  )
+URL: https://github.com/gsa-oes/sop
+Depends:
+    R (>= 3.1.0)
+Version: 1.0.0
+Imports:
+  bookdown,
+  DeclareDesign,
+  randomizr,
+  estimatr,
+  lmtest,
+  sandwich,
+  coin,
+  blockTools,
+  quickblock,
+  tidyverse,
+  kableExtra,
+  multcomp,
+  future,
+  future.apply,
+  ri2,
+  bfe,
+  remotes,
+  RItools (>= 3.0.0),
+  devtools,
+  withr,
+  here,
+  ICC,
+  nbpMatching
+Remotes:
+  rstudio/bookdown,
+  markmfredrickson/RItools@proj1-balT,
+  gibbonscharlie/bfe

@@ -1,0 +1,9 @@
+# Other Topics
+
+## Non- or Partial-Compliance and the Local Average Treatment Effect
+
+## Overly influential points
+
+## Issues with the field work or generation of random numbers
+
+## How to choose covariates for covariance adjustment

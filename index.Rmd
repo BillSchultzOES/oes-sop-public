@@ -1,0 +1,264 @@
+---
+title: OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.
+author: Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+site: bookdown::bookdown_site
+knit: bookdown::render_book
+documentclass: book
+bibliography: ["sop.bib", "packages.bib"]
+link-citations: yes
+colorlinks: yes
+lot: yes
+lof: yes
+github-repo: gsa-oes/sop
+description: "These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA"
+fontsize: 12pt
+geometry: margin=1in
+graphics: yes
+---
+
+
+```{r options, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
+require(knitr)
+opts_chunk$set(strip.white=TRUE,
+               width.cutoff=132,
+               size='\\scriptsize',
+               out.width='.9\\textwidth',
+               message=FALSE,
+               warning=FALSE,
+               echo=TRUE,
+               comment=NA,
+               tidy='styler',
+               prompt=FALSE,
+               results='markup')
+```
+
+```{r loadlibs}
+## Libraries are now managed by the renv system
+library(bfe) # for another approach to block randomized trials
+library(blockTools)
+library(coin) # for easier randomization inference
+library(DeclareDesign)
+library(devtools)
+library(estimatr)
+library(fabricatr)
+library(foreach)
+library(future)
+library(future.apply)
+library(here)
+library(kableExtra)
+library(lmtest)
+library(multcomp)
+library(quickblock)
+library(randomizr)
+library(ri2)
+library(sandwich)
+library(tidyverse)
+library(RItools)
+
+options(
+  htmltools.dir.version = FALSE, formatR.indent = 2,
+  width = 100, digits = 4, warnPartialMatchAttr = FALSE, warnPartialMatchDollar = FALSE
+)
+
+local({
+  r = getOption('repos')
+  if (!length(r) || identical(unname(r['CRAN']), '@CRAN@'))
+    r['CRAN'] = 'https://cran.rstudio.com'
+  options(repos = r)
+})
+```
+
+
+```{r htmlTemp3, echo=FALSE, eval=TRUE}
+## This next from https://stackoverflow.com/questions/45360998/code-folding-in-bookdown
+codejs <- readr::read_lines("js/codefolding.js")
+collapsejs <- readr::read_lines("js/collapse.js")
+transitionjs <- readr::read_lines("js/transition.js")
+
+## Default to showing code
+## window.initializeCodeFolding("show" === "show");
+## Default to hiding code
+## window.initializeCodeFolding("show" === "show");
+
+htmlhead <-
+  paste('
+<script>',
+paste(transitionjs, collapse = "\n"),
+'</script>
+<script>',
+paste(collapsejs, collapse = "\n"),
+'</script>
+<script>',
+paste(codejs, collapse = "\n"),
+'</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+', sep = "\n")
+
+readr::write_lines(htmlhead, path = "header.html")
+```
+
+\newcommand{\var}{\mathrm{Var}}
+\newcommand{\sd}{\mathrm{sd}}
+\newcommand{\cov}{\mathrm{Cov}}
+\newcommand{\cor}{\mathrm{Cor}}
+\newcommand{\pr}{\text{Pr}}
+\newcommand{\rank}{\text{rank}}
+\newcommand{\Dt}{\Delta t}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bZ}{\mathbf{Z}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\be}{\mathbf{e}}
+\newcommand{\bE}{\mathbf{E}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bV}{\mathbf{V}}
+\newcommand{\bpsi}{\boldsymbol{\psi}}
+\newcommand{\bmu}{\boldsymbol{\mu}}%m
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\btau}{\boldsymbol{\tau}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\blambda}{\boldsymbol{\lambda}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+
+
+
+# Overview {-}
+
+This document explains **how** our team, the [Office of Evaluation Sciences in
+the General Services Administration](https://oes.gsa.gov/) (the OES), tends to
+do statistical analysis and it also explains **why** we do what we do. ^[We call
+this document a standard operating procedure (SOP) because we are inspired by
+the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).]
+The research integrity process of the OES is already documented the [OES
+Methods Web Page](https://oes.gsa.gov/methods/). For example, on that page we
+provide templates for our research design and analysis pre-registration
+process. Here, we get into the nitty gritty of our statistical work.
+
+## Purposes of this document {-}
+
+First, this document educates new team members about the decisions past team
+members have made regarding the design and analysis of the studies fielded so
+far. This educative role also offers us a place to record decisions for [our
+own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011 ) but also
+to help us harness the power that arises from our disciplinary diversity. That
+is, we have decided, as a team, how to do certain statistical analysis and
+these decisions may differ from those that are common in any given academic
+discipline. This document, thus, helps explain why we have landed on those
+decisions (for now), and how to implement those practices.
+
+Second, this document records decisions that we have made in the absence of
+pre-analysis plans, or in the context of circumstances unforeseen by our
+pre-analysis planning. And it should guide our future experimental design
+and analysis.
+
+Third, this document should help us write better analysis plans and speed our
+practice of re-analysis. (Our team insists on a blind re-analysis of every
+study as a quality control for our results before they are reported to our
+agency partners.)
+
+Fourth, this document should help other teams working to learn about the causal
+impacts of policy interventions. We hope this contributes to the federal
+government's own work pursuing evidence-based public policy, but also helps
+other teams in other places doing work that is similar to our own.
+
+
+## Nature and limitations of this document {-}
+
+### We (mostly) focus on randomized field experiments. {-}
+
+This document focuses on design and analysis of randomized field experiments.
+Although we include some discussion about non-randomized studies, often known
+as observational studies, until now, our team has focused primarily on
+randomized field experiments.
+
+### We present examples using R {-}
+
+As public servants and social and behavioral scientists, we use the [R](http://r-project.org) statistical analysis language because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R). 
+
+Many members of our team use Stata or SAS or SPSS or Python.  We welcome
+additions to this document using those languages as well.
+
+### Structure of the document {-}
+
+Each section of this document will include, if applicable:
+
+ 1. A description of our approach
+ 2. A description of how we implement our approach, including functions in R,
+    including key arguments that must be entered into the function and key
+    values that are outputs from the function.^[We use R and R+markdown for
+    our work and in general prefer open source tools in order to best serve
+    the public.]
+ 3. A general example using simulated data (perhaps including some evaluation
+    of the tool as compared to other possible choices).
+ 4. A discussion of a specific example from OES (if applicable) in which we implemented the given procedure.
+
+
+Throughout the document, we include links to the [Glossary](#glossary) and
+[Appendix](#appendix), to clarify terms or explain tools and procedures in
+more depth.
+
+## Help us improve our work! {-}
+
+Since we hope to improve our analytic workflow with every
+project, this document should be seen as provisional --- as a record and a
+guide for our continuous learning and improvement.  We invite comments in the
+[Issues](https://github.com/gsa-oes/sop/issues) and [pull
+requests](https://help.github.com/articles/creating-a-pull-request/) for
+direct contributions.
+
+<!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
+
+## About this document {-}
+
+This book was written in [bookdown](http://bookdown.org/). 
+The complete source is available from [GitHub](https://github.com/gsa-oes/sop). 
+This version of the book was built with `r R.version.string` and the following packages.
+
+```{r, echo = FALSE, results="asis"}
+deps <- desc::desc_get_deps()$package[-1]
+pkgs <- sessioninfo::package_info(deps, dependencies = FALSE)
+df <- tibble(
+  package = pkgs$package,
+  version = pkgs$ondiskversion,
+  source = gsub("@", "\\\\@", pkgs$source)
+)
+knitr::kable(df, format = "markdown")
+```
+```{r, include = FALSE}
+ruler <- function(width = getOption("width")) {
+  x <- seq_len(width)
+  y <- case_when(
+    x %% 10 == 0 ~ as.character((x %/% 10) %% 10),
+    x %% 5 == 0  ~ "+",
+    TRUE         ~ "-"
+  )
+  cat(y, "\n", sep = "")
+  cat(x %% 10, "\n", sep = "")
+}
+ruler()
+```
+
+```{r makepackagesbib, include=FALSE, warnings=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(unique(c( df$package, 'bookdown', 'knitr', 'rmarkdown')), 'packages.bib')
+```
+
