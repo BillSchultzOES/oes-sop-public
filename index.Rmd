@@ -1,6 +1,6 @@
 ---
 title: OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.
-author: Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins
+author: Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 site: bookdown::bookdown_site
 knit: bookdown::render_book
@@ -35,9 +35,9 @@ opts_chunk$set(strip.white=TRUE,
 
 ```{r loadlibs}
 ## Libraries are now managed by the renv system
-library(bfe) # for another approach to block randomized trials
+library(bfe)
 library(blockTools)
-library(coin) # for easier randomization inference
+library(coin)
 library(DeclareDesign)
 library(devtools)
 library(estimatr)
@@ -46,9 +46,11 @@ library(foreach)
 library(future)
 library(future.apply)
 library(here)
+library(ICC)
 library(kableExtra)
 library(lmtest)
 library(multcomp)
+library(nbpMatching)
 library(quickblock)
 library(randomizr)
 library(ri2)
@@ -148,26 +150,22 @@ the General Services Administration](https://oes.gsa.gov/) (the OES), tends to
 do statistical analysis and it also explains **why** we do what we do. ^[We call
 this document a standard operating procedure (SOP) because we are inspired by
 the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).]
-The research integrity process of the OES is already documented the [OES
-Methods Web Page](https://oes.gsa.gov/methods/). For example, on that page we
-provide templates for our research design and analysis pre-registration
-process. Here, we get into the nitty gritty of our statistical work.
+The research integrity processes OES follows is already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we get into the nitty gritty of our statistical work.
 
 ## Purposes of this document {-}
 
 First, this document educates new team members about the decisions past team
 members have made regarding the design and analysis of the studies fielded so
-far. This educative role also offers us a place to record decisions for [our
-own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011 ) but also
-to help us harness the power that arises from our disciplinary diversity. That
-is, we have decided, as a team, how to do certain statistical analysis and
+far. It also serves as a place to record decisions for [our
+own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011), and helps us harness the power that arises from our disciplinary diversity. That
+is, we have decided, as a team, how to do certain statistical analyses, and
 these decisions may differ from those that are common in any given academic
 discipline. This document, thus, helps explain why we have landed on those
 decisions (for now), and how to implement those practices.
 
 Second, this document records decisions that we have made in the absence of
 pre-analysis plans, or in the context of circumstances unforeseen by our
-pre-analysis planning. And it should guide our future experimental design
+pre-analysis planning. It should help guide our future experimental design
 and analysis.
 
 Third, this document should help us write better analysis plans and speed our
@@ -175,10 +173,7 @@ practice of re-analysis. (Our team insists on a blind re-analysis of every
 study as a quality control for our results before they are reported to our
 agency partners.)
 
-Fourth, this document should help other teams working to learn about the causal
-impacts of policy interventions. We hope this contributes to the federal
-government's own work pursuing evidence-based public policy, but also helps
-other teams in other places doing work that is similar to our own.
+Fourth, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the federal government's own work pursuing evidence-based public policy, but also helps other teams in other places doing work that is similar to our own.
 
 
 ## Nature and limitations of this document {-}
@@ -188,27 +183,24 @@ other teams in other places doing work that is similar to our own.
 This document focuses on design and analysis of randomized field experiments.
 Although we include some discussion about non-randomized studies, often known
 as observational studies, until now, our team has focused primarily on
-randomized field experiments.
+randomized field experiments. We plan to include more discussion of observational studies over time.
 
 ### We present examples using R {-}
 
-As public servants and social and behavioral scientists, we use the [R](http://r-project.org) statistical analysis language because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R). 
+As public servants and social and behavioral scientists, we use the [R](http://r-project.org) statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R). 
 
-Many members of our team use Stata or SAS or SPSS or Python.  We welcome
+Many members of our team use Stata or SAS or SPSS or Python. We welcome
 additions to this document using those languages as well.
 
 ### Structure of the document {-}
 
 Each section of this document will include, if applicable:
 
- 1. A description of our approach
+ 1. A description of our approach.
  2. A description of how we implement our approach, including functions in R,
-    including key arguments that must be entered into the function and key
-    values that are outputs from the function.^[We use R and R+markdown for
-    our work and in general prefer open source tools in order to best serve
-    the public.]
- 3. A general example using simulated data (perhaps including some evaluation
-    of the tool as compared to other possible choices).
+    key arguments that must be entered into the function, and key
+    values that are outputs from the function.
+ 3. A general example using simulated data (perhaps including some evaluation of the tool as compared to other possible choices).
  4. A discussion of a specific example from OES (if applicable) in which we implemented the given procedure.
 
 
@@ -218,12 +210,7 @@ more depth.
 
 ## Help us improve our work! {-}
 
-Since we hope to improve our analytic workflow with every
-project, this document should be seen as provisional --- as a record and a
-guide for our continuous learning and improvement.  We invite comments in the
-[Issues](https://github.com/gsa-oes/sop/issues) and [pull
-requests](https://help.github.com/articles/creating-a-pull-request/) for
-direct contributions.
+Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement.  We invite comments in the [Issues](https://github.com/gsa-oes/sop/issues) and [pull requests](https://help.github.com/articles/creating-a-pull-request/) for direct contributions.
 
 <!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
 

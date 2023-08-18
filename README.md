@@ -18,6 +18,12 @@ We also need to use version 1.33 of knitr.
 install_version("knitr", version = 1.33)
 ```
 
+Finally, it may be necessary to install a development version of the bfe package, depending on the version of R you have loaded.
+
+```
+devtools::install_github('gibbonscharlie/bfe')
+```
+
 # To update the web preview:
 
 First, commit and push any changes to the _book subdirectory within the Book

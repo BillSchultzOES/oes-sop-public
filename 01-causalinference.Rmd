@@ -19,47 +19,19 @@ unrealistic case, we would know that a new policy improved the life of a single
 person, Jake, if we could compare Jake's decisions *both* under the new policy
 *and* under the status quo *at the same moment in time*. If we saw that Jake's
 decisions were better under the new policy than under the status quo, we would
-say that the new policy caused Jake to make better decisions. Since no one can
-observe Jake in both situations --- say, making health decisions both with and
-without a new procedure for visiting the doctor --- researchers try to find at
-least one other person (if not more) who represents how Jake would have acted
-if he had not been exposed to the new policy. @holland:1986a calls this problem
-the "fundamental problem of causal inference" and explains more formally about
-when we might believe that other people are a good example of how Jake would
-have acted without the new policy, for example, when we have randomized access
-to the new policy, we can claim that that the two groups are good
-counterfactuals for each other. That is, our team tends to think about the
-*causal effects* of a policy in *counterfactual* terms.
+say that the new policy caused Jake to make better decisions.
+
+Since no one can observe Jake in both situations --- say, making health decisions both with and without a new procedure for visiting the doctor --- researchers try to find at least one other person (if not more) who represents how Jake would have acted if he had not been exposed to the new policy. @holland:1986a calls this the "fundamental problem of causal inference" and explains more formally when we might believe that other people are a good approximations for how Jake would have acted without the new policy. For example, if access to the new policy is randomized, we can claim that that the two groups are good counterfactuals for each other. That is, our team tends to think about the *causal effects* of a policy in *counterfactual* terms.
 
 What do statistics have to do with learning about the causal effect of a new
 policy idea?  We use randomized experiments to create groups of people who
-represent *both* the decisions made under the new policy and the status quo. In
+represent behavior under *both* the new policy and the status quo. In
 medical experiments to assess the effectiveness of new treatments, these two
-groups tend to be called the "treatment group" and the "control group" and we
-sometimes use that same language even if we are not really providing a new
-treatment, but are, instead, offering a new communication or structure for a
-decision. If we pilot the new policy with people chosen at random, we can claim
-that the people chosen and the people not chosen represent each other. In a randomized study, we
-can use what we see from one group to learn about what would have happened had
-the other group instead received the treatment or new policy intervention.
+groups tend to be called the "treatment group" and the "control group." Social scientists often use that same language even if we are not really providing a new treatment, but are, instead, offering a new communication or structure for a decision. If we pilot the new policy with people chosen at random, we can claim that the people chosen and the people not chosen represent each other. In a randomized study, we can use what we see from one group to learn about what would have happened had the other group instead received the treatment or new policy intervention.
 
-Now, if our study has, say, 1000 people in it, we don't know for sure and
-exactly how the other group would have behaved. For example, if we pulled 500
-names from a hat, to divide the 1000 people into two groups, we would have one
-set of 500 people. If we were to do the experiment again, to pull another 500
-names at random, this second experiment will also be a randomized experiment,
-but the second 500 people will be different from the first 500 people. This
-means that, a single experiment offers us some information about the effect of
-the treatment, but we need to ask a question like, "How much would our best
-guess differ just because we could have pulled a different 500 people from the
-hat?" We also need to answer questions like, "What do you mean by 'best guess'?
-How do I know that this really is a good guess rather than a bad guess?"
+Now, in any given sample we won't know *exactly* how the treatment group would have behaved if they had been assigned to the control group instead. For example, if we pulled 500 out of 1000 names from a hat and assigned those 500 people to receive treatment, that's just one of many possible sets of 500 people we could have drawn. If we were to do the experiment again, and pulled another 500 names at random, this second experiment will also have a randomly selected treatment group, but the second 500 people will be different from the first 500 people. A single experiment offers us some information about the effect of treatment, but we need to ask other questions too, like, "How much could our result differ just due to pulling a different 500 people from the hat?" We also need to answer questions like, "What do you mean by 'result'? How do I know that this really is a good result rather than a bad result?"
 
-Our team uses statistical theory to produce "best guesses" or "estimates" about
-the causal effect of the new policy and we also use statistical theory to answer questions
-about information like "Could the effect really have been zero?" or "How many
-people do we need to observe in order to distinguish a positive effect from  a
-zero effect?"
+Our team uses statistical theory to produce estimates of the causal effect of a new policy. We also use statistical theory to answer questions like "Could the effect really have been zero?" or "How many people do we need to observe in order to distinguish a positive effect from a zero effect?"
 
 The rest of this document presents decisions we have made about the particulars
 of estimators and tests, as well as other tricky decisions that we have had to
@@ -68,7 +40,7 @@ confront --- like what to do when some of data are missing.
 For more on the basics of how statistics helps us answer questions about causal
 effects, we recommend chapters 1--3 of @gerber_field_2012 (which focuses on
 randomized experiments) and the first part of @rosenbaum2017 (which focuses on
-both experiments and research designs without randomization).
+both experiments and research designs without randomization). Another good treatment comes from the opening chapters of @angrist2009mostly.
 
 
 

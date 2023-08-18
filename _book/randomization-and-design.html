@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</title>
+  <meta name="description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments." />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA" />
+  <meta name="github-repo" content="gsa-oes/sop" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments." />
+  
+  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA" />
+  
+
+<meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
+
+
+<meta name="date" content="2023-08-18">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="design-based-principles-of-statistical-inference.html">
+<link rel="next" href="analysis-choices.html">
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The OES SOP</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Overview</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#purposes-of-this-document"><i class="fa fa-check"></i>Purposes of this document</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#nature-and-limitations-of-this-document"><i class="fa fa-check"></i>Nature and limitations of this document</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-focus-on-randomized-field-experiments."><i class="fa fa-check"></i>We (mostly) focus on randomized field experiments.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-present-examples-using-r"><i class="fa fa-check"></i>We present examples using R</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-document"><i class="fa fa-check"></i>Structure of the document</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#help-us-improve-our-work"><i class="fa fa-check"></i>Help us improve our work!</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-this-document"><i class="fa fa-check"></i>About this document</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="statistical-and-causal-inference-for-policy-change.html"><a href="statistical-and-causal-inference-for-policy-change.html"><i class="fa fa-check"></i><b>1</b> Statistical and causal inference for policy change</a></li>
+<li class="chapter" data-level="2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html"><i class="fa fa-check"></i><b>2</b> Basics of Experimental Design and Analysis</a><ul>
+<li class="chapter" data-level="2.1" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise"><i class="fa fa-check"></i><b>2.1</b> Statistical Power: Designing Studies that effectively distinguish signal from noise</a></li>
+<li class="chapter" data-level="2.2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#error-rates-of-tests"><i class="fa fa-check"></i><b>2.2</b> Error Rates of Tests</a></li>
+<li class="chapter" data-level="2.3" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#bias-in-estimators"><i class="fa fa-check"></i><b>2.3</b> Bias in Estimators</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html"><i class="fa fa-check"></i><b>3</b> Design-Based Principles of Statistical Inference</a><ul>
+<li class="chapter" data-level="3.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> How do we calculate randomization-based standard errors?</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="randomization-and-design.html"><a href="randomization-and-design.html"><i class="fa fa-check"></i><b>4</b> Randomization and Design</a><ul>
+<li class="chapter" data-level="4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#coin-flipping-randomization-versus-urn-drawing-randomization"><i class="fa fa-check"></i><b>4.1</b> Coin flipping randomization versus Urn-drawing randomization</a></li>
+<li class="chapter" data-level="4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#urn-drawing-or-complete-randomization-into-2-or-more-groups"><i class="fa fa-check"></i><b>4.2</b> Urn-Drawing or Complete Randomization into 2 or more groups</a></li>
+<li class="chapter" data-level="4.3" data-path="randomization-and-design.html"><a href="randomization-and-design.html#factorial-designs"><i class="fa fa-check"></i><b>4.3</b> Factorial Designs</a></li>
+<li class="chapter" data-level="4.4" data-path="randomization-and-design.html"><a href="randomization-and-design.html#block-random-assignment"><i class="fa fa-check"></i><b>4.4</b> Block Random Assignment</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#using-only-a-few-covariates-to-create-blocks"><i class="fa fa-check"></i><b>4.4.1</b> Using only a few covariates to create blocks</a></li>
+<li class="chapter" data-level="4.4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#multivariate-blocking-using-many-covariates"><i class="fa fa-check"></i><b>4.4.2</b> Multivariate blocking using many covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="randomization-and-design.html"><a href="randomization-and-design.html#cluster-random-assignment"><i class="fa fa-check"></i><b>4.5</b> Cluster random assignment</a></li>
+<li class="chapter" data-level="4.6" data-path="randomization-and-design.html"><a href="randomization-and-design.html#other-designs"><i class="fa fa-check"></i><b>4.6</b> Other designs</a></li>
+<li class="chapter" data-level="4.7" data-path="randomization-and-design.html"><a href="randomization-and-design.html#randomization-assessment"><i class="fa fa-check"></i><b>4.7</b> Randomization assessment</a><ul>
+<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with “failed” randomization assessments?</a></li>
+<li class="chapter" data-level="4.7.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#how-to-minimize-large-chance-departures-of-randomization"><i class="fa fa-check"></i><b>4.7.2</b> How to minimize large chance departures of randomization?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="analysis-choices.html"><a href="analysis-choices.html"><i class="fa fa-check"></i><b>5</b> Analysis Choices</a><ul>
+<li class="chapter" data-level="5.1" data-path="analysis-choices.html"><a href="analysis-choices.html#completely-or-urn-draw-randomized-trials"><i class="fa fa-check"></i><b>5.1</b> Completely or Urn-Draw Randomized Trials</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="analysis-choices.html"><a href="analysis-choices.html#two-arms"><i class="fa fa-check"></i><b>5.1.1</b> Two arms</a></li>
+<li class="chapter" data-level="5.1.2" data-path="analysis-choices.html"><a href="analysis-choices.html#multiple-arms"><i class="fa fa-check"></i><b>5.1.2</b> Multiple arms</a></li>
+<li class="chapter" data-level="5.1.3" data-path="analysis-choices.html"><a href="analysis-choices.html#multiple-outcomes"><i class="fa fa-check"></i><b>5.1.3</b> Multiple Outcomes</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="analysis-choices.html"><a href="analysis-choices.html#covariance-adjustment-the-use-of-background-information-to-increase-precision"><i class="fa fa-check"></i><b>5.2</b> Covariance Adjustment (the use of background information to increase precision)</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="analysis-choices.html"><a href="analysis-choices.html#intuition-about-bias-in-the-least-squares-estimator-of-the-ate-with-covariates"><i class="fa fa-check"></i><b>5.2.1</b> Intuition about bias in the least squares estimator of the ATE with covariates</a></li>
+<li class="chapter" data-level="5.2.2" data-path="analysis-choices.html"><a href="analysis-choices.html#the-lin-approach-to-covariance-adjustment"><i class="fa fa-check"></i><b>5.2.2</b> The Lin Approach to Covariance Adjustment</a></li>
+<li class="chapter" data-level="5.2.3" data-path="analysis-choices.html"><a href="analysis-choices.html#the-rosenbaum-approach-the-covariance-adjustment"><i class="fa fa-check"></i><b>5.2.3</b> The Rosenbaum Approach The Covariance Adjustment</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="analysis-choices.html"><a href="analysis-choices.html#how-to-choose-covariates-for-covariance-adjustment"><i class="fa fa-check"></i><b>5.3</b> How to choose covariates for covariance adjustment?</a></li>
+<li class="chapter" data-level="5.4" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandanalysis"><i class="fa fa-check"></i><b>5.4</b> Block-randomized trials</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="analysis-choices.html"><a href="analysis-choices.html#testing-the-null-of-no-effects-with-binary-outcomes-and-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables"><i class="fa fa-check"></i><b>5.4.1</b> Testing the null of no effects with binary outcomes and block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables</a></li>
+<li class="chapter" data-level="5.4.2" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandate"><i class="fa fa-check"></i><b>5.4.2</b> Estimating an overall Average Treatment Effect</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="analysis-choices.html"><a href="analysis-choices.html#clusterrandanalysis"><i class="fa fa-check"></i><b>5.5</b> Cluster-randomized trials</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="analysis-choices.html"><a href="analysis-choices.html#bias-when-cluster-size-is-correlated-with-potential-outcomes"><i class="fa fa-check"></i><b>5.5.1</b> Bias when cluster size is correlated with potential outcomes</a></li>
+<li class="chapter" data-level="5.5.2" data-path="analysis-choices.html"><a href="analysis-choices.html#incorrect-false-positive-rates-from-tests-and-confidence-intervals"><i class="fa fa-check"></i><b>5.5.2</b> Incorrect false positive rates from tests and confidence intervals</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="poweranalysis.html"><a href="poweranalysis.html"><i class="fa fa-check"></i><b>6</b> Power Analysis</a><ul>
+<li class="chapter" data-level="6.1" data-path="poweranalysis.html"><a href="poweranalysis.html#an-example-of-the-off-the-shelf-approach"><i class="fa fa-check"></i><b>6.1</b> An example of the off-the-shelf approach</a></li>
+<li class="chapter" data-level="6.2" data-path="poweranalysis.html"><a href="poweranalysis.html#an-example-of-the-simulation-approach"><i class="fa fa-check"></i><b>6.2</b> An example of the simulation approach</a></li>
+<li class="chapter" data-level="6.3" data-path="poweranalysis.html"><a href="poweranalysis.html#when-to-use-which-approach"><i class="fa fa-check"></i><b>6.3</b> When to use which approach</a></li>
+<li class="chapter" data-level="6.4" data-path="poweranalysis.html"><a href="poweranalysis.html#additional-examples-of-the-simulation-approach"><i class="fa fa-check"></i><b>6.4</b> Additional examples of the simulation approach</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="poweranalysis.html"><a href="poweranalysis.html#a-two-by-two-design-with-interaction"><i class="fa fa-check"></i><b>6.4.1</b> A two-by-two design with interaction</a></li>
+<li class="chapter" data-level="6.4.2" data-path="poweranalysis.html"><a href="poweranalysis.html#covariate-adjustment-with-the-lin-estimator"><i class="fa fa-check"></i><b>6.4.2</b> Covariate adjustment with the Lin estimator</a></li>
+<li class="chapter" data-level="6.4.3" data-path="poweranalysis.html"><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools"><i class="fa fa-check"></i><b>6.4.3</b> Incorporating DeclareDesign into OES Power Tools</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="working-with-data.html"><a href="working-with-data.html"><i class="fa fa-check"></i><b>7</b> Working with data</a><ul>
+<li class="chapter" data-level="7.1" data-path="working-with-data.html"><a href="working-with-data.html#general-questions-we-ask-of-a-data-set"><i class="fa fa-check"></i><b>7.1</b> General questions we ask of a data set</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="glossary-of-terms.html"><a href="glossary-of-terms.html"><i class="fa fa-check"></i><b>8</b> <span>Glossary of Terms</span></a></li>
+<li class="chapter" data-level="9" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>9</b> <span>Appendix</span></a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="randomization-and-design" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> Randomization and Design</h1>
+<p>After working together with our agency partners to translate insights from the
+social and behavioral sciences into policy recommendations following our
+<a href="https://oes.gsa.gov/methods/">process</a>, our combined OES and agency teams
+assess these new ideas by observing differences and changes in real world
+outcomes (usually measured using existing administrative data). Nearly always,
+we design a randomized control trial (an RCT) to ensure that the differences
+and changes we observe arise from the policy intervention and not from some
+other pre-existing difference or change. Here we show examples of the ways that
+we create the random numbers that form the core of our different types of RCTs
+that we use to build evidence about the effectiveness of the new policy.</p>
+<div id="coin-flipping-randomization-versus-urn-drawing-randomization" class="section level2">
+<h2><span class="header-section-number">4.1</span> Coin flipping randomization versus Urn-drawing randomization</h2>
+<p>Many discussions of RCTs begin by talking about the intervention being assigned
+to units (people, schools, offices, districts) “by the flip of a coin”. We
+rarely use this method directly even though it is a useful way to introduce the
+idea that RCTs guarantee fair access to the new policy.</p>
+<p>The following code contrasts coin-flipping style randomization (where the
+number of units in each condition is not guaranteed) with drawing-from-an-urn
+style, or complete, randomization (where the number of units in each condition
+is guaranteed). We try to avoid the coin-flipping style of randomization
+because of this lack of control over the number of units in each condition —
+coin-flipping based experiments are still valid and tell us about the
+underlying counterfactuals, but they can have less statistical power.</p>
+<p>Notice that the simple randomization implemented in the code below results in more observations in the treatment group (group <code>1</code>) than in the control group (group <code>0</code>). The complete randomization will always assign 5 units to the treatment, 5 to the control.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1"><span class="co">## Start with a small experiment with only 10 units</span></a>
+<a class="sourceLine" id="cb27-2" title="2">n &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb27-3" title="3"><span class="co">## Set a seed for the pseudo-random number generator so that we always get the same results</span></a>
+<a class="sourceLine" id="cb27-4" title="4"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
+<a class="sourceLine" id="cb27-5" title="5"><span class="co">## Coin flipping does not guarantee half and half treated and control</span></a>
+<a class="sourceLine" id="cb27-6" title="6"><span class="co">## This next bit of code shows the base R version of coin flipping randomization</span></a>
+<a class="sourceLine" id="cb27-7" title="7"><span class="co">## trt_coinflip &lt;- rbinom(10, size = 1, prob = .5)</span></a>
+<a class="sourceLine" id="cb27-8" title="8">trt_coinflip &lt;-<span class="st"> </span><span class="kw">simple_ra</span>(n)</a>
+<a class="sourceLine" id="cb27-9" title="9"><span class="co">## Drawing from an urn or shuffling cards, guarantees half treated and control</span></a>
+<a class="sourceLine" id="cb27-10" title="10"><span class="co">## trt_urn &lt;- sample(rep(c(1, 0), n / 2))</span></a>
+<a class="sourceLine" id="cb27-11" title="11">trt_urn &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(n)</a>
+<a class="sourceLine" id="cb27-12" title="12"><span class="kw">table</span>(trt_coinflip)</a></code></pre></div>
+<pre><code>trt_coinflip
+0 1 
+3 7 </code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1"><span class="kw">table</span>(trt_urn)</a></code></pre></div>
+<pre><code>trt_urn
+0 1 
+5 5 </code></pre>
+</div>
+<div id="urn-drawing-or-complete-randomization-into-2-or-more-groups" class="section level2">
+<h2><span class="header-section-number">4.2</span> Urn-Drawing or Complete Randomization into 2 or more groups</h2>
+<p>We tend to use the <code>randomizr</code> R package <span class="citation">(Coppock <a href="#ref-R-randomizr">2022</a><a href="#ref-R-randomizr">a</a>)</span> for simple designs
+rather than the base R <code>sample</code> function because thee <code>randomizr</code> does some
+quality control checks. Notice that we implement a check on our code below with
+the <code>stopifnot</code> command: the code will stop and issue a warning if we didn’t
+actually assign 1/4 of the observations to the treatment condition. Here, we
+assign the units first to 2 arms with equal probability (<code>Z2armEqual</code>) and
+then, to show how the code works, to 2 arms where one arm has only 1/4 the
+probability of receiving treatment (imagining a design with an expensive
+intervention) (<code>Z2armUnequalA</code> and <code>Z2armUnequalB</code>), and then to a design with
+4 arms, each with equal probability. (We often use <span class="math inline">\(Z\)</span> to refer to the variable
+recording our intervention arms.)</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1">N &lt;-<span class="st"> </span><span class="kw">nrow</span>(dat1)</a>
+<a class="sourceLine" id="cb31-2" title="2"><span class="co">## Two equal arms</span></a>
+<a class="sourceLine" id="cb31-3" title="3">dat1<span class="op">$</span>Z2armEqual &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N)</a>
+<a class="sourceLine" id="cb31-4" title="4"><span class="co">## Two unequal arms: .25 chance of treatment</span></a>
+<a class="sourceLine" id="cb31-5" title="5"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
+<a class="sourceLine" id="cb31-6" title="6">dat1<span class="op">$</span>Z2armUnequalA &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N, <span class="dt">prob =</span> <span class="fl">.25</span>)</a>
+<a class="sourceLine" id="cb31-7" title="7"><span class="kw">stopifnot</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>Z2armUnequalA) <span class="op">==</span><span class="st"> </span>N <span class="op">/</span><span class="st"> </span><span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb31-8" title="8">dat1<span class="op">$</span>Z2armUnequalB &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N, <span class="dt">m =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb31-9" title="9"><span class="co">## Four equal arms</span></a>
+<a class="sourceLine" id="cb31-10" title="10">dat1<span class="op">$</span>Z4arms &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N, <span class="dt">m_each =</span> <span class="kw">rep</span>(N <span class="op">/</span><span class="st"> </span><span class="dv">4</span>, <span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb31-11" title="11"></a>
+<a class="sourceLine" id="cb31-12" title="12"><span class="kw">table</span>(<span class="dt">Z2armEqual =</span> dat1<span class="op">$</span>Z2armEqual)</a></code></pre></div>
+<pre><code>Z2armEqual
+ 0  1 
+50 50 </code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"><span class="kw">table</span>(<span class="dt">Z2armUnequalA =</span> dat1<span class="op">$</span>Z2armUnequalA)</a></code></pre></div>
+<pre><code>Z2armUnequalA
+ 0  1 
+75 25 </code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1"><span class="kw">table</span>(<span class="dt">Z2armUnequalB =</span> dat1<span class="op">$</span>Z2armUnequalB)</a></code></pre></div>
+<pre><code>Z2armUnequalB
+ 0  1 
+75 25 </code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1"><span class="kw">table</span>(<span class="dt">Z4arms =</span> dat1<span class="op">$</span>Z4arms)</a></code></pre></div>
+<pre><code>Z4arms
+T1 T2 T3 T4 
+25 25 25 25 </code></pre>
+</div>
+<div id="factorial-designs" class="section level2">
+<h2><span class="header-section-number">4.3</span> Factorial Designs</h2>
+<p>One can often test the effects of more than one intervention without losing
+much statistical power by randomly assigning more than one treatment
+independently of each other. The simplest design that we use for this purpose
+is the <span class="math inline">\(2 \times 2\)</span> factorial design. For example, in the next table we see that
+we have assigned 50 observations to each arm of both of two interventions.
+Since the randomization of <code>treatment1</code> is independent of <code>treatment2</code>, we can
+assess the effects of each treatment separately and pay little power
+penalty unless one of the treatments dramatically increases the variance of
+the outcome compared to the experiment with only one treatment assigned.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1"><span class="co">## Two equal arms, second cross treatment</span></a>
+<a class="sourceLine" id="cb39-2" title="2">dat1<span class="op">$</span>Z2armEqual2 &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N)</a>
+<a class="sourceLine" id="cb39-3" title="3"><span class="kw">table</span>(<span class="dt">treatment1 =</span> dat1<span class="op">$</span>Z2armEqual, <span class="dt">treatment2 =</span> dat1<span class="op">$</span>Z2armEqual2)</a></code></pre></div>
+<pre><code>          treatment2
+treatment1  0  1
+         0 22 28
+         1 28 22</code></pre>
+<p>Although factorial designs allow us to test more than one intervention at the
+same time, they tend to provide little statistical power for testing
+hypotheses about the <strong>interaction</strong> of the two treatments. If we want to
+learn about how two different interventions work together, then the sample
+size requirements will be much larger than if we want to learn about only each
+treatment separately.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+</div>
+<div id="block-random-assignment" class="section level2">
+<h2><span class="header-section-number">4.4</span> Block Random Assignment</h2>
+<p>Statistical power depends not only on the size of the experiment and the strength of the treatment effect, but also on the amount of noise, or
+non-treatment-related variability, in outcomes. Block-randomized designs can help reduce the noise in outcomes, while simultaneously minimizing estimation error – the amount that our particular experiment’s estimate differs from the truth.</p>
+<p>In a block-randomized, or
+stratified, experiment, we randomly assign units to the policy
+interventions <em>within</em> groups.</p>
+<p>Suppose we are evaluating whether dedicated navigators can increase the percentage of students who live in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. Though we can never know the outcome in all buildings both with and without navigators (the “fundamental problem of causal inference”), if we could, we might have the data below.</p>
+
+<p>In this case, the true average treatment effect for this sample is the average under treatment minus the average under control: <span class="math inline">\(\text{ATE} = 50-25=25\)</span> percent more applications if navigators are deployed everywhere.</p>
+<p>If we randomly allocate two buildings to treatment and two to control, we might treat the first two buildings and observe</p>
+
+<p>yielding an estimate of the treatment effect of <span class="math inline">\(65-25 = 40\)</span> percent more applications – an estimate larger than the true value of 25.</p>
+<p>Or, we might observe</p>
+
+<p>yielding an estimate of the treatment effect of <span class="math inline">\(45-30 = 15\)</span> percent fewer applications – an estimate smaller than the true value of 25.</p>
+<p>All the possible equiprobable assignments, and their estimated treatment effects are below.</p>
+
+<p>These possible estimates have mean equal to the true value of 25, showing that the difference in means is an unbiased estimator. However, some of these estimates are far from the truth, and they have a lot of variability.</p>
+<p>To design our experiment to best estimate the true value, and to do so with more statistical power, we can <em>block</em> the experiment. Here, this means restricting our randomization to those three possible assignments that balance the large and small buildings across the treatment groups.</p>
+
+<p>With the blocked design, we will get an estimate no more than 10 percentage points from the truth. Further, our estimates will have less variability (an SD of 8.16 rather than
+11.4), improving the power of our design.</p>
+<p>For a more realistic example, suppose our experiment
+has two hospitals. We might randomly assign people to treatment and control <em>within</em> each hospital. We might assign half of the people in hospital “A”
+to treatment and half to control and likewise in hospital “B.”<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> Below, we have 50 units in hospital “A” and 50 in hospital “B”.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">dat1<span class="op">$</span>blockID &lt;-<span class="st"> </span><span class="kw">gl</span>(<span class="dt">n =</span> <span class="dv">2</span>, <span class="dt">k =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">2</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</a>
+<a class="sourceLine" id="cb41-2" title="2"><span class="kw">with</span>(dat1, <span class="kw">table</span>(<span class="dt">blockID =</span> dat1<span class="op">$</span>blockID))</a></code></pre></div>
+<pre><code>blockID
+ A  B 
+50 50 </code></pre>
+<p>We assign half of the units in each hospital to each treatment condition:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1">dat1<span class="op">$</span>Z2armBlocked &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blockID)</a>
+<a class="sourceLine" id="cb43-2" title="2"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blockID, Z2armBlocked))</a></code></pre></div>
+<pre><code>       Z2armBlocked
+blockID  0  1
+      A 25 25
+      B 25 25</code></pre>
+<p>If, say, there were fewer people eligible for treatment in hospital “A” — or
+perhaps the intervention was more expensive in that block — we might assign
+treatment with different probability within each block. The code below shows half of the hospital “A” units assigned to treatment, but only a quarter of those from hospital “B”. Again, we check that
+this code worked by including a test. This approach is an informal version of
+one of the best practices in writing code in general, called “unit testing”.
+See the <a href="https://rawgit.com/egap/methods-guides/master/workflow/workflow.html#to-minimize-error-build-testing-into-the-code">EGAP Guide to Workflow for more
+examples</a>.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">dat1<span class="op">$</span>Z2armBlockedUneqProb &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blockID, <span class="dt">block_prob =</span> <span class="kw">c</span>(.<span class="dv">5</span>, <span class="fl">.25</span>))</a>
+<a class="sourceLine" id="cb45-2" title="2"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blockID, Z2armBlockedUneqProb))</a></code></pre></div>
+<pre><code>       Z2armBlockedUneqProb
+blockID  0  1
+      A 25 25
+      B 38 12</code></pre>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1"><span class="kw">stopifnot</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>Z2armBlockedUneqProb <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>dat1<span class="op">$</span>blockID <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="kw">ceiling</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>blockID <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">/</span><span class="st"> </span><span class="dv">4</span>) <span class="op">|</span></a>
+<a class="sourceLine" id="cb47-2" title="2"><span class="st">  </span><span class="kw">sum</span>(dat1<span class="op">$</span>Z2armBlockedUneqProb <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>dat1<span class="op">$</span>blockID <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="kw">floor</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>blockID <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">/</span><span class="st"> </span><span class="dv">4</span>))</a></code></pre></div>
+<p>Our team tries to implement block-randomized assignment whenever possible in
+order to increase the statistical power of our experiments. We also often find
+it useful in cases where different administrative units are implementing the
+treatment or where we expect different groups of people to have different
+reactions to the treatment.</p>
+<div id="using-only-a-few-covariates-to-create-blocks" class="section level3">
+<h3><span class="header-section-number">4.4.1</span> Using only a few covariates to create blocks</h3>
+<p>If we have background information on a few covariates, we can great blocks by
+hand using the kind of process demonstrated here:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1"><span class="co">## For example, make three groups from the cov2 variable</span></a>
+<a class="sourceLine" id="cb48-2" title="2">dat1<span class="op">$</span>cov2cat &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">cut</span>(cov2, <span class="dt">breaks =</span> <span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb48-3" title="3"><span class="kw">table</span>(dat1<span class="op">$</span>cov2cat, <span class="dt">exclude =</span> <span class="kw">c</span>())</a></code></pre></div>
+<pre><code>
+(-7.32,-2.6]   (-2.6,2.1]   (2.1,6.82] 
+          11           68           21 </code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1"><span class="kw">with</span>(dat1, <span class="kw">tapply</span>(cov2, cov2cat, summary))</a></code></pre></div>
+<pre><code>$`(-7.32,-2.6]`
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  -7.30   -5.03   -3.66   -4.14   -3.01   -2.77 
+
+$`(-2.6,2.1]`
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-2.3916 -0.7630 -0.0194 -0.0218  0.7592  2.0864 
+
+$`(2.1,6.82]`
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2.13    2.46    2.95    3.24    3.68    6.80 </code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" title="1"><span class="co">## And we can make blocks that are the same on two covariates</span></a>
+<a class="sourceLine" id="cb52-2" title="2">dat1<span class="op">$</span>cov1bin &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(dat1<span class="op">$</span>cov1 <span class="op">&gt;</span><span class="st"> </span><span class="kw">median</span>(dat1<span class="op">$</span>cov1))</a>
+<a class="sourceLine" id="cb52-3" title="3">dat1<span class="op">$</span>blockV2 &lt;-<span class="st"> </span><span class="kw">droplevels</span>(<span class="kw">with</span>(dat1, <span class="kw">interaction</span>(cov1bin, cov2cat)))</a>
+<a class="sourceLine" id="cb52-4" title="4"><span class="kw">table</span>(dat1<span class="op">$</span>blockV2, <span class="dt">exclude =</span> <span class="kw">c</span>())</a></code></pre></div>
+<pre><code>
+0.(-7.32,-2.6] 1.(-7.32,-2.6]   0.(-2.6,2.1]   1.(-2.6,2.1]   0.(2.1,6.82]   1.(2.1,6.82] 
+             7              4             38             30              5             16 </code></pre>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1"><span class="co">## And then assign within these blocks</span></a>
+<a class="sourceLine" id="cb54-2" title="2"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
+<a class="sourceLine" id="cb54-3" title="3">dat1<span class="op">$</span>ZblockV2 &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blockV2)</a>
+<a class="sourceLine" id="cb54-4" title="4"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blockV2, ZblockV2, <span class="dt">exclude =</span> <span class="kw">c</span>()))</a></code></pre></div>
+<pre><code>                ZblockV2
+blockV2           0  1
+  0.(-7.32,-2.6]  4  3
+  1.(-7.32,-2.6]  2  2
+  0.(-2.6,2.1]   19 19
+  1.(-2.6,2.1]   15 15
+  0.(2.1,6.82]    2  3
+  1.(2.1,6.82]    8  8</code></pre>
+</div>
+<div id="multivariate-blocking-using-many-covariates" class="section level3">
+<h3><span class="header-section-number">4.4.2</span> Multivariate blocking using many covariates</h3>
+<p>If we have many background variables, we can increase precision by thinking
+about the problem of blocking as a problem of matching or creating sets of
+units which are as similar as possible in terms of the collection of those
+covariates <span class="citation">(Moore <a href="#ref-moore2012multivariate">2012</a>; Moore and Schnakenberg <a href="#ref-moore2016bT063">2016</a>)</span>. Here we show two approaches.</p>
+<p>Creating pairs:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" title="1"><span class="co">## using the blockTools package</span></a>
+<a class="sourceLine" id="cb56-2" title="2">mvblocks &lt;-<span class="st"> </span><span class="kw">block</span>(dat1, <span class="dt">id.vars =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">block.vars =</span> <span class="kw">c</span>(<span class="st">&quot;cov1&quot;</span>, <span class="st">&quot;cov2&quot;</span>), <span class="dt">algorithm =</span> <span class="st">&quot;optimal&quot;</span>)</a>
+<a class="sourceLine" id="cb56-3" title="3">dat1<span class="op">$</span>blocksV3 &lt;-<span class="st"> </span><span class="kw">createBlockIDs</span>(mvblocks, <span class="dt">data =</span> dat1, <span class="dt">id.var =</span> <span class="st">&quot;id&quot;</span>)</a>
+<a class="sourceLine" id="cb56-4" title="4">dat1<span class="op">$</span>ZblockV3 &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blocksV3)</a>
+<a class="sourceLine" id="cb56-5" title="5"><span class="co">## just show the first ten pairs</span></a>
+<a class="sourceLine" id="cb56-6" title="6"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blocksV3, ZblockV3, <span class="dt">exclude =</span> <span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, ]</a></code></pre></div>
+<pre><code>        ZblockV3
+blocksV3 0 1
+      1  1 1
+      2  1 1
+      3  1 1
+      4  1 1
+      5  1 1
+      6  1 1
+      7  1 1
+      8  1 1
+      9  1 1
+      10 1 1</code></pre>
+<p>Creating larger blocks:</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" title="1"><span class="co">## using the quickblock package</span></a>
+<a class="sourceLine" id="cb58-2" title="2">distmat &lt;-<span class="st"> </span><span class="kw">distances</span>(dat1,</a>
+<a class="sourceLine" id="cb58-3" title="3">  <span class="dt">dist_variables =</span> <span class="kw">c</span>(<span class="st">&quot;cov1&quot;</span>, <span class="st">&quot;cov2&quot;</span>), <span class="dt">id_variable =</span></a>
+<a class="sourceLine" id="cb58-4" title="4">    <span class="st">&quot;id&quot;</span>, <span class="dt">normalize =</span> <span class="st">&quot;mahalanobiz&quot;</span></a>
+<a class="sourceLine" id="cb58-5" title="5">)</a>
+<a class="sourceLine" id="cb58-6" title="6">distmat[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a></code></pre></div>
+<pre><code>       1      2      3      4      5
+1 0.0000 1.4766 0.3313 0.2835 0.6736
+2 1.4766 0.0000 1.6919 1.5891 0.9681
+3 0.3313 1.6919 0.0000 0.5477 0.7729
+4 0.2835 1.5891 0.5477 0.0000 0.9089
+5 0.6736 0.9681 0.7729 0.9089 0.0000</code></pre>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1"><span class="kw">quantile</span>(<span class="kw">as.vector</span>(distmat), <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">.1</span>))</a></code></pre></div>
+<pre><code>      0%      10%      20%      30%      40%      50%      60%      70%      80%      90%     100% 
+-3.13279 -1.18748 -0.79019 -0.38455 -0.14051  0.08898  0.26701  0.53818  0.89242  1.34321  2.91687 </code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" title="1"><span class="co">## The caliper argument is supposed to prevent the inclusion of ill-matched</span></a>
+<a class="sourceLine" id="cb62-2" title="2"><span class="co">## points.</span></a>
+<a class="sourceLine" id="cb62-3" title="3">mvbigblock &lt;-<span class="st"> </span><span class="kw">quickblock</span>(distmat, <span class="dt">size_constraint =</span> 6L) <span class="co"># ,caliper=2.5)</span></a>
+<a class="sourceLine" id="cb62-4" title="4"><span class="co">## Look for missing points</span></a>
+<a class="sourceLine" id="cb62-5" title="5"><span class="kw">table</span>(mvbigblock, <span class="dt">exclude =</span> <span class="kw">c</span>())</a></code></pre></div>
+<pre><code>mvbigblock
+ 0  1  2  3  4  5  6  7  8  9 10 11 
+ 6  6  6  6  8 11 14  7  7 10  7 12 </code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" title="1">dat1<span class="op">$</span>blocksV4 &lt;-<span class="st"> </span>mvbigblock</a>
+<a class="sourceLine" id="cb64-2" title="2">dat1<span class="op">$</span>ZblockV4 &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blocksV4)</a>
+<a class="sourceLine" id="cb64-3" title="3"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blocksV4, ZblockV3, <span class="dt">exclude =</span> <span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, ]</a></code></pre></div>
+<pre><code>        ZblockV3
+blocksV4 0 1
+       0 3 3
+       1 2 4
+       2 4 2
+       3 3 3
+       4 5 3
+       5 6 5
+       6 6 8
+       7 4 3
+       8 4 3
+       9 4 6</code></pre>
+<p>Here we produce some description of the differences within block: the proportion
+of people in category “1” on the binary covariate (notice that the sets are
+homogeneous on this covariate) and the difference between the largest and
+smallest value on the continuous covariate.</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1">blockingDescEval &lt;-<span class="st"> </span>dat1 <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb66-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(blocksV4) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb66-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(</a>
+<a class="sourceLine" id="cb66-4" title="4">    <span class="dt">cov2diff =</span> <span class="kw">max</span>(<span class="kw">abs</span>(cov2))</a>
+<a class="sourceLine" id="cb66-5" title="5">    <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(<span class="kw">abs</span>(cov2)),</a>
+<a class="sourceLine" id="cb66-6" title="6">    <span class="dt">cov1 =</span> <span class="kw">mean</span>(cov1)</a>
+<a class="sourceLine" id="cb66-7" title="7">  )</a>
+<a class="sourceLine" id="cb66-8" title="8">blockingDescEval</a></code></pre></div>
+<pre><code># A tibble: 12 × 3
+   blocksV4   cov2diff    cov1
+   &lt;qb_blckn&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+ 1  0             3.62  0.555 
+ 2  1             2.92  4.21  
+ 3  2             1.91 -3.89  
+ 4  3             3.64 -1.38  
+ 5  4             2.78  3.60  
+ 6  5             1.28  1.51  
+ 7  6             3.44  0.577 
+ 8  7             1.91 -0.0277
+ 9  8             1.46  1.56  
+10  9             2.61 -2.41  
+11 10             2.68 -1.35  
+12 11             1.16 -0.770 </code></pre>
+</div>
+</div>
+<div id="cluster-random-assignment" class="section level2">
+<h2><span class="header-section-number">4.5</span> Cluster random assignment</h2>
+<p>We often implement a new policy intervention at the level of some group
+of people — like a doctor’s practice, or a building, or some other
+administrative unit. Notice that, even though we have 100 units in our example
+data, imagine that they are grouped into 10 buildings, and the policy
+intervention is at the building level. Below, we assign 50 of those units
+to treatment and 50 to control. Everyone in each building has the same treatment assignment.</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" title="1">ndat1 &lt;-<span class="st"> </span><span class="kw">nrow</span>(dat1)</a>
+<a class="sourceLine" id="cb68-2" title="2"><span class="co">## Make an indicator of cluster membership</span></a>
+<a class="sourceLine" id="cb68-3" title="3">dat1<span class="op">$</span>buildingID &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>(ndat1 <span class="op">/</span><span class="st"> </span><span class="dv">10</span>), <span class="dt">length =</span> ndat1)</a>
+<a class="sourceLine" id="cb68-4" title="4"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
+<a class="sourceLine" id="cb68-5" title="5">dat1<span class="op">$</span>Zcluster &lt;-<span class="st"> </span><span class="kw">cluster_ra</span>(<span class="dt">cluster =</span> dat1<span class="op">$</span>buildingID)</a>
+<a class="sourceLine" id="cb68-6" title="6"><span class="kw">with</span>(dat1, <span class="kw">table</span>(Zcluster, buildingID))</a></code></pre></div>
+<pre><code>        buildingID
+Zcluster  1  2  3  4  5  6  7  8  9 10
+       0 10  0 10 10  0  0  0  0 10 10
+       1  0 10  0  0 10 10 10 10  0  0</code></pre>
+<p>Cluster randomized designs raise new questions about estimation and testing and
+thus statistical power. We describe our approaches to analysis and power
+analysis of cluster randomized designs <a href="analysis-choices.html#clusterrandanalysis">in the section on the analysis of Cluster Randomized Trials</a>.</p>
+</div>
+<div id="other-designs" class="section level2">
+<h2><span class="header-section-number">4.6</span> Other designs</h2>
+<p>Our team has also designed stepped-wedge style designs, saturation designs
+aimed to discover whether the effects of the experimental intervention are
+communicated across people (via some spillover or network mechanism), and
+designs where we try to isolate certain experimental units (like buildings)
+from each other so that we can focus our learning about the effects of the
+intervention rather than on the effects of communication of the intervention
+across people. In later versions of this document we will include simple
+descriptions and code for those other, less common designs.</p>
+</div>
+<div id="randomization-assessment" class="section level2">
+<h2><span class="header-section-number">4.7</span> Randomization assessment</h2>
+<p>If we have covariates, we can assess the performance of the randomization
+procedure by testing the hypothesis that the treatment-vs-control differences,
+or differences across treatment arms, in covariates are consistent with our
+claimed mechanism of randomization. In the absence of covariates, we assess
+whether the number of units assigned to each arm (conditional on other design
+features, such as blocking or stratification) are consistent with the claimed
+random assignment.</p>
+<p>Here is an example with a binary treatment and a continuous outcome and 10
+covariates. In this case we use the <span class="math inline">\(d^2\)</span> omnibus balance test function <code>xBalance()</code> in
+the package <code>RItools</code> <span class="citation">(see Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a> ; Bowers, Fredrickson, and Hansen <a href="#ref-bowers_ritools_2016">2016</a>)</span>.</p>
+<p>The “overall” <span class="math inline">\(p\)</span>-value below shows us that we have little evidence against the
+idea that treatment (<span class="math inline">\(Z\)</span>) was assigned at random — at least in terms of the
+relationships between the two covariates and the treatment assignment. The
+test statistics here are mean differences. This overall or omnibus test is the
+key here — if we had many covariates, it would easy to discover one or a few
+covariates with means that differ detectably from zero just by chance. That
+is, in a well-operating experiment, we would expect some baseline imbalances
+(as measured using randomization based tests) – roughly 5 in 100. Thus the value
+of the omnibus test is that we will not be misled by chance false positives.</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" title="1">randAssessV1 &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(Z <span class="op">~</span><span class="st"> </span>cov1 <span class="op">+</span><span class="st"> </span>cov2, <span class="dt">data =</span> dat1)</a>
+<a class="sourceLine" id="cb70-2" title="2">randAssessV1<span class="op">$</span>overall[, ]</a></code></pre></div>
+<pre><code>   chisquare df p.value
+--     1.998  2  0.3683</code></pre>
+<p>Here is an example of randomization assessment with block-randomized assignment:</p>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" title="1">randAssessV3 &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(ZblockV3 <span class="op">~</span><span class="st"> </span>cov1 <span class="op">+</span><span class="st"> </span>cov2 <span class="op">+</span><span class="st"> </span><span class="kw">strata</span>(blocksV3), <span class="dt">data =</span> dat1)</a>
+<a class="sourceLine" id="cb72-2" title="2">randAssessV3<span class="op">$</span>overall[, ]</a></code></pre></div>
+<pre><code>         chisquare df p.value
+blocksV3    2.8342  2  0.2424
+--          0.1365  2  0.9340</code></pre>
+<p>One can also assess the randomization given both block and cluster random
+assignment using a formula like so:
+<code>Z ~ cov1 + cov2 + strata(blockID) + cluster(clusterID)</code>.</p>
+<p>This approach, using the <code>RItools</code> package, works well for experiments that
+are not overly small. In a very small experiment, say, an experiment with 5
+clusters assigned to treatment and 5 clusters assigned to control, we would do
+the same test, but would not use the <span class="math inline">\(\chi^2\)</span> distribution. Instead, we would do a
+permutation-based test.</p>
+<p>We do not use <span class="math inline">\(F\)</span>-tests or Likelihood Ratio tests to assess randomization. See
+<span class="citation">Hansen and Bowers (<a href="#ref-hansen_covariate_2008">2008</a>)</span> for some evidence that a test based on
+randomization-inference (like the <span class="math inline">\(d^2\)</span> test developed in that article)
+maintains false positive rates better than the sampling- or likelihood-justified <span class="math inline">\(F\)</span> and likelihood ratio tests.</p>
+<div id="what-to-do-with-failed-randomization-assessments" class="section level3">
+<h3><span class="header-section-number">4.7.1</span> What to do with “failed” randomization assessments?</h3>
+<p>A <span class="math inline">\(p\)</span>-value less than .05 on a test of randomization mechanism ought to
+triggers extra scrutiny of how the randomization was conducted and how the data
+were recorded by the agency. For example, we might contact our agency partner
+to learn more deetails about how the random numbers themselves were
+generated, or we may ask for the SQL or SAS code or other code that might
+have been used to randomize. In most cases, we will learn that
+randomization worked well but that our understanding of the design and the
+data were incorrect. In some cases, we will learn that the randomization
+occurred as we had initially understood. In such cases, we tend to assume
+that rejecting the null in our randomization assessment is a false positive
+from our testing procedure (we assume we would see about 5 such errors in
+every 100 experiments). If the rejection of the null appears to be driven by
+one or more particularly substantively relevant covariates, say, the variable
+age looks very imbalanced between treated and control groups in a health
+study, then we will present both the unadjusted results but also adjust
+for that covariate via stratification and/or covariance adjustment as we
+describe later in this document. A chance rejection of the null that the
+experiment was randomized as it should not cause us to the use the adjusted
+estimate as our primary causal effect — after all, it will be biased
+whereas the unadjusted estimate will not be biased undere chance departures
+from the null. But, large differences between the two estimates can inform
+the qualitative task of substantive interpretation of the study: looking
+at different effects by age groups, for example, might tell us something
+about the particular context of the study and, in turn, help us think
+about what we have learned.</p>
+</div>
+<div id="how-to-minimize-large-chance-departures-of-randomization" class="section level3">
+<h3><span class="header-section-number">4.7.2</span> How to minimize large chance departures of randomization?</h3>
+<p>Our approach to block-randomization helps us avoid these problems. We can also restrict our randomization in ways that are more flexible than requiring blocks, but which, in turn should minimize chance. We tend not to use re-randomization, among methods of restricted randomization, only because we often can use block-randomization and thus can minimize the complexity of later analysis. However, since we pursue a randomization-based approach to the analysis of experiments, we can easily (in concept) estimate causal effects and test hypotheses about causal effects as well after such modes of randomization.</p>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-R-randomizr">
+<p>Coppock, Alexander. 2022a. <em>Randomizr: Easy-to-Use Tools for Common Forms of Random Assignment and Sampling</em>. <a href="https://CRAN.R-project.org/package=randomizr">https://CRAN.R-project.org/package=randomizr</a>.</p>
+</div>
+<div id="ref-moore2012multivariate">
+<p>Moore, Ryan T. 2012. “Multivariate Continuous Blocking to Improve Political Science Experiments.” <em>Political Analysis</em> 20 (4): 460–79.</p>
+</div>
+<div id="ref-moore2016bT063">
+<p>Moore, Ryan T., and Keith Schnakenberg. 2016. <em>BlockTools: Blocking, Assignment, and Diagnosing Interference in Randomized Experiments</em>. <a href="http://www.ryantmoore.org/html/software.blockTools.html">http://www.ryantmoore.org/html/software.blockTools.html</a>.</p>
+</div>
+<div id="ref-hansen_covariate_2008">
+<p>Hansen, Ben B., and Jake Bowers. 2008. “Covariate Balance in Simple, Stratified and Clustered Comparative Studies.” <em>Statistical Science</em> 23 (2): 219–36.</p>
+</div>
+<div id="ref-bowers_ritools_2016">
+<p>Bowers, Jake, Mark Fredrickson, and Ben Hansen. 2016. <em>RItools: Randomization Inference Tools</em>.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="3">
+<li id="fn3"><p>But see <span class="citation">Small, Volpp, and Rosenbaum (<a href="#ref-small2011structured">2011</a>)</span> for a way to increase the
+power of tests for such questions. This approach is not yet part of our
+standard practice.<a href="randomization-and-design.html#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>We use “block”
+rather than “strata” throughout this document to refer to groups of
+experimental units that are fixed before randomization, where group membership
+cannot be changed by the experiment itself.<a href="randomization-and-design.html#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="design-based-principles-of-statistical-inference.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="analysis-choices.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/gsa-oes/sop/edit/master/Book/03-randomizeddesigns.Rmd",
+"text": "Edit"
+},
+"download": ["OES_SOP.pdf", "OES_SOP.epub"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
