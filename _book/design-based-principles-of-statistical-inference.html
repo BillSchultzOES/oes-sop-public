@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-18">
+<meta name="date" content="2023-08-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -612,11 +612,9 @@ status quo.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co">## Read in data for the fake experiment</span></a>
 <a class="sourceLine" id="cb2-2" title="2">dat1 &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;dat1.csv&quot;</span>)</a></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co">## y0 and y1 are the true underlying potential outcomes.</span></a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="kw">with</span>(dat1, {</a>
-<a class="sourceLine" id="cb3-3" title="3">  <span class="kw">boxplot</span>(<span class="kw">list</span>(y0, y1), <span class="dt">names =</span> <span class="kw">c</span>(<span class="st">&quot;Control&quot;</span>, <span class="st">&quot;Treatment&quot;</span>), <span class="dt">ylab =</span> <span class="st">&quot;Outcomes&quot;</span>)</a>
-<a class="sourceLine" id="cb3-4" title="4">  <span class="kw">stripchart</span>(<span class="kw">list</span>(y0, y1), <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">vertical =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb3-5" title="5">  <span class="kw">stripchart</span>(<span class="kw">list</span>(<span class="kw">mean</span>(y0), <span class="kw">mean</span>(y1)), <span class="dt">add =</span> <span class="ot">TRUE</span>, <span class="dt">vertical =</span> <span class="ot">TRUE</span>, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">cex =</span> <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb3-6" title="6">})</a></code></pre></div>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">with</span>(dat1,{<span class="kw">boxplot</span>(<span class="kw">list</span>(y0,y1),<span class="dt">names=</span><span class="kw">c</span>(<span class="st">&quot;Control&quot;</span>,<span class="st">&quot;Treatment&quot;</span>),<span class="dt">ylab=</span><span class="st">&quot;Outcomes&quot;</span>)</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="kw">stripchart</span>(<span class="kw">list</span>(y0,y1),<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">vertical=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="kw">stripchart</span>(<span class="kw">list</span>(<span class="kw">mean</span>(y0),<span class="kw">mean</span>(y1)),<span class="dt">add=</span><span class="ot">TRUE</span>,<span class="dt">vertical=</span><span class="ot">TRUE</span>,<span class="dt">pch=</span><span class="dv">19</span>,<span class="dt">cex=</span><span class="dv">2</span>)})</a></code></pre></div>
 <p><img src="OES_SOP_files/figure-html/boxplot1-1.png" width=".9\textwidth" /></p>
 <p>In this simulated data, we know the true average treatment effect (ATE) because
 we know both of the underlying true potential outcomes (written in code as <code>y0</code>
@@ -636,12 +634,12 @@ Notice that we can just calculate the difference of means or we can use the
 fact that the ordinary least squares linear model also calculates the same number
 if we have a binary treatment on the right hand side.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co">## Y is the observed outcome.</span></a>
-<a class="sourceLine" id="cb6-2" title="2">estATE1 &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">mean</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">0</span>]))</a>
-<a class="sourceLine" id="cb6-3" title="3">estATE2 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat1)<span class="op">$</span>coef[[<span class="st">&quot;Z&quot;</span>]]</a>
-<a class="sourceLine" id="cb6-4" title="4"><span class="kw">c</span>(<span class="dt">estimatedATEv1 =</span> estATE1, <span class="dt">estimatedATEv2 =</span> estATE2)</a></code></pre></div>
+<a class="sourceLine" id="cb6-2" title="2">estATE1 &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">mean</span>(Y[Z<span class="op">==</span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(Y[Z<span class="op">==</span><span class="dv">0</span>]))</a>
+<a class="sourceLine" id="cb6-3" title="3">estATE2 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y<span class="op">~</span>Z,<span class="dt">data=</span>dat1)<span class="op">$</span>coef[[<span class="st">&quot;Z&quot;</span>]]</a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="kw">c</span>(<span class="dt">estimatedATEv1=</span>estATE1,<span class="dt">estimatedATEv2=</span>estATE2)</a></code></pre></div>
 <pre><code>estimatedATEv1 estimatedATEv2 
          4.637          4.637 </code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">stopifnot</span>(<span class="kw">all.equal</span>(estATE1, estATE2))</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">stopifnot</span>(<span class="kw">all.equal</span>(estATE1,estATE2))</a></code></pre></div>
 <p><strong>The design-based perspective causes differences in our approach when we think about how to calculate standard errors (and thus <span class="math inline">\(p\)</span>-values and confidence intervals).</strong></p>
 <div id="how-do-we-calculate-randomization-based-standard-errors" class="section level3">
 <h3><span class="header-section-number">3.1.1</span> How do we calculate randomization-based standard errors?</h3>
@@ -650,14 +648,14 @@ experiment on the same group of people? The standard error of an estimate of
 the average treatment effect is one answer to this question. Below, we simulate
 a simple, individual-level experiment to develop intuition about what a standard
 error is.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">simEstAte &lt;-<span class="st"> </span><span class="cf">function</span>(Z, y1, y0) {</a>
-<a class="sourceLine" id="cb9-2" title="2">  <span class="co">## A function to re-assign treatment and recalculate the difference of means</span></a>
-<a class="sourceLine" id="cb9-3" title="3">  <span class="co">## Treatment was assigned without blocking or other structure, so we</span></a>
-<a class="sourceLine" id="cb9-4" title="4">  <span class="co">## just permute or shuffle the existing treatment assignment vector</span></a>
-<a class="sourceLine" id="cb9-5" title="5">  Znew &lt;-<span class="st"> </span><span class="kw">sample</span>(Z)</a>
-<a class="sourceLine" id="cb9-6" title="6">  Y &lt;-<span class="st"> </span>Znew <span class="op">*</span><span class="st"> </span>y1 <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Znew) <span class="op">*</span><span class="st"> </span>y0</a>
-<a class="sourceLine" id="cb9-7" title="7">  estate &lt;-<span class="st"> </span><span class="kw">mean</span>(Y[Znew <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(Y[Znew <span class="op">==</span><span class="st"> </span><span class="dv">0</span>])</a>
-<a class="sourceLine" id="cb9-8" title="8">  <span class="kw">return</span>(estate)</a>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">simEstAte &lt;-<span class="st"> </span><span class="cf">function</span>(Z,y1,y0){</a>
+<a class="sourceLine" id="cb9-2" title="2">    <span class="co">## A function to re-assign treatment and recalculate the difference of means</span></a>
+<a class="sourceLine" id="cb9-3" title="3">    <span class="co">## Treatment was assigned without blocking or other structure, so we</span></a>
+<a class="sourceLine" id="cb9-4" title="4">    <span class="co">## just permute or shuffle the existing treatment assignment vector</span></a>
+<a class="sourceLine" id="cb9-5" title="5">    Znew &lt;-<span class="st"> </span><span class="kw">sample</span>(Z)</a>
+<a class="sourceLine" id="cb9-6" title="6">    Y &lt;-<span class="st"> </span>Znew <span class="op">*</span><span class="st"> </span>y1 <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">-</span>Znew) <span class="op">*</span><span class="st"> </span>y0</a>
+<a class="sourceLine" id="cb9-7" title="7">    estate &lt;-<span class="st"> </span><span class="kw">mean</span>(Y[Znew <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(Y[Znew <span class="op">==</span><span class="st"> </span><span class="dv">0</span>])</a>
+<a class="sourceLine" id="cb9-8" title="8">    <span class="kw">return</span>(estate)</a>
 <a class="sourceLine" id="cb9-9" title="9">}</a></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">sims &lt;-<span class="st"> </span><span class="dv">10000</span></a>
 <a class="sourceLine" id="cb10-2" title="2"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
@@ -687,21 +685,21 @@ what textbooks teach.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="co">## True SE (Dunning Chap 6, Gerber and Green Chap 3 and Freedman, Pisani and Purves A-32)</span></a>
 <a class="sourceLine" id="cb12-2" title="2"><span class="co">## including the covariance between the potential outcomes</span></a>
 <a class="sourceLine" id="cb12-3" title="3">N &lt;-<span class="st"> </span><span class="kw">nrow</span>(dat1)</a>
-<a class="sourceLine" id="cb12-4" title="4">V &lt;-<span class="st"> </span><span class="kw">var</span>(<span class="kw">cbind</span>(dat1<span class="op">$</span>y0, dat1<span class="op">$</span>y1))</a>
-<a class="sourceLine" id="cb12-5" title="5">varc &lt;-<span class="st"> </span>V[<span class="dv">1</span>, <span class="dv">1</span>]</a>
-<a class="sourceLine" id="cb12-6" title="6">vart &lt;-<span class="st"> </span>V[<span class="dv">2</span>, <span class="dv">2</span>]</a>
-<a class="sourceLine" id="cb12-7" title="7">covtc &lt;-<span class="st"> </span>V[<span class="dv">1</span>, <span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb12-4" title="4">V &lt;-<span class="st"> </span><span class="kw">var</span>(<span class="kw">cbind</span>(dat1<span class="op">$</span>y0,dat1<span class="op">$</span>y1))</a>
+<a class="sourceLine" id="cb12-5" title="5">varc &lt;-<span class="st"> </span>V[<span class="dv">1</span>,<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb12-6" title="6">vart &lt;-<span class="st"> </span>V[<span class="dv">2</span>,<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb12-7" title="7">covtc &lt;-<span class="st"> </span>V[<span class="dv">1</span>,<span class="dv">2</span>]</a>
 <a class="sourceLine" id="cb12-8" title="8">nt &lt;-<span class="st"> </span><span class="kw">sum</span>(dat1<span class="op">$</span>Z)</a>
-<a class="sourceLine" id="cb12-9" title="9">nc &lt;-<span class="st"> </span>N <span class="op">-</span><span class="st"> </span>nt</a>
+<a class="sourceLine" id="cb12-9" title="9">nc &lt;-<span class="st"> </span>N<span class="op">-</span>nt</a>
 <a class="sourceLine" id="cb12-10" title="10"></a>
-<a class="sourceLine" id="cb12-11" title="11">varestATE &lt;-<span class="st"> </span>((N <span class="op">-</span><span class="st"> </span>nt) <span class="op">/</span><span class="st"> </span>(N <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)) <span class="op">*</span><span class="st"> </span>(vart <span class="op">/</span><span class="st"> </span>(N <span class="op">-</span><span class="st"> </span>nt)) <span class="op">+</span><span class="st"> </span>((N <span class="op">-</span><span class="st"> </span>nc) <span class="op">/</span><span class="st"> </span>(N <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)) <span class="op">*</span><span class="st"> </span>(varc <span class="op">/</span><span class="st"> </span>nc) <span class="op">+</span><span class="st"> </span>(<span class="dv">2</span> <span class="op">/</span><span class="st"> </span>(N <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)) <span class="op">*</span><span class="st"> </span>covtc</a>
+<a class="sourceLine" id="cb12-11" title="11">varestATE &lt;-<span class="st"> </span>((N<span class="op">-</span>nt)<span class="op">/</span>(N<span class="dv">-1</span>)) <span class="op">*</span><span class="st"> </span>(vart<span class="op">/</span>(N<span class="op">-</span>nt)) <span class="op">+</span><span class="st"> </span>((N<span class="op">-</span>nc)<span class="op">/</span>(N<span class="dv">-1</span>)) <span class="op">*</span><span class="st"> </span>(varc<span class="op">/</span>nc) <span class="op">+</span><span class="st"> </span>(<span class="dv">2</span><span class="op">/</span>(N<span class="dv">-1</span>)) <span class="op">*</span><span class="st"> </span>covtc</a>
 <a class="sourceLine" id="cb12-12" title="12">seEstATETrue &lt;-<span class="st"> </span><span class="kw">sqrt</span>(varestATE)</a></code></pre></div>
 <p>And the finite sample <em>feasible</em> version (where we do not observe all the potential
 outcomes) and so we do not have the covariance. This is what we calculate —
 notice that it is not what OLS calculates.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">varYc &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">0</span>]))</a>
-<a class="sourceLine" id="cb13-2" title="2">varYt &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]))</a>
-<a class="sourceLine" id="cb13-3" title="3">fvarestATE &lt;-<span class="st"> </span>(N <span class="op">/</span><span class="st"> </span>(N <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)) <span class="op">*</span><span class="st"> </span>((varYt <span class="op">/</span><span class="st"> </span>nt) <span class="op">+</span><span class="st"> </span>(varYc <span class="op">/</span><span class="st"> </span>nc))</a>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">varYc &lt;-<span class="st"> </span><span class="kw">with</span>(dat1,<span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">0</span>]))</a>
+<a class="sourceLine" id="cb13-2" title="2">varYt &lt;-<span class="st"> </span><span class="kw">with</span>(dat1,<span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]))</a>
+<a class="sourceLine" id="cb13-3" title="3">fvarestATE &lt;-<span class="st"> </span>(N<span class="op">/</span>(N<span class="dv">-1</span>)) <span class="op">*</span><span class="st"> </span>( (varYt<span class="op">/</span>nt) <span class="op">+</span><span class="st"> </span>(varYc<span class="op">/</span>nc) )</a>
 <a class="sourceLine" id="cb13-4" title="4">estSEEstATE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(fvarestATE)</a></code></pre></div>
 <p>Here we use the HC2 standard error — which (<span class="citation">Lin (<a href="#ref-lin_agnostic_2013">2013</a>)</span>) shows is the
 randomization-justified SE for OLS. Following our design-based approach, we
@@ -709,24 +707,22 @@ use this standard error. And below we compare the true standard error, the
 feasible standard error, the HC2 SE (which is the same as the feasible
 standard error), the standard error arising from direct repetition of the
 experiment, and the OLS standard error.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">lm1 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat1)</a>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">lm1 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y<span class="op">~</span>Z,<span class="dt">data=</span>dat1)</a>
 <a class="sourceLine" id="cb14-2" title="2"></a>
 <a class="sourceLine" id="cb14-3" title="3"><span class="co">## The OLS SE</span></a>
-<a class="sourceLine" id="cb14-4" title="4">iidSE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcov</span>(lm1)))[[<span class="st">&quot;Z&quot;</span>]]</a>
+<a class="sourceLine" id="cb14-4" title="4">iidSE &lt;-<span class="st">  </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcov</span>(lm1)))[[<span class="st">&quot;Z&quot;</span>]]</a>
 <a class="sourceLine" id="cb14-5" title="5"></a>
 <a class="sourceLine" id="cb14-6" title="6"><span class="co">## Worth noting that if we had covariates in the model we would want this one</span></a>
 <a class="sourceLine" id="cb14-7" title="7"><span class="co">## (which is identical to the previous one without covariates).</span></a>
 <a class="sourceLine" id="cb14-8" title="8"></a>
-<a class="sourceLine" id="cb14-9" title="9">NeymanSE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcovHC</span>(lm1, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>)))[[<span class="st">&quot;Z&quot;</span>]]</a>
+<a class="sourceLine" id="cb14-9" title="9">NeymanSE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcovHC</span>(lm1,<span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>)))[[<span class="st">&quot;Z&quot;</span>]]</a>
 <a class="sourceLine" id="cb14-10" title="10"></a>
-<a class="sourceLine" id="cb14-11" title="11">compareSEs &lt;-<span class="st"> </span><span class="kw">c</span>(</a>
-<a class="sourceLine" id="cb14-12" title="12">  <span class="dt">simSE =</span> seEstATEsim,</a>
-<a class="sourceLine" id="cb14-13" title="13">  <span class="dt">feasibleSE =</span> estSEEstATE,</a>
-<a class="sourceLine" id="cb14-14" title="14">  <span class="dt">trueSE =</span> seEstATETrue,</a>
-<a class="sourceLine" id="cb14-15" title="15">  <span class="dt">olsIIDSE =</span> iidSE,</a>
-<a class="sourceLine" id="cb14-16" title="16">  <span class="dt">NeymanDesignSE =</span> NeymanSE</a>
-<a class="sourceLine" id="cb14-17" title="17">)</a>
-<a class="sourceLine" id="cb14-18" title="18"><span class="kw">sort</span>(compareSEs)</a></code></pre></div>
+<a class="sourceLine" id="cb14-11" title="11">compareSEs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">simSE =</span> seEstATEsim,</a>
+<a class="sourceLine" id="cb14-12" title="12">  <span class="dt">feasibleSE =</span> estSEEstATE,</a>
+<a class="sourceLine" id="cb14-13" title="13">  <span class="dt">trueSE =</span> seEstATETrue,</a>
+<a class="sourceLine" id="cb14-14" title="14">  <span class="dt">olsIIDSE =</span> iidSE,</a>
+<a class="sourceLine" id="cb14-15" title="15">  <span class="dt">NeymanDesignSE =</span> NeymanSE)</a>
+<a class="sourceLine" id="cb14-16" title="16"><span class="kw">sort</span>(compareSEs)</a></code></pre></div>
 <pre><code>        trueSE       olsIIDSE          simSE NeymanDesignSE     feasibleSE 
         0.6760         0.8930         0.9256         1.0387         1.0439 </code></pre>
 <p>The Neyman SE is supposed to be conservative relative to the true SE. Below, we
@@ -736,18 +732,16 @@ different variance between the outcomes in the treated group and the control
 group — so we expect that what we are calling the “iid” SE should be biased
 but not necessarily guaranteed to be overly conservative or liberal in all
 cases.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">sePerfFn &lt;-<span class="st"> </span><span class="cf">function</span>(Z, y1, y0) {</a>
-<a class="sourceLine" id="cb16-2" title="2">  Znew &lt;-<span class="st"> </span><span class="kw">sample</span>(Z)</a>
-<a class="sourceLine" id="cb16-3" title="3">  Ynew &lt;-<span class="st"> </span>Znew <span class="op">*</span><span class="st"> </span>y1 <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Znew) <span class="op">*</span><span class="st"> </span>y0</a>
-<a class="sourceLine" id="cb16-4" title="4">  lm1 &lt;-<span class="st"> </span><span class="kw">lm</span>(Ynew <span class="op">~</span><span class="st"> </span>Znew)</a>
-<a class="sourceLine" id="cb16-5" title="5">  iidSE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcov</span>(lm1)))[[<span class="st">&quot;Znew&quot;</span>]]</a>
-<a class="sourceLine" id="cb16-6" title="6">  NeymanSE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcovHC</span>(lm1, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>)))[[<span class="st">&quot;Znew&quot;</span>]]</a>
-<a class="sourceLine" id="cb16-7" title="7">  <span class="kw">return</span>(<span class="kw">c</span>(</a>
-<a class="sourceLine" id="cb16-8" title="8">    <span class="dt">estATE =</span> <span class="kw">coef</span>(lm1)[[<span class="st">&quot;Znew&quot;</span>]],</a>
-<a class="sourceLine" id="cb16-9" title="9">    <span class="dt">estSEiid =</span> iidSE,</a>
-<a class="sourceLine" id="cb16-10" title="10">    <span class="dt">estSENeyman =</span> NeymanSE</a>
-<a class="sourceLine" id="cb16-11" title="11">  ))</a>
-<a class="sourceLine" id="cb16-12" title="12">}</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">sePerfFn &lt;-<span class="st"> </span><span class="cf">function</span>(Z,y1,y0){</a>
+<a class="sourceLine" id="cb16-2" title="2">    Znew &lt;-<span class="st"> </span><span class="kw">sample</span>(Z)</a>
+<a class="sourceLine" id="cb16-3" title="3">    Ynew &lt;-<span class="st"> </span>Znew <span class="op">*</span><span class="st"> </span>y1 <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">-</span>Znew) <span class="op">*</span><span class="st"> </span>y0</a>
+<a class="sourceLine" id="cb16-4" title="4">    lm1 &lt;-<span class="st"> </span><span class="kw">lm</span>(Ynew<span class="op">~</span>Znew)</a>
+<a class="sourceLine" id="cb16-5" title="5">    iidSE &lt;-<span class="st">  </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcov</span>(lm1)))[[<span class="st">&quot;Znew&quot;</span>]]</a>
+<a class="sourceLine" id="cb16-6" title="6">    NeymanSE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcovHC</span>(lm1,<span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>)))[[<span class="st">&quot;Znew&quot;</span>]]</a>
+<a class="sourceLine" id="cb16-7" title="7">    <span class="kw">return</span>(<span class="kw">c</span>(<span class="dt">estATE=</span><span class="kw">coef</span>(lm1)[[<span class="st">&quot;Znew&quot;</span>]],</a>
+<a class="sourceLine" id="cb16-8" title="8">         <span class="dt">estSEiid=</span>iidSE,</a>
+<a class="sourceLine" id="cb16-9" title="9">         <span class="dt">estSENeyman=</span>NeymanSE))</a>
+<a class="sourceLine" id="cb16-10" title="10">}</a></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
 <a class="sourceLine" id="cb17-2" title="2">sePerformance &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">replicate</span>(sims, <span class="kw">sePerfFn</span>(<span class="dt">Z =</span> Z, <span class="dt">y1 =</span> y1, <span class="dt">y0 =</span> y0)))</a>
 <a class="sourceLine" id="cb17-3" title="3"><span class="kw">apply</span>(sePerformance[<span class="kw">c</span>(<span class="st">&quot;estSEiid&quot;</span>, <span class="st">&quot;estSENeyman&quot;</span>), ], <span class="dv">1</span>, summary)</a></code></pre></div>
@@ -770,14 +764,14 @@ the following approaches:</p>
 <a class="sourceLine" id="cb21-2" title="2">estAndSE1 &lt;-<span class="st"> </span><span class="kw">difference_in_means</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat1)</a>
 <a class="sourceLine" id="cb21-3" title="3"><span class="co">## coeftest and coefci come from the lmtest package</span></a>
 <a class="sourceLine" id="cb21-4" title="4">est2 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat1)</a>
-<a class="sourceLine" id="cb21-5" title="5">estAndSE2 &lt;-<span class="st"> </span><span class="kw">coeftest</span>(est2, <span class="dt">vcov. =</span> <span class="kw">vcovHC</span>(est2, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>))</a>
-<a class="sourceLine" id="cb21-6" title="6">estAndCI2 &lt;-<span class="st"> </span><span class="kw">coefci</span>(est2, <span class="dt">vcov. =</span> <span class="kw">vcovHC</span>(est2, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>), <span class="dt">parm =</span> <span class="st">&quot;Z&quot;</span>)</a>
+<a class="sourceLine" id="cb21-5" title="5">estAndSE2 &lt;-<span class="st"> </span><span class="kw">coeftest</span>(est2, <span class="dt">vcov.=</span><span class="kw">vcovHC</span>(est2, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>))</a>
+<a class="sourceLine" id="cb21-6" title="6">estAndCI2&lt;-<span class="st"> </span><span class="kw">coefci</span>(est2, <span class="dt">vcov.=</span><span class="kw">vcovHC</span>(est2, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>), <span class="dt">parm =</span> <span class="st">&quot;Z&quot;</span>)</a>
 <a class="sourceLine" id="cb21-7" title="7"></a>
 <a class="sourceLine" id="cb21-8" title="8">estAndSE1</a></code></pre></div>
 <pre><code>Design:  Standard 
   Estimate Std. Error t value  Pr(&gt;|t|) CI Lower CI Upper    DF
 Z    4.637      1.039   4.465 8.792e-05    2.524     6.75 33.12</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">estAndSE2[<span class="st">&quot;Z&quot;</span>, , drop =<span class="st"> </span><span class="ot">FALSE</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">estAndSE2[<span class="st">&quot;Z&quot;</span>, , drop=<span class="ot">FALSE</span>]</a></code></pre></div>
 <pre><code>  Estimate Std. Error t value  Pr(&gt;|t|)
 Z    4.637      1.039   4.465 2.147e-05</code></pre>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">estAndCI2</a></code></pre></div>

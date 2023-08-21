@@ -147,10 +147,7 @@ readr::write_lines(htmlhead, path = "header.html")
 
 This document explains **how** our team, the [Office of Evaluation Sciences in
 the General Services Administration](https://oes.gsa.gov/) (the OES), tends to
-do statistical analysis and it also explains **why** we do what we do. ^[We call
-this document a standard operating procedure (SOP) because we are inspired by
-the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).]
-The research integrity processes OES follows is already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we get into the nitty gritty of our statistical work.
+do statistical analysis and it also explains **why** we do what we do. ^[We call this document a standard operating procedure (SOP) because we are inspired by the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).] The research integrity processes OES follows is already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we get into the nitty gritty of our statistical work.
 
 ## Purposes of this document {-}
 

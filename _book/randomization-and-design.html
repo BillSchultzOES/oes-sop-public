@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-18">
+<meta name="date" content="2023-08-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -605,7 +605,7 @@ underlying counterfactuals, but they can have less statistical power.</p>
 <a class="sourceLine" id="cb27-7" title="7"><span class="co">## trt_coinflip &lt;- rbinom(10, size = 1, prob = .5)</span></a>
 <a class="sourceLine" id="cb27-8" title="8">trt_coinflip &lt;-<span class="st"> </span><span class="kw">simple_ra</span>(n)</a>
 <a class="sourceLine" id="cb27-9" title="9"><span class="co">## Drawing from an urn or shuffling cards, guarantees half treated and control</span></a>
-<a class="sourceLine" id="cb27-10" title="10"><span class="co">## trt_urn &lt;- sample(rep(c(1, 0), n / 2))</span></a>
+<a class="sourceLine" id="cb27-10" title="10"><span class="co">##trt_urn &lt;- sample(rep(c(1, 0), n / 2))</span></a>
 <a class="sourceLine" id="cb27-11" title="11">trt_urn &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(n)</a>
 <a class="sourceLine" id="cb27-12" title="12"><span class="kw">table</span>(trt_coinflip)</a></code></pre></div>
 <pre><code>trt_coinflip
@@ -634,25 +634,25 @@ recording our intervention arms.)</p>
 <a class="sourceLine" id="cb31-3" title="3">dat1<span class="op">$</span>Z2armEqual &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N)</a>
 <a class="sourceLine" id="cb31-4" title="4"><span class="co">## Two unequal arms: .25 chance of treatment</span></a>
 <a class="sourceLine" id="cb31-5" title="5"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
-<a class="sourceLine" id="cb31-6" title="6">dat1<span class="op">$</span>Z2armUnequalA &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N, <span class="dt">prob =</span> <span class="fl">.25</span>)</a>
-<a class="sourceLine" id="cb31-7" title="7"><span class="kw">stopifnot</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>Z2armUnequalA) <span class="op">==</span><span class="st"> </span>N <span class="op">/</span><span class="st"> </span><span class="dv">4</span>)</a>
-<a class="sourceLine" id="cb31-8" title="8">dat1<span class="op">$</span>Z2armUnequalB &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N, <span class="dt">m =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb31-6" title="6">dat1<span class="op">$</span>Z2armUnequalA &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N,<span class="dt">prob=</span>.<span class="dv">25</span>)</a>
+<a class="sourceLine" id="cb31-7" title="7"><span class="kw">stopifnot</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>Z2armUnequalA)<span class="op">==</span>N<span class="op">/</span><span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb31-8" title="8">dat1<span class="op">$</span>Z2armUnequalB &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N,<span class="dt">m=</span>N<span class="op">/</span><span class="dv">4</span>)</a>
 <a class="sourceLine" id="cb31-9" title="9"><span class="co">## Four equal arms</span></a>
-<a class="sourceLine" id="cb31-10" title="10">dat1<span class="op">$</span>Z4arms &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N, <span class="dt">m_each =</span> <span class="kw">rep</span>(N <span class="op">/</span><span class="st"> </span><span class="dv">4</span>, <span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb31-10" title="10">dat1<span class="op">$</span>Z4arms &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N,<span class="dt">m_each=</span><span class="kw">rep</span>(N<span class="op">/</span><span class="dv">4</span>,<span class="dv">4</span>))</a>
 <a class="sourceLine" id="cb31-11" title="11"></a>
-<a class="sourceLine" id="cb31-12" title="12"><span class="kw">table</span>(<span class="dt">Z2armEqual =</span> dat1<span class="op">$</span>Z2armEqual)</a></code></pre></div>
+<a class="sourceLine" id="cb31-12" title="12"><span class="kw">table</span>(<span class="dt">Z2armEqual=</span>dat1<span class="op">$</span>Z2armEqual)</a></code></pre></div>
 <pre><code>Z2armEqual
  0  1 
 50 50 </code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"><span class="kw">table</span>(<span class="dt">Z2armUnequalA =</span> dat1<span class="op">$</span>Z2armUnequalA)</a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" title="1"><span class="kw">table</span>(<span class="dt">Z2armUnequalA=</span>dat1<span class="op">$</span>Z2armUnequalA)</a></code></pre></div>
 <pre><code>Z2armUnequalA
  0  1 
 75 25 </code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1"><span class="kw">table</span>(<span class="dt">Z2armUnequalB =</span> dat1<span class="op">$</span>Z2armUnequalB)</a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" title="1"><span class="kw">table</span>(<span class="dt">Z2armUnequalB=</span>dat1<span class="op">$</span>Z2armUnequalB)</a></code></pre></div>
 <pre><code>Z2armUnequalB
  0  1 
 75 25 </code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1"><span class="kw">table</span>(<span class="dt">Z4arms =</span> dat1<span class="op">$</span>Z4arms)</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" title="1"><span class="kw">table</span>(<span class="dt">Z4arms=</span>dat1<span class="op">$</span>Z4arms)</a></code></pre></div>
 <pre><code>Z4arms
 T1 T2 T3 T4 
 25 25 25 25 </code></pre>
@@ -670,7 +670,7 @@ penalty unless one of the treatments dramatically increases the variance of
 the outcome compared to the experiment with only one treatment assigned.</p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1"><span class="co">## Two equal arms, second cross treatment</span></a>
 <a class="sourceLine" id="cb39-2" title="2">dat1<span class="op">$</span>Z2armEqual2 &lt;-<span class="st"> </span><span class="kw">complete_ra</span>(N)</a>
-<a class="sourceLine" id="cb39-3" title="3"><span class="kw">table</span>(<span class="dt">treatment1 =</span> dat1<span class="op">$</span>Z2armEqual, <span class="dt">treatment2 =</span> dat1<span class="op">$</span>Z2armEqual2)</a></code></pre></div>
+<a class="sourceLine" id="cb39-3" title="3"><span class="kw">table</span>(<span class="dt">treatment1=</span>dat1<span class="op">$</span>Z2armEqual,<span class="dt">treatment2=</span>dat1<span class="op">$</span>Z2armEqual2)</a></code></pre></div>
 <pre><code>          treatment2
 treatment1  0  1
          0 22 28
@@ -708,14 +708,14 @@ interventions <em>within</em> groups.</p>
 <p>For a more realistic example, suppose our experiment
 has two hospitals. We might randomly assign people to treatment and control <em>within</em> each hospital. We might assign half of the people in hospital “A”
 to treatment and half to control and likewise in hospital “B.”<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> Below, we have 50 units in hospital “A” and 50 in hospital “B”.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">dat1<span class="op">$</span>blockID &lt;-<span class="st"> </span><span class="kw">gl</span>(<span class="dt">n =</span> <span class="dv">2</span>, <span class="dt">k =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">2</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</a>
-<a class="sourceLine" id="cb41-2" title="2"><span class="kw">with</span>(dat1, <span class="kw">table</span>(<span class="dt">blockID =</span> dat1<span class="op">$</span>blockID))</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">dat1<span class="op">$</span>blockID &lt;-<span class="st"> </span><span class="kw">gl</span>(<span class="dt">n =</span> <span class="dv">2</span>, <span class="dt">k =</span> N<span class="op">/</span><span class="dv">2</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</a>
+<a class="sourceLine" id="cb41-2" title="2"><span class="kw">with</span>(dat1,<span class="kw">table</span>(<span class="dt">blockID=</span>dat1<span class="op">$</span>blockID))</a></code></pre></div>
 <pre><code>blockID
  A  B 
 50 50 </code></pre>
 <p>We assign half of the units in each hospital to each treatment condition:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1">dat1<span class="op">$</span>Z2armBlocked &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blockID)</a>
-<a class="sourceLine" id="cb43-2" title="2"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blockID, Z2armBlocked))</a></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1">dat1<span class="op">$</span>Z2armBlocked &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks=</span>dat1<span class="op">$</span>blockID)</a>
+<a class="sourceLine" id="cb43-2" title="2"><span class="kw">with</span>(dat1,<span class="kw">table</span>(blockID,Z2armBlocked))</a></code></pre></div>
 <pre><code>       Z2armBlocked
 blockID  0  1
       A 25 25
@@ -727,14 +727,14 @@ this code worked by including a test. This approach is an informal version of
 one of the best practices in writing code in general, called “unit testing”.
 See the <a href="https://rawgit.com/egap/methods-guides/master/workflow/workflow.html#to-minimize-error-build-testing-into-the-code">EGAP Guide to Workflow for more
 examples</a>.</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">dat1<span class="op">$</span>Z2armBlockedUneqProb &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blockID, <span class="dt">block_prob =</span> <span class="kw">c</span>(.<span class="dv">5</span>, <span class="fl">.25</span>))</a>
-<a class="sourceLine" id="cb45-2" title="2"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blockID, Z2armBlockedUneqProb))</a></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">dat1<span class="op">$</span>Z2armBlockedUneqProb &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks=</span>dat1<span class="op">$</span>blockID,<span class="dt">block_prob =</span> <span class="kw">c</span>(.<span class="dv">5</span>,.<span class="dv">25</span>))</a>
+<a class="sourceLine" id="cb45-2" title="2"><span class="kw">with</span>(dat1,<span class="kw">table</span>(blockID,Z2armBlockedUneqProb))</a></code></pre></div>
 <pre><code>       Z2armBlockedUneqProb
 blockID  0  1
       A 25 25
       B 38 12</code></pre>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1"><span class="kw">stopifnot</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>Z2armBlockedUneqProb <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>dat1<span class="op">$</span>blockID <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="kw">ceiling</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>blockID <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">/</span><span class="st"> </span><span class="dv">4</span>) <span class="op">|</span></a>
-<a class="sourceLine" id="cb47-2" title="2"><span class="st">  </span><span class="kw">sum</span>(dat1<span class="op">$</span>Z2armBlockedUneqProb <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>dat1<span class="op">$</span>blockID <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="kw">floor</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>blockID <span class="op">==</span><span class="st"> &quot;B&quot;</span>) <span class="op">/</span><span class="st"> </span><span class="dv">4</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1"><span class="kw">stopifnot</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>Z2armBlockedUneqProb<span class="op">==</span><span class="dv">1</span><span class="op">&amp;</span>dat1<span class="op">$</span>blockID<span class="op">==</span><span class="st">&quot;B&quot;</span>)<span class="op">==</span><span class="kw">ceiling</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>blockID<span class="op">==</span><span class="st">&quot;B&quot;</span>)<span class="op">/</span><span class="dv">4</span>)<span class="op">|</span></a>
+<a class="sourceLine" id="cb47-2" title="2"><span class="kw">sum</span>(dat1<span class="op">$</span>Z2armBlockedUneqProb<span class="op">==</span><span class="dv">1</span><span class="op">&amp;</span>dat1<span class="op">$</span>blockID<span class="op">==</span><span class="st">&quot;B&quot;</span>)<span class="op">==</span><span class="kw">floor</span>(<span class="kw">sum</span>(dat1<span class="op">$</span>blockID<span class="op">==</span><span class="st">&quot;B&quot;</span>)<span class="op">/</span><span class="dv">4</span>))</a></code></pre></div>
 <p>Our team tries to implement block-randomized assignment whenever possible in
 order to increase the statistical power of our experiments. We also often find
 it useful in cases where different administrative units are implementing the
@@ -745,12 +745,12 @@ reactions to the treatment.</p>
 <p>If we have background information on a few covariates, we can great blocks by
 hand using the kind of process demonstrated here:</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" title="1"><span class="co">## For example, make three groups from the cov2 variable</span></a>
-<a class="sourceLine" id="cb48-2" title="2">dat1<span class="op">$</span>cov2cat &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">cut</span>(cov2, <span class="dt">breaks =</span> <span class="dv">3</span>))</a>
-<a class="sourceLine" id="cb48-3" title="3"><span class="kw">table</span>(dat1<span class="op">$</span>cov2cat, <span class="dt">exclude =</span> <span class="kw">c</span>())</a></code></pre></div>
+<a class="sourceLine" id="cb48-2" title="2">dat1<span class="op">$</span>cov2cat &lt;-<span class="st"> </span><span class="kw">with</span>(dat1,<span class="kw">cut</span>(cov2,<span class="dt">breaks=</span><span class="dv">3</span>))</a>
+<a class="sourceLine" id="cb48-3" title="3"><span class="kw">table</span>(dat1<span class="op">$</span>cov2cat,<span class="dt">exclude=</span><span class="kw">c</span>())</a></code></pre></div>
 <pre><code>
 (-7.32,-2.6]   (-2.6,2.1]   (2.1,6.82] 
           11           68           21 </code></pre>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1"><span class="kw">with</span>(dat1, <span class="kw">tapply</span>(cov2, cov2cat, summary))</a></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1"><span class="kw">with</span>(dat1,<span class="kw">tapply</span>(cov2,cov2cat,summary))</a></code></pre></div>
 <pre><code>$`(-7.32,-2.6]`
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   -7.30   -5.03   -3.66   -4.14   -3.01   -2.77 
@@ -763,16 +763,16 @@ $`(2.1,6.82]`
    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
    2.13    2.46    2.95    3.24    3.68    6.80 </code></pre>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" title="1"><span class="co">## And we can make blocks that are the same on two covariates</span></a>
-<a class="sourceLine" id="cb52-2" title="2">dat1<span class="op">$</span>cov1bin &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(dat1<span class="op">$</span>cov1 <span class="op">&gt;</span><span class="st"> </span><span class="kw">median</span>(dat1<span class="op">$</span>cov1))</a>
-<a class="sourceLine" id="cb52-3" title="3">dat1<span class="op">$</span>blockV2 &lt;-<span class="st"> </span><span class="kw">droplevels</span>(<span class="kw">with</span>(dat1, <span class="kw">interaction</span>(cov1bin, cov2cat)))</a>
-<a class="sourceLine" id="cb52-4" title="4"><span class="kw">table</span>(dat1<span class="op">$</span>blockV2, <span class="dt">exclude =</span> <span class="kw">c</span>())</a></code></pre></div>
+<a class="sourceLine" id="cb52-2" title="2">dat1<span class="op">$</span>cov1bin &lt;-<span class="st"> </span><span class="kw">as.numeric</span>( dat1<span class="op">$</span>cov1 <span class="op">&gt;</span><span class="st"> </span><span class="kw">median</span>(dat1<span class="op">$</span>cov1) )</a>
+<a class="sourceLine" id="cb52-3" title="3">dat1<span class="op">$</span>blockV2 &lt;-<span class="st"> </span><span class="kw">droplevels</span>(<span class="kw">with</span>(dat1,<span class="kw">interaction</span>(cov1bin,cov2cat)))</a>
+<a class="sourceLine" id="cb52-4" title="4"><span class="kw">table</span>(dat1<span class="op">$</span>blockV2,<span class="dt">exclude=</span><span class="kw">c</span>())</a></code></pre></div>
 <pre><code>
 0.(-7.32,-2.6] 1.(-7.32,-2.6]   0.(-2.6,2.1]   1.(-2.6,2.1]   0.(2.1,6.82]   1.(2.1,6.82] 
              7              4             38             30              5             16 </code></pre>
 <div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1"><span class="co">## And then assign within these blocks</span></a>
 <a class="sourceLine" id="cb54-2" title="2"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
 <a class="sourceLine" id="cb54-3" title="3">dat1<span class="op">$</span>ZblockV2 &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blockV2)</a>
-<a class="sourceLine" id="cb54-4" title="4"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blockV2, ZblockV2, <span class="dt">exclude =</span> <span class="kw">c</span>()))</a></code></pre></div>
+<a class="sourceLine" id="cb54-4" title="4"><span class="kw">with</span>(dat1,<span class="kw">table</span>(blockV2,ZblockV2,<span class="dt">exclude=</span><span class="kw">c</span>()))</a></code></pre></div>
 <pre><code>                ZblockV2
 blockV2           0  1
   0.(-7.32,-2.6]  4  3
@@ -790,11 +790,11 @@ units which are as similar as possible in terms of the collection of those
 covariates <span class="citation">(Moore <a href="#ref-moore2012multivariate">2012</a>; Moore and Schnakenberg <a href="#ref-moore2016bT063">2016</a>)</span>. Here we show two approaches.</p>
 <p>Creating pairs:</p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" title="1"><span class="co">## using the blockTools package</span></a>
-<a class="sourceLine" id="cb56-2" title="2">mvblocks &lt;-<span class="st"> </span><span class="kw">block</span>(dat1, <span class="dt">id.vars =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">block.vars =</span> <span class="kw">c</span>(<span class="st">&quot;cov1&quot;</span>, <span class="st">&quot;cov2&quot;</span>), <span class="dt">algorithm =</span> <span class="st">&quot;optimal&quot;</span>)</a>
-<a class="sourceLine" id="cb56-3" title="3">dat1<span class="op">$</span>blocksV3 &lt;-<span class="st"> </span><span class="kw">createBlockIDs</span>(mvblocks, <span class="dt">data =</span> dat1, <span class="dt">id.var =</span> <span class="st">&quot;id&quot;</span>)</a>
+<a class="sourceLine" id="cb56-2" title="2">mvblocks &lt;-<span class="st"> </span><span class="kw">block</span>(dat1,<span class="dt">id.vars=</span><span class="st">&quot;id&quot;</span>,<span class="dt">block.vars=</span><span class="kw">c</span>(<span class="st">&quot;cov1&quot;</span>,<span class="st">&quot;cov2&quot;</span>),<span class="dt">algorithm=</span><span class="st">&quot;optimal&quot;</span>)</a>
+<a class="sourceLine" id="cb56-3" title="3">dat1<span class="op">$</span>blocksV3 &lt;-<span class="st"> </span><span class="kw">createBlockIDs</span>(mvblocks,<span class="dt">data=</span>dat1,<span class="dt">id.var =</span> <span class="st">&quot;id&quot;</span>)</a>
 <a class="sourceLine" id="cb56-4" title="4">dat1<span class="op">$</span>ZblockV3 &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blocksV3)</a>
 <a class="sourceLine" id="cb56-5" title="5"><span class="co">## just show the first ten pairs</span></a>
-<a class="sourceLine" id="cb56-6" title="6"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blocksV3, ZblockV3, <span class="dt">exclude =</span> <span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, ]</a></code></pre></div>
+<a class="sourceLine" id="cb56-6" title="6"><span class="kw">with</span>(dat1,<span class="kw">table</span>(blocksV3,ZblockV3,<span class="dt">exclude=</span><span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</a></code></pre></div>
 <pre><code>        ZblockV3
 blocksV3 0 1
       1  1 1
@@ -809,31 +809,29 @@ blocksV3 0 1
       10 1 1</code></pre>
 <p>Creating larger blocks:</p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" title="1"><span class="co">## using the quickblock package</span></a>
-<a class="sourceLine" id="cb58-2" title="2">distmat &lt;-<span class="st"> </span><span class="kw">distances</span>(dat1,</a>
-<a class="sourceLine" id="cb58-3" title="3">  <span class="dt">dist_variables =</span> <span class="kw">c</span>(<span class="st">&quot;cov1&quot;</span>, <span class="st">&quot;cov2&quot;</span>), <span class="dt">id_variable =</span></a>
-<a class="sourceLine" id="cb58-4" title="4">    <span class="st">&quot;id&quot;</span>, <span class="dt">normalize =</span> <span class="st">&quot;mahalanobiz&quot;</span></a>
-<a class="sourceLine" id="cb58-5" title="5">)</a>
-<a class="sourceLine" id="cb58-6" title="6">distmat[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a></code></pre></div>
+<a class="sourceLine" id="cb58-2" title="2">distmat &lt;-<span class="st"> </span><span class="kw">distances</span>(dat1, <span class="dt">dist_variables =</span> <span class="kw">c</span>(<span class="st">&quot;cov1&quot;</span>, <span class="st">&quot;cov2&quot;</span>),<span class="dt">id_variable =</span></a>
+<a class="sourceLine" id="cb58-3" title="3">             <span class="st">&quot;id&quot;</span>, <span class="dt">normalize=</span><span class="st">&quot;mahalanobiz&quot;</span>)</a>
+<a class="sourceLine" id="cb58-4" title="4">distmat[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a></code></pre></div>
 <pre><code>       1      2      3      4      5
 1 0.0000 1.4766 0.3313 0.2835 0.6736
 2 1.4766 0.0000 1.6919 1.5891 0.9681
 3 0.3313 1.6919 0.0000 0.5477 0.7729
 4 0.2835 1.5891 0.5477 0.0000 0.9089
 5 0.6736 0.9681 0.7729 0.9089 0.0000</code></pre>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1"><span class="kw">quantile</span>(<span class="kw">as.vector</span>(distmat), <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">.1</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1"><span class="kw">quantile</span>(<span class="kw">as.vector</span>(distmat),<span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,.<span class="dv">1</span>))</a></code></pre></div>
 <pre><code>      0%      10%      20%      30%      40%      50%      60%      70%      80%      90%     100% 
 -3.13279 -1.18748 -0.79019 -0.38455 -0.14051  0.08898  0.26701  0.53818  0.89242  1.34321  2.91687 </code></pre>
 <div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" title="1"><span class="co">## The caliper argument is supposed to prevent the inclusion of ill-matched</span></a>
 <a class="sourceLine" id="cb62-2" title="2"><span class="co">## points.</span></a>
-<a class="sourceLine" id="cb62-3" title="3">mvbigblock &lt;-<span class="st"> </span><span class="kw">quickblock</span>(distmat, <span class="dt">size_constraint =</span> 6L) <span class="co"># ,caliper=2.5)</span></a>
+<a class="sourceLine" id="cb62-3" title="3">mvbigblock &lt;-<span class="st"> </span><span class="kw">quickblock</span>(distmat, <span class="dt">size_constraint =</span> 6L) <span class="co">#,caliper=2.5)</span></a>
 <a class="sourceLine" id="cb62-4" title="4"><span class="co">## Look for missing points</span></a>
-<a class="sourceLine" id="cb62-5" title="5"><span class="kw">table</span>(mvbigblock, <span class="dt">exclude =</span> <span class="kw">c</span>())</a></code></pre></div>
+<a class="sourceLine" id="cb62-5" title="5"><span class="kw">table</span>(mvbigblock,<span class="dt">exclude=</span><span class="kw">c</span>())</a></code></pre></div>
 <pre><code>mvbigblock
  0  1  2  3  4  5  6  7  8  9 10 11 
  6  6  6  6  8 11 14  7  7 10  7 12 </code></pre>
 <div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" title="1">dat1<span class="op">$</span>blocksV4 &lt;-<span class="st"> </span>mvbigblock</a>
 <a class="sourceLine" id="cb64-2" title="2">dat1<span class="op">$</span>ZblockV4 &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blocksV4)</a>
-<a class="sourceLine" id="cb64-3" title="3"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blocksV4, ZblockV3, <span class="dt">exclude =</span> <span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, ]</a></code></pre></div>
+<a class="sourceLine" id="cb64-3" title="3"><span class="kw">with</span>(dat1,<span class="kw">table</span>(blocksV4,ZblockV3,<span class="dt">exclude=</span><span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</a></code></pre></div>
 <pre><code>        ZblockV3
 blocksV4 0 1
        0 3 3
@@ -850,14 +848,10 @@ blocksV4 0 1
 of people in category “1” on the binary covariate (notice that the sets are
 homogeneous on this covariate) and the difference between the largest and
 smallest value on the continuous covariate.</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1">blockingDescEval &lt;-<span class="st"> </span>dat1 <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb66-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(blocksV4) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb66-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(</a>
-<a class="sourceLine" id="cb66-4" title="4">    <span class="dt">cov2diff =</span> <span class="kw">max</span>(<span class="kw">abs</span>(cov2))</a>
-<a class="sourceLine" id="cb66-5" title="5">    <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(<span class="kw">abs</span>(cov2)),</a>
-<a class="sourceLine" id="cb66-6" title="6">    <span class="dt">cov1 =</span> <span class="kw">mean</span>(cov1)</a>
-<a class="sourceLine" id="cb66-7" title="7">  )</a>
-<a class="sourceLine" id="cb66-8" title="8">blockingDescEval</a></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1">blockingDescEval &lt;-<span class="st"> </span>dat1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(blocksV4) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">cov2diff =</span> <span class="kw">max</span>(<span class="kw">abs</span>(cov2))</a>
+<a class="sourceLine" id="cb66-2" title="2">                              <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(<span class="kw">abs</span>(cov2)),</a>
+<a class="sourceLine" id="cb66-3" title="3">                              <span class="dt">cov1 =</span> <span class="kw">mean</span>(cov1))</a>
+<a class="sourceLine" id="cb66-4" title="4">blockingDescEval</a></code></pre></div>
 <pre><code># A tibble: 12 × 3
    blocksV4   cov2diff    cov1
    &lt;qb_blckn&gt;    &lt;dbl&gt;   &lt;dbl&gt;
@@ -885,10 +879,10 @@ intervention is at the building level. Below, we assign 50 of those units
 to treatment and 50 to control. Everyone in each building has the same treatment assignment.</p>
 <div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" title="1">ndat1 &lt;-<span class="st"> </span><span class="kw">nrow</span>(dat1)</a>
 <a class="sourceLine" id="cb68-2" title="2"><span class="co">## Make an indicator of cluster membership</span></a>
-<a class="sourceLine" id="cb68-3" title="3">dat1<span class="op">$</span>buildingID &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>(ndat1 <span class="op">/</span><span class="st"> </span><span class="dv">10</span>), <span class="dt">length =</span> ndat1)</a>
+<a class="sourceLine" id="cb68-3" title="3">dat1<span class="op">$</span>buildingID &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>(ndat1<span class="op">/</span><span class="dv">10</span>),<span class="dt">length=</span>ndat1)</a>
 <a class="sourceLine" id="cb68-4" title="4"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
-<a class="sourceLine" id="cb68-5" title="5">dat1<span class="op">$</span>Zcluster &lt;-<span class="st"> </span><span class="kw">cluster_ra</span>(<span class="dt">cluster =</span> dat1<span class="op">$</span>buildingID)</a>
-<a class="sourceLine" id="cb68-6" title="6"><span class="kw">with</span>(dat1, <span class="kw">table</span>(Zcluster, buildingID))</a></code></pre></div>
+<a class="sourceLine" id="cb68-5" title="5">dat1<span class="op">$</span>Zcluster &lt;-<span class="st"> </span><span class="kw">cluster_ra</span>(<span class="dt">cluster=</span>dat1<span class="op">$</span>buildingID)</a>
+<a class="sourceLine" id="cb68-6" title="6"><span class="kw">with</span>(dat1,<span class="kw">table</span>(Zcluster,buildingID))</a></code></pre></div>
 <pre><code>        buildingID
 Zcluster  1  2  3  4  5  6  7  8  9 10
        0 10  0 10 10  0  0  0  0 10 10
@@ -929,13 +923,13 @@ covariates with means that differ detectably from zero just by chance. That
 is, in a well-operating experiment, we would expect some baseline imbalances
 (as measured using randomization based tests) – roughly 5 in 100. Thus the value
 of the omnibus test is that we will not be misled by chance false positives.</p>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" title="1">randAssessV1 &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(Z <span class="op">~</span><span class="st"> </span>cov1 <span class="op">+</span><span class="st"> </span>cov2, <span class="dt">data =</span> dat1)</a>
-<a class="sourceLine" id="cb70-2" title="2">randAssessV1<span class="op">$</span>overall[, ]</a></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" title="1">randAssessV1 &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(Z<span class="op">~</span>cov1<span class="op">+</span>cov2,<span class="dt">data=</span>dat1)</a>
+<a class="sourceLine" id="cb70-2" title="2">randAssessV1<span class="op">$</span>overall[,]</a></code></pre></div>
 <pre><code>   chisquare df p.value
 --     1.998  2  0.3683</code></pre>
 <p>Here is an example of randomization assessment with block-randomized assignment:</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" title="1">randAssessV3 &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(ZblockV3 <span class="op">~</span><span class="st"> </span>cov1 <span class="op">+</span><span class="st"> </span>cov2 <span class="op">+</span><span class="st"> </span><span class="kw">strata</span>(blocksV3), <span class="dt">data =</span> dat1)</a>
-<a class="sourceLine" id="cb72-2" title="2">randAssessV3<span class="op">$</span>overall[, ]</a></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" title="1">randAssessV3 &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(ZblockV3<span class="op">~</span>cov1<span class="op">+</span>cov2<span class="op">+</span><span class="kw">strata</span>(blocksV3),<span class="dt">data=</span>dat1)</a>
+<a class="sourceLine" id="cb72-2" title="2">randAssessV3<span class="op">$</span>overall[,]</a></code></pre></div>
 <pre><code>         chisquare df p.value
 blocksV3    2.8342  2  0.2424
 --          0.1365  2  0.9340</code></pre>
