@@ -13,7 +13,7 @@ After cloning the most recent version of this repository onto your machine, just
 
 # To make changes and build
 
-Right now this project requires the `bookdown` package for R. We have to use version .7 for now.
+This project requires the `bookdown` package for R. We have to use version .7 for now.
 
 ```
 library(devtools)
@@ -32,7 +32,7 @@ Finally, it may be necessary to install a development version of the `bfe` packa
 devtools::install_github('gibbonscharlie/bfe')
 ```
 
-The current reliance `renv` should take care of all of those version control issues for us. But this section of the README has been retained just in case we decide to drop `renv` in the future.
+The current reliance `renv` should take care of all of those version control issues for us, and help prevent new ones if any packages change in the future in a way that breaks our code. But this section of the README has been retained just in case we decide to drop `renv` in the future.
 
 # To update the web preview:
 
