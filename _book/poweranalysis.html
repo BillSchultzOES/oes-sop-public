@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html >
+<html>
 
 <head>
 
@@ -7,25 +7,25 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</title>
   <meta name="description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown &lt;!--bookdown:version--&gt; and GitBook 2.6.7">
 
-  <meta property="og:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments." />
-  <meta property="og:type" content="book" />
+  <meta property="og:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.">
+  <meta property="og:type" content="book">
   
   
-  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA" />
-  <meta name="github-repo" content="gsa-oes/sop" />
+  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  <meta name="github-repo" content="gsa-oes/sop">
 
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments." />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.">
   
-  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA" />
+  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
   
 
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-21">
+<meta name="date" content="2023-08-23">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,11 +35,11 @@
 <link rel="prev" href="analysis-choices.html">
 <link rel="next" href="working-with-data.html">
 <script src="libs/jquery/jquery.min.js"></script>
-<link href="libs/gitbook/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/style.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet">
 
 
 
@@ -460,8 +460,8 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
-<link rel="stylesheet" href="style.css" type="text/css" />
-</head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" data-external="1"></head>
 
 <body>
 
@@ -509,7 +509,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.5" data-path="randomization-and-design.html"><a href="randomization-and-design.html#cluster-random-assignment"><i class="fa fa-check"></i><b>4.5</b> Cluster random assignment</a></li>
 <li class="chapter" data-level="4.6" data-path="randomization-and-design.html"><a href="randomization-and-design.html#other-designs"><i class="fa fa-check"></i><b>4.6</b> Other designs</a></li>
 <li class="chapter" data-level="4.7" data-path="randomization-and-design.html"><a href="randomization-and-design.html#randomization-assessment"><i class="fa fa-check"></i><b>4.7</b> Randomization assessment</a><ul>
-<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with “failed” randomization assessments?</a></li>
+<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
 <li class="chapter" data-level="4.7.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#how-to-minimize-large-chance-departures-of-randomization"><i class="fa fa-check"></i><b>4.7.2</b> How to minimize large chance departures of randomization?</a></li>
 </ul></li>
 </ul></li>
@@ -579,7 +579,7 @@ fit easily into the assumptions made by analytic tools.</p>
 <p>However, for the sake of an example, we will show a version that uses
 simulation that produces the same answer as the faster analytic version.</p>
 <p>Imagine that we thought that a study would have an effect of about 1 standard
-deviation – this is more or less the effect difference we have created in our
+deviation &#x2013; this is more or less the effect difference we have created in our
 example dataset so far. How large a study do we need in order to distinguish
 this effect from noise?</p>
 <div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb177-1" title="1">population &lt;-<span class="st"> </span><span class="kw">declare_population</span>(dat1)</a>
@@ -605,10 +605,10 @@ this effect from noise?</p>
 1 Simple D-I-M    Z    5.571    0.8153     6.834 7.069e-10    3.953     7.189 98       Y     ATE</code></pre>
 <div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb179-1" title="1">designPlusEst &lt;-<span class="st"> </span>design <span class="op">+</span><span class="st"> </span>estimand <span class="op">+</span><span class="st"> </span>estimator</a></code></pre></div>
 <p>Now that the setup is complete, we can assess the statistical power of our
-proposed design with <span class="math inline">\(N=100\)</span> and an effect of roughly 1 SD. The output below
+proposed design with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">N=100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">100</span></span></span></span> and an effect of roughly 1 SD. The output below
 shows the statistical power as well as the false positive rate (called
-“Coverage” below) as well as the difference between the mean difference we
-calculate and the true average treatment effect (called “Bias” below).</p>
+&#x201C;Coverage&#x201D; below) as well as the difference between the mean difference we
+calculate and the true average treatment effect (called &#x201C;Bias&#x201D; below).</p>
 <div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb180-1" title="1"><span class="kw">diagnose_design</span>(designPlusEst, <span class="dt">sims =</span> <span class="dv">1000</span>)</a></code></pre></div>
 <pre><code>
 Research design diagnosis based on 1000 simulations. Diagnosis completed in 30 secs. Diagnosand estimates with bootstrapped standard errors in parentheses (100 replicates).
@@ -620,7 +620,7 @@ Research design diagnosis based on 1000 simulations. Diagnosis completed in 30 s
         0.71   0.71   1.00     0.97
       (0.02) (0.02) (0.00)   (0.01)</code></pre>
 <p>The analytic approach suggests more power than the simulation based approach
-– a difference that we suspect arises from our fairly skewed outcome.</p>
+&#x2013; a difference that we suspect arises from our fairly skewed outcome.</p>
 <div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb182-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">n =</span> <span class="dv">100</span>, <span class="dt">delta =</span> <span class="dv">1</span>, <span class="dt">sd =</span> <span class="dv">1</span>)</a></code></pre></div>
 <pre><code>
      Two-sample t test power calculation 
@@ -640,7 +640,7 @@ package</a>.</p>
 <h2><span class="header-section-number">6.1</span> An example of the off-the-shelf approach</h2>
 <p>To demonstrate how a power analysis might work in principle, consider another
 example using the R function <code>power.t.test()</code>.</p>
-<p>When using this function, there are three parameters that we’re most concerned
+<p>When using this function, there are three parameters that we&#x2019;re most concerned
 with, two of which are specified by the user, and the third of which is then
 calculated and returned by the function. These are:</p>
 <ul>
@@ -680,7 +680,7 @@ binary response, you can use <code>power.prop.test()</code> to calculate power f
 difference in proportions test.</p>
 <p>An equivalent approach in Stata is as follows:</p>
 <pre><code>power twomeans 0, power(0.8) n(1000) sd(1)</code></pre>
-<p>Stata users can learn more about available tools by checking out Stata’s
+<p>Stata users can learn more about available tools by checking out Stata&#x2019;s
 plethora of <a href="https://www.stata.com/features/power-and-sample-size/">relevant help
 files</a>.</p>
 </div>
@@ -756,7 +756,7 @@ are slightly different, they comport quite well with the analytic estimates.</p>
 <a class="sourceLine" id="cb189-64" title="64">  data, delta, <span class="dt">level =</span> <span class="fl">0.05</span></a>
 <a class="sourceLine" id="cb189-65" title="65">) {</a>
 <a class="sourceLine" id="cb189-66" title="66">  <span class="cf">if</span>(<span class="kw">missing</span>(delta)) {</a>
-<a class="sourceLine" id="cb189-67" title="67">    <span class="kw">stop</span>(<span class="st">&quot;Specify &#39;delta&#39; to proceed.&quot;</span>)</a>
+<a class="sourceLine" id="cb189-67" title="67">    <span class="kw">stop</span>(<span class="st">&quot;Specify &apos;delta&apos; to proceed.&quot;</span>)</a>
 <a class="sourceLine" id="cb189-68" title="68">  }</a>
 <a class="sourceLine" id="cb189-69" title="69"><span class="co">#  require(foreach)</span></a>
 <a class="sourceLine" id="cb189-70" title="70"><span class="co">#  require(magrittr)</span></a>
@@ -907,17 +907,17 @@ are slightly different, they comport quite well with the analytic estimates.</p>
 <a class="sourceLine" id="cb190-60" title="60"><span class="st">  </span><span class="kw">theme</span>(</a>
 <a class="sourceLine" id="cb190-61" title="61">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
 <a class="sourceLine" id="cb190-62" title="62">  ) </a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/powersimvsanalytic-1.png" width=".9\textwidth" /></p>
+<p><img src="OES_SOP_files/figure-html/powersimvsanalytic-1.png" width=".9\textwidth"></p>
 <p>Figure 1. Off-the-shelf versus simulation power estimates</p>
 <p>We produce these computational estimates using some helpful tools currently
-housed in OES’s GitHub <a href="https://github.com/gsa-oes/code_library/blob/master/power_simulation/power_simulation_tools.R">code
+housed in OES&#x2019;s GitHub <a href="https://github.com/gsa-oes/code_library/blob/master/power_simulation/power_simulation_tools.R">code
 library</a> and in the chunk above.</p>
 <p>These tools are designed around a simple workflow, and remove some of the
 programming required to calculate power computationally.</p>
 <p>These tools are centered around the following workflow:</p>
 <ol style="list-style-type: decimal">
 <li>Replicate</li>
-<li>Estimate<br />
+<li>Estimate<br>
 </li>
 <li>Evaluate</li>
 </ol>
@@ -931,7 +931,7 @@ distribution of test statistics under the null hypothesis.</p>
 <p>Finally, the last step, <em>Evaluate</em>, entails evaluating power to detect an effect
 over a range of alternative effect sizes.</p>
 <p>This workflow is supported by three functions: <code>replicate_design()</code>,
-<code>estimate()</code>, and <code>evaluate_power()</code>. Here’s the script used to generate the
+<code>estimate()</code>, and <code>evaluate_power()</code>. Here&#x2019;s the script used to generate the
 computational estimates shown in Figure 1:</p>
 <div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb191-1" title="1"><span class="co"># 1. Replicate:</span></a>
 <a class="sourceLine" id="cb191-2" title="2"></a>
@@ -985,7 +985,7 @@ examples online of a variety of research designs.</p>
 <p>Of course, for a simple difference in means test, the programming required for
 an analytical solution is much much less involved than the computational
 solution. When is the latter worth the extra investment?</p>
-<p>In cases where we’re interested in the power to detect a simple difference in
+<p>In cases where we&#x2019;re interested in the power to detect a simple difference in
 means, or a difference in proportions for binary responses, it is probably
 sufficient to use <code>power.t.test()</code> (for means) or <code>power.prop.test()</code> (for
 proportions).</p>
@@ -997,14 +997,14 @@ precision is small, then it might not be important to account for this in power
 calculations in the design phase of the project. However, if we expect a
 substantial gain in precision due to including covariates, then we probably want
 to account for this in our design. The natural way to do this is by simulation,
-where we can include the covariates in the “replicate” and “estimate” steps.
+where we can include the covariates in the &#x201C;replicate&#x201D; and &#x201C;estimate&#x201D; steps.
 Accounting for covariates in this way is especially useful if we can use real
 historical or pre-treatment data that represent the correlations we expect to
 see between covariates and outcomes in our later analysis of the trial data.</p>
 <p>More complex design features or analytic strategies may make investing in the
 simulation approach even more worthwhile, or downright necessary. Examples
 include heterogeneity in treatment effects, a multi-arm or factorial design, or
-block randomization with differing probabilities of treatment between blocks –
+block randomization with differing probabilities of treatment between blocks &#x2013;
 none of which can practically be accounted for with off-the-shelf tools. In the
 next section, we provide some additional examples of simulations for more
 complex design features or analytic strategies.</p>
@@ -1023,7 +1023,7 @@ such a design, the goal is to assess not only the power to detect main effects
 non-zero interaction effect between the treatments.</p>
 <p>Say we have a design with 1,000 observations and we would like to know the
 effect of two treatments on a binary outcome with a baseline of 0.25. Each
-treatment is assigned to <span class="math inline">\(M = 500\)</span> individuals at random, resulting in four
+treatment is assigned to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">M = 500</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">500</span></span></span></span> individuals at random, resulting in four
 roughly equal sized groups of observations after randomization: (1) a control
 group, (2) those assigned to treatment 1 but not treatment 2, (3) those assigned
 to treatment 2 but not treatment 1, and (4) those assigned to both treatment 1
@@ -1076,7 +1076,7 @@ in Figure 2.</p>
 <a class="sourceLine" id="cb194-23" title="23"><span class="st">  </span><span class="kw">theme</span>(</a>
 <a class="sourceLine" id="cb194-24" title="24">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
 <a class="sourceLine" id="cb194-25" title="25">  ) </a></code></pre></div>
-<p>Figure 2. Computational power analysis for a <span class="math inline">\(2\times 2\)</span> design.</p>
+<p>Figure 2. Computational power analysis for a <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>&#xD7;</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">2\times 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> design.</p>
 <p>Of course, we could have relied on some reasonable analytical assumptions to
 arrive at these estimates without resorting to simulation (see a helpful
 discussion
@@ -1096,11 +1096,11 @@ evaluate such a design computationally. The results will be just as accurate,
 without the added hassle of programming the appropriate analytical solution.</p>
 <p>Suppose we have a sample of 1,000 observations and a continuous outcome
 variable. We wish to assess the effect of some policy intervention on this
-continuous outcome. Our design calls for randomly assigning <span class="math inline">\(M = 250\)</span>
+continuous outcome. Our design calls for randomly assigning <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><mn>250</mn></mrow><annotation encoding="application/x-tex">M = 250</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">250</span></span></span></span>
 individuals to receive the intervention, and the rest to control.</p>
 <p>In addition to having data on the outcome and on treatment assignment, say that
 we also anticipate obtaining a dataset of covariates for our 1,000 observations.
-This data contains two variables that are prognostic of the outcome. We’ll call
+This data contains two variables that are prognostic of the outcome. We&#x2019;ll call
 these <code>z1</code> and <code>z2</code>. The first is a continuous measure; the latter a binary
 indicator. Our design calls for adjusting for these covariates via the Lin
 estimator to improve the precision of our estimated treatment effect. We can
@@ -1143,7 +1143,7 @@ covariate adjustment via the Lin estimator and without covariate adjustment:</p>
 <p>We can now easily compare results under these alternative empirical strategies.
 Figure 3 shows the power curves for each approach. As is clear, the Lin
 estimator provides substantial improvements in power. With covariate adjustment,
-we’re powered to detect an effect nearly 40% the size of the MDE without
+we&#x2019;re powered to detect an effect nearly 40% the size of the MDE without
 controlling for <code>z1</code> and <code>z2</code>. And it only took a few lines of code to get this
 result.</p>
 <div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb197-1" title="1"><span class="kw">bind_rows</span>(</a>
@@ -1175,7 +1175,7 @@ result.</p>
 <a class="sourceLine" id="cb197-27" title="27"><span class="st">  </span><span class="kw">theme</span>(</a>
 <a class="sourceLine" id="cb197-28" title="28">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
 <a class="sourceLine" id="cb197-29" title="29">  ) </a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-30-1.png" width=".9\textwidth" /></p>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-30-1.png" width=".9\textwidth"></p>
 <p>Figure 3. Simulating power with the Lin estimator.</p>
 </div>
 <div id="incorporating-declaredesign-into-oes-power-tools" class="section level3">
@@ -1253,7 +1253,7 @@ data in the figure below.</p>
 <a class="sourceLine" id="cb201-27" title="27"><span class="st">  </span><span class="kw">theme</span>(</a>
 <a class="sourceLine" id="cb201-28" title="28">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
 <a class="sourceLine" id="cb201-29" title="29">  )</a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-34-1.png" width=".9\textwidth" /></p>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-34-1.png" width=".9\textwidth"></p>
 
 </div>
 </div>
@@ -1261,7 +1261,7 @@ data in the figure below.</p>
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-lin_agnostic_2013">
-<p>Lin, Winston. 2013. “Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman’s Critique.” <em>The Annals of Applied Statistics</em> 7 (1): 295–318.</p>
+<p>Lin, Winston. 2013. &#x201C;Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman&#x2019;s Critique.&#x201D; <em>The Annals of Applied Statistics</em> 7 (1): 295&#x2013;318.</p>
 </div>
 </div>
             </section>
@@ -1316,7 +1316,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "true";
+    var src = "";
     if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');

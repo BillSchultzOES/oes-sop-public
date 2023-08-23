@@ -134,7 +134,7 @@
     },
     "RItools": {
       "Package": "RItools",
-      "Version": "0.3-1",
+      "Version": "0.3-3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -153,7 +153,7 @@
         "tidyr",
         "xtable"
       ],
-      "Hash": "8a52ec4324d215839e7876b16d22d248"
+      "Hash": "ad1816d3b0c2d276a53cb702ed26a0cb"
     },
     "Rcpp": {
       "Package": "Rcpp",
@@ -204,6 +204,19 @@
         "survival"
       ],
       "Hash": "69df2ed9b1a021e89e22cb95e5222860"
+    },
+    "V8": {
+      "Package": "V8",
+      "Version": "4.3.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "Rcpp",
+        "curl",
+        "jsonlite",
+        "utils"
+      ],
+      "Hash": "20d81ec18bde233d8cc3265761fe8c93"
     },
     "abind": {
       "Package": "abind",
@@ -1387,6 +1400,16 @@
         "xml2"
       ],
       "Hash": "49b625e6aabe4c5f091f5850aba8ff78"
+    },
+    "katex": {
+      "Package": "katex",
+      "Version": "1.4.1",
+      "Source": "Repository",
+      "Repository": "https://ropensci.r-universe.dev",
+      "Requirements": [
+        "V8"
+      ],
+      "Hash": "5705835b03d2678cbfa51e9845bd4032"
     },
     "knitr": {
       "Package": "knitr",

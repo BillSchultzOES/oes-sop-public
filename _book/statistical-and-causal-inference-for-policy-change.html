@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html >
+<html>
 
 <head>
 
@@ -7,25 +7,25 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</title>
   <meta name="description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown &lt;!--bookdown:version--&gt; and GitBook 2.6.7">
 
-  <meta property="og:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments." />
-  <meta property="og:type" content="book" />
+  <meta property="og:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.">
+  <meta property="og:type" content="book">
   
   
-  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA" />
-  <meta name="github-repo" content="gsa-oes/sop" />
+  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  <meta name="github-repo" content="gsa-oes/sop">
 
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments." />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.">
   
-  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA" />
+  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
   
 
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-21">
+<meta name="date" content="2023-08-23">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,11 +35,11 @@
 <link rel="prev" href="index.html">
 <link rel="next" href="basics-of-experimental-design-and-analysis.html">
 <script src="libs/jquery/jquery.min.js"></script>
-<link href="libs/gitbook/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/style.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet">
 
 
 
@@ -460,8 +460,8 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
-<link rel="stylesheet" href="style.css" type="text/css" />
-</head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" data-external="1"></head>
 
 <body>
 
@@ -509,7 +509,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.5" data-path="randomization-and-design.html"><a href="randomization-and-design.html#cluster-random-assignment"><i class="fa fa-check"></i><b>4.5</b> Cluster random assignment</a></li>
 <li class="chapter" data-level="4.6" data-path="randomization-and-design.html"><a href="randomization-and-design.html#other-designs"><i class="fa fa-check"></i><b>4.6</b> Other designs</a></li>
 <li class="chapter" data-level="4.7" data-path="randomization-and-design.html"><a href="randomization-and-design.html#randomization-assessment"><i class="fa fa-check"></i><b>4.7</b> Randomization assessment</a><ul>
-<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with “failed” randomization assessments?</a></li>
+<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
 <li class="chapter" data-level="4.7.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#how-to-minimize-large-chance-departures-of-randomization"><i class="fa fa-check"></i><b>4.7.2</b> How to minimize large chance departures of randomization?</a></li>
 </ul></li>
 </ul></li>
@@ -577,32 +577,32 @@ making and assumes that the reader has heard of a hypothesis test and a
 statistical estimator. However, here we explain in very broad terms how tests
 and estimators help us do our job in helping the US federal government improve
 public policy.</p>
-<p>Recall that “evidence-based public policy” can refer to <em>both</em>
-“evidence-as-insight” (the use of previous scientific literature as input to
-the design of new policies) and “evidence-as-evaluation” (the careful design of
+<p>Recall that &#x201C;evidence-based public policy&#x201D; can refer to <em>both</em>
+&#x201C;evidence-as-insight&#x201D; (the use of previous scientific literature as input to
+the design of new policies) and &#x201C;evidence-as-evaluation&#x201D; (the careful design of
 studies to learn about how and whether a new policy worked)
 <span class="citation">(Bowers and Testa <a href="#ref-bowers2019better">2019</a>)</span>. Our team aims to help government agencies <strong>design</strong> new
 policies and also to <strong>learn</strong> about how those new ideas work. <strong>This document
 focuses on the learning part of our work.</strong></p>
 <p>How would we know whether and how a new policy worked? In an ideal and
 unrealistic case, we would know that a new policy improved the life of a single
-person, Jake, if we could compare Jake’s decisions <em>both</em> under the new policy
-<em>and</em> under the status quo <em>at the same moment in time</em>. If we saw that Jake’s
+person, Jake, if we could compare Jake&#x2019;s decisions <em>both</em> under the new policy
+<em>and</em> under the status quo <em>at the same moment in time</em>. If we saw that Jake&#x2019;s
 decisions were better under the new policy than under the status quo, we would
 say that the new policy caused Jake to make better decisions.</p>
-<p>Since no one can observe Jake in both situations — say, making health decisions both with and without a new procedure for visiting the doctor — researchers try to find at least one other person (if not more) who represents how Jake would have acted if he had not been exposed to the new policy. <span class="citation">Holland (<a href="#ref-holland:1986a">1986</a>)</span> calls this the “fundamental problem of causal inference” and explains more formally when we might believe that other people are a good approximations for how Jake would have acted without the new policy. For example, if access to the new policy is randomized, we can claim that that the two groups are good counterfactuals for each other. That is, our team tends to think about the <em>causal effects</em> of a policy in <em>counterfactual</em> terms.</p>
+<p>Since no one can observe Jake in both situations &#x2014; say, making health decisions both with and without a new procedure for visiting the doctor &#x2014; researchers try to find at least one other person (if not more) who represents how Jake would have acted if he had not been exposed to the new policy. <span class="citation">Holland (<a href="#ref-holland:1986a">1986</a>)</span> calls this the &#x201C;fundamental problem of causal inference&#x201D; and explains more formally when we might believe that other people are a good approximations for how Jake would have acted without the new policy. For example, if access to the new policy is randomized, we can claim that that the two groups are good counterfactuals for each other. That is, our team tends to think about the <em>causal effects</em> of a policy in <em>counterfactual</em> terms.</p>
 <p>What do statistics have to do with learning about the causal effect of a new
 policy idea? We use randomized experiments to create groups of people who
 represent behavior under <em>both</em> the new policy and the status quo. In
 medical experiments to assess the effectiveness of new treatments, these two
-groups tend to be called the “treatment group” and the “control group.” Social scientists often use that same language even if we are not really providing a new treatment, but are, instead, offering a new communication or structure for a decision. If we pilot the new policy with people chosen at random, we can claim that the people chosen and the people not chosen represent each other. In a randomized study, we can use what we see from one group to learn about what would have happened had the other group instead received the treatment or new policy intervention.</p>
-<p>Now, in any given sample we won’t know <em>exactly</em> how the treatment group would have behaved if they had been assigned to the control group instead. For example, if we pulled 500 out of 1000 names from a hat and assigned those 500 people to receive treatment, that’s just one of many possible sets of 500 people we could have drawn. If we were to do the experiment again, and pulled another 500 names at random, this second experiment will also have a randomly selected treatment group, but the second 500 people will be different from the first 500 people. A single experiment offers us some information about the effect of treatment, but we need to ask other questions too, like, “How much could our result differ just due to pulling a different 500 people from the hat?” We also need to answer questions like, “What do you mean by ‘result’? How do I know that this really is a good result rather than a bad result?”</p>
-<p>Our team uses statistical theory to produce estimates of the causal effect of a new policy. We also use statistical theory to answer questions like “Could the effect really have been zero?” or “How many people do we need to observe in order to distinguish a positive effect from a zero effect?”</p>
+groups tend to be called the &#x201C;treatment group&#x201D; and the &#x201C;control group.&#x201D; Social scientists often use that same language even if we are not really providing a new treatment, but are, instead, offering a new communication or structure for a decision. If we pilot the new policy with people chosen at random, we can claim that the people chosen and the people not chosen represent each other. In a randomized study, we can use what we see from one group to learn about what would have happened had the other group instead received the treatment or new policy intervention.</p>
+<p>Now, in any given sample we won&#x2019;t know <em>exactly</em> how the treatment group would have behaved if they had been assigned to the control group instead. For example, if we pulled 500 out of 1000 names from a hat and assigned those 500 people to receive treatment, that&#x2019;s just one of many possible sets of 500 people we could have drawn. If we were to do the experiment again, and pulled another 500 names at random, this second experiment will also have a randomly selected treatment group, but the second 500 people will be different from the first 500 people. A single experiment offers us some information about the effect of treatment, but we need to ask other questions too, like, &#x201C;How much could our result differ just due to pulling a different 500 people from the hat?&#x201D; We also need to answer questions like, &#x201C;What do you mean by &#x2018;result&#x2019;? How do I know that this really is a good result rather than a bad result?&#x201D;</p>
+<p>Our team uses statistical theory to produce estimates of the causal effect of a new policy. We also use statistical theory to answer questions like &#x201C;Could the effect really have been zero?&#x201D; or &#x201C;How many people do we need to observe in order to distinguish a positive effect from a zero effect?&#x201D;</p>
 <p>The rest of this document presents decisions we have made about the particulars
 of estimators and tests, as well as other tricky decisions that we have had to
-confront — like what to do when some of data are missing.</p>
+confront &#x2014; like what to do when some of data are missing.</p>
 <p>For more on the basics of how statistics helps us answer questions about causal
-effects, we recommend chapters 1–3 of <span class="citation">Gerber and Green (<a href="#ref-gerber_field_2012">2012</a>)</span> (which focuses on
+effects, we recommend chapters 1&#x2013;3 of <span class="citation">Gerber and Green (<a href="#ref-gerber_field_2012">2012</a>)</span> (which focuses on
 randomized experiments) and the first part of <span class="citation">Rosenbaum (<a href="#ref-rosenbaum2017">2017</a>)</span> (which focuses on
 both experiments and research designs without randomization). Another good treatment comes from the opening chapters of <span class="citation">Angrist and Pischke (<a href="#ref-angrist2009mostly">2009</a>)</span>.</p>
 
@@ -610,19 +610,19 @@ both experiments and research designs without randomization). Another good treat
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-bowers2019better">
-<p>Bowers, Jake, and Paul F. Testa. 2019. “Better Government, Better Science: The Promise of and Challenges Facing the Evidence-Informed Policy Movement.” <em>Annual Review of Political Science</em> 22.</p>
+<p>Bowers, Jake, and Paul F. Testa. 2019. &#x201C;Better Government, Better Science: The Promise of and Challenges Facing the Evidence-Informed Policy Movement.&#x201D; <em>Annual Review of Political Science</em> 22.</p>
 </div>
 <div id="ref-holland:1986a">
-<p>Holland, Paul W. 1986. “Statistics and Causal Inference (with Discussion).” <em>Journal of the American Statistical Association</em> 81: 945–70.</p>
+<p>Holland, Paul W. 1986. &#x201C;Statistics and Causal Inference (with Discussion).&#x201D; <em>Journal of the American Statistical Association</em> 81: 945&#x2013;70.</p>
 </div>
 <div id="ref-gerber_field_2012">
 <p>Gerber, Alan S., and Donald P. Green. 2012. <em>Field Experiments: Design, Analysis, and Interpretation</em>. New York, NY: W. W. Norton &amp; Company.</p>
 </div>
 <div id="ref-rosenbaum2017">
-<p>Rosenbaum, Paul R. 2017. <em>Observation and experiment : an introduction to causal inference</em>. Cambridge, MA: Harvard University Press.</p>
+<p>&#x2014;&#x2014;&#x2014;. 2017. <em>Observation and experiment : an introduction to causal inference</em>. Cambridge, MA: Harvard University Press.</p>
 </div>
 <div id="ref-angrist2009mostly">
-<p>Angrist, Joshua D, and Jörn-Steffen Pischke. 2009. <em>Mostly Harmless Econometrics: An Empiricist’s Companion</em>. Princeton university press.</p>
+<p>Angrist, Joshua D, and J&#xF6;rn-Steffen Pischke. 2009. <em>Mostly Harmless Econometrics: An Empiricist&#x2019;s Companion</em>. Princeton university press.</p>
 </div>
 </div>
             </section>
@@ -677,7 +677,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "true";
+    var src = "";
     if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');

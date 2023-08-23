@@ -4,6 +4,9 @@ author: Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver 
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 site: bookdown::bookdown_site
 knit: bookdown::render_book
+output:
+  bookdown::gitbook:
+    math_method: r-katex
 documentclass: book
 bibliography: ["sop.bib", "packages.bib"]
 link-citations: yes
@@ -16,7 +19,6 @@ fontsize: 12pt
 geometry: margin=1in
 graphics: yes
 ---
-
 
 ```{r options, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
 require(knitr)
@@ -48,6 +50,7 @@ library(future.apply)
 library(here)
 library(ICC)
 library(kableExtra)
+library(katex)
 library(lmtest)
 library(multcomp)
 library(nbpMatching)
@@ -57,10 +60,12 @@ library(ri2)
 library(sandwich)
 library(tidyverse)
 library(RItools)
+library(V8)
 
 options(
   htmltools.dir.version = FALSE, formatR.indent = 2,
-  width = 100, digits = 4, warnPartialMatchAttr = FALSE, warnPartialMatchDollar = FALSE
+  width = 100, digits = 4, warnPartialMatchAttr = FALSE,
+  warnPartialMatchDollar = FALSE
 )
 
 local({

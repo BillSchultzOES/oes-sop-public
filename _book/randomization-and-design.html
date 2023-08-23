@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html >
+<html>
 
 <head>
 
@@ -7,25 +7,25 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</title>
   <meta name="description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown &lt;!--bookdown:version--&gt; and GitBook 2.6.7">
 
-  <meta property="og:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments." />
-  <meta property="og:type" content="book" />
+  <meta property="og:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.">
+  <meta property="og:type" content="book">
   
   
-  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA" />
-  <meta name="github-repo" content="gsa-oes/sop" />
+  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  <meta name="github-repo" content="gsa-oes/sop">
 
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments." />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.">
   
-  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA" />
+  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
   
 
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-21">
+<meta name="date" content="2023-08-23">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,11 +35,11 @@
 <link rel="prev" href="design-based-principles-of-statistical-inference.html">
 <link rel="next" href="analysis-choices.html">
 <script src="libs/jquery/jquery.min.js"></script>
-<link href="libs/gitbook/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/style.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet">
 
 
 
@@ -460,8 +460,8 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
-<link rel="stylesheet" href="style.css" type="text/css" />
-</head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" data-external="1"></head>
 
 <body>
 
@@ -509,7 +509,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.5" data-path="randomization-and-design.html"><a href="randomization-and-design.html#cluster-random-assignment"><i class="fa fa-check"></i><b>4.5</b> Cluster random assignment</a></li>
 <li class="chapter" data-level="4.6" data-path="randomization-and-design.html"><a href="randomization-and-design.html#other-designs"><i class="fa fa-check"></i><b>4.6</b> Other designs</a></li>
 <li class="chapter" data-level="4.7" data-path="randomization-and-design.html"><a href="randomization-and-design.html#randomization-assessment"><i class="fa fa-check"></i><b>4.7</b> Randomization assessment</a><ul>
-<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with “failed” randomization assessments?</a></li>
+<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
 <li class="chapter" data-level="4.7.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#how-to-minimize-large-chance-departures-of-randomization"><i class="fa fa-check"></i><b>4.7.2</b> How to minimize large chance departures of randomization?</a></li>
 </ul></li>
 </ul></li>
@@ -585,14 +585,14 @@ that we use to build evidence about the effectiveness of the new policy.</p>
 <div id="coin-flipping-randomization-versus-urn-drawing-randomization" class="section level2">
 <h2><span class="header-section-number">4.1</span> Coin flipping randomization versus Urn-drawing randomization</h2>
 <p>Many discussions of RCTs begin by talking about the intervention being assigned
-to units (people, schools, offices, districts) “by the flip of a coin”. We
+to units (people, schools, offices, districts) &#x201C;by the flip of a coin&#x201D;. We
 rarely use this method directly even though it is a useful way to introduce the
 idea that RCTs guarantee fair access to the new policy.</p>
 <p>The following code contrasts coin-flipping style randomization (where the
 number of units in each condition is not guaranteed) with drawing-from-an-urn
 style, or complete, randomization (where the number of units in each condition
 is guaranteed). We try to avoid the coin-flipping style of randomization
-because of this lack of control over the number of units in each condition —
+because of this lack of control over the number of units in each condition &#x2014;
 coin-flipping based experiments are still valid and tell us about the
 underlying counterfactuals, but they can have less statistical power.</p>
 <p>Notice that the simple randomization implemented in the code below results in more observations in the treatment group (group <code>1</code>) than in the control group (group <code>0</code>). The complete randomization will always assign 5 units to the treatment, 5 to the control.</p>
@@ -621,13 +621,13 @@ underlying counterfactuals, but they can have less statistical power.</p>
 <p>We tend to use the <code>randomizr</code> R package <span class="citation">(Coppock <a href="#ref-R-randomizr">2022</a><a href="#ref-R-randomizr">a</a>)</span> for simple designs
 rather than the base R <code>sample</code> function because thee <code>randomizr</code> does some
 quality control checks. Notice that we implement a check on our code below with
-the <code>stopifnot</code> command: the code will stop and issue a warning if we didn’t
+the <code>stopifnot</code> command: the code will stop and issue a warning if we didn&#x2019;t
 actually assign 1/4 of the observations to the treatment condition. Here, we
 assign the units first to 2 arms with equal probability (<code>Z2armEqual</code>) and
 then, to show how the code works, to 2 arms where one arm has only 1/4 the
 probability of receiving treatment (imagining a design with an expensive
 intervention) (<code>Z2armUnequalA</code> and <code>Z2armUnequalB</code>), and then to a design with
-4 arms, each with equal probability. (We often use <span class="math inline">\(Z\)</span> to refer to the variable
+4 arms, each with equal probability. (We often use <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi></mrow><annotation encoding="application/x-tex">Z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span></span></span></span> to refer to the variable
 recording our intervention arms.)</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" title="1">N &lt;-<span class="st"> </span><span class="kw">nrow</span>(dat1)</a>
 <a class="sourceLine" id="cb31-2" title="2"><span class="co">## Two equal arms</span></a>
@@ -662,7 +662,7 @@ T1 T2 T3 T4
 <p>One can often test the effects of more than one intervention without losing
 much statistical power by randomly assigning more than one treatment
 independently of each other. The simplest design that we use for this purpose
-is the <span class="math inline">\(2 \times 2\)</span> factorial design. For example, in the next table we see that
+is the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>&#xD7;</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">2 \times 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> factorial design. For example, in the next table we see that
 we have assigned 50 observations to each arm of both of two interventions.
 Since the randomization of <code>treatment1</code> is independent of <code>treatment2</code>, we can
 assess the effects of each treatment separately and pay little power
@@ -680,24 +680,24 @@ same time, they tend to provide little statistical power for testing
 hypotheses about the <strong>interaction</strong> of the two treatments. If we want to
 learn about how two different interventions work together, then the sample
 size requirements will be much larger than if we want to learn about only each
-treatment separately.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+treatment separately.<a href="references.html#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
 </div>
 <div id="block-random-assignment" class="section level2">
 <h2><span class="header-section-number">4.4</span> Block Random Assignment</h2>
 <p>Statistical power depends not only on the size of the experiment and the strength of the treatment effect, but also on the amount of noise, or
-non-treatment-related variability, in outcomes. Block-randomized designs can help reduce the noise in outcomes, while simultaneously minimizing estimation error – the amount that our particular experiment’s estimate differs from the truth.</p>
+non-treatment-related variability, in outcomes. Block-randomized designs can help reduce the noise in outcomes, while simultaneously minimizing estimation error &#x2013; the amount that our particular experiment&#x2019;s estimate differs from the truth.</p>
 <p>In a block-randomized, or
 stratified, experiment, we randomly assign units to the policy
 interventions <em>within</em> groups.</p>
-<p>Suppose we are evaluating whether dedicated navigators can increase the percentage of students who live in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. Though we can never know the outcome in all buildings both with and without navigators (the “fundamental problem of causal inference”), if we could, we might have the data below.</p>
+<p>Suppose we are evaluating whether dedicated navigators can increase the percentage of students who live in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. Though we can never know the outcome in all buildings both with and without navigators (the &#x201C;fundamental problem of causal inference&#x201D;), if we could, we might have the data below.</p>
 
-<p>In this case, the true average treatment effect for this sample is the average under treatment minus the average under control: <span class="math inline">\(\text{ATE} = 50-25=25\)</span> percent more applications if navigators are deployed everywhere.</p>
+<p>In this case, the true average treatment effect for this sample is the average under treatment minus the average under control: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>ATE</mtext><mo>=</mo><mn>50</mn><mo>&#x2212;</mo><mn>25</mn><mo>=</mo><mn>25</mn></mrow><annotation encoding="application/x-tex">\text{ATE} = 50-25=25</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord">ATE</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">50</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">25</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">25</span></span></span></span> percent more applications if navigators are deployed everywhere.</p>
 <p>If we randomly allocate two buildings to treatment and two to control, we might treat the first two buildings and observe</p>
 
-<p>yielding an estimate of the treatment effect of <span class="math inline">\(65-25 = 40\)</span> percent more applications – an estimate larger than the true value of 25.</p>
+<p>yielding an estimate of the treatment effect of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>65</mn><mo>&#x2212;</mo><mn>25</mn><mo>=</mo><mn>40</mn></mrow><annotation encoding="application/x-tex">65-25 = 40</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">65</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">25</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">40</span></span></span></span> percent more applications &#x2013; an estimate larger than the true value of 25.</p>
 <p>Or, we might observe</p>
 
-<p>yielding an estimate of the treatment effect of <span class="math inline">\(45-30 = 15\)</span> percent fewer applications – an estimate smaller than the true value of 25.</p>
+<p>yielding an estimate of the treatment effect of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>45</mn><mo>&#x2212;</mo><mn>30</mn><mo>=</mo><mn>15</mn></mrow><annotation encoding="application/x-tex">45-30 = 15</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">45</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">30</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">15</span></span></span></span> percent fewer applications &#x2013; an estimate smaller than the true value of 25.</p>
 <p>All the possible equiprobable assignments, and their estimated treatment effects are below.</p>
 
 <p>These possible estimates have mean equal to the true value of 25, showing that the difference in means is an unbiased estimator. However, some of these estimates are far from the truth, and they have a lot of variability.</p>
@@ -706,8 +706,8 @@ interventions <em>within</em> groups.</p>
 <p>With the blocked design, we will get an estimate no more than 10 percentage points from the truth. Further, our estimates will have less variability (an SD of 8.16 rather than
 11.4), improving the power of our design.</p>
 <p>For a more realistic example, suppose our experiment
-has two hospitals. We might randomly assign people to treatment and control <em>within</em> each hospital. We might assign half of the people in hospital “A”
-to treatment and half to control and likewise in hospital “B.”<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> Below, we have 50 units in hospital “A” and 50 in hospital “B”.</p>
+has two hospitals. We might randomly assign people to treatment and control <em>within</em> each hospital. We might assign half of the people in hospital &#x201C;A&#x201D;
+to treatment and half to control and likewise in hospital &#x201C;B.&#x201D;<a href="references.html#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> Below, we have 50 units in hospital &#x201C;A&#x201D; and 50 in hospital &#x201C;B&#x201D;.</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">dat1<span class="op">$</span>blockID &lt;-<span class="st"> </span><span class="kw">gl</span>(<span class="dt">n =</span> <span class="dv">2</span>, <span class="dt">k =</span> N<span class="op">/</span><span class="dv">2</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</a>
 <a class="sourceLine" id="cb41-2" title="2"><span class="kw">with</span>(dat1,<span class="kw">table</span>(<span class="dt">blockID=</span>dat1<span class="op">$</span>blockID))</a></code></pre></div>
 <pre><code>blockID
@@ -720,11 +720,11 @@ to treatment and half to control and likewise in hospital “B.”<a href="#fn4"
 blockID  0  1
       A 25 25
       B 25 25</code></pre>
-<p>If, say, there were fewer people eligible for treatment in hospital “A” — or
-perhaps the intervention was more expensive in that block — we might assign
-treatment with different probability within each block. The code below shows half of the hospital “A” units assigned to treatment, but only a quarter of those from hospital “B”. Again, we check that
+<p>If, say, there were fewer people eligible for treatment in hospital &#x201C;A&#x201D; &#x2014; or
+perhaps the intervention was more expensive in that block &#x2014; we might assign
+treatment with different probability within each block. The code below shows half of the hospital &#x201C;A&#x201D; units assigned to treatment, but only a quarter of those from hospital &#x201C;B&#x201D;. Again, we check that
 this code worked by including a test. This approach is an informal version of
-one of the best practices in writing code in general, called “unit testing”.
+one of the best practices in writing code in general, called &#x201C;unit testing&#x201D;.
 See the <a href="https://rawgit.com/egap/methods-guides/master/workflow/workflow.html#to-minimize-error-build-testing-into-the-code">EGAP Guide to Workflow for more
 examples</a>.</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1">dat1<span class="op">$</span>Z2armBlockedUneqProb &lt;-<span class="st"> </span><span class="kw">block_ra</span>(<span class="dt">blocks=</span>dat1<span class="op">$</span>blockID,<span class="dt">block_prob =</span> <span class="kw">c</span>(.<span class="dv">5</span>,.<span class="dv">25</span>))</a>
@@ -845,14 +845,14 @@ blocksV4 0 1
        8 4 3
        9 4 6</code></pre>
 <p>Here we produce some description of the differences within block: the proportion
-of people in category “1” on the binary covariate (notice that the sets are
+of people in category &#x201C;1&#x201D; on the binary covariate (notice that the sets are
 homogeneous on this covariate) and the difference between the largest and
 smallest value on the continuous covariate.</p>
 <div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" title="1">blockingDescEval &lt;-<span class="st"> </span>dat1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(blocksV4) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">cov2diff =</span> <span class="kw">max</span>(<span class="kw">abs</span>(cov2))</a>
 <a class="sourceLine" id="cb66-2" title="2">                              <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(<span class="kw">abs</span>(cov2)),</a>
 <a class="sourceLine" id="cb66-3" title="3">                              <span class="dt">cov1 =</span> <span class="kw">mean</span>(cov1))</a>
 <a class="sourceLine" id="cb66-4" title="4">blockingDescEval</a></code></pre></div>
-<pre><code># A tibble: 12 × 3
+<pre><code># A tibble: 12 &#xD7; 3
    blocksV4   cov2diff    cov1
    &lt;qb_blckn&gt;    &lt;dbl&gt;   &lt;dbl&gt;
  1  0             3.62  0.555 
@@ -872,7 +872,7 @@ smallest value on the continuous covariate.</p>
 <div id="cluster-random-assignment" class="section level2">
 <h2><span class="header-section-number">4.5</span> Cluster random assignment</h2>
 <p>We often implement a new policy intervention at the level of some group
-of people — like a doctor’s practice, or a building, or some other
+of people &#x2014; like a doctor&#x2019;s practice, or a building, or some other
 administrative unit. Notice that, even though we have 100 units in our example
 data, imagine that they are grouped into 10 buildings, and the policy
 intervention is at the building level. Below, we assign 50 of those units
@@ -912,16 +912,16 @@ whether the number of units assigned to each arm (conditional on other design
 features, such as blocking or stratification) are consistent with the claimed
 random assignment.</p>
 <p>Here is an example with a binary treatment and a continuous outcome and 10
-covariates. In this case we use the <span class="math inline">\(d^2\)</span> omnibus balance test function <code>xBalance()</code> in
+covariates. In this case we use the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> omnibus balance test function <code>xBalance()</code> in
 the package <code>RItools</code> <span class="citation">(see Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a> ; Bowers, Fredrickson, and Hansen <a href="#ref-bowers_ritools_2016">2016</a>)</span>.</p>
-<p>The “overall” <span class="math inline">\(p\)</span>-value below shows us that we have little evidence against the
-idea that treatment (<span class="math inline">\(Z\)</span>) was assigned at random — at least in terms of the
+<p>The &#x201C;overall&#x201D; <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value below shows us that we have little evidence against the
+idea that treatment (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi></mrow><annotation encoding="application/x-tex">Z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span></span></span></span>) was assigned at random &#x2014; at least in terms of the
 relationships between the two covariates and the treatment assignment. The
 test statistics here are mean differences. This overall or omnibus test is the
-key here — if we had many covariates, it would easy to discover one or a few
+key here &#x2014; if we had many covariates, it would easy to discover one or a few
 covariates with means that differ detectably from zero just by chance. That
 is, in a well-operating experiment, we would expect some baseline imbalances
-(as measured using randomization based tests) – roughly 5 in 100. Thus the value
+(as measured using randomization based tests) &#x2013; roughly 5 in 100. Thus the value
 of the omnibus test is that we will not be misled by chance false positives.</p>
 <div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" title="1">randAssessV1 &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(Z<span class="op">~</span>cov1<span class="op">+</span>cov2,<span class="dt">data=</span>dat1)</a>
 <a class="sourceLine" id="cb70-2" title="2">randAssessV1<span class="op">$</span>overall[,]</a></code></pre></div>
@@ -939,15 +939,15 @@ assignment using a formula like so:
 <p>This approach, using the <code>RItools</code> package, works well for experiments that
 are not overly small. In a very small experiment, say, an experiment with 5
 clusters assigned to treatment and 5 clusters assigned to control, we would do
-the same test, but would not use the <span class="math inline">\(\chi^2\)</span> distribution. Instead, we would do a
+the same test, but would not use the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>&#x3C7;</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\chi^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0085em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">&#x3C7;</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> distribution. Instead, we would do a
 permutation-based test.</p>
-<p>We do not use <span class="math inline">\(F\)</span>-tests or Likelihood Ratio tests to assess randomization. See
+<p>We do not use <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span></span></span>-tests or Likelihood Ratio tests to assess randomization. See
 <span class="citation">Hansen and Bowers (<a href="#ref-hansen_covariate_2008">2008</a>)</span> for some evidence that a test based on
-randomization-inference (like the <span class="math inline">\(d^2\)</span> test developed in that article)
-maintains false positive rates better than the sampling- or likelihood-justified <span class="math inline">\(F\)</span> and likelihood ratio tests.</p>
+randomization-inference (like the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> test developed in that article)
+maintains false positive rates better than the sampling- or likelihood-justified <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi></mrow><annotation encoding="application/x-tex">F</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">F</span></span></span></span> and likelihood ratio tests.</p>
 <div id="what-to-do-with-failed-randomization-assessments" class="section level3">
-<h3><span class="header-section-number">4.7.1</span> What to do with “failed” randomization assessments?</h3>
-<p>A <span class="math inline">\(p\)</span>-value less than .05 on a test of randomization mechanism ought to
+<h3><span class="header-section-number">4.7.1</span> What to do with &#x201C;failed&#x201D; randomization assessments?</h3>
+<p>A <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value less than .05 on a test of randomization mechanism ought to
 triggers extra scrutiny of how the randomization was conducted and how the data
 were recorded by the agency. For example, we might contact our agency partner
 to learn more deetails about how the random numbers themselves were
@@ -965,7 +965,7 @@ study, then we will present both the unadjusted results but also adjust
 for that covariate via stratification and/or covariance adjustment as we
 describe later in this document. A chance rejection of the null that the
 experiment was randomized as it should not cause us to the use the adjusted
-estimate as our primary causal effect — after all, it will be biased
+estimate as our primary causal effect &#x2014; after all, it will be biased
 whereas the unadjusted estimate will not be biased undere chance departures
 from the null. But, large differences between the two estimates can inform
 the qualitative task of substantive interpretation of the study: looking
@@ -986,29 +986,17 @@ about what we have learned.</p>
 <p>Coppock, Alexander. 2022a. <em>Randomizr: Easy-to-Use Tools for Common Forms of Random Assignment and Sampling</em>. <a href="https://CRAN.R-project.org/package=randomizr">https://CRAN.R-project.org/package=randomizr</a>.</p>
 </div>
 <div id="ref-moore2012multivariate">
-<p>Moore, Ryan T. 2012. “Multivariate Continuous Blocking to Improve Political Science Experiments.” <em>Political Analysis</em> 20 (4): 460–79.</p>
+<p>Moore, Ryan T. 2012. &#x201C;Multivariate Continuous Blocking to Improve Political Science Experiments.&#x201D; <em>Political Analysis</em> 20 (4): 460&#x2013;79.</p>
 </div>
 <div id="ref-moore2016bT063">
 <p>Moore, Ryan T., and Keith Schnakenberg. 2016. <em>BlockTools: Blocking, Assignment, and Diagnosing Interference in Randomized Experiments</em>. <a href="http://www.ryantmoore.org/html/software.blockTools.html">http://www.ryantmoore.org/html/software.blockTools.html</a>.</p>
 </div>
 <div id="ref-hansen_covariate_2008">
-<p>Hansen, Ben B., and Jake Bowers. 2008. “Covariate Balance in Simple, Stratified and Clustered Comparative Studies.” <em>Statistical Science</em> 23 (2): 219–36.</p>
+<p>Hansen, Ben B., and Jake Bowers. 2008. &#x201C;Covariate Balance in Simple, Stratified and Clustered Comparative Studies.&#x201D; <em>Statistical Science</em> 23 (2): 219&#x2013;36.</p>
 </div>
 <div id="ref-bowers_ritools_2016">
 <p>Bowers, Jake, Mark Fredrickson, and Ben Hansen. 2016. <em>RItools: Randomization Inference Tools</em>.</p>
 </div>
-</div>
-<div class="footnotes">
-<hr />
-<ol start="3">
-<li id="fn3"><p>But see <span class="citation">Small, Volpp, and Rosenbaum (<a href="#ref-small2011structured">2011</a>)</span> for a way to increase the
-power of tests for such questions. This approach is not yet part of our
-standard practice.<a href="randomization-and-design.html#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>We use “block”
-rather than “strata” throughout this document to refer to groups of
-experimental units that are fixed before randomization, where group membership
-cannot be changed by the experiment itself.<a href="randomization-and-design.html#fnref4" class="footnote-back">↩</a></p></li>
-</ol>
 </div>
             </section>
 
@@ -1062,7 +1050,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "true";
+    var src = "";
     if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
