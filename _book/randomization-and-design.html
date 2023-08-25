@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-23">
+<meta name="date" content="2023-08-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -495,6 +495,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html"><i class="fa fa-check"></i><b>3</b> Design-Based Principles of Statistical Inference</a><ul>
 <li class="chapter" data-level="3.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
 <li class="chapter" data-level="3.1.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> How do we calculate randomization-based standard errors?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> How do we calculate randomization-based confidence intervals?</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
@@ -680,7 +681,7 @@ same time, they tend to provide little statistical power for testing
 hypotheses about the <strong>interaction</strong> of the two treatments. If we want to
 learn about how two different interventions work together, then the sample
 size requirements will be much larger than if we want to learn about only each
-treatment separately.<a href="references.html#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+treatment separately.<a href="references.html#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
 </div>
 <div id="block-random-assignment" class="section level2">
 <h2><span class="header-section-number">4.4</span> Block Random Assignment</h2>
@@ -707,7 +708,7 @@ interventions <em>within</em> groups.</p>
 11.4), improving the power of our design.</p>
 <p>For a more realistic example, suppose our experiment
 has two hospitals. We might randomly assign people to treatment and control <em>within</em> each hospital. We might assign half of the people in hospital &#x201C;A&#x201D;
-to treatment and half to control and likewise in hospital &#x201C;B.&#x201D;<a href="references.html#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> Below, we have 50 units in hospital &#x201C;A&#x201D; and 50 in hospital &#x201C;B&#x201D;.</p>
+to treatment and half to control and likewise in hospital &#x201C;B.&#x201D;<a href="references.html#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> Below, we have 50 units in hospital &#x201C;A&#x201D; and 50 in hospital &#x201C;B&#x201D;.</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1">dat1<span class="op">$</span>blockID &lt;-<span class="st"> </span><span class="kw">gl</span>(<span class="dt">n =</span> <span class="dv">2</span>, <span class="dt">k =</span> N<span class="op">/</span><span class="dv">2</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>))</a>
 <a class="sourceLine" id="cb41-2" title="2"><span class="kw">with</span>(dat1,<span class="kw">table</span>(<span class="dt">blockID=</span>dat1<span class="op">$</span>blockID))</a></code></pre></div>
 <pre><code>blockID

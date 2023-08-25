@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-23">
+<meta name="date" content="2023-08-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -495,6 +495,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html"><i class="fa fa-check"></i><b>3</b> Design-Based Principles of Statistical Inference</a><ul>
 <li class="chapter" data-level="3.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
 <li class="chapter" data-level="3.1.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> How do we calculate randomization-based standard errors?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> How do we calculate randomization-based confidence intervals?</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
@@ -863,7 +864,7 @@ retaining both hypotheses is <span class="katex"><span class="katex-mathml"><mat
 rejecting at least one of these hypotheses is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>&#x2212;</mo><mo stretchy="false">(</mo><mn>1</mn><mo>&#x2212;</mo><mi>&#x3B1;</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>=</mo><mi mathvariant="normal">.</mi><mn>0975</mn></mrow><annotation encoding="application/x-tex">1-(1-\alpha)^2 = .0975</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">&#x3B1;</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">.0975</span></span></span></span> &#x2014;
 almost double our stated significance threshold of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3B1;</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">\alpha = 0.05</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">&#x3B1;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.05</span></span></span></span>.</p>
 <p>Second, multiple tests will often be correlated and our tests should recognize
-these relationships (which will penalize the multiple testing less).<a href="references.html#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+these relationships (which will penalize the multiple testing less).<a href="references.html#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
 <p>So, our standard practice in multi-arm trials is the following:</p>
 <ul>
 <li><p>First, decide on a focal comparison: say, control/status quo versus receiving any version of the treatment. This test has a lot of statistical power and would
@@ -1896,7 +1897,7 @@ the weighting of the different blocks is automatic.</p>
 <div id="testing-the-null-of-no-effects-with-binary-outcomes-and-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables" class="section level3">
 <h3><span class="header-section-number">5.4.1</span> Testing the null of no effects with binary outcomes and block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables</h3>
 <p>We use the CMH test as a test of no effect for block-randomized trials with
-binary outcome.<a href="references.html#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> Because the blocks or strata are
+binary outcome.<a href="references.html#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> Because the blocks or strata are
 important to the experiment and outcomes, we want to keep the outcomes for each
 strata intact rather than pooling the outcomes together. Since we repeat the
 same experiment across each stratum, the CMH test tells us if the odds
@@ -2158,7 +2159,7 @@ leaving statistical power on the table in exchange for an easier to interpret
 estimate, an estimator that relates to its underlying target in an unbiased
 fashion. Below we show an approach which is optimal from the perspective of
 statistical power, precision, or narrow confidence intervals which we call
-&#x201C;precision weighted&#x201D; average treatment effects.<a href="references.html#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> In some literatures using the least squares
+&#x201C;precision weighted&#x201D; average treatment effects.<a href="references.html#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> In some literatures using the least squares
 machinery to calculate the weighted means this approach is called Least Squared
 Dummy Variables, or &#x201C;fixed effects&#x201D;. However, we show below that these
 approaches are all versions of a weighted least squares estimator.</p>

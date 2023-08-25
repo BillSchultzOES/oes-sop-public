@@ -21,7 +21,10 @@ graphics: yes
 ---
 
 ```{r options, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
+# Required packages
 require(knitr)
+
+# Set options
 opts_chunk$set(strip.white=TRUE,
                width.cutoff=132,
                size='\\scriptsize',
@@ -33,6 +36,19 @@ opts_chunk$set(strip.white=TRUE,
                tidy='styler',
                prompt=FALSE,
                results='markup')
+
+# Force RStudio to use the bundled pandoc version (correct crossrefs)
+old_path <- Sys.getenv("PATH")
+Sys.setenv(
+  PATH = paste(
+    Sys.getenv("RSTUDIO_PANDOC"), old_path, 
+    sep = .Platform$path.sep
+  ))
+rmarkdown:::find_pandoc(FALSE)
+rmarkdown::pandoc_version()
+
+# Reproducible random numbers
+set.seed(20405)
 ```
 
 ```{r loadlibs}
@@ -51,6 +67,7 @@ library(here)
 library(ICC)
 library(kableExtra)
 library(katex)
+library(knitr)
 library(lmtest)
 library(multcomp)
 library(nbpMatching)

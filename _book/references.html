@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-23">
+<meta name="date" content="2023-08-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -495,6 +495,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html"><i class="fa fa-check"></i><b>3</b> Design-Based Principles of Statistical Inference</a><ul>
 <li class="chapter" data-level="3.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
 <li class="chapter" data-level="3.1.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> How do we calculate randomization-based standard errors?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> How do we calculate randomization-based confidence intervals?</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
@@ -670,34 +671,40 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <hr>
 <ol>
 <li id="fn1"><p>We call this document a standard operating procedure (SOP) because we are inspired by the <a href="https://github.com/acoppock/Green-Lab-SOP">Green, Lin and Coppock SOP</a>.<a href="index.html#fnref1" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn2"><p>See <a href="http://egap.org/methods-guides/10-types-treatment-effect-you-should-know-about" class="uri">http://egap.org/methods-guides/10-types-treatment-effect-you-should-know-about</a>
-for a demonstration that the difference of means in the observed treatment and
-control groups is an unbiased estimator of the average treatment effect itself
-and what it means to be unbiased.<a href="design-based-principles-of-statistical-inference.html#fnref2" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn3"><p>But see <span class="citation">Small, Volpp, and Rosenbaum (<a href="#ref-small2011structured">2011</a>)</span> for a way to increase the
+<li id="fn2"><p>See <a href="http://egap.org/methods-guides/10-types-treatment-effect-you-should-know-about" class="uri">http://egap.org/methods-guides/10-types-treatment-effect-you-should-know-about</a> for a demonstration that the difference of means in the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.<a href="design-based-principles-of-statistical-inference.html#fnref2" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn3"><p>See <span class="citation">Gerber and Green (<a href="#ref-gerber_field_2012">2012</a>)</span> and
+<span class="citation">Dunning (<a href="#ref-dunning_natural_2012">2012</a>)</span> for easy-to-read explanations and derivations of this
+design-based expression for the standard error of the simple estimator of the average treatment effect.<a href="design-based-principles-of-statistical-inference.html#fnref3" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn4"><p>But see <span class="citation">Small, Volpp, and Rosenbaum (<a href="#ref-small2011structured">2011</a>)</span> for a way to increase the
 power of tests for such questions. This approach is not yet part of our
-standard practice.<a href="randomization-and-design.html#fnref3" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn4"><p>We use &#x201C;block&#x201D;
+standard practice.<a href="randomization-and-design.html#fnref4" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn5"><p>We use &#x201C;block&#x201D;
 rather than &#x201C;strata&#x201D; throughout this document to refer to groups of
 experimental units that are fixed before randomization, where group membership
-cannot be changed by the experiment itself.<a href="randomization-and-design.html#fnref4" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn5"><p>Imagine
+cannot be changed by the experiment itself.<a href="randomization-and-design.html#fnref5" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn6"><p>Imagine
 testing two hypotheses with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3B1;</mi><mo>=</mo><mi mathvariant="normal">.</mi><mn>05</mn></mrow><annotation encoding="application/x-tex">\alpha = .05</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">&#x3B1;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">.05</span></span></span></span> but the reference distributions of the
 tests were identical: we just by accident ran the same exact code
 twice. In that case, we are really just doing one test and so haven&#x2019;t changed
 our probability of rejecting a true null hypothesis for either test. If the two
 tests were correlated at .99, we would have changed this probability but only
-very slightly since both tests would basically still be the same.<a href="analysis-choices.html#fnref5" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn6"><p>Binary outcomes implies that there are only two outcomes for
+very slightly since both tests would basically still be the same.<a href="analysis-choices.html#fnref6" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn7"><p>Binary outcomes implies that there are only two outcomes for
 an experiment, and we have recorded one or the other. Usually, we use indicator
-variables (0, 1) to record these outcomes.<a href="analysis-choices.html#fnref6" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn7"><p>See Section 5 of
+variables (0, 1) to record these outcomes.<a href="analysis-choices.html#fnref7" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn8"><p>See Section 5 of
 <span class="citation">Hansen and Bowers (<a href="#ref-hansen_covariate_2008">2008</a>)</span> for proof that this kind of weighting is optimal from
-the perspective of precision.<a href="analysis-choices.html#fnref7" class="footnote-back">&#x21A9;</a></p></li>
+the perspective of precision.<a href="analysis-choices.html#fnref8" class="footnote-back">&#x21A9;</a></p></li>
 </ol>
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
+<div id="ref-gerber_field_2012">
+<p>Gerber, Alan S., and Donald P. Green. 2012. <em>Field Experiments: Design, Analysis, and Interpretation</em>. New York, NY: W. W. Norton &amp; Company.</p>
+</div>
+<div id="ref-dunning_natural_2012">
+<p>Dunning, Thad. 2012. <em>Natural Experiments in the Social Sciences: A Design-Based Approach</em>. Strategies for Social Inquiry. New York, NY: Cambridge University Press.</p>
+</div>
 <div id="ref-small2011structured">
 <p>Small, D.S., K.G. Volpp, and P.R. Rosenbaum. 2011. &#x201C;Structured Testing of 2<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&#xD7;</mo></mrow><annotation encoding="application/x-tex">\times</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord">&#xD7;</span></span></span></span> 2 Factorial Effects: An Analytic Plan Requiring Fewer Observations.&#x201D; <em>The American Statistician</em> 65 (1): 11&#x2013;15.</p>
 </div>

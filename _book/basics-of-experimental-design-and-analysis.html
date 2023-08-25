@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-23">
+<meta name="date" content="2023-08-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -495,6 +495,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html"><i class="fa fa-check"></i><b>3</b> Design-Based Principles of Statistical Inference</a><ul>
 <li class="chapter" data-level="3.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
 <li class="chapter" data-level="3.1.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> How do we calculate randomization-based standard errors?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> How do we calculate randomization-based confidence intervals?</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
@@ -572,46 +573,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="basics-of-experimental-design-and-analysis" class="section level1">
 <h1><span class="header-section-number">Chapter 2</span> Basics of Experimental Design and Analysis</h1>
-<p>Here we very briefly define and describe some of the general characteristics of
-statistical procedures that guide our decision making in the rest of this
+<p>Here we very briefly define and describe some of the general characteristics of the statistical procedures that guide our decision making in the rest of this
 guide. Briefly, we want to create research designs that have enough statistical
-power to tell us something meaningful about the new policy interventions that
-we are piloting, and we want to use statistical tests that will rarely mislead
-us &#x2014; will rarely give a false positive result, and we want to use estimators
-without systematic error. These operating characteristics of our procedures
-depend on both the design of the study and the choices of computational
-procedures that we use. So, we descibe them more in-depth in the <a href="poweranalysis.html#poweranalysis">Power
-Analysis</a> section that comes after both our sections on
-randomization and the design of experiments and the section on analysis
-choices.</p>
+power to tell us something meaningful about the policy interventions that
+we are piloting. We want to use statistical tests that will rarely mislead
+us&#x2014; i.e., will rarely give a false positive result&#x2014; and we want to use estimators without systematic error. These characteristics depend on both the design of the study and the choices we make about computational procedures. We discuss this in more depth in the <a href="poweranalysis.html#poweranalysis">Power Analysis</a> chapter that follows our chapters on design-based inference, experimental design, and analysis choices.</p>
 <div id="statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise" class="section level2">
 <h2><span class="header-section-number">2.1</span> Statistical Power: Designing Studies that effectively distinguish signal from noise</h2>
 <p>The research designs we use in the OES aim to enhance our ability to
 distinguish signal from noise: studies with very few observations cannot tell
 us much about the treatment effect, while studies with very many observations
 provide a lot of information about the treatment effect. A study which
-effectively distinguishes signal from noise has excellent &#x201C;statistical power&#x201D;
-and a study which cannot do this has low statistical power. The Evidence in Governance and Politics (EGAP) Methods
-Guide <a href="https://egap.org/methods-guides/10-things-you-need-know-about-statistical-power">10 Things You Need to Know about Statistical
-Power</a>
-describes more about what statistical power is and how to assess it.</p>
+effectively distinguishes signal from noise has excellent &#x201C;statistical power,&#x201D;
+and a study which cannot do this has low statistical power. The Evidence in Governance and Politics (EGAP) Methods Guide <a href="https://egap.org/methods-guides/10-things-you-need-know-about-statistical-power">10 Things You Need to Know about Statistical Power</a> describes more about what statistical power is and how to assess it.</p>
 <p>Before we field a research design, we assess its statistical power. If we
 anticipate that the intervention will only make a small change in peoples&#x2019;
 behavior, then we will need a relatively large number of people in the study:
-too few people will result in a report saying something like, &#x201C;The new policy
-might have improved the lives of the people in the study, but we can&#x2019;t argue
-strongly that this is so because the study was too small.&#x201D;</p>
+too few people would result in a report saying something like, &#x201C;The new policy
+might have improved the lives of participants, but we can&#x2019;t argue strongly that this is so because our sample was too small.&#x201D;</p>
 </div>
 <div id="error-rates-of-tests" class="section level2">
 <h2><span class="header-section-number">2.2</span> Error Rates of Tests</h2>
 <p>A good statistical test rarely rejects a true hypothesis and often rejects
 false hypotheses. The EGAP Methods Guide <a href="https://egap.org/methods-guides/10-things-know-about-hypothesis-testing">10 Things to Know about Hypothesis
-Testing</a>
-describes the basics of hypothesis tests and explains more about how one might
-know that a given <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value arises from a test with good properties in a given
-research design. Our team tries to follow these practices of choosing testing
-procedures that are not likely to mislead analysts, when we make our analysis
-plans and complete our analyses and re-analyses.</p>
+Testing</a> describes the basics of hypothesis tests and explains more about how one might know that a given <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value arises from a test with good properties in a given research design. Our team tries to follow these practices of choosing testing procedures that are not likely to mislead analysts, both when we make our analysis plans and as we complete our analyses and re-analyses.</p>
 </div>
 <div id="bias-in-estimators" class="section level2">
 <h2><span class="header-section-number">2.3</span> Bias in Estimators</h2>
@@ -619,17 +604,15 @@ plans and complete our analyses and re-analyses.</p>
 better estimator tends to produce estimates that are close to the truth across
 different experiments. Because the difference of means between treatment and
 control groups is well known as an unbiased estimator of the average treatment
-effect within a given experimental pool, this is a primary quantity of interest
-to report by our team. Similarly, since we know that the coefficient in a
-logistic regression of a binary outcome on a treatment indicator and a
-covariate is a biased estimator of the underlying causal difference in log-odds
-we use other approaches when we want to talk about the causal effect of a
-treatment on log-odds <span class="citation">(Freedman <a href="#ref-freedman2008randomization">2008</a><a href="#ref-freedman2008randomization">b</a>)</span>.</p>
+effect within a given experimental sample, this is a primary quantity of interest that our team reports. In practice, we often estimate this quantity using linear regression <span class="citation">(Angrist and Pischke <a href="#ref-angrist2009mostly">2009</a>)</span>. Similarly, since we know that the coefficient in a logistic regression of a binary outcome on a treatment indicator and a covariate is a biased estimator of the underlying causal difference in log-odds we use other approaches when we want to talk about the causal effect of a treatment on log-odds <span class="citation">(Freedman <a href="#ref-freedman2008randomization">2008</a><a href="#ref-freedman2008randomization">b</a>)</span>.</p>
 
 </div>
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
+<div id="ref-angrist2009mostly">
+<p>Angrist, Joshua D, and J&#xF6;rn-Steffen Pischke. 2009. <em>Mostly Harmless Econometrics: An Empiricist&#x2019;s Companion</em>. Princeton university press.</p>
+</div>
 <div id="ref-freedman2008randomization">
 <p>&#x2014;&#x2014;&#x2014;. 2008b. &#x201C;Randomization Does Not Justify Logistic Regression.&#x201D; <em>Statistical Science</em> 23 (2): 237&#x2013;49.</p>
 </div>

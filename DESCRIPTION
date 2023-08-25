@@ -34,7 +34,8 @@ Imports:
   ICC,
   nbpMatching,
   katex,
-  V8
+  V8,
+  knitr
 Remotes:
   rstudio/bookdown,
   markmfredrickson/RItools@proj1-balT,
