@@ -238,7 +238,7 @@ dat1$Z2armBlocked <- labelTC(block_ra(blocks=dat1$blockID))
 with(dat1,table(blockID,Z2armBlocked))
 ```
 
-If, say, there were fewer people eligible for treatment in hospital "A" --- or perhaps the intervention was more expensive in that block --- we might choose different treatment probabilities for each block. The code below assigns half of the hospital "A" patients to treatment, but only a quarter of those from hospital "B". Again, we also check that this code worked. This approach is an informal version of one of the best practices for writing code in general, called "unit testing." See the [EGAP Guide to Workflow](https://rawgit.com/egap/methods-guides/master/workflow/workflow.html#to-minimize-error-build-testing-into-the-code) for more examples.
+If, say, there were fewer people eligible for treatment in hospital "A" --- or perhaps the intervention was more expensive in that block --- we might choose different treatment probabilities for each block. The code below assigns half of the hospital "A" patients to treatment, but only a quarter of those from hospital "B". Again, we also check that this code worked. This approach is an informal version of one of the best practices for writing code in general, called "unit testing." See the [EGAP Guide to Workflow](https://egap.org/resource/10-things-to-know-about-project-workflow/) for more examples.
 
 ```{r blockra2}
 ## Blocked assignment, unequal probability

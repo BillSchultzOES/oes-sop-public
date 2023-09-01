@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-08-29">
+<meta name="date" content="2023-09-01">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1086,7 +1086,7 @@ Block A Block B
 blockID    C  T
   Block A 25 25
   Block B 25 25</code></pre>
-<p>If, say, there were fewer people eligible for treatment in hospital &#x201C;A&#x201D; &#x2014; or perhaps the intervention was more expensive in that block &#x2014; we might choose different treatment probabilities for each block. The code below assigns half of the hospital &#x201C;A&#x201D; patients to treatment, but only a quarter of those from hospital &#x201C;B&#x201D;. Again, we also check that this code worked. This approach is an informal version of one of the best practices for writing code in general, called &#x201C;unit testing.&#x201D; See the <a href="https://rawgit.com/egap/methods-guides/master/workflow/workflow.html#to-minimize-error-build-testing-into-the-code">EGAP Guide to Workflow</a> for more examples.</p>
+<p>If, say, there were fewer people eligible for treatment in hospital &#x201C;A&#x201D; &#x2014; or perhaps the intervention was more expensive in that block &#x2014; we might choose different treatment probabilities for each block. The code below assigns half of the hospital &#x201C;A&#x201D; patients to treatment, but only a quarter of those from hospital &#x201C;B&#x201D;. Again, we also check that this code worked. This approach is an informal version of one of the best practices for writing code in general, called &#x201C;unit testing.&#x201D; See the <a href="https://egap.org/resource/10-things-to-know-about-project-workflow/">EGAP Guide to Workflow</a> for more examples.</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" title="1"><span class="co">## Blocked assignment, unequal probability</span></a>
 <a class="sourceLine" id="cb46-2" title="2">dat1<span class="op">$</span>Z2armBlockedUneqProb &lt;-<span class="st"> </span><span class="kw">labelTC</span>(<span class="kw">block_ra</span>(<span class="dt">blocks=</span>dat1<span class="op">$</span>blockID,<span class="dt">block_prob =</span> <span class="kw">c</span>(.<span class="dv">5</span>,.<span class="dv">25</span>)))</a>
 <a class="sourceLine" id="cb46-3" title="3"><span class="kw">with</span>(dat1,<span class="kw">table</span>(blockID,Z2armBlockedUneqProb))</a></code></pre></div>

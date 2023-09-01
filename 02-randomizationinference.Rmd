@@ -35,7 +35,7 @@ dat1 <- read.csv("dat1.csv")
 knitr::kable(head(dat1[, c(1, 23:27)]))
 ```
 
-```{r boxplot1, fig.caption="Simulated Experimental Outcomes"}
+```{r boxplot1, fig.cap="Simulated Experimental Outcomes"}
 ## y0 and y1 are the true underlying potential outcomes.
 with(dat1,{boxplot(list(y0,y1),names=c("Control","Treatment"),ylab="Outcomes")
 stripchart(list(y0,y1),add=TRUE,vertical=TRUE)
@@ -64,7 +64,7 @@ This design-based perspective leads us to think differently about how to calcula
 ###  How do we calculate randomization-based standard errors?
 
 How would an estimate of the average treatment effect vary if we repeated an
-experiment on the same group of people multiple times (randomly re-assigning treatment)? The **standard error** of an estimate of the average treatment effect is one answer to this question. Below, we simulate a simple, individual-level experiment to develop intuition about what the standard error is.^[See http://egap.org/methods-guides/10-types-treatment-effect-you-should-know-about for a demonstration that the difference of means in the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.]
+experiment on the same group of people multiple times (randomly re-assigning treatment)? The **standard error** of an estimate of the average treatment effect is one answer to this question. Below, we simulate a simple, individual-level experiment to develop intuition about what the standard error is.^[See https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/ for a demonstration that the difference of means in the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.]
 
 ```{r simsesetup}
 ## A function to re-assign treatment and recalculate the difference of means.

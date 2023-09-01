@@ -15,7 +15,7 @@ distinguish signal from noise: studies with very few observations cannot tell
 us much about the treatment effect, while studies with very many observations
 provide a lot of information about the treatment effect. A study which
 effectively distinguishes signal from noise has excellent "statistical power,"
-and a study which cannot do this has low statistical power.  The Evidence in Governance and Politics (EGAP) Methods Guide [10 Things You Need to Know about Statistical Power](https://egap.org/methods-guides/10-things-you-need-know-about-statistical-power) describes more about what statistical power is and how to assess it.
+and a study which cannot do this has low statistical power.  The Evidence in Governance and Politics (EGAP) Methods Guide [10 Things You Need to Know about Statistical Power](https://egap.org/resource/10-things-to-know-about-hypothesis-testing/) describes more about what statistical power is and how to assess it.
 
 Before we field a research design, we assess its statistical power. If we
 anticipate that the intervention will only make a small change in peoples'
@@ -27,7 +27,7 @@ might have improved the lives of participants, but we can't argue strongly that 
 
 A good statistical test rarely rejects a true hypothesis and often rejects
 false hypotheses. The EGAP Methods Guide [10 Things to Know about Hypothesis
-Testing](https://egap.org/methods-guides/10-things-know-about-hypothesis-testing) describes the basics of hypothesis tests and explains more about how one might know that a given $p$-value arises from a test with good properties in a given research design. Our team tries to follow these practices of choosing testing procedures that are not likely to mislead analysts, both when we make our analysis plans and as we complete our analyses and re-analyses.
+Testing](https://egap.org/resource/10-things-to-know-about-hypothesis-testing/) describes the basics of hypothesis tests and explains more about how one might know that a given $p$-value arises from a test with good properties in a given research design. Our team tries to follow these practices of choosing testing procedures that are not likely to mislead analysts, both when we make our analysis plans and as we complete our analyses and re-analyses.
 
 ## Bias in Estimators
 
