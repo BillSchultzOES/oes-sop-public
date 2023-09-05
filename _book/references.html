@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-09-01">
+<meta name="date" content="2023-09-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -683,19 +683,15 @@ design-based expression for the standard error of the simple estimator of the av
 <li id="fn7"><p>What we call the &#x201C;weak null&#x201D; here corresponds to the null hypothesis this is evaluated by default in many software packages (like R and Stata) when implementing common procedures like a difference-in-means test or a linear regression. Meanwhile, the &#x201C;sharp null&#x201D; is more often evaluated when employing permutation-based procedures like those discussed in our earlier chapter on design-based inference.<a href="analysis-choices.html#fnref7" class="footnote-back">&#x21A9;</a></p></li>
 <li id="fn8"><p>Classical OLS standard errors assume away heteroscedasticity, rendering them potentially inaccurate when heteroscedasticity is present.<a href="analysis-choices.html#fnref8" class="footnote-back">&#x21A9;</a></p></li>
 <li id="fn9"><p>Specifically, the equation for feasible SE discussed in Chapter 2<a href="analysis-choices.html#fnref9" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn10"><p>Imagine
-testing two hypotheses with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3B1;</mi><mo>=</mo><mi mathvariant="normal">.</mi><mn>05</mn></mrow><annotation encoding="application/x-tex">\alpha = .05</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">&#x3B1;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">.05</span></span></span></span> but the reference distributions of the
-tests were identical: we just by accident ran the same exact code
-twice. In that case, we are really just doing one test and so haven&#x2019;t changed
-our probability of rejecting a true null hypothesis for either test. If the two
-tests were correlated at .99, we would have changed this probability but only
-very slightly since both tests would basically still be the same.<a href="analysis-choices.html#fnref10" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn11"><p>Binary outcomes implies that there are only two outcomes for
+<li id="fn10"><p>Imagine testing two hypotheses with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3B1;</mi><mo>=</mo><mi mathvariant="normal">.</mi><mn>05</mn></mrow><annotation encoding="application/x-tex">\alpha = .05</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">&#x3B1;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">.05</span></span></span></span> but the assumed reference distributions for the test statistics were identical: we just by accident ran the same exact code twice. In that case, we are really just doing one test and so haven&#x2019;t changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.<a href="analysis-choices.html#fnref10" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn11"><p>Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.<a href="analysis-choices.html#fnref11" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn12"><p>We focus on the classic Tukey HSD procedure for this illustration, which assumes equally sized groups. There are modifications to apply this procedure in other settings, such as the Tukey-Kramer approach.<a href="analysis-choices.html#fnref12" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn13"><p>Binary outcomes implies that there are only two outcomes for
 an experiment, and we have recorded one or the other. Usually, we use indicator
-variables (0, 1) to record these outcomes.<a href="analysis-choices.html#fnref11" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn12"><p>See Section 5 of
+variables (0, 1) to record these outcomes.<a href="analysis-choices.html#fnref13" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn14"><p>See Section 5 of
 <span class="citation">Hansen and Bowers (<a href="#ref-hansen_covariate_2008">2008</a>)</span> for proof that this kind of weighting is optimal from
-the perspective of precision.<a href="analysis-choices.html#fnref12" class="footnote-back">&#x21A9;</a></p></li>
+the perspective of precision.<a href="analysis-choices.html#fnref14" class="footnote-back">&#x21A9;</a></p></li>
 </ol>
 </div>
 <h3>References</h3>

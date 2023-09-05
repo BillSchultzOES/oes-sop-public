@@ -184,15 +184,12 @@ matpt
 
 ### Multiple arms
 
-Multiple treatment arms can be analyzed as above, except that we tend to have
-more than one comparison between a treated group and a control group and so
-such studies raise both substantive and statistical questions about multiple
-testing or multiple comparisons. For example, the `difference_in_means`
+Multiple treatment arms can be analyzed as above, except that we now have
+more than one comparison between a treated group and a control group. Such studies raise both substantive and statistical questions about multiple
+testing (or "multiple comparisons"). For example, the `difference_in_means`
 function asks which average treatment effect it should estimate --- and it
 only presents one comparison at a time: here we compare the treatment `T2`
-with the baseline outcome of `T1`. We can compare arms 2--3 with arm 1, as in
-the second set of results (`lm_robust` implements the same standard errors as
-`difference_in_means` but allows for more flexibility).
+with the baseline outcome of `T1`. We can also compare both of `T2` and `T3` with `T1` at the same time, as in the second set of results (`lm_robust` implements the same standard errors as `difference_in_means` but allows for more flexibility).
 
 ```{r}
 estAndSE3 <- difference_in_means(Y~Z4arms,data=dat1,condition1="T1",condition2="T2")
@@ -201,65 +198,30 @@ estAndSE3multarms <- lm_robust(Y~Z4arms,data=dat1)
 print(estAndSE3multarms)
 ```
 
-In this case, we could have $((4 \times 4)-4)/2)=6$ tests. And if there were
-really no effects, and we rejected the null at $\alpha=.05$, we would claim
-that there was at least one effect out of six tests much more than 5% of the time: $1 - ( 1 - .05)^6 = .27$ or 27% of the time we would make a false positive error, claiming an effect existed when it did not.
+In this case, we could make $((4 \times 4)-4)/2)=6$ different possible comparisons between pairs of treatment groups. If there were really no effects of any treatment, and if we chose to reject the null at the standard significance threshold of $\alpha=.05$, we would actually claim that there was at least one effect *more than 5% of the time*. $1 - ( 1 - .05)^6 = .27$, or 27% of the time, we would make a false positive error, claiming an effect existed when it did not.
 
-In general, our analysis of studies with multiple arms should reflect the fact
-that we are making multiple comparisons for two reasons. First, the family-wise
-error rate of these tests will differ from the individual error rate of single
-test. In short, testing more than one hypothesis increases the chance of making
-a Type I error (i.e., incorrectly rejecting a true null hypothesis).  Suppose
-instead of testing a single hypothesis at a conventional significance level of
-$\alpha = 0.05$ we tested two hypothesis at $\alpha = 0.05$. The probability of
-retaining both hypotheses is $(1-\alpha)^2 = .9025$  and the probability of
-rejecting at least one of these hypotheses is $1-(1-\alpha)^2 = .0975$ ---
-almost double our stated significance threshold of $\alpha = 0.05$.
+In general, our analyses of studies with multiple arms should reflect the fact that we are making multiple comparisons. Two points are worth emphasizing here. First, the family-wise error rate (FWER) of these tests will differ from the individual error rate of single test. In short, testing more than one hypothesis increases the chance of making at least one Type I error (i.e., incorrectly rejecting a true null hypothesis). Suppose instead of testing a single hypothesis at a conventional significance level of $\alpha = 0.05$ we tested two hypothesis at $\alpha = 0.05$. The probability of retaining both hypotheses is $(1-\alpha)^2 = .9025$  and the probability of rejecting at least one of these hypotheses is $1-(1-\alpha)^2 = .0975$ --- almost double our stated significance threshold of $\alpha = 0.05$.
 
-Second, multiple tests will often be correlated and our tests should recognize
-these relationships (which will penalize the multiple testing less).^[Imagine
-testing two hypotheses with $\alpha = .05$ but the reference distributions of the
-tests were identical:  we just by accident ran the same exact code
-twice. In that case, we are really just doing one test and so haven't changed
-our probability of rejecting a true null hypothesis for either test. If the two
-tests were correlated at .99, we would have changed this probability but only
-very slightly since both tests would basically still be the same.]
+Second, multiple tests will often be correlated, and our corrections for multiple testing should recognize these relationships (which will penalize the multiple testing less). When tests are correlated, this means that there is some relationship between the test statistics (e.g., student's t-statistic, or a $\chi^{2}$ statistic) used to perform inference in each case (e.g., calculating p-values). In other words, the test statistics are jointly distributed --- when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$ but the assumed reference distributions for the test statistics were identical: we just by accident ran the same exact code twice. In that case, we are really just doing one test and so haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
 
-So, our standard practice in multi-arm trials is the following:
+This in mind, our standard practice in multi-arm trials is the following:
 
- - First, decide on a focal comparison: say, control/status quo versus receiving any version of the treatment. This test has a lot of statistical power and would
- have a controlled false positive rate.
+ - First, decide on a focal, **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. This test should have more statistical power, and will also have a correctly controlled false positive rate. This will serve as the primary test on which our conclusions are based.
 
- - Next, either do the rest of the comparisons as exploration for future
-   studies --- to give hints about where we might be seeing more or less of an
- effect OR do a second series of comparisons but adjusting for the collective
- false positive rate (i.e. adjusting the Family Wise Error Rate --- see more
-		      later on when we might use FDR versus FWER).  We will
- often use the Tukey HSD procedure for pairwise comparisons in this case _or_
- test the hypotheses in a particular order to preserve statistical
- power (@rosenbaum2008a).
-
+ - Next, either perform the rest of the comparisons as **exploratory analyses** --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for overall conclusions on their own --- *OR* perform a series of additional confirmatory comparisons that adjusts for the collective false positive rate (generally to control the FWER, though we have sometimes consider adjustments to control the false discovery rate, or FDR).^[Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] We may use the Tukey HSD procedure for pairwise comparisons in a case like our example above *OR* test the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
 
 #### Adjusting p-values and confidence intervals for multiple comparisons using Tukey HSD in R
 
 Here is an illustration of how we might adjust for multiple comparisons.
 
 To reflect that fact that we are making multiple comparisons, we can adjust
-$p$-values from our tests to control the familywise error rate at $\alpha$
-through either a single step (e.g. [Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)) or stepwise
-procedure (such as the [Holm correction](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method) or
-the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)).
+$p$-values from (uncorrelated) tests to control the familywise error rate at $\alpha$ through either a single step procedure (e.g. [Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise stepwise procedure (such as the [Holm correction](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We might also control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)).
 
-Our standard practice is to adjust FWER using the Holm adjustment.
+Our standard practice is to adjust the FWER using what we often refer to as Holm correction/adjustment. For more on such adjustments and multiple comparisons see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
 
-For more on such adjustments and multiple comparisons see EGAP's [10 Things you need to know about multiple
-comparisons](8https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
-
-
-**Explain
+<!-- Explain
 here about what constitutes a family and how we choose. Also why Holm. And
-when FDR.**
-
+when FDR.-->
 
 ```{r}
 # Get p-values but exclude intercept
@@ -270,40 +232,24 @@ round(p.adjust(pvals, "holm"), 3)
 round(p.adjust(pvals, "hochberg"), 3) ## The  FDR Correction
 ```
 
-Simply adjusting $p$-values from this linear model, however, ignores the fact that
-we are likely interested in other pairwise comparisons, such as the difference
-between simply receiving an email and receiving an email with framing A (or
-framing B). It also ignores potential correlations in the distribution of test
-statistics.
+Simply adjusting $p$-values from this linear model, however, would ignore the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. It also ignores potential correlations in the distribution of test statistics.
 
-Below we demonstrate how to implement a Tukey Honest Signficant Differences
-(HSD) test. The Tukey HSD test (sometimes called a Tukey range test or just a
-Tuke test) calculates adjusted $p$-values and simultaneous confidence intervals
-from a studentized range distribution *for all pairwise comparisons* in a model,
-taking into account the correlation of test statistics.
+Below we demonstrate how to implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
+Tukey test) calculates multiple-comparison-adjusted $p$-values and simultaneous confidence intervals *for all pairwise comparisons* in a model, while taking into account possible correlations between test statistics. It is similar to a two-sample t-test, but with built in adjustment for multiple comparisons.
 
-The test statistic for any comparison between group $i$ and $j$:
+The test statistic for any comparison between two equally-sized groups $i$ and $j$ is:
 
 $$ t_{ij} = \frac{\bar{y_i}-\bar{y_j}}{s\sqrt{\frac{2}{n}}} $$
 
-Where, $\bar{y_i}$ and $\bar{y_j}$ are the means in groups $i$ and
-$j$, respectively,  $s$ is the pooled standard deviation and $n$ is the common
-sample size.
+$\bar{y_i}$ and $\bar{y_j}$ are the means in groups $i$ and
+$j$, respectively. The means are generally listed in descending order based on their size in each comparison. $s$ is the pooled standard deviation of the outcome, and $n$ is the common sample size. A critical value is then chosen for $t_{ij}$ given the desired significance level, $\alpha$, the number of groups being compared, $k$, and the degrees of freedom, $n-k$: $t_{\alpha,k,n}$.
 
-The confidence interval for any difference is simply:
+The confidence interval for any difference between equally-sized groups would then be:^[We focus on the classic Tukey HSD procedure for this illustration, which assumes equally sized groups. There are modifications to apply this procedure in other settings, such as the Tukey-Kramer approach.]
 
-$$ \left[
-	 \bar{y_i}-\bar{y_j}-u_{1-\alpha}s\sqrt{\frac{2}{n}};\bar{y_i}-\bar{y_j}+u_{1-\alpha}s\sqrt{\frac{2}{n}}\right]
-$$
+$$\left[\bar{y_i}-\bar{y_j}-t_{\alpha,k,n}s\sqrt{\frac{2}{n}}\hspace{2mm},\hspace{2mm} \bar{y_i}-\bar{y_j}+t_{\alpha,k,n}s\sqrt{\frac{2}{n}}\right]$$
 
-Where $u_{1-\alpha}$ denotes the $(1-\alpha)$-quantile of the multivariate
-$t$-distribution.
-
-
-We present an implementation of the Tukey HSD test using the `glht()` function
-from the `multcomp` package which offers more flexiblity than the
-`TukeyHSD` in the base `stats` package at the price of a slightly more complicated
-syntax.
+We present an implementation of the Tukey HSD test using the `glht()` function from the `multcomp` package, which offers more flexiblity than the
+`TukeyHSD` in the base `stats` package at the price of a slightly more complicated syntax.
 
 ```{r}
 ## We can use aov() or lm()
@@ -312,47 +258,41 @@ lmmod <- lm(Y~Z4arms, dat1)
 ```
 
 Using the `glht()` function's `linfcnt` argument, we tell the function to
-conduct a Tukey test of all pairwise comparisons for our treatment indicator,
-$Z$.
+conduct a Tukey test of all pairwise comparisons for our treatment indicator, $Z$.
 
 ```{r}
 tukey_mc <- glht(lmmod, linfct = mcp(Z4arms = "Tukey"))
-
 ```
 
 ```{r}
 summary(tukey_mc)
 ```
 
-
-We can plot the 95-percent family wise confidence intervals from these
-comparisons
+We can plot the 95% family wise confidence intervals from these comparisons
 
 ```{r tukeyplot}
-# Save dfault ploting parameters
+## Save dfault ploting parameters
 op <- par()
-# Add space to lefthand outer margin
+## Add space to left-hand outer margin
 par(oma = c(1, 3, 0, 0))
 plot(tukey_mc)
 ```
 
-And also obtain simultaneous confidence intervals at other levels of statistical
-significance using `confint()` function
+We can also obtain simultaneous confidence intervals at other levels of statistical significance using the `confint()` function.
 
 ```{r plot_tukey_ci, warnings=FALSE}
+## Generate and plot 90% confidence intervals
 tukey_mc_90ci <- confint(tukey_mc, level = .90)
 plot(tukey_mc_90ci)
-# Restore plotting defaults
-## par(op)
+## Restore plotting defaults, now
+par(op)
 ```
 
 See also: `pairwise.prop.test` for binary outcomes.
 
 ### Multiple Outcomes
 
-Some times our studies involve more than one outcome. Assessing the effect of
-even a simple two-arm treatment on 10 different outcomes raises the same kinds
-of questions that come up in the context of multi-arm trials.
+Our studies often involve more than one outcome measure. Assessing the effect of even a simple two-arm treatment on 10 different outcomes raises the same kinds of questions that come up in the context of multi-arm trials, generally requiring applications of the methods discussed above.
 
 <!-- Insert examples here? Or not?-->
 
