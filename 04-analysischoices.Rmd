@@ -1,8 +1,9 @@
-```{r setupdat14,  echo=FALSE}
+```{r setupdat14, echo=FALSE}
 ## Read in the dat1 file created from 03-randomizeddesigns.Rmd
 if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1_with_designs.csv')) }
 dat1$rankY <- rank(dat1$Y)
 ndat1 <- nrow(dat1)
+
 ```
 
 # Analysis Choices
@@ -56,8 +57,12 @@ We often assess the sharp null of no effects via direct permutation as a check o
 Below, we show how to perform these tests using two different R packages: `coin`, and `ri2`.  First the `coin` package [@R-coin]:
 
 ```{r RItest1, eval=FALSE, cache=TRUE, include=F}
-## Currently RItest is only in the randomization-distribution development branch
-## of RItools. This code would work if that branch were installed.
+## Currently, RItest is only in the randomization-distribution
+## development branch of RItools. This code would work if that branch
+## were installed. Right now (current renv package versions, as of 9/7/23)
+## it is not, and I'm (Bill) hesistant to make the code here reliant
+## on a development package that some Fellows may not be able to
+## easily install under GSA IT permissions. So, excluding this chunk.
 set.seed(12345)
 test1T <- RItest(y=dat1$Y,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
 print(test1T)
@@ -300,142 +305,130 @@ Our studies often involve more than one outcome measure. Assessing the effect of
 
 When we have background or baseline information about experimental units, we
 can use this to increase the precision with which we estimate our treatment
-effects (or, equivalently, increase the statistical power of our tests). We
-prefer to use this information during the design phase to create block
-randomized designs, but we sometimes have access to such background information
-after the study has been fielded, and so we will pre-specify use of this
-information to increase our statistical power.
+effects (or, equivalently, increase the statistical power of our tests). We prefer to use this information during the design phase to create block randomized designs, but we sometimes only have access to such background information after the study has been fielded, and so we will pre-specify use of this information to increase our statistical power.
 
-We tend to avoid the practice of adjusting for the covariates
-in a linear and additive fashion because of this estimator of the average
-treatment effect is biased [@freedman2008rae] whereas a version of the
-estimator that we call the "Lin estimator" is not [@lin_agnostic_2013]. Note
-that the bias in the commonly used linear covariance adjustment estimator tends to
-be quite small, and especially small when sample sizes are large
-[@lin_agnostic_2013]. Yet, because it is basically costless to use the Lin
-estimator, this is our standard  practice (see also
-<https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html>)
+We often wish to avoid the practice of adjusting for covariates (and fixed effect dummies) in a linear and additive fashion. This estimator of the average treatment effect can be biased and --- counterintuitively --- *less* (asymptotically) efficient [@freedman2008rae].^[@lin_agnostic_2013 notes that this problem appears *asymptotically* when a 2-arm design is imbalanced (more observations in one arm), or when a covariate has a stronger relationship with a unit's treatment effect than with it's expected outcome. This problem may also appear *asymptotically* in a 3+ arm design, regardless of balance.] In contrast, an approach to covariate adjustment that we call the "Lin estimator" does not experience these problems [@lin_agnostic_2013]. Note that the bias/precision-loss attributable to the commonly used linear covariance adjustment estimator tends to be quite small, and especially small when sample sizes are large [@lin_agnostic_2013]. Yet, because it is frequently costless to use the Lin estimator in sufficiently large samples, this is our default recommendation (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, a good number of our projects encounter situations where linear, additive covariate adjustment is still preferred.^[For instance, as the number of parameters to be estimated becomes large relative to a study's sample size, we may judge that the loss of degrees of freedom due to Lin adjustment is not worth it's potential benefits.]
 
 ### Intuition about bias in the least squares estimator of the ATE with covariates
 
-When we estimate the average treatment effect by using a least squares we tend
-to say that we "regress" some outcome for each unit $i$, $Y_i$, on (often
-binary) treatment assignment, $Z_i$, where $Z_i=1$ if a unit is assigned to
-treatment and 0 if assigned to control. And we write a linear model relating
-$Z$ and $Y$ as below, where $\beta_1$ represents the difference in means of $Y$ between units with $Z=1$ and $Z=0$:
+When we estimate the average treatment effect by using a least squares we tend to say that we "regress" some outcome for each unit $i$, $Y_i$, on (often binary) treatment assignment, $Z_i$, where $Z_i=1$ if a unit is assigned to treatment and 0 if assigned to control. And we write a linear model relating $Z$ and $Y$ as below, where $\beta_1$ represents the difference in means of $Y$ between units with $Z=1$ and $Z=0$:
 
+$$
 \begin{equation}
-Y_i = \beta_0 + \beta_1 Z_i + e_i (\#eq:olsbiv)
+Y_i = \beta_0 + \beta_1 Z_i + e_i
 \end{equation}
+$$
 
-This is a common practice because, we know that the formula to estimate $\beta_1$ in equation \@ref(eq:olsbiv) is the same as the difference of means in $Y$ between treatment and control groups:
+This is a common practice because, we know that the formula to estimate $\beta_1$ in Equation (1) is the same as the difference of means in $Y$ between treatment and control groups:
 
+$$
 \begin{equation}
-\hat{\beta}_1 = \overline{Y|Z=1} - \overline{Y|Z=0} = \frac{cov(Y,Z)}{var(Z)}.
+\hat{\beta}_1 = \overline{Y}_{Z=1} - \overline{Y}_{Z=0} = \frac{\cov(Y,Z)}{\var(Z)}.
 \end{equation}
+$$
+This last term, expressed with covariances and variances, is the expression for the least squares coefficient in a bivariate linear least squares model. This estimator of the average treatment effect has no systematic error (i.e., it is unbiased), so we can write $E_R(\hat{\beta}_1)=\beta_1 \equiv \text{ATE}$, where $E_R(\hat{\beta}_1)$ refers to the expectation of $\hat{\beta}_{1}$ across randomizations consistent with the experimental design.
 
-This last term, expressed with covariances and variances, is the expression for the least squares coefficient in a bivariate linear least squares model. And we also know that this estimator of the average treatment effect has no systematic error (i.e. is unbiased), so we can write $E_R(\hat{\beta}_1)=\beta_1 \equiv \text{ATE}$ where we take the expectation across randomizations consistent with the experimental design.
+Sometimes we have an additional (pre-treatment) covariate $X_i$ commonly used in the analysis of non-experimental data as follows:
 
-Now, sometimes we have a covariate $X_i$ and we use it as would be common in the analysis of non-experimental data:
-
+$$
 \begin{equation}
-Y_i = \beta_0 + \beta_1 Z_i + \beta_2 X_i + e_i (\#eq:olscov)
+Y_i = \beta_0 + \beta_1 Z_i + \beta_2 X_i + e_i
 \end{equation}
+$$
 
-What is $\beta_1$ in this case? We know the matrix representation here $(\bX^{T}\bX)^{-1}\bX^{T}\by$, but here is the scalar formula for this particular case in \@ref(eq:olsbiv):
+What is $\beta_1$ in this case? The matrix representation here is: $(\beta X^{T}\beta X)^{-1}\beta X^{T}\beta y$. But it will be more useful to examine the scalar formula for this particular case:
 
 $$ \hat{\beta}_1 = \frac{\var(X)\cov(Z,Y) - \cov(X,Z)\cov(X,Y)}{\var(Z)\var(X) - \cov(Z,X)^2} $$
 
-In very large experiments $\cov(X,Z) \approx 0$ --- because $Z$ is randomly
-assigned and is thus independent of background variables like $X$ ---  however
-in any given finite sized experiment $cov(X,Z) \ne 0$ so this does not reduce
-to the unbiased estimator of the bivariate case. Thus, @freedman2008rae showed
-that there is a small amount of bias in using equation \@ref(eq:olscov) to
-estimate the average treatment effect.
+In very large experiments $\cov(X,Z) \approx 0$ because $Z$ is randomly
+assigned and is thus independent of background variables like $X$. However in any given finite sized experiment $\cov(X,Z) \ne 0$, so this does not reduce to an unbiased estimator as it does in the bivariate case. Thus, @freedman2008rae showed that there is a small amount of bias in using the equation above to estimate the average treatment effect.
 
 As a way to engage with this problem, @lin_agnostic_2013 suggested using the
-following least squares approach --- regressing the outcome on binary treatment
-assignment $Z_i$ and its interaction with mean-centered covariates.
+following least squares approach --- regressing the outcome on binary treatment assignment $Z_i$ and its interaction with mean-centered covariates.
 
+$$
 \begin{equation}
-Y_i = \beta_0 + \beta_1 Z_i + \beta_2 ( X_i  -  \bar{X} ) + \beta_3 Z_i (X_i - \bar{X}) +  e_i(\#eq:olscov) 
+Y_i = \beta_0 + \beta_1 Z_i + \beta_2 ( X_i - \bar{X} ) + \beta_3 Z_i (X_i - \bar{X}) +  e_i
 \end{equation}
+$$
 
-See the [Green-Lin-Coppock
-SOP](https://alexandercoppock.com/Green-Lab-SOP/Green_Lab_SOP.html#using-covariates-in-analysis)
-for more examples of this approach to covariance adjustment.
+See the [Green-Lin-Coppock SOP](https://alexandercoppock.com/Green-Lab-SOP/Green_Lab_SOP.html#using-covariates-in-analysis) for more examples of this approach to covariance adjustment.
 
+### Illustrating the Lin Approach to Covariance Adjustment
 
-### The Lin Approach to Covariance Adjustment
+Now, we show how covariance adjustment can create bias in estimation of the average treatment effect --- and how to reduce this bias while using the Lin procedure as well as by increasing the size of the experiment. In this case, we compare an experiment with 20 units to an experiement with 100 units, in each case with half of the units assigned to treatment by complete random assignment.
 
-Here we show how covariance adjustment can create bias in estimation of the
-average treatment effect --- and how to reduce this bias while using the Lin
-procedure as well as by increasing the size of the experiment. In this case, we
-compare an experiment with 20 units to an experiement with 100 units, in each
-case with half of the units assigned to treatment by complete random
-assignment.
+We use the [DeclareDesign](https://declaredesign.org/) R package to make
+this process of assessing bias easier. Much of the code that follows
+is providing instructions to the `diagnose_design` command, which repeats the design of the experiment many times, each time estimating an average treatment effect, and comparing the mean of those estimate to the truth (labeled "Mean Estimand" below).
 
-We use the [DeclareDesign](https://declaredesign.org/) package for R to make
-this process of assessing bias easier. So, much of the code that follows
-provides input to the `diagnose_design` command which repeats the design of the
-experiment many times, each time estimating an average treatment effect, and
-comparing the mean of those estimate to the truth (labeled "Mean Estimand"
-below).
+The true potential outcomes (`y1` and `y0`) are generated using one covariate, called `cov2`, with *no true treatment effect*. In what follows we compare the performance of the simple estimator using OLS, to estimators that use Lin's procedure involving just the correct covariate, to estimators that use incorrect covariates (since we rarely know exactly the covariates that help generate any given behavioral outcome).
 
-The true potential outcomes (`y1` and `y0`) are generated using one covariate,
-called `cov2`.  In what follows we compare the performance of the simple
-estimator using OLS, to estimators that use Lin's procedure involving just the
-correct covariate, to estimators that use incorrect covariates (since we rarely
-know exactly the covariates that help generate any given behavioral outcome).
+We'll break this code up into sections to help with legibility. First, let's prepare `design` objects (a class used by `DeclareDesign`) for the $n=20$ and $n=100$ designs.
 
 ```{r lianestimatorexample,results="hide"}
-##summary(lm(y0~cov2,data=dat1))$r.squared
-##summary(lm(y1~cov2,data=dat1))$r.squared
-
+## Keep a dataframe of select variables
 wrkdat1 <- dat1 %>% dplyr::select(id,y1,y0,contains("cov"))
+
+## Declare this as our larger population
+## (an experimental sample of 100 units)
 popbigdat1 <- declare_population(wrkdat1)
 
-## Make a small dataset to represent a small experiment or a cluster randomized experiment with few clusters
+## A dataset to represent a smaller experiment,
+## or a cluster randomized experiment with few clusters
+## (an experimental sample of 20 units)
 set.seed(12345)
 smalldat1 <- dat1 %>% dplyr::select(id,y1,y0,contains("cov")) %>% sample_n(20)
+
 ## The relevant covariate is a reasonably strong predictor of the outcome
 summary(lm(y0~cov2,data=smalldat1))$r.squared
 
-### Now declare the differeent inputs for DeclareDesign
+## Now declare the differeent inputs for DeclareDesign
+## (declare the smaller population, and assign treatment in each)
 popsmalldat1 <- declare_population(smalldat1)
-
 assignsmalldat1  <- declare_assignment(Znew=complete_ra(N,m=10))
 assignbigdat1  <- declare_assignment(Znew=complete_ra(N,m=50))
 
-## No additional treatment effects other than those created when we made y0 and y1 earlier
+## No additional treatment effects
+## (potential outcomes)
 po_functionNull <- function(data){
 	data$Y_Znew_0 <- data$y0
 	data$Y_Znew_1 <- data$y1
 	data
 }
 
+## A few additional declare design settings
 ysdat1  <- declare_potential_outcomes(handler = po_functionNull)
 theestimanddat1 <- declare_inquiry(ATE = mean(Y_Znew_1 - Y_Znew_0))
 theobsidentdat1 <- declare_reveal(Y, Znew)
 
-thedesignsmalldat1 <- popsmalldat1 + assignsmalldat1 + ysdat1 + theestimanddat1 +
-	theobsidentdat1
+## The smaller sample design
+thedesignsmalldat1 <- popsmalldat1 + assignsmalldat1 + ysdat1 + theestimanddat1 + theobsidentdat1
 
-thedesignbigdat1 <- popbigdat1 + assignbigdat1 + ysdat1 + theestimanddat1 +
-	theobsidentdat1
+## The larger sample design
+thedesignbigdat1 <- popbigdat1 + assignbigdat1 + ysdat1 + 
+  theestimanddat1 + theobsidentdat1
 
 ```
 
+Next, we'll prepare a list of estimators (i.e., models) we want to compare. These models include different numbers of covariates, with and without Lin (2013) adjustment.
+
 ```{r covadjestimators}
-estCov0 <- declare_estimator(Y~Znew, inquiry=theestimanddat1, model=lm_robust, label="CovAdj0: Lm, No covariates")
-estCov1 <- declare_estimator(Y~Znew+cov2, inquiry=theestimanddat1, model=lm_robust, label="CovAdj1: Lm,Correct Covariate")
-estCov2 <- declare_estimator(Y~Znew+cov1+cov2+cov3+cov4+cov5+cov6+cov7+cov8, inquiry=theestimanddat1, model=lm_robust, label="CovAdj2: Lm,  Mixed Covariates")
-estCov3 <- declare_estimator(Y~Znew+cov1+cov3+cov4+cov5+cov6, inquiry=theestimanddat1, model=lm_robust, label="CovAdj3: Lm, Wrong Covariates")
-estCov4 <- declare_estimator(Y~Znew,covariates=~cov1+cov2+cov3+cov4+cov5+cov6+cov7+cov8, inquiry=theestimanddat1, model=lm_lin, label="CovAdj4: Lin, Mixed Covariates")
-estCov5 <- declare_estimator(Y~Znew,covariates=~cov2, inquiry=theestimanddat1, model=lm_lin, label="CovAdj5: Lin, Correct Covariate")
+## Declare a selection of different estimation strategies
+estCov0 <- declare_estimator(Y~Znew, inquiry=theestimanddat1, .method=lm_robust, label="CovAdj0: Lm, No covariates")
+estCov1 <- declare_estimator(Y~Znew+cov2, inquiry=theestimanddat1, .method=lm_robust, label="CovAdj1: Lm,Correct Covariate")
+estCov2 <- declare_estimator(Y~Znew+cov1+cov2+cov3+cov4+cov5+cov6+cov7+cov8, inquiry=theestimanddat1, .method=lm_robust, label="CovAdj2: Lm,  Mixed Covariates")
+estCov3 <- declare_estimator(Y~Znew+cov1+cov3+cov4+cov5+cov6, inquiry=theestimanddat1, .method=lm_robust, label="CovAdj3: Lm, Wrong Covariates")
+estCov4 <- declare_estimator(Y~Znew,covariates=~cov1+cov2+cov3+cov4+cov5+cov6+cov7+cov8, inquiry=theestimanddat1, .method=lm_lin, label="CovAdj4: Lin, Mixed Covariates")
+estCov5 <- declare_estimator(Y~Znew,covariates=~cov2, inquiry=theestimanddat1, .method=lm_lin, label="CovAdj5: Lin, Correct Covariate")
+
+## List them all together
+all_estimators <- estCov0 + estCov1 + estCov2 +
+	estCov3 + estCov4 + estCov5
 ```
 
 ```{r testestimators, echo=FALSE, results=FALSE}
+## Testing, hidden from book
 blah <- draw_data(thedesignsmalldat1)
 blahBig <- draw_data(thedesignbigdat1)
 estCov0(blah)
@@ -446,63 +439,63 @@ estCov4(blah)
 estCov5(blah)
 ```
 
-```{r setup_design_plus_est_objects}
-thedesignsmalldat1PlusEstimators <- thedesignsmalldat1 + estCov0 + estCov1 + estCov2 +
-	estCov3 + estCov4 + estCov5
+After this, we'll add those estimators to our `design` class objects.
 
-thedesignbigdat1PlusEstimators <- thedesignbigdat1 + estCov0 + estCov1 + estCov2 +
-	estCov3 + estCov4 + estCov5
+```{r setup_design_plus_est_objects}
+## Add the estimators to those design objects
+
+## Smaller sample
+thedesignsmalldat1PlusEstimators <- thedesignsmalldat1 + all_estimators
+
+## Larger sample
+thedesignbigdat1PlusEstimators <- thedesignbigdat1 + all_estimators
 ```
 
+Now, let's simulate each design 200 times and evaluate their performance. First, the smaller sample:
+
 ```{r diagnosisCovAdj1, cache=TRUE, results="hide"}
+## Summarize characteristics of the smaller-sample designs
 sims <- 200
 set.seed(12345)
 thediagnosisCovAdj1 <- diagnose_design(thedesignsmalldat1PlusEstimators, sims = sims, bootstrap_sims = 0)
-thediagnosisCovAdj1
 ```
+
+Lastly, the larger sample: 
 
 ```{r diagnosisCovAdj2, cache=TRUE, results="hide"}
+## Summarize characteristics of the larger-sample designs
 set.seed(12345)
 thediagnosisCovAdj2 <- diagnose_design(thedesignbigdat1PlusEstimators, sims = sims, bootstrap_sims = 0)
-thediagnosisCovAdj2
 ```
 
-After 1000 simulations using the small experiment (N=20) we can see that the
+After 200 simulations using the small experiment (N=20) we can see that the
 "CovAdj1: Lm, Correct Covariate" lines show fairly large bias compared to the
-estimator using no covariates at all. The Lin approach using only the known to
-be correct covariate reduces the bias, but does not erase it. However, the
-unadjusted estimator has fairly low power  where as the Lin approach with the
+estimator using no covariates at all. The Lin approach using only the correct covariate reduces the bias, but does not erase it. However, the
+unadjusted estimator has fairly low power where as the Lin approach with the
 correct covariate "CovAdj5: Lin, Correct Covariate" has excellent power to
-detect the 1 SD effect built into this experiment. One interesting result here
-is that the Lin approach is worst (in power and even false positive rate
+detect the 1 SD effect built into this experiment. One interesting result here is that the Lin approach is worst (in power and even false positive rate
 (called "Coverage" below) when a mixture or correct and incorrect covariates
-are added to the linear model following the interaction-and-centering based
-approach.
+are added to the linear model following the interaction-and-centering based approach.
 
 ```{r diagnostCovAdj1}
 diagcols <- c(3,5,6,7,8,9,10,11)
-## See https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
-kable(reshape_diagnosis(thediagnosisCovAdj1)[,diagcols] ) # %>% kable_styling() %>% scroll_box(width = "100%", height = "400px")
+kable(reshape_diagnosis(thediagnosisCovAdj1)[,diagcols] )
 ```
 
 The experiment with $N=100$ shows much smaller bias than the small experiment
 above. Since all estimators allow us to detect the 1 SD effect (Power=1), the
-RMSE (Root Mean Squared Error) column or "Mean Se" columns tell us about the
-precision of the estimators. Again, the unadjusted approach has low bias, but
-has the largest standard error. While the Lin approach with a mixture of
-correct and incorrect covariates has low bias, it shows slightly worse coverage
-(or false positive error rate) even it has most precision.
+RMSE (Root Mean Squared Error) column tell us about the precision of the estimators. Again, the unadjusted approach has low bias, but has the largest standard error. While the Lin approach with a mixture of correct and incorrect covariates has low bias, it shows slightly worse coverage (or false positive error rate), even if it has the most precision.
 
 ```{r diagnostCovAdj2}
-## See https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
-kable(reshape_diagnosis(thediagnosisCovAdj2)[,diagcols] ) # %>% kable_styling() %>% scroll_box(width = "100%", height = "400px")
+kable(reshape_diagnosis(thediagnosisCovAdj2)[,diagcols] )
 ```
 
-
-```{r setupgraph}
+```{r setupgraph, eval = F, echo = F}
+## Bill: not sure what the intended takeaway is here.
+## This code (and chunk below) was already left out of the SOP.
+## Past authors have trouble getting this to run? To potentially revisit.
 simdesignsCovAdj1 <- get_simulations(thediagnosisCovAdj1)
 trueATE1covadj <- with(dat1,mean(y1-y0))
-
 ## simdesigns <- simulate_design(thedesign,sims=sims)
 simmeansCovAdj1 <- simdesignsCovAdj1 %>% group_by(estimator) %>% summarize(expest=mean(estimate))
 ```
@@ -522,118 +515,105 @@ print(g)
 Although the Lin approach works well when covariates are few and sample sizes
 are large, these simulations show where the approach is weak: when covariates
 are many. In this case the estimator involving both correct and irrelevant
-covariates used 18 terms. Fitting a model with 18 terms with N=20 allows nearly
-any observation to exert undue influence, increases the risk of serious
-multicollinearity, and leads to overfitting problems in general.
+covariates used 18 terms. Fitting a model with 18 terms with N=20 allows nearly any observation to exert undue influence, increases the risk of serious multicollinearity, and leads to overfitting problems in general.
 
-So far, our team has not run into this problem because our studies have tended
-to involve many thousands of units and relatively few covariates. However, we
-are considering a few alternative approaches should we confront this situation
-in the future such as (1) collapsing the covariates into fewer dimensions
-(using a Mahalanobis distance or principal components based distance) or
-working with a residualized version of the outcome as described below.
+Our team does not often run into such an extreme version of this problem because our studies have tended to involve many thousands of units and relatively few covariates. However, when we do encounter situations where the number of covariates (or fixed effects) we'd like to include in Lin (2013) adjustment seems large, we consider a few alternative approaches: (1) standard linear, additive covariate adjustment; (2) collapsing the covariates into fewer dimensions (e.g., using principal component analysis); or (3) working with a residualized version of the outcome, as described below.
 
 ### The Rosenbaum Approach The Covariance Adjustment
 
-When we have many covariates, sometimes the Lin style approach prevents us from
-calculating appropriate standard errors and/or can have inflated bias due to
-overfitting. @rosenbaum:2002a showed an approach in which the outcomes are
-regressed on covariates, ignoring treatment assignment, and then the residuals
-from that regression are used to estimate an average treatment effect.
+When we have many covariates, sometimes the Lin style approach prevents us from calculating appropriate standard errors and/or can have inflated bias due to overfitting. @rosenbaum:2002a showed an approach in which the outcomes are regressed on covariates, ignoring treatment assignment, and then the residuals from that regression are used to estimate an average treatment effect.
 
-We do a similar evaluation of that approach here.
+We evaluate that approach through simulation below:^[For a little more context on this R code, it may be useful to consult the Chapter of Advanced R on [function factories](https://adv-r.hadley.nz/function-factories.html).]
+
+First, code we use to generate Rosenbaum (2002) estimators:
 
 ```{r rosenbaumstylecov}
-
+## The argument covs is a character vector of names of covariates.
+## Given a vector of covariates, this function generates
+## a separate estimation command that performs Rosenbaum (2002)
+## adjustment for the specified covariates, given a sample of data.
+## This new function can then by used as an estimator in 
+## DeclareDesign simulations below.
 make_est_fun<-function(covs){
-	## covs is a vector of character names of covariates
-        force(covs)
-        covfmla <- reformulate(covs,response="Y")
-        function(data){
-		data$e_y <- residuals(lm(covfmla,data=data))
-                obj <-lm_robust(e_y~Znew,data=data)
-                res <- tidy(obj) %>% filter(term=="Znew")
-                return(res)
-        }
-}
+  
+  force(covs)
+  
+  ## Generate a formula from the character vector of covariates
+  covfmla <- reformulate(covs,response="Y")
+  
+  ## What the new function to-be-generated will do,
+  ## given the model generated above:
+  function(data){
+    data$e_y <- residuals(lm(covfmla,data=data))
+    obj <- lm_robust(e_y~Znew,data=data)
+    res <- tidy(obj) %>% filter(term=="Znew")
+    return(res)
+    }
+  
+  }
 
+## Make Rosenbaum (2002) estimators for different groups of covariates
 est_fun_correct <- make_est_fun("cov2")
 est_fun_mixed<- make_est_fun(c("cov1","cov2","cov3","cov4","cov5","cov6","cov7","cov8"))
 est_fun_incorrect <- make_est_fun(c("cov1","cov2","cov3","cov4","cov5","cov6"))
 
-## est_fun_correct(blah)
+## Declare additional estimators, to add to the designs above
+estCov6 <- declare_estimator(handler = label_estimator(est_fun_correct), inquiry=theestimanddat1, label="CovAdj6: Resid, Correct")
+estCov7 <- declare_estimator(handler = label_estimator(est_fun_mixed), inquiry=theestimanddat1, label="CovAdj7: Resid, Mixed")
+estCov8 <- declare_estimator(handler = label_estimator(est_fun_incorrect), inquiry=theestimanddat1, label="CovAdj8: Resid, InCorrect")
 
-estCov6 <- declare_estimator(handler = tidy_estimator(est_fun_correct), inquiry=theestimanddat1, label="CovAdj6: Resid, Correct")
-estCov7 <- declare_estimator(handler = tidy_estimator(est_fun_mixed), inquiry=theestimanddat1, label="CovAdj7: Resid, Mixed")
-estCov8 <- declare_estimator(handler = tidy_estimator(est_fun_incorrect), inquiry=theestimanddat1, label="CovAdj8: Resid, InCorrect")
-
-thedesignsmalldat1PlusRoseEstimators <- thedesignsmalldat1 + estCov0 + estCov1 + estCov2 +
-	estCov3 + estCov4 + estCov5 + estCov6 + estCov7 + estCov8
-
-thedesignbigdat1PlusRoseEstimators <- thedesignbigdat1 + estCov0 + estCov1 + estCov2 +
-	estCov3 + estCov4 + estCov5 + estCov6 + estCov7 + estCov8
+## Add the additional estimators
+thedesignsmalldat1PlusRoseEstimators <- thedesignsmalldat1 + all_estimators + estCov6 + estCov7 + estCov8
+thedesignbigdat1PlusRoseEstimators <- thedesignbigdat1 + all_estimators + estCov6 + estCov7 + estCov8
 
 ```
+
+Evaluating a design that applies those estimators (alongside the others above) to our smaller sample:
 
 ```{r diagnosisCovAdj3, cache=TRUE, results="hide"}
 set.seed(12345)
 thediagnosisCovAdj3 <- diagnose_design(thedesignsmalldat1PlusRoseEstimators, sims = sims, bootstrap_sims = 0)
-thediagnosisCovAdj3
 ```
+
+Evaluating a design that applies those estimators (alongside the others above) to our larger sample:
 
 ```{r diagnosisCovAdj4, cache=TRUE, results="hide"}
 set.seed(12345)
 thediagnosisCovAdj4 <- diagnose_design(thedesignbigdat1PlusRoseEstimators, sims = sims, bootstrap_sims = 0)
-thediagnosisCovAdj3
 ```
 
 With a small sample (N=20), the Rosenbaum-style approach yields very little
 bias and quite high power using the correct covariate ("CovAdj6: Resid,
-Correct"), but poor performance in terms of bias and coverage with incorrect
+Correct"), but performs poorly in terms of bias and coverage with incorrect
 covariates  --- recall that coverage here uses the t-test that in turn relies
-on asymptotic approximations, and we are challenging this approximation with a
-small experiment and overfitting problems.
+on asymptotic approximations, and we are challenging this approximation with a small experiment and overfitting problems.
 
 ```{r diagnostCovAdj3}
-## See https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
-kable(reshape_diagnosis(thediagnosisCovAdj3)[7:9,diagcols] ) #%>% kable_styling() %>% scroll_box(width = "100%", height = "400px")
+kable(reshape_diagnosis(thediagnosisCovAdj3)[7:9,diagcols] )
 ```
 
-With a larger experiment, the bias goes down, but coverage is poor with
+With a larger experiment, the bias goes down, but coverage remains poor with
 incorrect covariates in this approach as well. We speculate that performance
-might improve if we fit the covariance adjustment models that produce residuals
-separately for the treated and control groups.
-
+might improve if we fit covariance adjustment models that produce residuals separately for the treated and control groups.
 
 ```{r diagnostCovAdj4}
-## See https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
-kable(reshape_diagnosis(thediagnosisCovAdj4)[7:9,diagcols] ) # %>% kable_styling() %>% scroll_box(width = "100%", height = "400px")
+kable(reshape_diagnosis(thediagnosisCovAdj4)[7:9,diagcols] )
 ```
 
 ## How to choose covariates for covariance adjustment?
 
-Our analysis plans commonly specify a few covariates based on what we know about the
-mechanisms and context of the study. In general, if we have a measurement of
-the outcome *before the treatment was assigned*, the baseline outcome, we try
-to use it via blocking and/or via covariance adjustment.
+Our analysis plans commonly specify a few covariates based on what we know about the mechanisms and context of the study. In general, if we have a measurement of the outcome *before the treatment was assigned* --- the baseline outcome --- we try to use it as a part of a blocking or covariance adjustment strategy.
 
-When we have access to many covariates, we sometimes use simple machine
-learning methods to select variables that strongly predict the outcome.
+When we have access to many covariates, we may sometimes use simple machine
+learning methods to select variables that strongly predict the outcome, such as a lasso model. In particular, we tend to prefer the *adaptive lasso* rather than a simple lasso because it has better theoretical properties [@zou2006adaptive], but also because the adaptive lasso tends to produce sparser results --- and the bias from covariance adjustment can be severe if we add too many covariates to a covariance adjustment procedure.
 
-#### Example of using the adaptive lasso for variable selection
+<!-- #### Example of using the adaptive lasso for variable selection -->
 
-Here we show how we use baseline data, data collected before the treatment was
-assigned or new policy implemented, to choose covariates that we then use as
-we have described above.
+<!-- Here, we show how we use *baseline data*, or data collected before treatment was assigned or a new policy was implemented, to choose covariates to include later in blocking or covariance adjustment. -->
 
-We tend to use the adaptive lasso rather than the simple lasso because the
-adaptive lasso has better theoretical properties (insert citation to Zhou) but
-also because the adaptive lasso tends to produce sparser results --- and the
-bias from covariance adjustment can be severe if we add many many covariates to
-a covriance adjustment procedure.
+<!-- We tend to use the adaptive lasso rather than the simple lasso because the adaptive lasso has better theoretical properties [@zou2006adaptive] but also because the adaptive lasso tends to produce sparser results --- and the bias from covariance adjustment can be severe if we add many many covariates to a covriance adjustment procedure. -->
 
-**TO DO**
-
+<!-- **TO DO** -->
 
 ## Block-randomized trials {#blockrandanalysis}
 
