@@ -617,49 +617,19 @@ learning methods to select variables that strongly predict the outcome, such as 
 
 ## Block-randomized trials {#blockrandanalysis}
 
-We design block-randomized trials by splitting units into groups based on
-predefined characteristics --- covariates that cannot be changed by the
-experimental treatment --- and then randomly assigning treatment within each
-group.  We use this procedure when we want to increase our ability to detect
-signal from noise and we think that the noise, or variation in the outcome of
-the experiment, is driven in part by the covariates that we use for blocking.
-For example, if we imagine the patterns of energy use will tend to differ
-according to size of family, we may create blocks or strata of different family
-sizes and randomly assign an energy saving intervention separately within those
-blocks. We also design block-randomized experiments when we want to assess
-effects within and across subgroups (for example, if we want to ensure that we
-have enough statistical power to detect a *difference in effects* between
-veterans and non-veterans). If we have complete random assignment, it is likely
-that the proportion of veterans assigned treatment will not be exactly same as
-the proportion of non-veterans receiving treatment. However, if we stratify or
-block the group on military status, and randomly assign treatment and control
-within each group, we can then ensure that equal proportions (or numbers) or
-veterans and non-veterans receive the treatment and control.
+We design block-randomized trials by splitting units into groups based on predefined characteristics --- covariates that cannot be changed by the experimental treatment --- and then randomly assigning treatment within each
+group. We use this procedure when we want to increase our ability to detect
+signal from noise. It assumes that the noise, or random variation in the outcome measure, is associated with the variables that we use to assign blocks. For example, if we imagine that patterns of energy use will tend to differ according to size of family, we may create blocks or strata of different family sizes and randomly assign an energy saving intervention separately within those blocks. We also design block-randomized experiments when we want to assess effects within and across subgroups (for example, if we want to ensure that we have enough statistical power to detect a *difference in effects* between veterans and non-veterans). If we have complete random assignment, it is likely that the proportion of veterans assigned treatment will not be exactly same as the proportion of non-veterans receiving treatment. However, if we stratify or block the group on military status, and randomly assign treatment and control within each group, we can then ensure that equal proportions (or numbers) or veterans and non-veterans receive the treatment and control.
 
-Most of the general ideas that we demonstrated in the context of completely
-randomized trials have direct analogues in the case of block randomized trials.
-The only additional question that arises with block randomized trials is about
-how to weight the contributions of each individual block when calculating an
-overall average treatment effect or testing an overall hypothesis about
-treatment effects.
+Most of the general ideas that we demonstrated in the context of completely randomized trials have direct analogues in the case of block randomized trials. The only additional question that arises with block randomized trials is about how to weight the contributions of each individual block when calculating an overall average treatment effect or testing an overall hypothesis about treatment effects.
 
-We begin here with the simple case of testing the sharp null of no effects when
-we have a binary outcome --- in the case of the Cochran-Mantel-Haenszel test
-the weighting of the different blocks is automatic.
+We begin here with the simple case of testing the sharp null of no effects when we have a binary outcome --- in the case of a Cochran-Mantel-Haenszel test the weighting of different blocks is handled automatically.
 
 ### Testing the null of no effects with binary outcomes and block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables
 
-We use the CMH test as a test of no effect for block-randomized trials with
-binary outcome.^[Binary outcomes implies that there are only two outcomes for
-an experiment, and we have recorded one or the other.  Usually, we use indicator
-variables (0, 1) to record these outcomes.]  Because the blocks or strata are
-important to the experiment and outcomes, we want to keep the outcomes for each
-strata intact rather than pooling the outcomes together.  Since we repeat the
-same experiment across each stratum, the CMH test tells us if the odds
-ratio in the experiments indicate that there is an association
-between outcomes and treatment/control across strata [@cochran_methods_1954;@mantel_statistical_1959].
+We might use the CMH test as a test of no effect for block-randomized trials with a binary outcome.^[By "binary outcome," we mean that there are only two outcomes for an experiment, and we have recorded one or the other. Usually, we use indicator variables (0, 1) to record these outcomes.] We want to keep the outcomes for each strata intact rather than pooling the outcomes together --- under blocking, we are effectively repeating the same experiment within each stratum. The CMH test tells us if the odds ratio in the experiments indicate that there is an association between outcomes and treatment/control across strata [@cochran_methods_1954;@mantel_statistical_1959].
 
-To set up the CMH test, we need *k* sets of 2x2 contingency tables.  Suppose
+To set up the CMH test, we need *k* sets of 2x2 contingency tables. Suppose
 the table below represents outcomes from stratum *i* where A,B,C, and D are
 counts of observations:
 
@@ -669,57 +639,54 @@ Treatment | A         | B           | A+B
 Control   | C         | D           | C+D
 Total     | A+C       | B+D         | A+B+C+D = T
 
-The CMH test statistic compares the sum of squared deviation between observed
-and expected outcomes of an experiment within one stratum to the variance of
-those outcomes, conditional on marginal totals.
+The CMH test statistic takes the sum of the deviations between observed and expected outcomes within each stratum, squares this sum, and compares it to the sum of the variance of the outcome within each strata:
 
-\[CMH = \frac{\sum_{i=1}^{k} (A_{i} -
-\mathrm{E}[{A_{i}}])}{\sum{\mathrm{VAR}[{A_i}]}}\]
+$$
+CMH = \frac{\big[\sum_{i=1}^{k} (A_{i} -
+\mathrm{E}[{A_{i}}])\big]^{2}}{\sum_{i=1}^{k}{\mathrm{\var}[{A_i}]}}
+$$
 
-where \[\mathrm{E}[A_{i}] =  \frac{(A_i+B_i)(A_i+C_i)}{T_i}\]
+where $$\mathrm{E}[A_{i}] = \frac{(A_i+B_i)(A_i+C_i)}{T_i}$$
 
-and \[\mathrm{VAR}[A_{i}] =
-\frac{(A_i+B_i)(A_i+C_i)(B_i+D_i)(C_i+D_i)}{{T_i}^2(T_i-1)}\]
+and $$\var[A_{i}] =
+\frac{(A_i+B_i)(A_i+C_i)(B_i+D_i)(C_i+D_i)}{{T_i}^2(T_i-1)}$$
 
 In large enough samples, if there are no associations between Treatment and
 Reponse across strata, we would expect to see an odds ratio which is equal to
 1, and, across randomizations and in large samples, this test statistic would
 have an asymptotic $\chi^2$ distribution with degrees of freedom = 1.
 
-The odds ratio in this scenario is the combined weighted odds ratio of each
-two-armed trial with binary outcomes within one block or stratum.
+In this scenario, for a standard two-arm trial, the odds ratio for a given stratum is:
 
-The odds ratio for a given stratum is
+$$OR = \frac{\frac{A}{B}}{\frac{C}{D}} = \frac{AD}{BC}$$
 
-\[ OR = \frac{\frac{A}{B}}{\frac{C}{D}} = \frac{AD}{BC}\]
+With many strata, we can then find an overall common odds ratio as follows:
 
-With many strata, we can find a common odds ratio
-
+$$
 \begin{equation}
  OR_{CMH} = \frac{\sum_{i=1}^{k} \frac{A_{i}D_{i}}{T_{i}}}{\sum_{i=1}^{k}{B_{i}C_{i}}{T_{i}}}
 \end{equation}
+$$
 
-That is, we add the odds ratios of each stratum and weigh it by the total in
-that stratum.  If the odds ratio is greater than 1 then we
-suspect that there may be an association between the outcome and treatment
-across all strata and the CMH test statistic will be large.  If
-$OR_{CMH} = 1$, then this supports the null hypothesis that there is
-no association between treatment and outcome and the CMH test statistic will be small.
+If this combined odds ratio is substantially greater than 1, then we should suspect that there is an association between the outcome and treatment across strata, and the CMH test statistic will be large. If $OR_{CMH} = 1$, this would instead support the null hypothesis that there is no association between treatment and the outcome, and the CMH test statistic would be small.
 
-We can also use the CMH test to compare odds ratios between experiments, rather
-than compare against the null that the odds ratio = 1.
+We can also use the CMH test to compare odds ratios between experiments, rather than compare against the null that the odds ratio = 1.
 
 ### Estimating an overall Average Treatment Effect {#blockrandate}
 
-Our team nearly always reports a single estimate of the average treatment effect whether or not we randomly assign a policy intervention within blocks or strata. We randomly assign the intervention within each block independently and we tend to **define** our overall ATE (the estimand) as a simple average of the individual additive treatment effects (for two treatments, remember that we tend to write this unobserved causal effect as $\tau_i = y_{i,0} - y_{i,1}$). So we tend to define the overall ATE as $\bar{\tau}=(1/n) \sum_{i=1}^n \tau_i$. Now, we have randomly assigned within blocks in order to (1) increase precision and (2) enable subgroup analysis. How can we "analyze as we have randomized" if we want to learn about $\bar{\tau}$ using what we observe? Our approach is to build up from the block-level (see @gerber_field_2012 for more on this approach). Say, for example, we imagine that the unobserved ATE within a given block, $b$, was $\text{ATE}_{b}=\bar{\tau}_b=(1/n_b)\sum_{i=1}^{n_b} \tau_{i}$ where we are averaging the individual level treatment effects ($\tau_{i}$) across all $n_b$ people in block $b$. And now, imagine that we had an experiment with blocks of different sizes (and perhaps with different proportions assigned to treatment within block --- perhaps certain blocks are more expensive places in which to run an experiment). We could learn about $\bar{\tau}$ with a block-size weighted average of the $\bar{\tau}_b$ such that $\bar{\tau}_{\text{nbwt}}= (1/B) \sum_{b=1}^B (n_b/n) \bar{\tau}_b$. We can estimate $\bar{\tau}_{\text{nbwt}}$ with the observed analogue just as  we have with the completely randomized experiment (after all, each block is a small completely randomized experiment in this example, and so we can estimate $\bar{\tau}_b$ using the unbiased estimator where $i \in t$ means "for $i$ in the treatment group", $\hat{\tau}_b=\sum_{i \in t} Y_{ib}/m_b - \sum_{i \in c} Y_{ib}/(n_b - m_b)$ where $m_b$ is the number of units assigned to treatment in block $b$.
+Whether or not we randomly assign a policy intervention within blocks or strata, our team nearly always reports a single estimate of the average treatment effect. To review, we define the overall ATE (the theoretical estimand) as a simple average of the individual additive treatment effects. For two treatments, we might write this unobserved causal effect as $\tau_i = y_{i,0} - y_{i,1}$). We'd therefore express the overall (true) ATE across our sample as as $\bar{\tau}=(1/n) \sum_{i=1}^n \tau_i$. Unfortunately, this quantity is unobservable.
 
-**Note that many people do not use this unbiased estimator because the precision of tests based on this estimator are worse that those of another estimator that is slightly biased.** We will demonstrate both methods --- the block-size weighted estimator and what we call the precision-weighted estimator --- here and offer some reflections on when a biased estimator that tends to produce answers closer to the truth might be preferred over an unbiased estimator where any given estimate may be farther from the truth. This estimator uses harmonic-weights.  We have tended to call it a "precision-weighted average" and the weights on the blocks combine both the block size $n_b$ and the proportion of the block assigned to treatment $p_b = (1/n_b) \sum_{i=1}^{n_b} Z_{ib}$ for a binary treatment, $Z_{ib}$ so that the weight is $h_b = n_b p_b (1 - p_b)$ and the estimator is $\bar{\tau}_{\text{hbwt}}= (1/B) \sum_{b=1}^B (1/h_b) \bar{\tau}_b$.
+In blocked designs, we have randomly assigned the intervention within each block independently. As we note above, this (1) increases precision and (2) supports more credible subgroup analysis. How might we "analyze as we have randomized" to learn about $\bar{\tau}$ using observable data? Our approach is to build up from the block-level (see @gerber_field_2012 for more on this approach).
 
-First we show multiple approaches to producing estimates using these
-estimators. And then we demonstrate how (1) ignoring the blocks when estimating
-can produce problems in both estimation and testing, (2) how the block-size
-weighted approaches are unbiased but possibly less precise than the precision
-weighted approaches.
+Say, for example, that the unobserved ATE within a given block, $b$, was $\text{ATE}_{b}=\bar{\tau}_b=(1/n_b)\sum_{i=1}^{n_b} \tau_{i}$. Here, we are averaging the individual level treatment effects ($\tau_{i}$) across all $n_b$ people in block $b$. Now, imagine that we had an experiment with blocks of different sizes (and perhaps with different proportions of units assigned to treatment within block --- perhaps certain blocks are more expensive places in which to run an experiment). We can imagine learning about $\bar{\tau}$ through a different estimand, the block-size weighted average of the true within-block treatment effects: $$\bar{\tau}_{\text{nbwt}}= (1/B) \sum_{b=1}^B (n_b/n) \bar{\tau}_b$$
+
+We can estimate $\bar{\tau}_{\text{nbwt}}$ based on its the observed analogue just as we have with a completely randomized experiment. Each block is essentially a smaller completely randomized experiment, so we can estimate $\bar{\tau}_b$ using the following unbiased estimator, where $i \in t$ means "for $i$ in the treatment group" and where $m_b$ is the number of units assigned to treatment in block $b$: $$\hat{\tau}_b=\sum_{i \in t} Y_{ib}/m_b - \sum_{i \in c} Y_{ib}/(n_b - m_b)$$
+
+We would then plug estimates of $\hat{\tau}_b$ into the expression for $\bar{\tau}_{\text{nbwt}}$ above. **Note that many people do not use this unbiased estimator because the precision of tests based on this estimator are worse that those of another estimator that is slightly biased.** We will demonstrate both methods here --- the block-size weighted estimator and what we call the precision-weighted estimator --- and offer some reflections on when a biased estimator that tends to produce answers closer to the truth might be preferred over an unbiased estimator where any given estimate may be farther from the truth.
+
+The precision-weighted estimator uses *harmonic-weights*. We have tended to call it a "precision-weighted average." The weights combine both the block size $n_b$ and the proportion of the block assigned to treatment $p_b = (1/n_b) \sum_{i=1}^{n_b} Z_{ib}$ for a binary treatment, $Z_{ib}$ so that the weight is $h_b = n_b p_b (1 - p_b)$ and the estimator is: $$\bar{\tau}_{\text{hbwt}}= (1/B) \sum_{b=1}^B (1/h_b) \bar{\tau}_b$$.
+
+First, we will show multiple approaches to applying these estimators. We will then demonstrate how (1) ignoring the blocks when estimating treatment effects can produce problems in both estimation and testing, and (2) how the block-size weighted approaches are unbiased but possibly less precise than the precision weighted approaches.
 
 ```{r newblockeddat}
 ## Create block sizes and create block weights
@@ -727,98 +694,115 @@ B <- 10 # Number of blocks
 dat <- data.frame(b=rep(1:B,c(8,20,30,40,50,60,70,80,100,800)))
 dat$bF <- factor(dat$b)
 
+## x1 is a covariate that strongly predicts the outcome without treatment\
 set.seed(2201)
-## x1 is a covariate that strongly predicts the outcome without treatment
-dat <- group_by(dat,b) %>% mutate(nb=n(),
-				  x1=rpois(n = nb,lambda=runif(1,min=1,max=2000)))
+dat <- group_by(dat,b) %>%
+  mutate(
+    nb=n(),
+    x1=rpois(n = nb,lambda=runif(1,min=1,max=2000))
+    )
 
 ## The treatment effect varies by size of block (using sqrt(nb) because nb has such a large range.)
-dat <- group_by(dat,b) %>% mutate(y0=sd(x1)*x1+rchisq(n=nb,df=1),
-				  y0=y0*(y0>quantile(y0,.05)),
-                                  tauib = -(sd(y0))*sqrt(nb)  + rnorm(n(),mean=0,sd=sd(y0)),
-				  y1=y0+tauib,
-				  y1=y1*(y1>0))
+dat <- group_by(dat,b) %>% 
+  mutate(
+    y0=sd(x1)*x1+rchisq(n=nb,df=1),
+    y0=y0*(y0>quantile(y0,.05)),
+    tauib = -(sd(y0))*sqrt(nb) + rnorm(n(),mean=0,sd=sd(y0)),
+    y1=y0+tauib,
+    y1=y1*(y1>0)
+    )
 blockpredpower <- summary(lm(y0~bF,data=dat))$r.squared
 ```
 
-To make the differences between the approaches to estimation most vivid,
-we create a dataset with blocks of widely varying sizes, half of the blocks
-have half of the units assigned to treatment and the other half 10% of the
-units assigned to treatment. The baseline outcomes are strongly predicted by
-the blocks ($R^2$ around $`r round(blockpredpower,2)`$).
+To make the differences between these estimation approaches more vivid,
+we've create a dataset with blocks of widely varying sizes, half of the blocks have half of the units assigned to treatment and the other half 10% of the units assigned to treatment. The baseline outcomes are strongly predicted by the blocks ($R^2$ around $`r round(blockpredpower,2)`$).
 
-We will use the `DeclareDesign` approach to assess bias, coverage and power (or
-precision) of the different estimators here. The next code block sets up the
-simulation and also demonstrates different approaches to calculating the same
-numbers to represent the true underlying ATE (we can only do this because we
-are using simulation here to learn about different statistical techniques.)
+We will use `DeclareDesign` to assess bias, coverage and power (or precision) of the different estimators here. The next code block sets up the simulation and also demonstrates different approaches to estimating an ATE (as usual, we can only do this because we are using simulation here to compare these different statistical techniques).
 
 ```{r setup_dd_blockrand}
-## Using the Declare Design Machinery to ensure that the data here  and the
-## simulations below match
+## Using the Declare Design Machinery to ensure that 
+## the data here and the simulations below match
 
-## Setting up Declare Design:
+## Declare the population
 thepop <- declare_population(dat)
 
+## Represent the potential outcomes with a function
 po_function <- function(data){
 	data$Y_Z_0 <- data$y0
 	data$Y_Z_1 <- data$y1
 	data
 }
 
-theys  <- declare_potential_outcomes(handler = po_function)
+## Use this function to declare the potential outcomes
+theys <- declare_potential_outcomes(handler = po_function)
+
+## Declare the desired inquiry
 theestimand <- declare_inquiry(ATE = mean(Y_Z_1 - Y_Z_0))
 
+## Declare treatment assignment
 numtreated <- sort(unique(dat$nb))/rep(c(2,10),B/2)
+theassign <- declare_assignment(Z=block_ra(blocks = bF, block_m=numtreated))
 
-theassign <- declare_assignment(Z=block_ra(blocks = bF, 
-			block_m=numtreated))
-
+## Declare revealed data (potential outcomes aren't observed)
 theobsident <- declare_reveal(Y, Z)
 
+## Combine these design elements together
 thedesign <- thepop + theys + theestimand + theassign + theobsident
 
+# Draw data matching this design
 set.seed(2201)
 dat2 <- draw_data(thedesign)
 
-## Adding rank transformed outcomes for use later.
-dat2 <- dat2 %>% group_by(b) %>% mutate(y0md = y0 - mean(y0),
-					y1md = y1 - mean(y1),
-					alignedY = Y - mean(Y),
-				      rankalignedY = rank(alignedY)
-)
-## Now add individual level weights to the data. Different textbooks and algebra yield different expressions. We show that they are all the same.
-dat2 <- dat2 %>% group_by(b) %>% mutate(nb = n(), ## Size of block
-				      pib=mean(Z), ## prob of treatment assignment
-				      nTb=sum(Z), ## Number treated
-				      nCb=nb - nTb, ## Number control
-				      nbwt =  ( Z/pib ) + ( (1-Z)/(1-pib) ),
-				      nbwt2 = nb/nrow(dat2),
-				      #hbwt = 2 * (nCb * nTb )  / (nTb + nCb), ## Precision weight/Harmonic
-				      #hbwt2 = 2 * ( nbwt2 )*(pib*(1-pib)),
-                                      hbwt3 =  nbwt * ( pib * (1 - pib) ) )
+## Adding rank transformed outcomes for use later
+dat2 <- dat2 %>% 
+  group_by(b) %>%
+  mutate(
+    y0md = y0 - mean(y0),
+    y1md = y1 - mean(y1),
+    alignedY = Y - mean(Y),
+    rankalignedY = rank(alignedY)
+    )
 
+## Now add individual-level weights to the data.
+## Different textbooks and algebra yield different expressions.
+## We show that they are all the same.
+dat2 <- dat2 %>% 
+  group_by(b) %>% 
+  mutate(
+    nb = n(), # Size of block
+		pib=mean(Z), # prob of treatment assignment
+		nTb=sum(Z), # Number treated
+		nCb=nb - nTb, # Number control
+		nbwt =  ( Z/pib ) + ( (1-Z)/(1-pib) ), 
+		nbwt2 = nb/nrow(dat2),
+		#hbwt = 2 * (nCb * nTb )  / (nTb + nCb), # Precision weight
+		#hbwt2 = 2 * ( nbwt2 )*(pib*(1-pib)),
+    hbwt3 =  nbwt * ( pib * (1 - pib) )
+		)
 dat2$nbwt3 <- dat2$nbwt2/dat2$nb
 
+## Declare a new population, and generate another design
 thepop2 <- declare_population(dat2)
 thedesign2 <- thepop2 + theys + theestimand + theassign + theobsident
 
-## And create the block level dataset, with block level weights.
-datB <- group_by(dat2,b) %>% summarize(taub = mean(Y[Z==1]) - mean(Y[Z==0]),
-				      truetaub = mean(y1) - mean(y0),
-				      nb = n(),
-				      nTb = sum(Z),
-				      nCb = nb - nTb,
-				      estvartaub =  (nb/(nb-1)) * ( var(Y[Z==1]) / nTb )  + ( var(Y[Z==0])/nCb ) ,
-				      pb=mean(Z),
-				      nbwt = unique(nb/nrow(dat2)),
-				      pbwt = pb * ( 1 - pb),
-				      hbwt2 = nbwt * pbwt,
-				      hbwt5 = pbwt * nb,
-				      hbwt= ( 2*( nCb * nTb ) / (nTb + nCb)))
+## Create the block level dataset, with block level weights.
+datB <- group_by(dat2,b) %>%
+  summarize(
+    taub = mean(Y[Z==1]) - mean(Y[Z==0]), # Estimated effect (variance below)
+    truetaub = mean(y1) - mean(y0), # True effect
+    nb = n(), # Number in block
+    nTb = sum(Z), # Number treated
+    nCb = nb - nTb, # Number control
+    estvartaub = (nb/(nb-1)) * (var(Y[Z==1])/nTb) + (var(Y[Z==0])/nCb),
+    pb=mean(Z), # Proportion treated
+    nbwt = unique(nb/nrow(dat2)), # Block-size weights
+		pbwt = pb * ( 1 - pb),
+		hbwt2 = nbwt * pbwt, # Precision weights
+		hbwt5 = pbwt * nb,
+		hbwt= (2*(nCb * nTb )/(nTb + nCb)))
 datB$greenlabrule <- 20*datB$hbwt5/sum(datB$hbwt5)
 
-## Notice that all of these different ways to express the harmonic mean weight are the same.
+## All of these expressions of the harmonic mean weight are the same
 datB$hbwt01 <- datB$hbwt/sum(datB$hbwt)
 datB$hbwt201 <- datB$hbwt2/sum(datB$hbwt2)
 datB$hbwt501 <- datB$hbwt5/sum(datB$hbwt5)
@@ -826,12 +810,11 @@ stopifnot(all.equal(datB$hbwt01,datB$hbwt201))
 stopifnot(all.equal(datB$hbwt01,datB$hbwt501))
 
 ## What is the "true" ATE?
-trueATE1 <- with(dat2,mean(y1) - mean(y0))
+trueATE1 <- with(dat2, mean(y1) - mean(y0))
 trueATE2 <- with(datB, sum(truetaub*nbwt))
 stopifnot(all.equal(trueATE1,trueATE2))
-## We could define the following as an estimand, too. But it is a bit weird.
+## We could define the following as an estimand, too.
 ## trueATE3 <- with(datB, sum(truetaub*hbwt01))
-
 ## c(trueATE1,trueATE2,trueATE3)
 
 ## We can get the same answer using R's weighted.mean command
@@ -839,19 +822,13 @@ trueATE2b <- weighted.mean(datB$truetaub,w=datB$nbwt)
 stopifnot(all.equal(trueATE2b,trueATE2))
 ```
 
-Here we can see the design:
+We can now review the design:
 
 ```{r blockdesign}
-with(dat2,table(treatment=Z,blocknumber=b))
+with(dat2, table(treatment=Z,blocknumber=b))
 ```
 
-Now, we will show multiple ways to get the same answer and later show evidence
-about bias and precision. Notice that we do not use fixed effects on their own
-in any of these approaches. There are two approaches that do use fixed
-effects/indicator variables but they only include them in interaction with the
-treatment assignment. Below we will show that all of these approaches are
-unbiased estimators of $\bar{\tau}_{\text{nbwt}}$ (the ATE treating all
-individuals equally although randomizing within block).
+Now that the simulation is prepared, we'll start by illustrating multiple ways of getting the block-size-weighted average treatment effect estimates. Later, we'll show evidence about bias and precision. Notice that we do not use linear, additive fixed effects adjustment in any of these approaches.^[I.e., we are not employing the least squares dummy variable, or LSDV, approach to including fixed effects in a linear regression. Note that for our purposes here, including fixed effects in the regression via a *within-estimator* instead would yield the same results to LSDV adjustment [@cameron2005microeconometrics].] Two of these approaches do include fixed effects dummies, but they are mean-centered and interacted with treatment assignment --- in other words, we include the fixed effects via @lin_agnostic_2013 adjustment.^[See also @miratrix2013adjusting] Below, we will show that all of these approach-es are unbiased estimators of $\bar{\tau}_{\text{nbwt}}$ (the ATE treating all individuals equally although randomizing within block).
 
 ```{r utilityfns, echo=FALSE}
 ## bfe doesn't have a summary function so making one here, using their
