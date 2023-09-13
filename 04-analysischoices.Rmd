@@ -674,7 +674,7 @@ We can also use the CMH test to compare odds ratios between experiments, rather 
 
 ### Estimating an overall Average Treatment Effect {#blockrandate}
 
-Whether or not we randomly assign a policy intervention within blocks or strata, our team nearly always reports a single estimate of the average treatment effect. To review, we define the overall ATE (the theoretical estimand) as a simple average of the individual additive treatment effects. For two treatments, we might write this unobserved causal effect as $\tau_i = y_{i,0} - y_{i,1}$). We'd therefore express the overall (true) ATE across our sample as as $\bar{\tau}=(1/n) \sum_{i=1}^n \tau_i$. Unfortunately, this quantity is unobservable.
+Whether or not we randomly assign a policy intervention within blocks or strata, our team nearly always reports a single estimate of the average treatment effect. To review, we define the overall ATE (the theoretical estimand) as a simple average of the individual additive treatment effects. For two treatments, we might write this unobserved causal effect as $\tau_i = y_{i,0} - y_{i,1}$. We'd therefore express the overall (true) ATE across our sample as as $\bar{\tau}=(1/n) \sum_{i=1}^n \tau_i$. Unfortunately, this quantity is unobservable.
 
 In blocked designs, we have randomly assigned the intervention within each block independently. As we note above, this (1) increases precision and (2) supports more credible subgroup analysis. How might we "analyze as we have randomized" to learn about $\bar{\tau}$ using observable data? Our approach is to build up from the block-level (see @gerber_field_2012 for more on this approach).
 
@@ -686,7 +686,9 @@ We would then plug estimates of $\hat{\tau}_b$ into the expression for $\bar{\ta
 
 The precision-weighted estimator uses *harmonic-weights*. We have tended to call it a "precision-weighted average." The weights combine both the block size $n_b$ and the proportion of the block assigned to treatment $p_b = (1/n_b) \sum_{i=1}^{n_b} Z_{ib}$ for a binary treatment, $Z_{ib}$ so that the weight is $h_b = n_b p_b (1 - p_b)$ and the estimator is: $$\bar{\tau}_{\text{hbwt}}= (1/B) \sum_{b=1}^B (1/h_b) \bar{\tau}_b$$.
 
-First, we will show multiple approaches to applying these estimators. We will then demonstrate how (1) ignoring the blocks when estimating treatment effects can produce problems in both estimation and testing, and (2) how the block-size weighted approaches are unbiased but possibly less precise than the precision weighted approaches.
+Notice that, by weighting blocks proportionally to their contributions to overall sample size, $\bar{\tau}_{\text{nbwt}}$ effectively treats all units equally in terms of their contributions to the ATE estimate. In contrast, $\bar{\tau}_{\text{hbwt}}$ weights blocks (and therefore the individuals within them) relatively more if they have a treatment probability closer to 0.5.^[A block of 100 units would have a harmonic weight of 25 with a treatment probability of 0.5 $(100 \times 0.5 \times 0.5)$, but a harmonic weight of 18.75 with under an alternative treatment probability of 0.25 $(100 \times 0.25 \times 0.75)$.] In effect, the precision benefits here come from giving slightly more explanatory power to units in blocks where treatment assignment is relatively more balanced.
+
+Next, we will show multiple approaches to applying these estimators. We will then demonstrate (1) how ignoring the blocks when estimating treatment effects can produce problems in both estimation and testing, and (2) that the block-size weighted approaches are unbiased but possibly less precise than the precision weighted approaches.
 
 ```{r newblockeddat}
 ## Create block sizes and create block weights
@@ -828,7 +830,7 @@ We can now review the design:
 with(dat2, table(treatment=Z,blocknumber=b))
 ```
 
-Now that the simulation is prepared, we'll start by illustrating multiple ways of getting the block-size-weighted average treatment effect estimates. Later, we'll show evidence about bias and precision. Notice that we do not use linear, additive fixed effects adjustment in any of these approaches.^[I.e., we are not employing the least squares dummy variable, or LSDV, approach to including fixed effects in a linear regression. Note that for our purposes here, including fixed effects in the regression via a *within-estimator* instead would yield the same results to LSDV adjustment [@cameron2005microeconometrics].] Two of these approaches do include fixed effects dummies, but they are mean-centered and interacted with treatment assignment --- in other words, we include the fixed effects via @lin_agnostic_2013 adjustment.^[See also @miratrix2013adjusting] Below, we will show that all of these approach-es are unbiased estimators of $\bar{\tau}_{\text{nbwt}}$ (the ATE treating all individuals equally although randomizing within block).
+With those simulations prepared, we'll start by illustrating multiple approaches for getting an unbiased block-size-weighted average treatment effect estimate, $\bar{\tau}_{\text{nbwt}}$. Notice that we do not use linear, additive fixed effects adjustment in any of these approaches.^[I.e., we are not employing the least squares dummy variable, or LSDV, methods of including fixed effects in a linear regression. For our purposes here, including fixed effects in the regression via a *within-estimator* instead would yield the same results [@cameron2005microeconometrics].] Two of these approaches do include fixed effects dummies, but they are mean-centered and interacted with treatment assignment --- in other words, we include the fixed effects via @lin_agnostic_2013 adjustment.^[See also @miratrix2013adjusting]
 
 ```{r utilityfns, echo=FALSE}
 ## bfe doesn't have a summary function so making one here, using their
@@ -860,30 +862,37 @@ summary.iwe <- function(obj,level=.95){
 }
 ```
 
-For example, below we see 6 different ways to estimate the average treatment
-effect using block-size weights: `simple_block` refers to calculating meaen
-differences within blocks and then taking the block-size weighted averagee of
-them; diffmeans uses the `difference_in_means` function from the `estimatr`
-package [@R-estimatr]; `lmlin` uses the Lin approach to covariance adjustment
-but uses block indicators instead of other covariates using the `lm_lin`
-function; `lmlinbyhand` verifies that function using matrix operations;
-`intereactionBFE` uses the `EstimateIWE` function from the `bfe` package
-[@R-bfe]; and `regwts` uses the basic OLS function from R `lm` with appropriate
-weights.
+Six approaches to the block-size-weighted ATE under blocking:
+
+1. `simple_block` refers to calculating mean differences within blocks and then taking the block-size weighted averagee of them
+2. `diffmeans` uses the `difference_in_means` function from the `estimatr`
+package [@R-estimatr]
+3. `lmlin` uses the Lin approach to covariance adjustment *via* block indicators, using the `lm_lin` function
+4. `lmlinbyhand` verifies that function using matrix operations; see [this entry](https://alexandercoppock.com/Green-Lab-SOP/Green_Lab_SOP.html#taking-block-randomization-into-account-in-ses-and-cis) from the SOP from Don Green's lab at Columbia
+5. `interactionBFE` uses the `EstimateIWE` function from the `bfe` package [@R-bfe]
+6. `regwts` uses the basic OLS function from R `lm` with appropriate weights.
+
+Let's compare the estimates themselves:
 
 ```{r blockrandests,echo=TRUE}
-### Block size weighting
+### simple_block
 ate_nbwt1 <- with(datB,sum(taub*nbwt))
+
+### diffmeans
 ate_nbwt2 <- difference_in_means(Y~Z,blocks = b,data=dat2)
+
+### lmlin
 ate_nbwt3 <- lm_lin(Y~Z,covariates=~bF,data=dat2)
+
+### interactionBFE
 ate_nbwt5 <- EstimateIWE(y="Y",treatment="Z",group="bF",controls=NULL,data=as.data.frame(dat2))
+
+### regwts
 ate_nbwt6 <- lm_robust(Y~Z,data=dat2,weights=nbwt)
 ate_nbwt6a <- lm(Y~Z,data=dat2,weights=nbwt)
 ate_nbwt6ase <- coeftest(ate_nbwt6a,vcov=vcovHC(ate_nbwt6a,type="HC2"))
 
-## This next implements the lm_lin method from Lin 2013 by hand:
-## Implementing Lin's method from https://alexandercoppock.com/Green-Lab-SOP/Green_Lab_SOP.html#taking-block-randomization-into-account-in-ses-and-cis.
-
+### lmlinbyhand
 X <- model.matrix(~bF-1,data=dat2)
 barX <- colMeans(X)
 Xmd <- sweep(X,2,barX)
@@ -891,117 +900,140 @@ stopifnot( all.equal( (X[,3]-mean(X[,3])), Xmd[,3] ) )
 ZXmd <- sweep(Xmd,1,dat2$Z,FUN="*")
 stopifnot( all.equal( dat2$Z*Xmd[,3],ZXmd[,3]  ))
 bigX <- cbind(Intercept=1,Z=dat2$Z,Xmd[,-1],ZXmd[,-1])
-#ate_nbwt4 <- lm.fit(x=bigX,y=dat$Y)
 bigXdf <- data.frame(bigX,Y=dat2$Y)
 ate_nbwt4 <-lm(Y~.-1,data=bigXdf)
 ate_nbwt4se <- coeftest(ate_nbwt4,vcov.=vcovHC(ate_nbwt4,type="HC2"))
 
-
-nbwtates<-c(simple_block=ate_nbwt1,
+### List all
+nbwtates<-c(
+  simple_block=ate_nbwt1,
   diffmeans=ate_nbwt2$coefficients[["Z"]],
   lmlin=ate_nbwt3$coefficients[["Z"]],
   lmlinbyhand=ate_nbwt4$coefficients[["Z"]],
   interactionBFE=ate_nbwt5$swe.est,
   regwts=ate_nbwt6$coefficients[["Z"]]
-)
+  )
 
 nbwtates
-
-## Comparing the Standard Errors
-## ate_nbwt1se <- sqrt(sum(datB$nbwt^2 * datB$estvartaub))
-##
-## nbwtses <- c(simple_block=ate_nbwt1se,
-## 	     diffmeans=ate_nbwt2$std.error,
-## 	     lmlin=ate_nbwt3$std.error[["Z"]],
-## 	     interaction1=ate_nbwt4se["Z","Std. Error"],
-## 	     interaction2=ate_nbwt5$swe.var^.5,
-## 	     wts=ate_nbwt6$std.error[["Z"]])
-## nbwtses
 ```
 
-Weighting by block size allows us to define the average treatment effect in a
-way that treats each unit equally. And we have shown six different ways to
-estimate this effect. If we want to calculate standard errors for these
-estimators, so as to produce confidence intervals, we will, in general, be
-leaving statistical power on the table in exchange for an easier to interpret
-estimate, an estimator that relates to its underlying target in an unbiased
-fashion. Below we show an approach which is optimal from the perspective of
-statistical power, precision, or narrow confidence intervals which we call
-"precision weighted" average treatment effects.^[See Section 5 of
-@hansen_covariate_2008 for proof that  this kind of weighting is optimal from
-the perspective of  precision.] In some literatures using the least squares
-machinery to calculate the weighted means this approach is called Least Squared
-Dummy Variables, or "fixed effects". However, we show below that these
-approaches are all versions of a weighted least squares estimator.
+Let's also quickly review their standard errors:
 
-Below we see that we can estimate the precision-weighted ATE in five different
-ways: `simple_block` calculates simple differences of means within blocks and
+```{r blockrandSEests,echo=T}
+### Comparing the Standard Errors
+ate_nbwt1se <- sqrt(sum(datB$nbwt^2 * datB$estvartaub))
+nbwtses <- c(
+  simple_block=ate_nbwt1se,
+  diffmeans=ate_nbwt2$std.error,
+	lmlin=ate_nbwt3$std.error[["Z"]],
+	lmlinbyhand=ate_nbwt4se["Z","Std. Error"],
+	interactionBFE=ate_nbwt5$swe.var^.5,
+	regwts=ate_nbwt6$std.error[["Z"]]
+  )
+
+nbwtses
+
+```
+
+As noted above, weighting by block size allows us to define the average treatment effect in a way that treats each unit equally. And we have just illustrated six different ways to estimate this effect. If we want to calculate standard errors for these estimators (e.g., to produce confidence intervals), we will, in general, be leaving statistical power on the table in exchange for an easier to interpret estimate, and an estimator that relates to its underlying target in an unbiased fashion.
+
+Next, we show an approach to blocking adjustment that is optimal from the perspective of statistical power, precision, or narrow confidence intervals. As discussed above, we call this the "precision-weighted" average treatment effect.^[See Section 5 of @hansen_covariate_2008 for proof that  this kind of weighting is optimal from the perspective of precision.] Some literatures typically use ordinal least squares regression machinery to calculate an ATE that is weighted to account for blocking --- i.e., a "Least Squared Dummy Variables" (LSDV) approach to adjusting for block fixed effects. We show here that this is simply another version of the precision-weighted ATE estimator for blocked designs.
+
+Five approaches to the precision-weighted ATE under blocking:
+
+1. `simple_block` calculates a simple differences of means within blocks and
 then takes a weighted average of those differences, using the precision
-weights; `lm_fixed_effects1` uses `lm_robust` with indicators for block;
-`lm_fixed_effects2` uses `lm_robust` with the `fixed_effects` option including
-a factor variable recording block membership; `direct_wts` uses `lm_robust`
-without block-indicators but with precision weights; and `demeaned` regresses a
-block-centered version of the outcome on a block-centered version of the
-treatment indicator.
+weights
+2. `lm_fixed_effects1` uses `lm_robust` with binary indicators for blocks
+3. `lm_fixed_effects2` uses `lm_robust` with the `fixed_effects` option including a factor variable recording block membership
+4. `direct_wts` uses `lm_robust` without block-indicators but with precision weights
+4. `demeaned` regresses a block-centered version of the outcome on a block-centered version of the treatment indicator.
+
+Let's compare the estimates themselves:
 
 ```{r}
+### simple_block
 ate_hbwt1 <- with(datB, sum(taub*hbwt01))
+
+### lm_fixed_effects1
 ate_hbwt2 <- lm_robust(Y~Z+bF,data=dat2)
+
+### lm_fixed_effects2
 ate_hbwt3 <- lm_robust(Y~Z,fixed_effects=~bF,data=dat2)
+
+### direct_wts
 ate_hbwt4 <- lm_robust(Y~Z,data=dat2,weights=hbwt3)
+
+### demeaned
 ate_hbwt5 <- lm_robust(I(Y-ave(Y,b))~I(Z-ave(Z,b)),data=dat2)
-hbwtates<-c(simple_block=ate_hbwt1,
-	    lm_fixed_effects1=ate_hbwt2$coefficients[["Z"]],
-	    lm_fixed_effects2=ate_hbwt3$coefficients[["Z"]],
-	    direct_wts=ate_hbwt4$coefficients[["Z"]],
-	    demeaned=ate_hbwt5$coefficient[[2]])
+
+### List all
+hbwtates<-c(
+  simple_block=ate_hbwt1,
+	lm_fixed_effects1=ate_hbwt2$coefficients[["Z"]],
+	lm_fixed_effects2=ate_hbwt3$coefficients[["Z"]],
+	direct_wts=ate_hbwt4$coefficients[["Z"]],
+	demeaned=ate_hbwt5$coefficient[[2]]
+  )
+
 hbwtates
-## ate_hbwt1se <- sqrt(sum(datB$hbwt01^2 * datB$estvartaub))
-##
-## hbwtses <- c(simple_block=ate_hbwt1se,
-## 	     diffmeans=ate_hbwt2$std.error[["Z"]],
-## 	     lmfe=ate_hbwt3$std.error[["Z"]],
-## 	     wts=ate_hbwt4$std.error[["Z"]],
-## 	     demean=ate_hbwt5$std.error[[2]])
-## hbwtses
-##
-## nbwtses
 ```
 
+Let's also quickly review their standard errors:
 
-Now, we claimed that the block size weighted estimator is unbiased but perhaps
-less precise than the precision-weighted estimator. We use `DeclareDesign` to
-to compare the performance of these estimators. We focus here on the use of
-least squares to calculate the weighted averages and standard errors but, as we
-showed above, one could calculate the estimates easily without using least
-squares.
+```{r,echo=T}
+### Comparing the Standard Errors
+ate_hbwt1se <- sqrt(sum(datB$hbwt01^2 * datB$estvartaub))
+hbwtses <- c(
+  simple_block=ate_hbwt1se,
+  lm_fixed_effects1=ate_hbwt2$std.error[["Z"]],
+	lm_fixed_effects2=ate_hbwt3$std.error[["Z"]],
+	direct_wts=ate_hbwt4$std.error[["Z"]],
+	demeaned=ate_hbwt5$std.error[[2]]
+  )
 
-We implement those estimators as functions usable by the `diagnose_design`
-function in the next code block. 
+hbwtses
+```
+
+Now, we claimed that the block size weighted estimator is unbiased but perhaps less precise than the precision-weighted estimator. We'll use `DeclareDesign` to compare the performance of these estimators. We focus here on the use of least squares to calculate the weighted averages and standard errors but, as we showed above, one could calculate the estimates easily without using least squares.
+
+We implement those estimators as functions passed to the `diagnose_design`
+function in the next code block.
 
 ```{r defineestimators1, results="hide"}
-# Define estimators that can be repeated in the simulation below
-estnowtHC2 <- declare_estimator(Y~Z, inquiry=theestimand, model=lm_robust, label="E1: Ignores Blocks, Design SE")
-estnowtIID <- declare_estimator(Y~Z, inquiry=theestimand, model=lm, label="E0: Ignores Blocks, IID SE")
-estnbwt1   <- declare_estimator(Y~Z, inquiry=theestimand, model=difference_in_means, blocks = b,label="E2: Diff Means Block Size Weights, Design SE")
-estnbwt2   <- declare_estimator(Y~Z, inquiry=theestimand, model=lm_lin, covariates=~bF, label="E3: Treatment Interaction with Block Indicators, Design SE")
+### Define estimator functions employed in the simulation below
 
+### Two options that don't account for blocking
+estnowtHC2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust, label="E1: Ignores Blocks, Design (HC2) SE")
+estnowtIID <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm, label="E0: Ignores Blocks, OLS SE")
+
+### Two options applying block-size weights
+estnbwt1 <- declare_estimator(Y~Z, inquiry=theestimand, .method=difference_in_means, blocks = b, label="E2: Diff Means Block Size Weights, Design SE")
+estnbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_lin, covariates=~bF, label="E3: Treatment Interaction with Block Indicators, Design SE")
+
+### Using the BFE package (also block-size weights)
 iwe_est_fun <- function(data) {
 	obj <- EstimateIWE(y="Y", treatment="Z", group="bF", controls = NULL, data = data)
 	res <- summary.iwe(obj)["SWE",]
 	res$term <- "Z"
 	return(res)
 }
+estnbwt3 <- declare_estimator(handler = label_estimator(iwe_est_fun), inquiry = theestimand, label = "E4: Treatment Interaction with Block Indicators, Design SE")
 
-estnbwt3 <- declare_estimator(handler = tidy_estimator(iwe_est_fun), inquiry = theestimand, label = "E4: Treatment Interaction with Block Indicators, Design SE")
-
+### Another block-size-weighted option (via regression weights)
 nbwt_est_fun <- function(data){
 	data$newnbwt <- with(data,( Z/pib ) + ( (1-Z)/(1-pib) ) )
 	obj <-lm_robust(Y~Z,data=data,weights = newnbwt)
 	res <- tidy(obj) %>% filter(term=="Z")
 	return(res)
 }
+estnbwt4 <- declare_estimator(handler = label_estimator(nbwt_est_fun), inquiry=theestimand, label="E5: Least Squares with Block Size Weights, Design SE")
 
+### Two precision-weighted options
+esthbwt1 <- declare_estimator(Y~Z+bF, inquiry=theestimand, .method=lm_robust,label="E6: Precision Weights via Fixed Effects, Design SE")
+esthbwt2   <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust,fixed_effects=~bF,label="E7: Precision Weights via Demeaning, Design SE")
+
+### Another precision-weighted option (regression weights)
 hbwt_est_fun <- function(data){
 	data$newnbwt <- with(data,( Z/pib ) + ( (1-Z)/(1-pib) ) )
 	data$newhbwt <-  with(data, newnbwt * ( pib * (1 - pib) ) )
@@ -1009,12 +1041,9 @@ hbwt_est_fun <- function(data){
 	res <- tidy(obj) %>% filter(term=="Z")
 	return(res)
 }
+esthbwt3   <- declare_estimator(handler = label_estimator(hbwt_est_fun), inquiry=theestimand, label="E8: Direct Precision Weights, Design SE")
 
-estnbwt4   <- declare_estimator(handler = tidy_estimator(nbwt_est_fun), inquiry=theestimand, label="E5: Least Squares with Block Size Weights, Design SE")
-esthbwt1   <- declare_estimator(Y~Z+bF, inquiry=theestimand, model=lm_robust,label="E6: Precision Weights via Fixed Effects, Design SE")
-esthbwt2   <- declare_estimator(Y~Z, inquiry=theestimand, model=lm_robust,fixed_effects=~bF,label="E7: Precision Weights via Demeaning, Design SE")
-esthbwt3   <- declare_estimator(handler = tidy_estimator(hbwt_est_fun), inquiry=theestimand,label="E8: Direct Precision Weights, Design SE")
-
+### A final precision-weighted option (demeaning)
 direct_demean_fun <- function(data){
 	data$Y <- with(data, Y - ave(Y,b))
 	data$Z <- with(data, Z - ave(Z,b))
@@ -1029,24 +1058,28 @@ direct_demean_fun <- function(data){
 		   df=obj$df[[2]],
 		   outcome="Y")
 }
+esthbwt4   <- declare_estimator(handler = label_estimator(direct_demean_fun), inquiry=theestimand, label="E9: Direct Demeaning, Design SE")
 
-esthbwt4   <- declare_estimator(handler = tidy_estimator(direct_demean_fun), inquiry=theestimand ,label="E9: Direct Demeaning, Design SE")
-
+### Vector of all the estimator function names just created
+### (via regular expression)
 theestimators <- ls(patt="^est.*?wt")
 theestimators
 
-checkest <- sapply(theestimators,function(x){ get(x)(as.data.frame(dat2))[c("estimate","std.error")]})
+### Get results for each estimator
+### (get() calls the object from the environment with name x;
+### this is then applied to the dataframe specified, and
+### the estimates/SEs are kept)
+checkest <- sapply(
+  theestimators,
+  function(x){
+    get(x)(as.data.frame(dat2))[c("estimate","std.error")]
+    }
+  )
 
-checkest
-
+### Combine all of these design objects
 thedesignPlusEstimators <- thedesign2 +
 	estnowtHC2 + estnowtIID + estnbwt1 + estnbwt2 + estnbwt3 + estnbwt4 +
 	esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
-
-## Verifying that this works with a fixed population
-## datv1 <- draw_data(thedesign)
-##datv2 <- draw_data(thedesign)
-##table(datv1$Z,datv2$Z)
 ```
 
 ```{r diagnosis1, cache=TRUE}
@@ -1055,28 +1088,26 @@ set.seed(12345)
 thediagnosis <- diagnose_design(thedesignPlusEstimators, sims = sims, bootstrap_sims = 0)
 ```
 
-We see that the estimator using block-size weights (E2, E3, E4, or E5) all
-eliminate bias (within simulation error). The estimators ignoring blocks (E0
-and E1), have bias, and in this simulation, the precision weighed estimators
-(E6--E9) also show high bias --- with some of them also producing poor coverage
-or false positive rates (E7 and E9).
+We see in the diagnostic output below that the estimator using block-size weights (E2, E3, E4, or E5) all eliminate bias (within simulation error). The estimators ignoring blocks (E0 and E1), have bias, and in this simulation, the precision weighed estimators (E6--E9) also show high bias --- with some of them also producing poor coverage or false positive rates (E7 and E9).
 
-The diagnostic output also shows us the "SD Estimate" (which is a good estimate of the standard error of the estimate) and the "Mean SE" (which is the average of the analytic estimates of the standard error). In the case of E2, E3, E4 or E5 the Mean SE is larger than the SD Estimate --- this is good in that it means that our analytic standard errors will be conservative. However, we also would prefer that our analytic standard errors not be *too* conservative, for example, E5 looks good but the mean analytic standard error is quite high compared to E4, for example.
+This output also shows us the "SD Estimate" (which is a good estimate of the standard error of the estimate) and the "Mean SE" (which is the average of the analytic estimates of the standard error). In the case of E2, E3, E4 or E5 the Mean SE is larger than the SD Estimate --- this is good in that it means that our analytic standard errors will be conservative. However, we also would prefer that our analytic standard errors not be *too* conservative --- for example, E5 looks good but the mean analytic standard error is quite high compared to E4, for example.
 
 ```{r diagnosisblocks}
-## See https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
-kable(reshape_diagnosis(thediagnosis)[,diagcols] ) # %>% kable_styling() %>% scroll_box(width = "100%", height = "600px")
+kable(reshape_diagnosis(thediagnosis)[,diagcols])
 ```
 
-```{r setupblockdiaggraph, eval=FALSE}
+```{r setupblockdiaggraph, eval=FALSE, echo = F}
+### For a visualization below currently not included in the SOP
 simdesigns <- get_simulations(thediagnosis)
 ## simdesigns <- simulate_design(thedesign,sims=sims)
-simmeans <- simdesigns %>% group_by(estimator) %>% summarize(expest=mean(estimate))
+simmeans <- simdesigns %>%
+  group_by(estimator) %>%
+  summarize(expest=mean(estimate))
 ```
-
 
 ```{r graphblockdiag, eval=FALSE}
 ## Now compare to better behaved outcomes.
+### 
 g <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
 	geom_density() +
 	geom_vline(xintercept=trueATE1) +
@@ -1086,50 +1117,49 @@ g <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
 print(g)
 ```
 
-Since we wondered whether these biases might be exacerbated by the highly
-skewed nature of our outcome data (which is designed to look like
-administrative outcomes in its prevalence of zeros and long tails), we
-transformed the outcomes to ranks.  This less skewed outcome nearly erases the
-bias from the block-sizee weighted estimators, and the precision-weighted
-approach also performs well. Ignoring the blocked design is still a problem
-here --- E0 and E1 showing high bias.
+The simulated outcome data is highly skewed by design. Our intention is to illustrate that the biases of precision-weighted estimates could be exacerbated by common problems in administrative data like skewed outcomes or zero-inflation (i.e., many 0s). One solution we can apply in this case is rank-transforming the outcome measure. This less skewed outcome nearly erases the bias from the block-size weighted estimators, and the precision-weighted
+approaches also perform well. However, ignoring the blocked design is still a problem in this example --- E0 and E1 continue to show substantial bias.
 
-```{r ranktransblock}
+```{r ranktransblock, cache = T}
+### Define a function to rank-transform the potential outcomes
 po_functionNorm <- function(data){
-	data <- data %>% group_by(b) %>% mutate(Y_Z_0=rank(y0),
-						Y_Z_1=rank(y1))
-	as.data.frame(data)
+	data <- data %>%
+	  group_by(b) %>%
+	  mutate(
+	    Y_Z_0=rank(y0),
+	    Y_Z_1=rank(y1)
+	    )
+	return(as.data.frame(data))
 }
 
-theysNorm  <- declare_potential_outcomes(handler = po_functionNorm)
-
+### Redefine relevant DeclareDesign objects
+theysNorm <- declare_potential_outcomes(handler = po_functionNorm)
 thedesignNorm <- thepop2 + theysNorm + theestimand + theassign + theobsident
-
 datNorm <- draw_data(thedesignNorm)
-
 thedesignPlusEstimatorsNorm <- thedesignNorm +
-             estnowtHC2 + estnowtIID + estnbwt1 + estnbwt2 + estnbwt3 + estnbwt4 +
-	     esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
+  estnowtHC2 + estnowtIID + estnbwt1 +
+  estnbwt2 + estnbwt3 + estnbwt4 +
+  esthbwt1 + esthbwt2 + esthbwt3 + 
+  esthbwt4
 
-```
-
-```{r diagnosis2, cache=TRUE}
+### Perform a new simulation
 sims <- 200
 thediagnosisNorm <- diagnose_design(thedesignPlusEstimatorsNorm, sims = sims, bootstrap_sims = 0)
 ```
 
 ```{r blockdiagres2, results='asis'}
-kable(reshape_diagnosis(thediagnosisNorm)[,diagcols] ) # %>% kable_styling() %>% scroll_box(width = "100%", height = "600px")
+kable(reshape_diagnosis(thediagnosisNorm)[,diagcols])
 ```
 
-```{r setupblockdiaggraph2s, eval=FALSE}
+```{r setupblockdiaggraph2s, eval=FALSE, echo = F}
+### Again, leaving this out of SOP for now
 simdesignsNorm <- get_simulations(thediagnosisNorm)
 ## simdesigns <- simulate_design(thedesign,sims=sims)
 simmeansNorm <- simdesignsNorm %>% group_by(estimator) %>% summarize(expest=mean(estimate))
 ```
 
-
 ```{r plotthediagnosisNorm, eval=FALSE}
+### Again, leaving this out of SOP for now
 g2 <- ggplot(data=simdesignsNorm,aes(x=estimate,color=estimator)) +
 	geom_density() +
 	geom_vline(xintercept=trueATE1) +
@@ -1139,43 +1169,36 @@ g2 <- ggplot(data=simdesignsNorm,aes(x=estimate,color=estimator)) +
 print(g2)
 ```
 
-In a pair-randomized design, we know that bias should not arise from ignoring
-the blocking structure but we could double our statistical power by taking the
-pairing into account [@bowers2011mem]. This next simulation changes the design
-to still have unequal sized blocks, but with all of the blocks having the same
-probability of treatment assignment although they vary greatly in size.  Here
-only two esimators show appreciable bias (E5 and E8). However, ignoring the
-blocks leads to overly conservative standard errors.
+In a pair-randomized design, we know that bias should not arise from ignoring the blocking structure but we could double our statistical power by taking the pairing into account [@bowers2011mem]. This next simulation changes the design to still have unequal sized blocks, but with all of the blocks having the same probability of treatment assignment although they vary greatly in size. Here only two estimators show appreciable bias (E5 and E8). However, ignoring the blocks leads to overly conservative standard errors.
 
-```{r equalprobblocks}
+```{r equalprobblocks, cache = T}
+### Re-define relevant declare design objects: paired design
 theassignEqual <- declare_assignment(Z=block_ra(blocks = bF))
-
-thedesignNormEqual <- thepop2 + theysNorm + theestimand + theassignEqual + theobsident
-
+thedesignNormEqual <- thepop2 + theysNorm + theestimand + 
+  theassignEqual + theobsident
 datNormEqual <- draw_data(thedesignNormEqual)
-
 thedesignPlusEstimatorsNormEqual <- thedesignNormEqual +
-             estnowtHC2 + estnowtIID + estnbwt1 + estnbwt2 + estnbwt3 + estnbwt4 +
-	     esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
-```
+  estnowtHC2 + estnowtIID + estnbwt1 + 
+  estnbwt2 + estnbwt3 + estnbwt4 +
+  esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
 
-
-```{r diagnosis3, cache=TRUE}
+### Perform a new simulation
 sims <- 200
 thediagnosisNormEqual <- diagnose_design(thedesignPlusEstimatorsNormEqual, sims = sims, bootstrap_sims = 0)
 ```
 
 ```{r blockdiagres3}
-kable(reshape_diagnosis(thediagnosisNormEqual)[,diagcols] ) # %>% kable_styling() %>% scroll_box(width = "100%", height = "600px")
+kable(reshape_diagnosis(thediagnosisNormEqual)[,diagcols] )
 ```
 
-```{r setupblockdiaggraph3, eval=FALSE}
+```{r setupblockdiaggraph3, eval=FALSE, echo=T}
+### Again, leaving this out of SOP for now
 simdesignsNormEqual <- get_simulations(thediagnosisNorm)
 simmeansNormEqual <- simdesignsNormEqual %>% group_by(estimator) %>% summarize(expest=mean(estimate))
 ```
 
-
-```{r graphblockdiag3, eval=FALSE}
+```{r graphblockdiag3, eval=FALSE, echo=T}
+### Again, leaving this out of SOP for now
 ## Now compare to better behaved outcomes.
 g3 <- ggplot(data=simdesignsNormEqual,aes(x=estimate,color=estimator)) +
 	geom_density() +
@@ -1188,19 +1211,7 @@ print(g3)
 
 #### Summary of Approaches to the Analysis of Block Randomized Trials
 
-Our team prefers block randomized trials because of their potential to increase
-statistical power (and thus provide more bang for the research buck) as well as
-their ability to let us focus on subgroup effects when relevant.  The approach
-of our team to the analysis of blocked experiments has been guided by evidence like that
-shown here: we analyze as we randomize to avoid bias and increase statistical
-power, and we are careful in our choice of weighting approaches. Different
-designs will require different specific decisions --- sometimes we may be
-willing to trade a small amount of bias for a guarantee that our estimates will
-be closer to the truth and more precise, on average (i.e. trade mean-squared
-error for bias). Other studies will be so large or small that one or another
-strategy will become obvious. We use our Analysis Plans to specify these
-approaches and simulation studies like those shown here when we are uncertain
-about the applicability of statistical rules of thumb to any given design.
+Our team prefers block randomized trials because of their potential to increase statistical power (and thus provide more bang for the research buck) as well as their ability to let us focus on subgroup effects when relevant.  The approach of our team to the analysis of blocked experiments has been guided by evidence like that shown here: we "analyze as we randomize" to avoid bias and increase statistical power, and we are careful in our choice of weighting approaches. Different designs will require different analytical decisions --- sometimes we may be willing to trade a small amount of bias for a guarantee that our estimates will be closer to the truth and more precise, on average (i.e. get lower mean-squared error, but more bias). Other studies will be so large or small that one or another strategy will become obvious. We use our Analysis Plans to explain our choices, and simulation studies like those shown here when we are uncertain about the applicability of statistical rules of thumb to any given design.
 
 ## Cluster-randomized trials {#clusterrandanalysis}
 
