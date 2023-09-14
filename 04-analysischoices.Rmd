@@ -3,7 +3,6 @@
 if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1_with_designs.csv')) }
 dat1$rankY <- rank(dat1$Y)
 ndat1 <- nrow(dat1)
-
 ```
 
 # Analysis Choices
@@ -1216,176 +1215,154 @@ Our team prefers block randomized trials because of their potential to increase 
 ## Cluster-randomized trials {#clusterrandanalysis}
 
 A cluster randomized trial tends to distinguish signal from noise less well
-than an experiment where we can assign treatment directly to individuals
-because the number of independent pieces of information available to learn
-about the treatment effect is closer to the number of clusters (each of which
-tends to be assigned to treatment independently of each other) than it is to
-the number of dependent observations within a cluster (See EGAP's [10 Things You Need to Know about Cluster
-Randomization](https://egap.org/methods-guides/10-things-you-need-know-about-cluster-randomization)).
+than an experiment where we can assign treatment directly to individuals. The number of independent pieces of information available to learn about the treatment effect will generally be closer to the number of clusters (each of which tends to be assigned to treatment independently of each other) than the number of dependent observations within a cluster (See EGAP's [10 Things You Need to Know about Cluster Randomization](https://egap.org/resource/10-things-to-know-about-cluster-randomization/)).^[Note that when treatment assignment is influenced by clustering but not completely determined at the cluster level, traditional standard error adjustments for clustering will tend to be too conservative. See @abadie2023should for more discussion of this and some potential solutions.]
 
-Since we analyze as we randomize, a cluster randomized experiment requires that
-we (1) weight the combination of cluster-level average treatment effects by
-cluster size if we are trying to estimate the average of the individual level
-causal effects  [@middleton2015unbiased] and (2) change how we calculate
-standard errors and $p$-values to account for the fact that uncertainty is
-generated at the level of the cluster and not at the level of the individual
-[@hansen_covariate_2008; @gerber_field_2012]. For example, imagine that we had
-10 clusters (administrative offices, physicians groups, etc..) with half
-assigned to treatment and half assigned to control.
+Since we analyze as we randomize, a cluster randomized experiment may require that we (1) weight cluster-level average treatment effects by cluster size if we are trying to estimate the average of the individual level causal effects [@middleton2015unbiased], and generally requires (2) changing how we calculate standard errors and $p$-values to account for the fact that uncertainty is generated at the level of the cluster and not at the level of the individual [@hansen_covariate_2008; @gerber_field_2012]. For example, imagine that we had 10 clusters (administrative offices, physicians groups, etc..) with half assigned to treatment and half assigned to control.
 
-```{r makeblocksintoclusters, echo=FALSE}
-dat3 <- dat2 ## just making a copy for use with clustering
+```{r makeblocksintoclusters, echo=T}
+### Create a copy of this dataset to use for our clustering examples
+dat3 <- dat2
 dat3$cluster <- dat3$b
 dat3$clusterF <- factor(dat3$cluster)
 ndat3 <- nrow(dat3)
-```
-
-```{r assignclusters}
+### Randomly assign half of the clusters to treatment and half to control
 set.seed(12345)
-## Randomly assign half of the clusters to treatment and half to control
 dat3$Zcluster <- cluster_ra(cluster=dat3$cluster)
-# dat3$falsestratum <- rep(1,nrow(dat3))
-# dat3$iprweight <-  with(dat3,ipr(Zcluster,falsestratum,clusterF))
 with(dat3,table(Zcluster,cluster))
 ```
 
-So, although our data has `r ndat3` observations, we do not have `r ndat3`
-pieces of independent information about the effect of the treatment because
-people were assigned in groups. Rather we have some amount of information in
-between `r ndat1` and the number of clusters, in this case, 
-`r length(unique(dat3$cluster))`.  For example, here we can see the number of
+Although our example data has `r ndat3` observations, we do not have `r ndat3` pieces of independent information about the effect of the treatment because people were assigned in groups. Rather we have some amount of information in between `r ndat1` and the number of clusters, in this case, 
+`r length(unique(dat3$cluster))`. For example, here we can see the number of
 people within each cluster --- and notice that all of the people are coded as
 either control or treatment because assignment is at the level of the cluster.
 
-
 ```{r setupclusterdesign, results="hide"}
-## Setup the cluster-randomized design
+### Setup the cluster-randomized design
 library(ICC)
 iccres <- ICCest(x=clusterF,y=Y,data=dat3)
 dat3$varweight <- 1/(iccres$vara + (iccres$varw/dat3$nb))
-
+### Define DeclareDesign elements
 thepop3 <- declare_population(dat3)
-
 po_functionCluster <- function(data){
 	data$Y_Zcluster_0 <- data$y0
 	data$Y_Zcluster_1 <- data$y1
 	data
 }
-
 theysCluster  <- declare_potential_outcomes(handler = po_functionCluster)
-
 theestimandCluster <- declare_inquiry(ATE = mean(Y_Zcluster_1 - Y_Zcluster_0))
-
 theassignCluster <- declare_assignment(Zcluster=cluster_ra(clusters=cluster))
-
 theobsidentCluster <- declare_reveal(Y, Zcluster)
-
 thedesignCluster <- thepop3 + theysCluster + theestimandCluster + theassignCluster + theobsidentCluster
-
 datCluster <- draw_data(thedesignCluster)
 ```
 
-In everyday practice, with more than about 50 clusters, we produce estimates
-and using more or less the same kinds software as we do above but changing the
-standard  error calculations to use the the `CR2` cluster-robust standard error
-[@pustejovsky2019cr]. For example, here are two approaches to such adjustment.
+In everyday practice, with more than about 50 clusters, we often produce estimates using more or less the same kinds software as we do above, but changing the standard error calculations to use the the `CR2` cluster-robust standard error [@pustejovsky2019cr]. For example, here are two approaches to such adjustment.
 
 ```{r simplecr}
+### CR2 via difference in means
 estAndSE4a <- difference_in_means(Y~Zcluster,data=datCluster,clusters=cluster)
 estAndSE4a
+### CR2 via linear regression
 estAndSE4b <- lm_robust(Y~Zcluster,data=datCluster,clusters=cluster,se_type="CR2")
 estAndSE4b
 ```
 
 ### Bias when cluster size is correlated with potential outcomes
 
-When clusters have unequal sizes, we worry about bias in addition to appropriate estimates of precision
-[@middleton2015unbiased] (see also
-<https://declaredesign.org/blog/bias-cluster-randomized-trials.html>). Here we
-demonstrate how to reduce the bias, and also how bias can emerge in the
-analysis of a cluster randomized trial.
+When clusters have unequal sizes, we may worry about bias in addition to appropriate estimates of precision [@middleton2015unbiased] (see also
+<https://declaredesign.org/blog/bias-cluster-randomized-trials.html>). Here, we demonstrate how to reduce the bias, and also how bias can emerge in the analysis of a cluster randomized trial.
 
 ```{r defineestimatorsCluster, results="hide"}
-# Define estimators that can be repeated in the simulation below
-estC0 <- declare_estimator(Y~Zcluster, inquiry=theestimand, model=lm, label="C0: Ignores Clusters, IID SE")
-estC1 <- declare_estimator(Y~Zcluster, inquiry=theestimand, model=lm_robust, label="C1: Ignores Clusters, CR2 SE")
-estC2 <- declare_estimator(Y~Zcluster, inquiry=theestimand, model=lm_robust,
-			   clusters=cluster, se_type="stata",label="C2: OLS Clusters, Stata RCSE")
-estC3 <- declare_estimator(Y~Zcluster, inquiry=theestimand, model=difference_in_means,
-			     clusters = cluster,label="C3: Diff Means Cluster, CR2 SE")
-estC4 <- declare_estimator(Y~Zcluster, inquiry=theestimand, model=lm_robust,
-			     clusters = cluster,se_type="CR2",label="C4: OLS Cluster, CR2 SE")
-estC5 <- declare_estimator(Y~Zcluster, inquiry=theestimand, model=horvitz_thompson,
-			     clusters=cluster, simple=FALSE,condition_prs=.5,label="C5: Horvitz-Thompson Cluster, Young SE")
-estC6 <- declare_estimator(Y~Zcluster, inquiry=theestimand, model=lm_robust, weights= nb ,
-			   clusters=cluster, se_type="CR2",label="C6: OLS Clusters with ClusterSize Weights, CR2 RCSE")
+### Define estimators that can be repeated in the simulation below
 
-estC7 <- declare_estimator(Y~Zcluster + nb, inquiry=theestimand,
-			   model=lm_robust, weights=varweight,
-			   clusters=cluster, se_type="CR2",
-			   label="C7: OLS Clusters with Weights, CR2 RCSE")
+### No adjustment for clustering
+estC0 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm, label="C0: Ignores Clusters, IID SE")
 
-estC8 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
-			   model=lm_robust,
-			   clusters=cluster, se_type="CR2",
-			   label="C8: OLS Clusters with adj for cluster size, CR2 RCSE")
+### HC2 SEs
+estC1 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, label="C1: Ignores Clusters, CR2 SE")
 
+### Clustered SEs (CR1; Stata default)
+estC2 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, clusters=cluster, se_type="stata",label="C2: OLS Clusters, Stata RCSE")
+
+### CR2 SEs (difference in means)
+estC3 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=difference_in_means, clusters = cluster,label="C3: Diff Means Cluster, CR2 SE")
+
+### CR2 SEs (linear regression)
+estC4 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, clusters = cluster,se_type="CR2",label="C4: OLS Cluster, CR2 SE")
+
+### Horvitz-Thompson estimator with clustering
+estC5 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=horvitz_thompson, clusters=cluster, simple=FALSE, condition_prs=.5, label="C5: Horvitz-Thompson Cluster, Young SE")
+
+### Linear regression, CR2 errors, weight by cluster size
+estC6 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
+.method=lm_robust, weights = nb, clusters=cluster, se_type="CR2",label="C6: OLS Clusters with ClusterSize Weights, CR2 RCSE")
+
+### Linear regression, CR2 errors, control for cluster size, variance weights
+estC7 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
+.method=lm_robust, weights=varweight, clusters=cluster, se_type="CR2", label="C7: OLS Clusters with Weights, CR2 RCSE")
+
+### Linear regression, CR2 errors, control for cluster size
+estC8 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand, .method=lm_robust, clusters=cluster, se_type="CR2",
+label="C8: OLS Clusters with adj for cluster size, CR2 RCSE")
+
+### Linear regression, CR2 errors, lin estimation for cluster size
 estC9 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
-			   model=lm_lin,covariates=~nb,
-			   clusters=cluster, se_type="CR2",
-			   label="C9: OLS Clusters with adj for cluster size, CR2 RCSE")
-# estC10 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
-# 			   model=lm_robust, weights= ipr(Zcluster,falsestratum,clusterF),
-# 			   clusters=cluster, se_type="CR2",
-# 			   label="C10: OLS Clusters with IPR Weights, CR2 RCSE")
+.method=lm_lin, covariates=~nb, clusters=cluster, se_type="CR2",
+label="C9: OLS Clusters with adj for cluster size, CR2 RCSE")
 
-
-bt <- balanceTest(Zcluster~Y+cluster(cluster),data=datCluster)
-bt0 <- balanceTest(Zcluster~Y,data=datCluster)
-
+### Get a character vector of the estimators just created
+### (using a regular expression)
 theestimatorsC <- ls(patt="^estC[0-9]")
 theestimatorsC
 
-checkestC <- sapply(theestimatorsC,function(x){ message(x)
-		    get(x)(as.data.frame(datCluster))[c("estimate","std.error")]})
+### Add all these estimators to the design
+thedesignClusterPlusEstimators <- thedesignCluster +
+	estC0 + estC1 + estC2 + 
+  estC3 + estC4 + estC5 + 
+  estC6 + estC7 + estC8 + 
+  estC9
+
+### Apply each of these estimators to the data
+### (get(x) calls an object with this name from the environment;
+### this function is then applied to the dataframe in question)
+checkestC <- sapply(
+  theestimatorsC,
+  function(x){
+    get(x)(as.data.frame(datCluster))[c("estimate","std.error")]
+    }
+  )
+
+### Review the results
 checkestC
 
-thedesignClusterPlusEstimators <- thedesignCluster +
-	estC0 + estC1 + estC2 + estC3 + estC4 + estC5 + estC6 + estC7 + estC8 + estC9 #+ estC10
 ```
 
 ```{r diagnosisCluster, cache=TRUE, results="markup"}
+### Simulate the performance of these estimators
 sims <- 200
 set.seed(12345)
 thediagnosisCluster <- diagnose_design(thedesignClusterPlusEstimators, sims = sims, bootstrap_sims = 0)
-reshape_diagnosis(thediagnosisCluster)[,diagcols]
 ```
 
-
-The results of our simulation using `r sims` simulations show how certain
-approaches can yield very biased estimates and other approaches can reduce the
-bias. The C5 and C6 estimators have the lowest bias in this particular example
-with very few clusters. We also see the problems with the standard errors ---
-the actual standard errors (in "SD Estimate") should be much higher than those
-estimated by the approaches which ignore the clustered design (C0 and C1).
-
+The results of our simulation show how certain approaches can yield very biased estimates, while other approaches can reduce the bias. With variaion in cluster size, the C5 and C6 estimators have the lowest bias in this particular example with very few clusters. We also see evidence of problems with some of these standard errors --- the actual standard errors (in "SD Estimate") should be much higher than those estimated by the approaches which ignore the clustered design (C0 and C1).
 
 ```{r diagclustres1}
-## See https://haozhu233.github.io/kableExtra/awesome_table_in_html.html
-kable(reshape_diagnosis(thediagnosisCluster)[,diagcols] ) # %>% kable_styling() %>% scroll_box(width = "100%", height = "800px")
+kable(reshape_diagnosis(thediagnosisCluster)[,diagcols] )
 ```
 
-```{r setupclustgraph1}
+```{r setupclustgraph1, echo = F, eval = F}
+### commenting out for now
 simdesigns <- get_simulations(thediagnosis)
 ## simdesigns <- simulate_design(thedesign,sims=sims)
 simmeans <- simdesigns %>% group_by(estimator) %>% summarize(expest=mean(estimate))
 ```
 
-The following plot shows many of the estimators produce results far from the
-truth (shown by the vertical black bar), and also shows the diversity in
-precision of the estimators.
+<!-- The following plot shows many of the estimators produce results far from the -->
+<!-- truth (shown by the vertical black bar), and also shows the diversity in -->
+<!-- precision of the estimators. -->
 
-```{r clusterresultsplot}
+```{r clusterresultsplot, eval = F, echo = F}
+### commenting out for now
 ## Now compare to better behaved outcomes.
 gDiagClust <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
 	geom_density() +
@@ -1400,69 +1377,54 @@ print(gDiagClust)
 
 When we have few clusters, analytic standard errors such as those used by
 `difference_in_means` and `lm_robust` may lead to incorrect false positive
-rates for our hypothesis tests or confidence intervals. We demonstrate how
-adjusting for cluster-randomization can help ensure that the false positive
-rates of our hypothesis tests is controlled/known, we also discuss the
-limitations of these approaches. The next code block compares the false
-positive rates of two different approaches to adjusting standard errors in a
-cluster randomized trial. 
+rates for our hypothesis tests or confidence intervals. We demonstrate below how adjusting for cluster-randomization can help ensure that the false positive rates of our hypothesis tests is controlled/known. We also discuss the limitations of these approaches.
 
-To distinguish between the problems of bias arising from unequal sized clusters and problems of false positive rates or covereage arising from the fact that we have fewer clusters than units, we use a design with equal numbers of units per cluster:
+To distinguish between (1) the problems of bias arising from unequal sized clusters and (2) problems of false positive rates or poor covereage arising from the presence of few clusters, we use a design with equal numbers of units per cluster:
 
 ```{r clusterdesign2}
-
 with(dat1,table(Zcluster,buildingID))
-
 ```
 
-In this case, with equal sized clusters, a simple outcome, and equal numbers of
-clusters in treatment and control, we see that the CR2 standard error controls
-the false positive rate (**less than** 5\% of the 1000 simulations testing a
-true null hypothesis of no effects return a $p$-value of less than .05) while
-the "Stata" standard error has a slightly too high false positive rate of `r
-fprateStata05` at the 5\% error level. We also saw above that not controlling
-at all yields very poor coverage (see the rows for C0 and C1) --- and we saw
-that the "Stata" approach has poor coverage relative to the CR2 based
-approaches as well, in this case with only 10 clusters.
-
-
 ```{r fprateCR2, cache=TRUE, resuls="hide"}
-
+### Break any relationship between treatment and outcomes by permuting
+### or shuffling the treatment variable. This means that H0,  the null,
+### of no effects is true.
 checkFP <- function(dat,setype="CR2"){
-	## Break any relationship between treatment and outcomes by permuting
-	## or shuffling the treatment variable. This means that H0,  the null,
-	## of no effects is true.
 	dat$newZ <-  cluster_ra(cluster=dat$buildingID)
 	newest <- lm_robust(Y~newZ,dat=dat,clusters=buildingID,se_type=setype)
 	return(nullp = newest$p.value["newZ"])
 }
-
+### Construct a separate dataset for this example
 smalldat <- dat1[,c("Y","buildingID")]
+### Apply the function above 1000 times (CR2)
 set.seed(123)
 fpresCR2 <- replicate(1000,checkFP(dat=smalldat))
+### Apply the function above 1000 times (CR1, Stata)
 set.seed(123)
 fpresStata <- replicate(1000,checkFP(dat=smalldat,setype="stata"))
+### Summarize the results
 fprateCR205 <- mean(fpresCR2 <=  .05)
 fprateCR205
 fprateStata05 <- mean(fpresStata <= .05)
 fprateStata05
 ```
 
-The following plot shows that, in this case the Stata standard error tends to
-make slightly too many false positive errors (shown by open circles above the
-45 degree line) and the CR2 standard error tends control the error rate of the
-test (with black dots below the 45 degree line).
+In this case, with equal sized clusters, a simple outcome, and equal numbers of clusters in treatment and control, we see that the CR2 standard error controls the false positive rate (*less than* 5% of the 1000 simulations testing a true null hypothesis of no effect return a $p$-value of less than .05) while the default "Stata" (CR1) standard error has a slightly too high false positive rate of `r fprateStata05` at the 5\% error level.
 
-```{r plotfpr}
+<!-- The following plot shows that, in this case the Stata standard error tends to -->
+<!-- make slightly too many false positive errors (shown by open circles above the -->
+<!-- 45 degree line) and the CR2 standard error tends control the error rate of the -->
+<!-- test (with black dots below the 45 degree line). -->
+
+```{r plotfpr, eval = F, echo = F}
+### commenting out for now
 plot(ecdf(fpresCR2),pch=19)
-plot(ecdf(fpresStata),pch=21,add=TRUE)
+plot(ecdf(fpresStata),pch=21)
 abline(0,1)
 ```
 
 When a simulation like the above shows false positive rate problems with the
-CR2 standard error, we then use permutation-based randomization inference
-(rather than the asymptotic justified randomization inference of the CR2
-standard error).
+CR2 standard error, we prefer permutation-based randomization inference (rather than the asymptotic justified randomization inference of the CR2 standard error).
 
-[TO DO: An example using permutation based inference and its false positive rate].
+<!-- [TO DO: An example using permutation based inference and its false positive rate]. -->
 

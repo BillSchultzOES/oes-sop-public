@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-09-13">
+<meta name="date" content="2023-09-14">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -578,6 +578,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="refs" class="references">
 <div>
+<p>Abadie, Alberto, Susan Athey, Guido W Imbens, and Jeffrey M Wooldridge. 2023. &#x201C;When Should You Adjust Standard Errors for Clustering?&#x201D; <em>The Quarterly Journal of Economics</em> 138 (1): 1&#x2013;35.</p>
+</div>
+<div>
 <p>Angrist, Joshua D, and J&#xF6;rn-Steffen Pischke. 2009. <em>Mostly Harmless Econometrics: An Empiricist&#x2019;s Companion</em>. Princeton university press.</p>
 </div>
 <div>
@@ -700,6 +703,7 @@ design-based expression for the standard error of the simple estimator of the av
 <li id="fn18"><p>I.e., we are not employing the least squares dummy variable, or LSDV, methods of including fixed effects in a linear regression. For our purposes here, including fixed effects in the regression via a <em>within-estimator</em> instead would yield the same results <span class="citation">(Cameron and Trivedi <a href="#ref-cameron2005microeconometrics">2005</a>)</span>.<a href="analysis-choices.html#fnref18" class="footnote-back">&#x21A9;</a></p></li>
 <li id="fn19"><p>See also <span class="citation">Miratrix, Sekhon, and Yu (<a href="#ref-miratrix2013adjusting">2013</a>)</span><a href="analysis-choices.html#fnref19" class="footnote-back">&#x21A9;</a></p></li>
 <li id="fn20"><p>See Section 5 of <span class="citation">Hansen and Bowers (<a href="#ref-hansen_covariate_2008">2008</a>)</span> for proof that this kind of weighting is optimal from the perspective of precision.<a href="analysis-choices.html#fnref20" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn21"><p>Note that when treatment assignment is influenced by clustering but not completely determined at the cluster level, traditional standard error adjustments for clustering will tend to be too conservative. See <span class="citation">Abadie et al. (<a href="#ref-abadie2023should">2023</a>)</span> for more discussion of this and some potential solutions.<a href="analysis-choices.html#fnref21" class="footnote-back">&#x21A9;</a></p></li>
 </ol>
 </div>
 <h3>References</h3>
@@ -724,6 +728,9 @@ design-based expression for the standard error of the simple estimator of the av
 </div>
 <div id="ref-hansen_covariate_2008">
 <p>Hansen, Ben B., and Jake Bowers. 2008. &#x201C;Covariate Balance in Simple, Stratified and Clustered Comparative Studies.&#x201D; <em>Statistical Science</em> 23 (2): 219&#x2013;36.</p>
+</div>
+<div id="ref-abadie2023should">
+<p>Abadie, Alberto, Susan Athey, Guido W Imbens, and Jeffrey M Wooldridge. 2023. &#x201C;When Should You Adjust Standard Errors for Clustering?&#x201D; <em>The Quarterly Journal of Economics</em> 138 (1): 1&#x2013;35.</p>
 </div>
 </div>
             </section>

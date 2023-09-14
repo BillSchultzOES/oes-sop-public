@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-09-13">
+<meta name="date" content="2023-09-14">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3110,163 +3110,126 @@ Z
 <div id="clusterrandanalysis" class="section level2">
 <h2><span class="header-section-number">5.5</span> Cluster-randomized trials</h2>
 <p>A cluster randomized trial tends to distinguish signal from noise less well
-than an experiment where we can assign treatment directly to individuals
-because the number of independent pieces of information available to learn
-about the treatment effect is closer to the number of clusters (each of which
-tends to be assigned to treatment independently of each other) than it is to
-the number of dependent observations within a cluster (See EGAP&#x2019;s <a href="https://egap.org/methods-guides/10-things-you-need-know-about-cluster-randomization">10 Things You Need to Know about Cluster
-Randomization</a>).</p>
-<p>Since we analyze as we randomize, a cluster randomized experiment requires that
-we (1) weight the combination of cluster-level average treatment effects by
-cluster size if we are trying to estimate the average of the individual level
-causal effects <span class="citation">(Middleton and Aronow <a href="#ref-middleton2015unbiased">2015</a>)</span> and (2) change how we calculate
-standard errors and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-values to account for the fact that uncertainty is
-generated at the level of the cluster and not at the level of the individual
-<span class="citation">(Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>; Gerber and Green <a href="#ref-gerber_field_2012">2012</a>)</span>. For example, imagine that we had
-10 clusters (administrative offices, physicians groups, etc..) with half
-assigned to treatment and half assigned to control.</p>
-<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb159-1" title="1"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
-<a class="sourceLine" id="cb159-2" title="2"><span class="co">## Randomly assign half of the clusters to treatment and half to control</span></a>
-<a class="sourceLine" id="cb159-3" title="3">dat3<span class="op">$</span>Zcluster &lt;-<span class="st"> </span><span class="kw">cluster_ra</span>(<span class="dt">cluster=</span>dat3<span class="op">$</span>cluster)</a>
-<a class="sourceLine" id="cb159-4" title="4"><span class="co"># dat3$falsestratum &lt;- rep(1,nrow(dat3))</span></a>
-<a class="sourceLine" id="cb159-5" title="5"><span class="co"># dat3$iprweight &lt;-  with(dat3,ipr(Zcluster,falsestratum,clusterF))</span></a>
-<a class="sourceLine" id="cb159-6" title="6"><span class="kw">with</span>(dat3,<span class="kw">table</span>(Zcluster,cluster))</a></code></pre></div>
+than an experiment where we can assign treatment directly to individuals. The number of independent pieces of information available to learn about the treatment effect will generally be closer to the number of clusters (each of which tends to be assigned to treatment independently of each other) than the number of dependent observations within a cluster (See EGAP&#x2019;s <a href="https://egap.org/resource/10-things-to-know-about-cluster-randomization/">10 Things You Need to Know about Cluster Randomization</a>).<a href="references.html#fn21" class="footnote-ref" id="fnref21"><sup>21</sup></a></p>
+<p>Since we analyze as we randomize, a cluster randomized experiment may require that we (1) weight cluster-level average treatment effects by cluster size if we are trying to estimate the average of the individual level causal effects <span class="citation">(Middleton and Aronow <a href="#ref-middleton2015unbiased">2015</a>)</span>, and generally requires (2) changing how we calculate standard errors and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-values to account for the fact that uncertainty is generated at the level of the cluster and not at the level of the individual <span class="citation">(Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>; Gerber and Green <a href="#ref-gerber_field_2012">2012</a>)</span>. For example, imagine that we had 10 clusters (administrative offices, physicians groups, etc..) with half assigned to treatment and half assigned to control.</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb159-1" title="1"><span class="co">### Create a copy of this dataset to use for our clustering examples</span></a>
+<a class="sourceLine" id="cb159-2" title="2">dat3 &lt;-<span class="st"> </span>dat2</a>
+<a class="sourceLine" id="cb159-3" title="3">dat3<span class="op">$</span>cluster &lt;-<span class="st"> </span>dat3<span class="op">$</span>b</a>
+<a class="sourceLine" id="cb159-4" title="4">dat3<span class="op">$</span>clusterF &lt;-<span class="st"> </span><span class="kw">factor</span>(dat3<span class="op">$</span>cluster)</a>
+<a class="sourceLine" id="cb159-5" title="5">ndat3 &lt;-<span class="st"> </span><span class="kw">nrow</span>(dat3)</a>
+<a class="sourceLine" id="cb159-6" title="6"><span class="co">### Randomly assign half of the clusters to treatment and half to control</span></a>
+<a class="sourceLine" id="cb159-7" title="7"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
+<a class="sourceLine" id="cb159-8" title="8">dat3<span class="op">$</span>Zcluster &lt;-<span class="st"> </span><span class="kw">cluster_ra</span>(<span class="dt">cluster=</span>dat3<span class="op">$</span>cluster)</a>
+<a class="sourceLine" id="cb159-9" title="9"><span class="kw">with</span>(dat3,<span class="kw">table</span>(Zcluster,cluster))</a></code></pre></div>
 <pre><code>        cluster
 Zcluster   1   2   3   4   5   6   7   8   9  10
        0   8   0  30  40   0   0   0   0 100 800
        1   0  20   0   0  50  60  70  80   0   0</code></pre>
-<p>So, although our data has 1258 observations, we do not have 1258
-pieces of independent information about the effect of the treatment because
-people were assigned in groups. Rather we have some amount of information in
-between 100 and the number of clusters, in this case,
+<p>Although our example data has 1258 observations, we do not have 1258 pieces of independent information about the effect of the treatment because people were assigned in groups. Rather we have some amount of information in between 100 and the number of clusters, in this case,
 10. For example, here we can see the number of
 people within each cluster &#x2014; and notice that all of the people are coded as
 either control or treatment because assignment is at the level of the cluster.</p>
-<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb161-1" title="1"><span class="co">## Setup the cluster-randomized design</span></a>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb161-1" title="1"><span class="co">### Setup the cluster-randomized design</span></a>
 <a class="sourceLine" id="cb161-2" title="2"><span class="kw">library</span>(ICC)</a>
 <a class="sourceLine" id="cb161-3" title="3">iccres &lt;-<span class="st"> </span><span class="kw">ICCest</span>(<span class="dt">x=</span>clusterF,<span class="dt">y=</span>Y,<span class="dt">data=</span>dat3)</a>
 <a class="sourceLine" id="cb161-4" title="4">dat3<span class="op">$</span>varweight &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">/</span>(iccres<span class="op">$</span>vara <span class="op">+</span><span class="st"> </span>(iccres<span class="op">$</span>varw<span class="op">/</span>dat3<span class="op">$</span>nb))</a>
-<a class="sourceLine" id="cb161-5" title="5"></a>
+<a class="sourceLine" id="cb161-5" title="5"><span class="co">### Define DeclareDesign elements</span></a>
 <a class="sourceLine" id="cb161-6" title="6">thepop3 &lt;-<span class="st"> </span><span class="kw">declare_population</span>(dat3)</a>
-<a class="sourceLine" id="cb161-7" title="7"></a>
-<a class="sourceLine" id="cb161-8" title="8">po_functionCluster &lt;-<span class="st"> </span><span class="cf">function</span>(data){</a>
-<a class="sourceLine" id="cb161-9" title="9">    data<span class="op">$</span>Y_Zcluster_<span class="dv">0</span> &lt;-<span class="st"> </span>data<span class="op">$</span>y0</a>
-<a class="sourceLine" id="cb161-10" title="10">    data<span class="op">$</span>Y_Zcluster_<span class="dv">1</span> &lt;-<span class="st"> </span>data<span class="op">$</span>y1</a>
-<a class="sourceLine" id="cb161-11" title="11">    data</a>
-<a class="sourceLine" id="cb161-12" title="12">}</a>
-<a class="sourceLine" id="cb161-13" title="13"></a>
-<a class="sourceLine" id="cb161-14" title="14">theysCluster  &lt;-<span class="st"> </span><span class="kw">declare_potential_outcomes</span>(<span class="dt">handler =</span> po_functionCluster)</a>
-<a class="sourceLine" id="cb161-15" title="15"></a>
-<a class="sourceLine" id="cb161-16" title="16">theestimandCluster &lt;-<span class="st"> </span><span class="kw">declare_inquiry</span>(<span class="dt">ATE =</span> <span class="kw">mean</span>(Y_Zcluster_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Y_Zcluster_<span class="dv">0</span>))</a>
-<a class="sourceLine" id="cb161-17" title="17"></a>
-<a class="sourceLine" id="cb161-18" title="18">theassignCluster &lt;-<span class="st"> </span><span class="kw">declare_assignment</span>(<span class="dt">Zcluster=</span><span class="kw">cluster_ra</span>(<span class="dt">clusters=</span>cluster))</a>
-<a class="sourceLine" id="cb161-19" title="19"></a>
-<a class="sourceLine" id="cb161-20" title="20">theobsidentCluster &lt;-<span class="st"> </span><span class="kw">declare_reveal</span>(Y, Zcluster)</a>
-<a class="sourceLine" id="cb161-21" title="21"></a>
-<a class="sourceLine" id="cb161-22" title="22">thedesignCluster &lt;-<span class="st"> </span>thepop3 <span class="op">+</span><span class="st"> </span>theysCluster <span class="op">+</span><span class="st"> </span>theestimandCluster <span class="op">+</span><span class="st"> </span>theassignCluster <span class="op">+</span><span class="st"> </span>theobsidentCluster</a>
-<a class="sourceLine" id="cb161-23" title="23"></a>
-<a class="sourceLine" id="cb161-24" title="24">datCluster &lt;-<span class="st"> </span><span class="kw">draw_data</span>(thedesignCluster)</a></code></pre></div>
-<p>In everyday practice, with more than about 50 clusters, we produce estimates
-and using more or less the same kinds software as we do above but changing the
-standard error calculations to use the the <code>CR2</code> cluster-robust standard error
-<span class="citation">(Pustejovsky <a href="#ref-pustejovsky2019cr">2019</a>)</span>. For example, here are two approaches to such adjustment.</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" title="1">estAndSE4a &lt;-<span class="st"> </span><span class="kw">difference_in_means</span>(Y<span class="op">~</span>Zcluster,<span class="dt">data=</span>datCluster,<span class="dt">clusters=</span>cluster)</a>
-<a class="sourceLine" id="cb162-2" title="2">estAndSE4a</a></code></pre></div>
+<a class="sourceLine" id="cb161-7" title="7">po_functionCluster &lt;-<span class="st"> </span><span class="cf">function</span>(data){</a>
+<a class="sourceLine" id="cb161-8" title="8">    data<span class="op">$</span>Y_Zcluster_<span class="dv">0</span> &lt;-<span class="st"> </span>data<span class="op">$</span>y0</a>
+<a class="sourceLine" id="cb161-9" title="9">    data<span class="op">$</span>Y_Zcluster_<span class="dv">1</span> &lt;-<span class="st"> </span>data<span class="op">$</span>y1</a>
+<a class="sourceLine" id="cb161-10" title="10">    data</a>
+<a class="sourceLine" id="cb161-11" title="11">}</a>
+<a class="sourceLine" id="cb161-12" title="12">theysCluster  &lt;-<span class="st"> </span><span class="kw">declare_potential_outcomes</span>(<span class="dt">handler =</span> po_functionCluster)</a>
+<a class="sourceLine" id="cb161-13" title="13">theestimandCluster &lt;-<span class="st"> </span><span class="kw">declare_inquiry</span>(<span class="dt">ATE =</span> <span class="kw">mean</span>(Y_Zcluster_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Y_Zcluster_<span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb161-14" title="14">theassignCluster &lt;-<span class="st"> </span><span class="kw">declare_assignment</span>(<span class="dt">Zcluster=</span><span class="kw">cluster_ra</span>(<span class="dt">clusters=</span>cluster))</a>
+<a class="sourceLine" id="cb161-15" title="15">theobsidentCluster &lt;-<span class="st"> </span><span class="kw">declare_reveal</span>(Y, Zcluster)</a>
+<a class="sourceLine" id="cb161-16" title="16">thedesignCluster &lt;-<span class="st"> </span>thepop3 <span class="op">+</span><span class="st"> </span>theysCluster <span class="op">+</span><span class="st"> </span>theestimandCluster <span class="op">+</span><span class="st"> </span>theassignCluster <span class="op">+</span><span class="st"> </span>theobsidentCluster</a>
+<a class="sourceLine" id="cb161-17" title="17">datCluster &lt;-<span class="st"> </span><span class="kw">draw_data</span>(thedesignCluster)</a></code></pre></div>
+<p>In everyday practice, with more than about 50 clusters, we often produce estimates using more or less the same kinds software as we do above, but changing the standard error calculations to use the the <code>CR2</code> cluster-robust standard error <span class="citation">(Pustejovsky <a href="#ref-pustejovsky2019cr">2019</a>)</span>. For example, here are two approaches to such adjustment.</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" title="1"><span class="co">### CR2 via difference in means</span></a>
+<a class="sourceLine" id="cb162-2" title="2">estAndSE4a &lt;-<span class="st"> </span><span class="kw">difference_in_means</span>(Y<span class="op">~</span>Zcluster,<span class="dt">data=</span>datCluster,<span class="dt">clusters=</span>cluster)</a>
+<a class="sourceLine" id="cb162-3" title="3">estAndSE4a</a></code></pre></div>
 <pre><code>Design:  Clustered 
          Estimate Std. Error t value Pr(&gt;|t|) CI Lower CI Upper   DF
 Zcluster   -15597       8336  -1.871   0.1232   -37356     6162 4.76</code></pre>
-<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb164-1" title="1">estAndSE4b &lt;-<span class="st"> </span><span class="kw">lm_robust</span>(Y<span class="op">~</span>Zcluster,<span class="dt">data=</span>datCluster,<span class="dt">clusters=</span>cluster,<span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>)</a>
-<a class="sourceLine" id="cb164-2" title="2">estAndSE4b</a></code></pre></div>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb164-1" title="1"><span class="co">### CR2 via linear regression</span></a>
+<a class="sourceLine" id="cb164-2" title="2">estAndSE4b &lt;-<span class="st"> </span><span class="kw">lm_robust</span>(Y<span class="op">~</span>Zcluster,<span class="dt">data=</span>datCluster,<span class="dt">clusters=</span>cluster,<span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>)</a>
+<a class="sourceLine" id="cb164-3" title="3">estAndSE4b</a></code></pre></div>
 <pre><code>            Estimate Std. Error t value Pr(&gt;|t|) CI Lower CI Upper    DF
 (Intercept)    15707       8332   1.885   0.1409    -8542    39955 3.578
 Zcluster      -15597       8336  -1.871   0.1232   -37356     6162 4.760</code></pre>
 <div id="bias-when-cluster-size-is-correlated-with-potential-outcomes" class="section level3">
 <h3><span class="header-section-number">5.5.1</span> Bias when cluster size is correlated with potential outcomes</h3>
-<p>When clusters have unequal sizes, we worry about bias in addition to appropriate estimates of precision
-<span class="citation">(Middleton and Aronow <a href="#ref-middleton2015unbiased">2015</a>)</span> (see also
-<a href="https://declaredesign.org/blog/bias-cluster-randomized-trials.html" class="uri">https://declaredesign.org/blog/bias-cluster-randomized-trials.html</a>). Here we
-demonstrate how to reduce the bias, and also how bias can emerge in the
-analysis of a cluster randomized trial.</p>
-<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb166-1" title="1"><span class="co"># Define estimators that can be repeated in the simulation below</span></a>
-<a class="sourceLine" id="cb166-2" title="2">estC0 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">model=</span>lm, <span class="dt">label=</span><span class="st">&quot;C0: Ignores Clusters, IID SE&quot;</span>)</a>
-<a class="sourceLine" id="cb166-3" title="3">estC1 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">model=</span>lm_robust, <span class="dt">label=</span><span class="st">&quot;C1: Ignores Clusters, CR2 SE&quot;</span>)</a>
-<a class="sourceLine" id="cb166-4" title="4">estC2 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">model=</span>lm_robust,</a>
-<a class="sourceLine" id="cb166-5" title="5">               <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;stata&quot;</span>,<span class="dt">label=</span><span class="st">&quot;C2: OLS Clusters, Stata RCSE&quot;</span>)</a>
-<a class="sourceLine" id="cb166-6" title="6">estC3 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">model=</span>difference_in_means,</a>
-<a class="sourceLine" id="cb166-7" title="7">                 <span class="dt">clusters =</span> cluster,<span class="dt">label=</span><span class="st">&quot;C3: Diff Means Cluster, CR2 SE&quot;</span>)</a>
-<a class="sourceLine" id="cb166-8" title="8">estC4 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">model=</span>lm_robust,</a>
-<a class="sourceLine" id="cb166-9" title="9">                 <span class="dt">clusters =</span> cluster,<span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,<span class="dt">label=</span><span class="st">&quot;C4: OLS Cluster, CR2 SE&quot;</span>)</a>
-<a class="sourceLine" id="cb166-10" title="10">estC5 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">model=</span>horvitz_thompson,</a>
-<a class="sourceLine" id="cb166-11" title="11">                 <span class="dt">clusters=</span>cluster, <span class="dt">simple=</span><span class="ot">FALSE</span>,<span class="dt">condition_prs=</span>.<span class="dv">5</span>,<span class="dt">label=</span><span class="st">&quot;C5: Horvitz-Thompson Cluster, Young SE&quot;</span>)</a>
-<a class="sourceLine" id="cb166-12" title="12">estC6 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">model=</span>lm_robust, <span class="dt">weights=</span> nb ,</a>
-<a class="sourceLine" id="cb166-13" title="13">               <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,<span class="dt">label=</span><span class="st">&quot;C6: OLS Clusters with ClusterSize Weights, CR2 RCSE&quot;</span>)</a>
+<p>When clusters have unequal sizes, we may worry about bias in addition to appropriate estimates of precision <span class="citation">(Middleton and Aronow <a href="#ref-middleton2015unbiased">2015</a>)</span> (see also
+<a href="https://declaredesign.org/blog/bias-cluster-randomized-trials.html" class="uri">https://declaredesign.org/blog/bias-cluster-randomized-trials.html</a>). Here, we demonstrate how to reduce the bias, and also how bias can emerge in the analysis of a cluster randomized trial.</p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb166-1" title="1"><span class="co">### Define estimators that can be repeated in the simulation below</span></a>
+<a class="sourceLine" id="cb166-2" title="2"></a>
+<a class="sourceLine" id="cb166-3" title="3"><span class="co">### No adjustment for clustering</span></a>
+<a class="sourceLine" id="cb166-4" title="4">estC0 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">.method=</span>lm, <span class="dt">label=</span><span class="st">&quot;C0: Ignores Clusters, IID SE&quot;</span>)</a>
+<a class="sourceLine" id="cb166-5" title="5"></a>
+<a class="sourceLine" id="cb166-6" title="6"><span class="co">### HC2 SEs</span></a>
+<a class="sourceLine" id="cb166-7" title="7">estC1 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">.method=</span>lm_robust, <span class="dt">label=</span><span class="st">&quot;C1: Ignores Clusters, CR2 SE&quot;</span>)</a>
+<a class="sourceLine" id="cb166-8" title="8"></a>
+<a class="sourceLine" id="cb166-9" title="9"><span class="co">### Clustered SEs (CR1; Stata default)</span></a>
+<a class="sourceLine" id="cb166-10" title="10">estC2 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">.method=</span>lm_robust, <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;stata&quot;</span>,<span class="dt">label=</span><span class="st">&quot;C2: OLS Clusters, Stata RCSE&quot;</span>)</a>
+<a class="sourceLine" id="cb166-11" title="11"></a>
+<a class="sourceLine" id="cb166-12" title="12"><span class="co">### CR2 SEs (difference in means)</span></a>
+<a class="sourceLine" id="cb166-13" title="13">estC3 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">.method=</span>difference_in_means, <span class="dt">clusters =</span> cluster,<span class="dt">label=</span><span class="st">&quot;C3: Diff Means Cluster, CR2 SE&quot;</span>)</a>
 <a class="sourceLine" id="cb166-14" title="14"></a>
-<a class="sourceLine" id="cb166-15" title="15">estC7 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster <span class="op">+</span><span class="st"> </span>nb, <span class="dt">inquiry=</span>theestimand,</a>
-<a class="sourceLine" id="cb166-16" title="16">               <span class="dt">model=</span>lm_robust, <span class="dt">weights=</span>varweight,</a>
-<a class="sourceLine" id="cb166-17" title="17">               <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,</a>
-<a class="sourceLine" id="cb166-18" title="18">               <span class="dt">label=</span><span class="st">&quot;C7: OLS Clusters with Weights, CR2 RCSE&quot;</span>)</a>
-<a class="sourceLine" id="cb166-19" title="19"></a>
-<a class="sourceLine" id="cb166-20" title="20">estC8 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster<span class="op">+</span>nb, <span class="dt">inquiry=</span>theestimand,</a>
-<a class="sourceLine" id="cb166-21" title="21">               <span class="dt">model=</span>lm_robust,</a>
-<a class="sourceLine" id="cb166-22" title="22">               <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,</a>
-<a class="sourceLine" id="cb166-23" title="23">               <span class="dt">label=</span><span class="st">&quot;C8: OLS Clusters with adj for cluster size, CR2 RCSE&quot;</span>)</a>
+<a class="sourceLine" id="cb166-15" title="15"><span class="co">### CR2 SEs (linear regression)</span></a>
+<a class="sourceLine" id="cb166-16" title="16">estC4 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">.method=</span>lm_robust, <span class="dt">clusters =</span> cluster,<span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,<span class="dt">label=</span><span class="st">&quot;C4: OLS Cluster, CR2 SE&quot;</span>)</a>
+<a class="sourceLine" id="cb166-17" title="17"></a>
+<a class="sourceLine" id="cb166-18" title="18"><span class="co">### Horvitz-Thompson estimator with clustering</span></a>
+<a class="sourceLine" id="cb166-19" title="19">estC5 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand, <span class="dt">.method=</span>horvitz_thompson, <span class="dt">clusters=</span>cluster, <span class="dt">simple=</span><span class="ot">FALSE</span>, <span class="dt">condition_prs=</span>.<span class="dv">5</span>, <span class="dt">label=</span><span class="st">&quot;C5: Horvitz-Thompson Cluster, Young SE&quot;</span>)</a>
+<a class="sourceLine" id="cb166-20" title="20"></a>
+<a class="sourceLine" id="cb166-21" title="21"><span class="co">### Linear regression, CR2 errors, weight by cluster size</span></a>
+<a class="sourceLine" id="cb166-22" title="22">estC6 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand,</a>
+<a class="sourceLine" id="cb166-23" title="23"><span class="dt">.method=</span>lm_robust, <span class="dt">weights =</span> nb, <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,<span class="dt">label=</span><span class="st">&quot;C6: OLS Clusters with ClusterSize Weights, CR2 RCSE&quot;</span>)</a>
 <a class="sourceLine" id="cb166-24" title="24"></a>
-<a class="sourceLine" id="cb166-25" title="25">estC9 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand,</a>
-<a class="sourceLine" id="cb166-26" title="26">               <span class="dt">model=</span>lm_lin,<span class="dt">covariates=</span><span class="op">~</span>nb,</a>
-<a class="sourceLine" id="cb166-27" title="27">               <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,</a>
-<a class="sourceLine" id="cb166-28" title="28">               <span class="dt">label=</span><span class="st">&quot;C9: OLS Clusters with adj for cluster size, CR2 RCSE&quot;</span>)</a>
-<a class="sourceLine" id="cb166-29" title="29"><span class="co"># estC10 &lt;- declare_estimator(Y~Zcluster, inquiry=theestimand,</span></a>
-<a class="sourceLine" id="cb166-30" title="30"><span class="co">#              model=lm_robust, weights= ipr(Zcluster,falsestratum,clusterF),</span></a>
-<a class="sourceLine" id="cb166-31" title="31"><span class="co">#              clusters=cluster, se_type=&quot;CR2&quot;,</span></a>
-<a class="sourceLine" id="cb166-32" title="32"><span class="co">#              label=&quot;C10: OLS Clusters with IPR Weights, CR2 RCSE&quot;)</span></a>
-<a class="sourceLine" id="cb166-33" title="33"></a>
-<a class="sourceLine" id="cb166-34" title="34"></a>
-<a class="sourceLine" id="cb166-35" title="35">bt &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(Zcluster<span class="op">~</span>Y<span class="op">+</span><span class="kw">cluster</span>(cluster),<span class="dt">data=</span>datCluster)</a>
-<a class="sourceLine" id="cb166-36" title="36">bt0 &lt;-<span class="st"> </span><span class="kw">balanceTest</span>(Zcluster<span class="op">~</span>Y,<span class="dt">data=</span>datCluster)</a>
+<a class="sourceLine" id="cb166-25" title="25"><span class="co">### Linear regression, CR2 errors, control for cluster size, variance weights</span></a>
+<a class="sourceLine" id="cb166-26" title="26">estC7 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster<span class="op">+</span>nb, <span class="dt">inquiry=</span>theestimand,</a>
+<a class="sourceLine" id="cb166-27" title="27"><span class="dt">.method=</span>lm_robust, <span class="dt">weights=</span>varweight, <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>, <span class="dt">label=</span><span class="st">&quot;C7: OLS Clusters with Weights, CR2 RCSE&quot;</span>)</a>
+<a class="sourceLine" id="cb166-28" title="28"></a>
+<a class="sourceLine" id="cb166-29" title="29"><span class="co">### Linear regression, CR2 errors, control for cluster size</span></a>
+<a class="sourceLine" id="cb166-30" title="30">estC8 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster<span class="op">+</span>nb, <span class="dt">inquiry=</span>theestimand, <span class="dt">.method=</span>lm_robust, <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,</a>
+<a class="sourceLine" id="cb166-31" title="31"><span class="dt">label=</span><span class="st">&quot;C8: OLS Clusters with adj for cluster size, CR2 RCSE&quot;</span>)</a>
+<a class="sourceLine" id="cb166-32" title="32"></a>
+<a class="sourceLine" id="cb166-33" title="33"><span class="co">### Linear regression, CR2 errors, lin estimation for cluster size</span></a>
+<a class="sourceLine" id="cb166-34" title="34">estC9 &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Zcluster, <span class="dt">inquiry=</span>theestimand,</a>
+<a class="sourceLine" id="cb166-35" title="35"><span class="dt">.method=</span>lm_lin, <span class="dt">covariates=</span><span class="op">~</span>nb, <span class="dt">clusters=</span>cluster, <span class="dt">se_type=</span><span class="st">&quot;CR2&quot;</span>,</a>
+<a class="sourceLine" id="cb166-36" title="36"><span class="dt">label=</span><span class="st">&quot;C9: OLS Clusters with adj for cluster size, CR2 RCSE&quot;</span>)</a>
 <a class="sourceLine" id="cb166-37" title="37"></a>
-<a class="sourceLine" id="cb166-38" title="38">theestimatorsC &lt;-<span class="st"> </span><span class="kw">ls</span>(<span class="dt">patt=</span><span class="st">&quot;^estC[0-9]&quot;</span>)</a>
-<a class="sourceLine" id="cb166-39" title="39">theestimatorsC</a>
-<a class="sourceLine" id="cb166-40" title="40"></a>
-<a class="sourceLine" id="cb166-41" title="41">checkestC &lt;-<span class="st"> </span><span class="kw">sapply</span>(theestimatorsC,<span class="cf">function</span>(x){ <span class="kw">message</span>(x)</a>
-<a class="sourceLine" id="cb166-42" title="42">            <span class="kw">get</span>(x)(<span class="kw">as.data.frame</span>(datCluster))[<span class="kw">c</span>(<span class="st">&quot;estimate&quot;</span>,<span class="st">&quot;std.error&quot;</span>)]})</a>
-<a class="sourceLine" id="cb166-43" title="43">checkestC</a>
-<a class="sourceLine" id="cb166-44" title="44"></a>
-<a class="sourceLine" id="cb166-45" title="45">thedesignClusterPlusEstimators &lt;-<span class="st"> </span>thedesignCluster <span class="op">+</span></a>
-<a class="sourceLine" id="cb166-46" title="46"><span class="st">    </span>estC0 <span class="op">+</span><span class="st"> </span>estC1 <span class="op">+</span><span class="st"> </span>estC2 <span class="op">+</span><span class="st"> </span>estC3 <span class="op">+</span><span class="st"> </span>estC4 <span class="op">+</span><span class="st"> </span>estC5 <span class="op">+</span><span class="st"> </span>estC6 <span class="op">+</span><span class="st"> </span>estC7 <span class="op">+</span><span class="st"> </span>estC8 <span class="op">+</span><span class="st"> </span>estC9 <span class="co">#+ estC10</span></a></code></pre></div>
-<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb167-1" title="1">sims &lt;-<span class="st"> </span><span class="dv">200</span></a>
-<a class="sourceLine" id="cb167-2" title="2"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
-<a class="sourceLine" id="cb167-3" title="3">thediagnosisCluster &lt;-<span class="st"> </span><span class="kw">diagnose_design</span>(thedesignClusterPlusEstimators, <span class="dt">sims =</span> sims, <span class="dt">bootstrap_sims =</span> <span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb167-4" title="4"><span class="kw">reshape_diagnosis</span>(thediagnosisCluster)[, diagcols]</a></code></pre></div>
-<pre><code>                                              Estimator     Term Mean Estimand Mean Estimate
-1                          C0: Ignores Clusters, IID SE Zcluster     -12900.57     -15166.65
-2                          C1: Ignores Clusters, CR2 SE Zcluster     -12900.57     -15166.65
-3                          C2: OLS Clusters, Stata RCSE Zcluster     -12900.57     -15166.65
-4                        C3: Diff Means Cluster, CR2 SE Zcluster     -12900.57     -15166.65
-5                               C4: OLS Cluster, CR2 SE Zcluster     -12900.57     -15166.65
-6                C5: Horvitz-Thompson Cluster, Young SE Zcluster     -12900.57     -12710.34
-7   C6: OLS Clusters with ClusterSize Weights, CR2 RCSE Zcluster     -12900.57     -12670.05
-8               C7: OLS Clusters with Weights, CR2 RCSE Zcluster     -12900.57     -19047.82
-9  C8: OLS Clusters with adj for cluster size, CR2 RCSE Zcluster     -12900.57     -19120.43
-10 C9: OLS Clusters with adj for cluster size, CR2 RCSE Zcluster     -12900.57      61051.64
-       Bias SD Estimate      RMSE Power
-1  -2266.08     5916.55   6321.84  1.00
-2  -2266.08     5916.55   6321.84  1.00
-3  -2266.08     5916.55   6321.84  0.76
-4  -2266.08     5916.55   6321.84  0.32
-5  -2266.08     5916.55   6321.84  0.32
-6    190.23     5595.09   5584.33  0.32
-7    230.51     5931.54   5921.18  0.24
-8  -6147.26     6717.76   9093.48  0.24
-9  -6219.86     6709.44   9136.65  0.26
-10 73952.20   124497.09 144537.04  0.06</code></pre>
-<p>The results of our simulation using 200 simulations show how certain
-approaches can yield very biased estimates and other approaches can reduce the
-bias. The C5 and C6 estimators have the lowest bias in this particular example
-with very few clusters. We also see the problems with the standard errors &#x2014;
-the actual standard errors (in &#x201C;SD Estimate&#x201D;) should be much higher than those
-estimated by the approaches which ignore the clustered design (C0 and C1).</p>
-<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb169-1" title="1"><span class="co">## See https://haozhu233.github.io/kableExtra/awesome_table_in_html.html</span></a>
-<a class="sourceLine" id="cb169-2" title="2"><span class="kw">kable</span>(<span class="kw">reshape_diagnosis</span>(thediagnosisCluster)[,diagcols] ) <span class="co"># %&gt;% kable_styling() %&gt;% scroll_box(width = &quot;100%&quot;, height = &quot;800px&quot;)</span></a></code></pre></div>
+<a class="sourceLine" id="cb166-38" title="38"><span class="co">### Get a character vector of the estimators just created</span></a>
+<a class="sourceLine" id="cb166-39" title="39"><span class="co">### (using a regular expression)</span></a>
+<a class="sourceLine" id="cb166-40" title="40">theestimatorsC &lt;-<span class="st"> </span><span class="kw">ls</span>(<span class="dt">patt=</span><span class="st">&quot;^estC[0-9]&quot;</span>)</a>
+<a class="sourceLine" id="cb166-41" title="41">theestimatorsC</a>
+<a class="sourceLine" id="cb166-42" title="42"></a>
+<a class="sourceLine" id="cb166-43" title="43"><span class="co">### Add all these estimators to the design</span></a>
+<a class="sourceLine" id="cb166-44" title="44">thedesignClusterPlusEstimators &lt;-<span class="st"> </span>thedesignCluster <span class="op">+</span></a>
+<a class="sourceLine" id="cb166-45" title="45"><span class="st">    </span>estC0 <span class="op">+</span><span class="st"> </span>estC1 <span class="op">+</span><span class="st"> </span>estC2 <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb166-46" title="46"><span class="st">  </span>estC3 <span class="op">+</span><span class="st"> </span>estC4 <span class="op">+</span><span class="st"> </span>estC5 <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb166-47" title="47"><span class="st">  </span>estC6 <span class="op">+</span><span class="st"> </span>estC7 <span class="op">+</span><span class="st"> </span>estC8 <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb166-48" title="48"><span class="st">  </span>estC9</a>
+<a class="sourceLine" id="cb166-49" title="49"></a>
+<a class="sourceLine" id="cb166-50" title="50"><span class="co">### Apply each of these estimators to the data</span></a>
+<a class="sourceLine" id="cb166-51" title="51"><span class="co">### (get(x) calls an object with this name from the environment;</span></a>
+<a class="sourceLine" id="cb166-52" title="52"><span class="co">### this function is then applied to the dataframe in question)</span></a>
+<a class="sourceLine" id="cb166-53" title="53">checkestC &lt;-<span class="st"> </span><span class="kw">sapply</span>(</a>
+<a class="sourceLine" id="cb166-54" title="54">  theestimatorsC,</a>
+<a class="sourceLine" id="cb166-55" title="55">  <span class="cf">function</span>(x){</a>
+<a class="sourceLine" id="cb166-56" title="56">    <span class="kw">get</span>(x)(<span class="kw">as.data.frame</span>(datCluster))[<span class="kw">c</span>(<span class="st">&quot;estimate&quot;</span>,<span class="st">&quot;std.error&quot;</span>)]</a>
+<a class="sourceLine" id="cb166-57" title="57">    }</a>
+<a class="sourceLine" id="cb166-58" title="58">  )</a>
+<a class="sourceLine" id="cb166-59" title="59"></a>
+<a class="sourceLine" id="cb166-60" title="60"><span class="co">### Review the results</span></a>
+<a class="sourceLine" id="cb166-61" title="61">checkestC</a></code></pre></div>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb167-1" title="1"><span class="co">### Simulate the performance of these estimators</span></a>
+<a class="sourceLine" id="cb167-2" title="2">sims &lt;-<span class="st"> </span><span class="dv">200</span></a>
+<a class="sourceLine" id="cb167-3" title="3"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
+<a class="sourceLine" id="cb167-4" title="4">thediagnosisCluster &lt;-<span class="st"> </span><span class="kw">diagnose_design</span>(thedesignClusterPlusEstimators, <span class="dt">sims =</span> sims, <span class="dt">bootstrap_sims =</span> <span class="dv">0</span>)</a></code></pre></div>
+<p>The results of our simulation show how certain approaches can yield very biased estimates, while other approaches can reduce the bias. With variaion in cluster size, the C5 and C6 estimators have the lowest bias in this particular example with very few clusters. We also see evidence of problems with some of these standard errors &#x2014; the actual standard errors (in &#x201C;SD Estimate&#x201D;) should be much higher than those estimated by the approaches which ignore the clustered design (C0 and C1).</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1"><span class="kw">kable</span>(<span class="kw">reshape_diagnosis</span>(thediagnosisCluster)[,diagcols] )</a></code></pre></div>
 <table>
 <thead>
 <tr>
@@ -3559,79 +3522,52 @@ Zcluster
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" title="1">simdesigns &lt;-<span class="st"> </span><span class="kw">get_simulations</span>(thediagnosis)</a>
-<a class="sourceLine" id="cb170-2" title="2"><span class="co">## simdesigns &lt;- simulate_design(thedesign,sims=sims)</span></a>
-<a class="sourceLine" id="cb170-3" title="3">simmeans &lt;-<span class="st"> </span>simdesigns <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(estimator) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarize</span>(<span class="dt">expest=</span><span class="kw">mean</span>(estimate))</a></code></pre></div>
-<p>The following plot shows many of the estimators produce results far from the
-truth (shown by the vertical black bar), and also shows the diversity in
-precision of the estimators.</p>
-<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb171-1" title="1"><span class="co">## Now compare to better behaved outcomes.</span></a>
-<a class="sourceLine" id="cb171-2" title="2">gDiagClust &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data=</span>simdesigns,<span class="kw">aes</span>(<span class="dt">x=</span>estimate,<span class="dt">color=</span>estimator)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb171-3" title="3"><span class="st">    </span><span class="kw">geom_density</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb171-4" title="4"><span class="st">    </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span>trueATE1) <span class="op">+</span></a>
-<a class="sourceLine" id="cb171-5" title="5"><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">data=</span>simmeans,<span class="kw">aes</span>(<span class="dt">x=</span>expest,<span class="dt">y=</span><span class="kw">rep</span>(<span class="dv">0</span>,<span class="dv">10</span>)),<span class="dt">shape=</span><span class="dv">17</span>,<span class="dt">size=</span><span class="dv">6</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb171-6" title="6"><span class="st">    </span><span class="kw">theme_bw</span>() <span class="co">#+</span></a>
-<a class="sourceLine" id="cb171-7" title="7">    <span class="co">#theme(legend.position = c(.9,.8))</span></a>
-<a class="sourceLine" id="cb171-8" title="8"><span class="kw">print</span>(gDiagClust)</a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/clusterresultsplot-1.png" width=".9\textwidth"></p>
+<!-- The following plot shows many of the estimators produce results far from the -->
+<!-- truth (shown by the vertical black bar), and also shows the diversity in -->
+<!-- precision of the estimators. -->
 </div>
 <div id="incorrect-false-positive-rates-from-tests-and-confidence-intervals" class="section level3">
 <h3><span class="header-section-number">5.5.2</span> Incorrect false positive rates from tests and confidence intervals</h3>
 <p>When we have few clusters, analytic standard errors such as those used by
 <code>difference_in_means</code> and <code>lm_robust</code> may lead to incorrect false positive
-rates for our hypothesis tests or confidence intervals. We demonstrate how
-adjusting for cluster-randomization can help ensure that the false positive
-rates of our hypothesis tests is controlled/known, we also discuss the
-limitations of these approaches. The next code block compares the false
-positive rates of two different approaches to adjusting standard errors in a
-cluster randomized trial.</p>
-<p>To distinguish between the problems of bias arising from unequal sized clusters and problems of false positive rates or covereage arising from the fact that we have fewer clusters than units, we use a design with equal numbers of units per cluster:</p>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb172-1" title="1"><span class="kw">with</span>(dat1,<span class="kw">table</span>(Zcluster,buildingID))</a></code></pre></div>
+rates for our hypothesis tests or confidence intervals. We demonstrate below how adjusting for cluster-randomization can help ensure that the false positive rates of our hypothesis tests is controlled/known. We also discuss the limitations of these approaches.</p>
+<p>To distinguish between (1) the problems of bias arising from unequal sized clusters and (2) problems of false positive rates or poor covereage arising from the presence of few clusters, we use a design with equal numbers of units per cluster:</p>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb169-1" title="1"><span class="kw">with</span>(dat1,<span class="kw">table</span>(Zcluster,buildingID))</a></code></pre></div>
 <pre><code>        buildingID
 Zcluster  1  2  3  4  5  6  7  8  9 10
        C 10  0 10 10  0  0  0  0 10 10
        T  0 10  0  0 10 10 10 10  0  0</code></pre>
-<p>In this case, with equal sized clusters, a simple outcome, and equal numbers of
-clusters in treatment and control, we see that the CR2 standard error controls
-the false positive rate (<strong>less than</strong> 5% of the 1000 simulations testing a
-true null hypothesis of no effects return a <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value of less than .05) while
-the &#x201C;Stata&#x201D; standard error has a slightly too high false positive rate of <code>r fprateStata05</code> at the 5% error level. We also saw above that not controlling
-at all yields very poor coverage (see the rows for C0 and C1) &#x2014; and we saw
-that the &#x201C;Stata&#x201D; approach has poor coverage relative to the CR2 based
-approaches as well, in this case with only 10 clusters.</p>
-<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb174-1" title="1">checkFP &lt;-<span class="st"> </span><span class="cf">function</span>(dat, <span class="dt">setype =</span> <span class="st">&quot;CR2&quot;</span>) {</a>
-<a class="sourceLine" id="cb174-2" title="2">  <span class="co">## Break any relationship between treatment and outcomes by permuting</span></a>
-<a class="sourceLine" id="cb174-3" title="3">  <span class="co">## or shuffling the treatment variable. This means that H0,  the null,</span></a>
-<a class="sourceLine" id="cb174-4" title="4">  <span class="co">## of no effects is true.</span></a>
-<a class="sourceLine" id="cb174-5" title="5">  dat<span class="op">$</span>newZ &lt;-<span class="st"> </span><span class="kw">cluster_ra</span>(<span class="dt">cluster =</span> dat<span class="op">$</span>buildingID)</a>
-<a class="sourceLine" id="cb174-6" title="6">  newest &lt;-<span class="st"> </span><span class="kw">lm_robust</span>(Y <span class="op">~</span><span class="st"> </span>newZ, <span class="dt">dat =</span> dat, <span class="dt">clusters =</span> buildingID, <span class="dt">se_type =</span> setype)</a>
-<a class="sourceLine" id="cb174-7" title="7">  <span class="kw">return</span>(<span class="dt">nullp =</span> newest<span class="op">$</span>p.value[<span class="st">&quot;newZ&quot;</span>])</a>
-<a class="sourceLine" id="cb174-8" title="8">}</a>
-<a class="sourceLine" id="cb174-9" title="9"></a>
-<a class="sourceLine" id="cb174-10" title="10">smalldat &lt;-<span class="st"> </span>dat1[, <span class="kw">c</span>(<span class="st">&quot;Y&quot;</span>, <span class="st">&quot;buildingID&quot;</span>)]</a>
-<a class="sourceLine" id="cb174-11" title="11"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
-<a class="sourceLine" id="cb174-12" title="12">fpresCR2 &lt;-<span class="st"> </span><span class="kw">replicate</span>(<span class="dv">1000</span>, <span class="kw">checkFP</span>(<span class="dt">dat =</span> smalldat))</a>
-<a class="sourceLine" id="cb174-13" title="13"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
-<a class="sourceLine" id="cb174-14" title="14">fpresStata &lt;-<span class="st"> </span><span class="kw">replicate</span>(<span class="dv">1000</span>, <span class="kw">checkFP</span>(<span class="dt">dat =</span> smalldat, <span class="dt">setype =</span> <span class="st">&quot;stata&quot;</span>))</a>
-<a class="sourceLine" id="cb174-15" title="15">fprateCR205 &lt;-<span class="st"> </span><span class="kw">mean</span>(fpresCR2 <span class="op">&lt;=</span><span class="st"> </span><span class="fl">.05</span>)</a>
-<a class="sourceLine" id="cb174-16" title="16">fprateCR205</a></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb171-1" title="1"><span class="co">### Break any relationship between treatment and outcomes by permuting</span></a>
+<a class="sourceLine" id="cb171-2" title="2"><span class="co">### or shuffling the treatment variable. This means that H0,  the null,</span></a>
+<a class="sourceLine" id="cb171-3" title="3"><span class="co">### of no effects is true.</span></a>
+<a class="sourceLine" id="cb171-4" title="4">checkFP &lt;-<span class="st"> </span><span class="cf">function</span>(dat,<span class="dt">setype=</span><span class="st">&quot;CR2&quot;</span>){</a>
+<a class="sourceLine" id="cb171-5" title="5">    dat<span class="op">$</span>newZ &lt;-<span class="st">  </span><span class="kw">cluster_ra</span>(<span class="dt">cluster=</span>dat<span class="op">$</span>buildingID)</a>
+<a class="sourceLine" id="cb171-6" title="6">    newest &lt;-<span class="st"> </span><span class="kw">lm_robust</span>(Y<span class="op">~</span>newZ,<span class="dt">dat=</span>dat,<span class="dt">clusters=</span>buildingID,<span class="dt">se_type=</span>setype)</a>
+<a class="sourceLine" id="cb171-7" title="7">    <span class="kw">return</span>(<span class="dt">nullp =</span> newest<span class="op">$</span>p.value[<span class="st">&quot;newZ&quot;</span>])</a>
+<a class="sourceLine" id="cb171-8" title="8">}</a>
+<a class="sourceLine" id="cb171-9" title="9"><span class="co">### Construct a separate dataset for this example</span></a>
+<a class="sourceLine" id="cb171-10" title="10">smalldat &lt;-<span class="st"> </span>dat1[,<span class="kw">c</span>(<span class="st">&quot;Y&quot;</span>,<span class="st">&quot;buildingID&quot;</span>)]</a>
+<a class="sourceLine" id="cb171-11" title="11"><span class="co">### Apply the function above 1000 times (CR2)</span></a>
+<a class="sourceLine" id="cb171-12" title="12"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb171-13" title="13">fpresCR2 &lt;-<span class="st"> </span><span class="kw">replicate</span>(<span class="dv">1000</span>,<span class="kw">checkFP</span>(<span class="dt">dat=</span>smalldat))</a>
+<a class="sourceLine" id="cb171-14" title="14"><span class="co">### Apply the function above 1000 times (CR1, Stata)</span></a>
+<a class="sourceLine" id="cb171-15" title="15"><span class="kw">set.seed</span>(<span class="dv">123</span>)</a>
+<a class="sourceLine" id="cb171-16" title="16">fpresStata &lt;-<span class="st"> </span><span class="kw">replicate</span>(<span class="dv">1000</span>,<span class="kw">checkFP</span>(<span class="dt">dat=</span>smalldat,<span class="dt">setype=</span><span class="st">&quot;stata&quot;</span>))</a>
+<a class="sourceLine" id="cb171-17" title="17"><span class="co">### Summarize the results</span></a>
+<a class="sourceLine" id="cb171-18" title="18">fprateCR205 &lt;-<span class="st"> </span><span class="kw">mean</span>(fpresCR2 <span class="op">&lt;=</span><span class="st">  </span><span class="fl">.05</span>)</a>
+<a class="sourceLine" id="cb171-19" title="19">fprateCR205</a></code></pre></div>
 <pre><code>[1] 0.045</code></pre>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb176-1" title="1">fprateStata05 &lt;-<span class="st"> </span><span class="kw">mean</span>(fpresStata <span class="op">&lt;=</span><span class="st"> </span><span class="fl">.05</span>)</a>
-<a class="sourceLine" id="cb176-2" title="2">fprateStata05</a></code></pre></div>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb173-1" title="1">fprateStata05 &lt;-<span class="st"> </span><span class="kw">mean</span>(fpresStata <span class="op">&lt;=</span><span class="st"> </span><span class="fl">.05</span>)</a>
+<a class="sourceLine" id="cb173-2" title="2">fprateStata05</a></code></pre></div>
 <pre><code>[1] 0.054</code></pre>
-<p>The following plot shows that, in this case the Stata standard error tends to
-make slightly too many false positive errors (shown by open circles above the
-45 degree line) and the CR2 standard error tends control the error rate of the
-test (with black dots below the 45 degree line).</p>
-<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb178-1" title="1"><span class="kw">plot</span>(<span class="kw">ecdf</span>(fpresCR2),<span class="dt">pch=</span><span class="dv">19</span>)</a>
-<a class="sourceLine" id="cb178-2" title="2"><span class="kw">plot</span>(<span class="kw">ecdf</span>(fpresStata),<span class="dt">pch=</span><span class="dv">21</span>,<span class="dt">add=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb178-3" title="3"><span class="kw">abline</span>(<span class="dv">0</span>,<span class="dv">1</span>)</a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/plotfpr-1.png" width=".9\textwidth"></p>
+<p>In this case, with equal sized clusters, a simple outcome, and equal numbers of clusters in treatment and control, we see that the CR2 standard error controls the false positive rate (<em>less than</em> 5% of the 1000 simulations testing a true null hypothesis of no effect return a <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value of less than .05) while the default &#x201C;Stata&#x201D; (CR1) standard error has a slightly too high false positive rate of 0.054 at the 5% error level.</p>
+<!-- The following plot shows that, in this case the Stata standard error tends to -->
+<!-- make slightly too many false positive errors (shown by open circles above the -->
+<!-- 45 degree line) and the CR2 standard error tends control the error rate of the -->
+<!-- test (with black dots below the 45 degree line). -->
 <p>When a simulation like the above shows false positive rate problems with the
-CR2 standard error, we then use permutation-based randomization inference
-(rather than the asymptotic justified randomization inference of the CR2
-standard error).</p>
-<p>[TO DO: An example using permutation based inference and its false positive rate].</p>
+CR2 standard error, we prefer permutation-based randomization inference (rather than the asymptotic justified randomization inference of the CR2 standard error).</p>
+<!-- [TO DO: An example using permutation based inference and its false positive rate]. -->
 
 </div>
 </div>
