@@ -7,17 +7,17 @@ ndat1 <- nrow(dat1)
 
 # Analysis Choices
 
-We organize our discussion of analysis tactics by a study's design. Different study designs require different analyses. But there are a few general tactics that we use to pursue the strategy of transparent, valid, and statistically precise statements about the results of our experiments.
+We've organized our discussion of analysis tactics in this chapter by a study's design. After all, different study designs often require different analyses. But there are a few general tactics that we use to ensure that we can make transparent, valid, and statistically precise statements about the results of our research. We'll start this chapter by discussing those.
 
-The nature of the data that we expect to see from a given experiment also informs our analysis plans. For example, we may make some choices based on on the nature of the measured outcome --- a binary outcome, a symmetrically distributed continuous outcome, and a heavily skewed continuous outcome each might each call for different analytical approaches.
+First, the nature of the data that we expect to see from a given experiment informs our analysis plans. For example, we may make some choices based on the nature of the outcome --- a binary outcome, a symmetrically distributed continuous outcome, and a heavily skewed continuous outcome each could each call for different analytical approaches.
 
-We tend to ask three questions of each of our studies, and we answer each with a different statistical procedure:
+Second, we tend to ask three different questions in each of our studies, and we answer them with different statistical procedures:
 
- 1. Can we *detect an effect* in our experiment? (We use hypothesis tests to answer this question).
+ 1. Can we *detect an effect* in our experiment? (We use hypothesis tests to answer this question.)
  2. What is our best guess about the *size of the effect* of the experiment? (We estimate the average treatment effect of our interventions to answer this question.)
- 3. *How precise* is our guess? (We report confidence intervals and standard errors to answer this question.)
+ 3. *How precise* is our guess? (We report confidence intervals or standard errors to answer this question.)
 
-Each procedure below describes methods of answering those three questions for different categories of experiments. In our [Analysis Plans](https://oes.gsa.gov/methodsdetail/#analysis-plans), we try to anticipate many of the common decisions involved in data analysis --- including how we will treat missing data, how we will rescale, recode, and combine columns of raw data, etc. We touch on some of these topics below in general terms.
+Finally, in the [Analysis Plans](https://oes.gsa.gov/methodsdetail/#analysis-plans) that we post online before receiving outcome data for a project, we try to anticipate many common decisions involved in data analysis --- how we will treat missing data, how we will rescale, recode, and combine columns of raw data, etc. We touch on some of these topics in more detail below, and will cover others in a future chapter on **Working with Data**.
 
 ## Completely or Urn-Draw Randomized Trials
 
@@ -26,7 +26,7 @@ Each procedure below describes methods of answering those three questions for di
 #### Continuous outcomes
 
 In a completely randomized trial where outcomes take on many levels (units
-like times, counts of events, dollars, percentages, etc.), we assess the *weak null hypothesis* of no average effects, we estimate an average treatment effect, and we often also assess the *sharp null hypothesis* of no effect for any unit using some test statistic other than a difference of means.^[What we call the "weak null" here corresponds to the null hypothesis this is evaluated by default in many software packages (like R and Stata) when implementing common procedures like a difference-in-means test or a linear regression. Meanwhile, the "sharp null" is more often evaluated when employing permutation-based procedures like those discussed in our earlier chapter on design-based inference.] This last assessment allows us to check on whether our choice to focus on mean differences matters for our substantive interpretation of the study.
+like times, counts of events, dollars, percentages, etc.) we generally assess the *weak null hypothesis* of no average effects, estimate an average treatment effect, and may also assess the *sharp null hypothesis* of no effect for any unit using some test statistic beside a difference-in-means.^[What we call the "weak null" here corresponds to the null hypothesis this is evaluated by default in many software packages (like R and Stata) when implementing common procedures like a difference-in-means test or a linear regression. Meanwhile, the "sharp null" is more often evaluated when employing permutation-based procedures like those discussed in our earlier chapter on design-based inference.] This last assessment allows us to check on whether our choice to focus on mean differences matters for our substantive interpretation of the results.
 
 ##### Estimating the average treatment effect and testing the weak null of no average effects
 
@@ -38,20 +38,20 @@ estAndSE1 <- difference_in_means(Y ~ Z,data = dat1)
 print(estAndSE1)
 ```
 
-Notice that the standard errors that we use are not the same as those produced by OLS by default:
+Notice that the standard errors that we use are not the default OLS errors:
 
 ```{r notolsse}
 estAndSE1OLS <- lm(Y~Z,data=dat1)
 summary(estAndSE1OLS)$coef
 ```
 
-The standard errors we prefer reflect repeated randomization from a fixed experimental pool. This is known as the HC2 standard error. Specifically, @lin_agnostic_2013 and @samii_equivalencies_2012 show that the standard error estimator derived for an unbiased average treatment effect within a "finite-sample" or design-based framework (i.e., the Neyman standard error) is equivalent to the HC2 standard error. These SEs are produced by default from the `estimatr` package's function `difference_in_means()` and the `lmtest` package's functions `coeftest()` and `coefci()`. They can also be produced using the `vcovHC()` function from the `sandwich` package.
+The standard errors we prefer reflect repeated randomization from a fixed experimental pool. This is known as the HC2 standard error. @lin_agnostic_2013 and @samii_equivalencies_2012 show that the standard error estimator of an unbiased average treatment effect within a "finite-sample" or design-based framework (i.e., the Neyman standard error; see Chapter 3) is equivalent to the HC2 standard error. These SEs are produced by default by the `estimatr` package's function `difference_in_means()` and the `lmtest` package's functions `coeftest()` and `coefci()`. They can also be produced using the `vcovHC()` function from the `sandwich` package.
 
-While our preference for HC2 errors follows from their design-based justification, many researchers instead encounter them as one of several methods of correcting OLS standard errors for a problem called *heteroscedasticity*. Essentially, this means that the variance of the regression model's error term is not constant across observations.^[Classical OLS standard errors assume away heteroscedasticity, rendering them potentially inaccurate when heteroscedasticity is present.] When using OLS to analyze data from a two-arm randomized trial, for instance, this might occur because the variance of the outcome is different in the treatment and control groups. This is quite common in practice.
+Our preference for HC2 errors follows from their design-based justification, but many researchers encounter them as one of several methods of correcting OLS standard errors for *heteroscedasticity*. Essentially, this means that the variance of the regression model's error term is not constant across observations.^[Classical OLS standard errors assume away heteroscedasticity, rendering them potentially inaccurate when heteroscedasticity is present.] When using OLS to analyze data from a two-arm randomized trial, heteroscedasticity might appear because the variance of the outcome is different in the treatment and control groups. This is common in practice.
 
 ##### Testing the sharp null of no effects
 
-We often assess the sharp null of no effects via direct permutation as a check on the assumptions underlying the calculations and statistical inferences above. We tend to use a $t$-statistic as our test statistic in this case to parallel the above tests. But we might use a rank-based test statistic instead if we are concerned about long-tails (i.e., skew) reducing statistical power.
+We may assess the sharp null of no effects via direct permutation as a check on the assumptions underlying the calculations and statistical inferences above. We tend to use a $t$-statistic as our test statistic here to parallel the above tests. But we could use a rank-based test statistic instead if we were concerned about long-tails (i.e., skew) reducing statistical power.
 
 Below, we show how to perform these tests using two different R packages: `coin`, and `ri2`.  First the `coin` package [@R-coin]:
 
@@ -95,11 +95,11 @@ tidy(test1riR)
 
 #### Binary outcomes
 
-We tend to focus on differences in proportions when we are working with binary outcomes. A statement such as "The effect was 5 percentage points." has tended to make communication with our policy partners easier than a discussion in terms of log odds or odds ratios. Our tests of the hypothesis of no difference may change in the case of binary outcomes, however, in order to increase statistical power. In addition to difficulties in interpretation and communication, we avoid logistic regression coefficients because of the bias problem noticed by @freedman2008randomization in the case of covariance adjustment or more complicated research designs.
+We tend to focus on differences in percentage points when we are working with binary outcomes, usually estimated via OLS linear regression. A statement like "the effect was a 5 percentage point increase" has made communication with partners easier than a discussion in terms of log odds or odds ratios. In addition to difficulties in interpretation and communication, we also avoid logistic regression coefficients because of the bias problem noticed by @freedman2008randomization in the case of covariance adjustment or more complicated research designs.
 
 ##### Estimating the average treatment effect and testing the weak null of no average effects
 
-We can estimate effects and produce standard errors for differences of proportions using the same process as above. The average treatment effect estimate here represents the difference in the proportions of positive responses (i.e., $Y=1$) between the treatment conditions. The standard error is still valid because it is based on the design of the study and not the distribution of the outcomes.
+We can estimate effects (and produce standard errors) for differences of proportions using the same process as above. The average treatment effect estimate here represents the difference in the proportions of positive responses (i.e., $Y=1$) between treatment conditions. The standard error is still valid because it is based on the design of the study and not the distribution of the outcomes.
 
 ```{r makebinoutcomes}
 ## Make some binary outcomes
@@ -116,15 +116,15 @@ estAndSE2 <- difference_in_means(Ybin~Z,data=dat1)
 print(estAndSE2)
 ```
 
-When we have an experiment that includes a treatment and control group with binary outcomes, and when we are estimating the ATE, the standard error from a difference in proportions test is the same as the Neyman standard error (and therefore the HC2 error). In contrast, the standard error from a regular OLS regression with a binary outcome --- sometimes called a *linear probability model* --- will be at least slightly incorrect due to inherent heteroscecdasticity in such models [@angrist2009mostly].
+When we have an experiment that includes a treatment and control group with binary outcomes, and when we are estimating the ATE, the standard error from a difference in proportions test is the same as the Neyman standard error (and therefore the HC2 error). In contrast, the standard error from a regular OLS regression with a binary outcome --- sometimes called a *linear probability model* --- will be at least slightly incorrect due to inherent heteroscecdasticity [@angrist2009mostly].
 
 To see some logic for this, first consider that difference-in-proportion standard errors are estimated with the following equation:
 
 $$\widehat{SE}_{prop} = \sqrt{\frac{p_{1}(1-p_{1})}{n_{1}}+\frac{p_{2}(1-p_{2})}{n_{2}}}$$
 
-We can think of $n_1$ as the size of the group assigned treatment, $n_2$ as the size of the group assigned control, $p_1$ as the proportion of "successes" in the group assigned treatment, and $p_2$ as the proportion of "successes" in the group assigned control. Note that $p_{i}(1 - p_{i})$ --- the numerator in the fractions above --- represents the variance of a given proportion, $p_{i}$.
+$n_1$ is the size of the group assigned treatment, $n_2$ is the size of the group assigned control, $p_1$ is the proportion of "successes" in the group assigned treatment, and $p_2$iss the proportion of "successes" in the group assigned control. Notice that the numerator in the fractions above represents the variance of the proportion in each treatment group.
 
-Now, compare this with the Neyman standard error equation [@lin_agnostic_2013]:^[Specifically, the equation for feasible SE discussed in Chapter 2]
+Compare this with the Neyman standard error equation [@lin_agnostic_2013]:^[Specifically, the equation for feasible SE discussed in Chapter 2]
 
 $$\widehat{SE}_{Neyman} = \sqrt{\frac{VAR(Y_{t})}{n_1}+\frac{VAR(Y_{c})}{n_2}}$$
 
@@ -132,7 +132,7 @@ $Y_c$ is the vector of observed outcomes under control, and $Y_t$ is the vector 
 
 The code below compares the various standard error estimators discussed here.
 
-```{r, eval = TRUE, echo = TRUE, results = 'hide'}
+```{r, eval = TRUE, echo = TRUE}
 nt <- sum(dat1$Z)
 nc <- sum(1-dat1$Z)
 
@@ -155,10 +155,8 @@ se_ols <- round(coef(summary(simpOLS))["Z", "Std. Error"], 2)
 ## 5. Find Neyman SE (which are the HC2 SEs)
 se_neyman2 <- coeftest(simpOLS,vcov = vcovHC(simpOLS,type="HC2"))[2,2]
 se_neyman3 <- estAndSE2$std.error
-```
 
-```{r, eval = TRUE, echo = TRUE}
-## 5. Show SEs
+## 6. Show SEs
 se_compare <- as.data.frame(cbind(se_prop, se_neyman, se_neyman2, se_neyman3, se_ols))
 rownames(se_compare) <- "SE(ATE)"
 colnames(se_compare) <- c("diff in prop", "neyman1","neyman2","neyman3", "ols")
@@ -167,7 +165,7 @@ print(se_compare)
 
 ##### Testing the sharp null of no effects
 
-In this case, with a binary treatment and a binary outcome, we could perform a simple test of the hypothesis that outcomes are independent of treatment assignment using what is called *Fisher's exact test*. We can also use the permutation-based approaches above to produce results that do not rely on asymptotic assumptions. Below we show how Fisher's exact test, the Exact Cochran-Mantel-Haenszel test, and the Exact $\chi$-squared test produce the same answers.
+With a binary treatment and a binary outcome, we could test hypothesis that outcomes are totally independent of treatment assignment using what is called *Fisher's exact test*. We can also use the permutation-based approaches above to produce results that do not rely on asymptotic assumptions. Below we show how Fisher's exact test, the Exact Cochran-Mantel-Haenszel test, and the Exact $\chi$-squared test produce the same answers.
 
 ```{r fisherexact}
 test2fisher <- fisher.test(x=dat1$Z,y=dat1$Ybin)
@@ -178,7 +176,7 @@ test2cmh <- cmh_test(factor(Ybin)~factor(Z),data=dat1,distribution=exact())
 print(test2cmh)
 ```
 
-Notice that a difference of proportions test can also be done directly (rather than through OLS). Here, the null hypothesis is tested while using a binomial distribution rather than a Normal distribution to approximate the underlying randomization distribution. In reasonably-sized samples, both approximations perform well.
+A difference-in-proportions test can also be performed directly (rather than relying on OLS to approximate this). In that case, the null hypothesis is tested while using a binomial distribution (rather than a Normal distribution) to approximate the underlying randomization distribution. In reasonably-sized samples, both approximations perform well.
 
 ```{r diffprop}
 mat <- with(dat1,table(Z,Ybin))
@@ -191,9 +189,9 @@ matpt
 Multiple treatment arms can be analyzed as above, except that we now have
 more than one comparison between a treated group and a control group. Such studies raise both substantive and statistical questions about multiple
 testing (or "multiple comparisons"). For example, the `difference_in_means`
-function asks which average treatment effect it should estimate --- and it
-only presents one comparison at a time: here we compare the treatment `T2`
-with the baseline outcome of `T1`. We can also compare both of `T2` and `T3` with `T1` at the same time, as in the second set of results (`lm_robust` implements the same standard errors as `difference_in_means` but allows for more flexibility).
+function asks which average treatment effect it should estimate, and it
+only presents one comparison at a time. We *could* compare the treatment `T2`
+with the baseline outcome of `T1`. But we *could also* compare both of `T2` and `T3` with `T1` at the same time, as in the second set of results (`lm_robust` implements the same standard errors as `difference_in_means`, but allows for more flexible model specification).
 
 ```{r}
 estAndSE3 <- difference_in_means(Y~Z4arms,data=dat1,condition1="T1",condition2="T2")
@@ -202,58 +200,57 @@ estAndSE3multarms <- lm_robust(Y~Z4arms,data=dat1)
 print(estAndSE3multarms)
 ```
 
-In this case, we could make $((4 \times 4)-4)/2)=6$ different possible comparisons between pairs of treatment groups. If there were really no effects of any treatment, and if we chose to reject the null at the standard significance threshold of $\alpha=.05$, we would actually claim that there was at least one effect *more than 5% of the time*. $1 - ( 1 - .05)^6 = .27$, or 27% of the time, we would make a false positive error, claiming an effect existed when it did not.
+In this case, we could make $((4 \times 4)-4)/2)=6$ different possible comparisons between pairs of treatment groups. Consider that if there were really no effects of any treatment, and if we chose to reject the null at the standard significance threshold of $\alpha=.05$, we would actually claim that there was at least one effect *more than 5% of the time*. $1 - ( 1 - .05)^6 = .27$, or 27% of the time, we would make a false positive error, claiming an effect existed when it did not.
 
 In general, our analyses of studies with multiple arms should reflect the fact that we are making multiple comparisons. Two points are worth emphasizing here. First, the family-wise error rate (FWER) of these tests will differ from the individual error rate of single test. In short, testing more than one hypothesis increases the chance of making at least one Type I error (i.e., incorrectly rejecting a true null hypothesis). Suppose instead of testing a single hypothesis at a conventional significance level of $\alpha = 0.05$ we tested two hypothesis at $\alpha = 0.05$. The probability of retaining both hypotheses is $(1-\alpha)^2 = .9025$  and the probability of rejecting at least one of these hypotheses is $1-(1-\alpha)^2 = .0975$ --- almost double our stated significance threshold of $\alpha = 0.05$.
 
-Second, multiple tests will often be correlated, and our corrections for multiple testing should recognize these relationships (which will penalize the multiple testing less). When tests are correlated, this means that there is some relationship between the test statistics (e.g., student's t-statistic, or a $\chi^{2}$ statistic) used to perform inference in each case (e.g., calculating p-values). In other words, the test statistics are jointly distributed --- when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$ but the assumed reference distributions for the test statistics were identical: we just by accident ran the same exact code twice. In that case, we are really just doing one test and so haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
+Second, multiple tests will often be correlated, and corrections for multiple testing should recognize these relationships --- importantly, accounting for this correlation *will penalize multiple testing less*! When we say that tests are "correlated," we mean that there is some relationship between the test statistics (e.g., a student's t-statistic, or a $\chi^{2}$ statistic) used to perform statistical inference in each case. In other words, it means that the test statistics are jointly distributed --- when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$, but the assumed reference distributions for the test statistics were identical: by accident, ran the same exact code twice. In that case, we are really just doing one test and so we haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
 
-This in mind, our standard practice in multi-arm trials is the following:
+That issue in mind, our default recommendations for multi-arm trials are as follows:
 
- - First, decide on a focal, **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. This test should have more statistical power, and will also have a correctly controlled false positive rate. This will serve as the primary test on which our conclusions are based.
+ - First, decide on a focal, **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. Such a test would likely have more statistical power that a test that evaluates each arm separately, and would also have a correctly controlled false positive rate. This would then serve as the primary confirmatory finding we report.
 
- - Next, either perform the rest of the comparisons as **exploratory analyses** --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for overall conclusions on their own --- *OR* perform a series of additional confirmatory comparisons that adjusts for the collective false positive rate (generally to control the FWER, though we have sometimes consider adjustments to control the false discovery rate, or FDR).^[Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] We may use the Tukey HSD procedure for pairwise comparisons in a case like our example above *OR* test the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
+ - Next, we perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for overall conclusions on their own. *Or*, perform a series of additional confirmatory comparisons that adjusts for the collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] Other options to consider are using the Tukey HSD procedure for pairwise comparisons, or testing the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
 
-#### Adjusting p-values and confidence intervals for multiple comparisons using Tukey HSD in R
+#### Adjusting p-values and confidence intervals for multiple comparisons
 
-Here is an illustration of how we might adjust for multiple comparisons.
+Here is an illustration of different methods of adjusting for multiple comparisons in R.
 
-To reflect that fact that we are making multiple comparisons, we can adjust
+To reflect that fact that we are making multiple comparisons, we could adjust
 $p$-values from (uncorrelated) tests to control the familywise error rate at $\alpha$ through either a single step procedure (e.g. [Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise stepwise procedure (such as the [Holm correction](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We might also control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)).
 
-Our standard practice is to adjust the FWER using what we often refer to as Holm correction/adjustment. For more on such adjustments and multiple comparisons see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
+Our standard practice is to adjust the FWER for uncorrelated tests using Holm adjustment. For more on such adjustments and multiple comparisons see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
 
 <!-- Explain
 here about what constitutes a family and how we choose. Also why Holm. And
 when FDR.-->
 
 ```{r}
-# Get p-values but exclude intercept
+## Get p-values but exclude intercept
 pvals <- summary(estAndSE3multarms)$coef[2:4,4]
+## Illustrate different corrections (or lack thereof)
 round(p.adjust(pvals, "none"), 3)
 round(p.adjust(pvals, "bonferroni"), 3)
 round(p.adjust(pvals, "holm"), 3)
-round(p.adjust(pvals, "hochberg"), 3) ## The  FDR Correction
+round(p.adjust(pvals, "hochberg"), 3) # FDR instead of FWER
 ```
 
-Simply adjusting $p$-values from this linear model, however, would ignore the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. It also ignores potential correlations in the distribution of test statistics.
+Simply adjusting $p$-values from this linear model, however, ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. It also ignores potential correlations in the distribution of test statistics (i.e., we are leaving statistical power "on the table").
 
-Below we demonstrate how to implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
-Tukey test) calculates multiple-comparison-adjusted $p$-values and simultaneous confidence intervals *for all pairwise comparisons* in a model, while taking into account possible correlations between test statistics. It is similar to a two-sample t-test, but with built in adjustment for multiple comparisons.
-
-The test statistic for any comparison between two equally-sized groups $i$ and $j$ is:
+Instead of the above, and instead of employing simulation to control the FWER (step 7 on [this page](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/)), we can also implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
+Tukey test) calculates multiple-comparison-adjusted $p$-values and simultaneous confidence intervals *for all pairwise comparisons* in a model, while taking into account possible correlations between test statistics. It is similar to a two-sample t-test, but with built in adjustment for multiple comparisons. The test statistic for any comparison between two equally-sized groups $i$ and $j$ is:
 
 $$ t_{ij} = \frac{\bar{y_i}-\bar{y_j}}{s\sqrt{\frac{2}{n}}} $$
 
 $\bar{y_i}$ and $\bar{y_j}$ are the means in groups $i$ and
-$j$, respectively. The means are generally listed in descending order based on their size in each comparison. $s$ is the pooled standard deviation of the outcome, and $n$ is the common sample size. A critical value is then chosen for $t_{ij}$ given the desired significance level, $\alpha$, the number of groups being compared, $k$, and the degrees of freedom, $n-k$: $t_{\alpha,k,n}$.
+$j$, respectively. $s$ is the pooled standard deviation of the outcome, and $n$ is the common sample size. A critical value is then chosen for $t_{ij}$ given the desired significance level, $\alpha$, the number of groups being compared, $k$, and the degrees of freedom, $n-k$. We'll represent this critical value with $t_{\alpha,k,n}$.
 
-The confidence interval for any difference between equally-sized groups would then be:^[We focus on the classic Tukey HSD procedure for this illustration, which assumes equally sized groups. There are modifications to apply this procedure in other settings, such as the Tukey-Kramer approach.]
+The confidence interval for any difference between equally-sized groups is then:^[We focus on the classic Tukey HSD procedure for this illustration, which assumes equally sized groups. There are modifications to apply this procedure in other settings, such as the Tukey-Kramer test.]
 
 $$\left[\bar{y_i}-\bar{y_j}-t_{\alpha,k,n}s\sqrt{\frac{2}{n}}\hspace{2mm},\hspace{2mm} \bar{y_i}-\bar{y_j}+t_{\alpha,k,n}s\sqrt{\frac{2}{n}}\right]$$
 
 We present an implementation of the Tukey HSD test using the `glht()` function from the `multcomp` package, which offers more flexiblity than the
-`TukeyHSD` in the base `stats` package at the price of a slightly more complicated syntax.
+`TukeyHSD` in the base `stats` package (at the price of a slightly more complicated syntax).
 
 ```{r}
 ## We can use aov() or lm()
@@ -266,13 +263,10 @@ conduct a Tukey test of all pairwise comparisons for our treatment indicator, $Z
 
 ```{r}
 tukey_mc <- glht(lmmod, linfct = mcp(Z4arms = "Tukey"))
-```
-
-```{r}
 summary(tukey_mc)
 ```
 
-We can plot the 95% family wise confidence intervals from these comparisons
+We can then plot the 95% family wise confidence intervals for these comparisons.
 
 ```{r tukeyplot}
 ## Save dfault ploting parameters
@@ -300,7 +294,7 @@ Our studies often involve more than one outcome measure. Assessing the effect of
 
 <!-- Insert examples here? Or not?-->
 
-## Covariance Adjustment (the use of background information to increase precision)
+## Covariance adjustment (the use of background information to increase precision)
 
 When we have background or baseline information about experimental units, we
 can use this to increase the precision with which we estimate our treatment
