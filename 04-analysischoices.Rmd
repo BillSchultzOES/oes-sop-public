@@ -353,8 +353,7 @@ See the [Green-Lin-Coppock SOP](https://alexandercoppock.com/Green-Lab-SOP/Green
 Here, we show how covariance adjustment can create bias in estimation of the average treatment effect --- and how to reduce this bias while using the Lin procedure as well as by increasing the size of the experiment. In this case, we compare an experiment with 20 units to an experiement with 100 units, in each case with half of the units assigned to treatment by complete random assignment.
 
 We use the [DeclareDesign](https://declaredesign.org/) R package to make
-this process of assessing bias easier. Much of the code that follows
-is providing instructions to the `diagnose_design` command, which repeats the design of the experiment many times, each time estimating an average treatment effect, and comparing the mean of those estimate to the truth (labeled "Mean Estimand" below).
+this process of assessing bias easier.^[For more, see also [this accompanying book](https://book.declaredesign.org/introduction/preface.html).] Much of the code that follows is providing instructions to the `diagnose_design` command, which repeats the design of the experiment many times, each time estimating an average treatment effect, and comparing the mean of those estimate to the truth (labeled "Mean Estimand" below).
 
 The true potential outcomes (`y1` and `y0`) are generated using one covariate, called `cov2`, with *no true treatment effect*. In what follows, we compare the performance of (1) the simple estimator using OLS to (2) estimators that use Lin's procedure involving just the correct covariate, and also to (3) estimators that use incorrect covariates (since we rarely know exactly the covariates that help generate any given behavioral outcome).
 
@@ -863,24 +862,24 @@ package [@R-estimatr]
 Let's compare the estimates themselves:
 
 ```{r blockrandests,echo=TRUE}
-### simple_block
+## simple_block
 ate_nbwt1 <- with(datB,sum(taub*nbwt))
 
-### diffmeans
+## diffmeans
 ate_nbwt2 <- difference_in_means(Y~Z,blocks = b,data=dat2)
 
-### lmlin
+## lmlin
 ate_nbwt3 <- lm_lin(Y~Z,covariates=~bF,data=dat2)
 
-### interactionBFE
+## interactionBFE
 ate_nbwt5 <- EstimateIWE(y="Y",treatment="Z",group="bF",controls=NULL,data=as.data.frame(dat2))
 
-### regwts
+## regwts
 ate_nbwt6 <- lm_robust(Y~Z,data=dat2,weights=nbwt)
 ate_nbwt6a <- lm(Y~Z,data=dat2,weights=nbwt)
 ate_nbwt6ase <- coeftest(ate_nbwt6a,vcov=vcovHC(ate_nbwt6a,type="HC2"))
 
-### lmlinbyhand
+## lmlinbyhand
 X <- model.matrix(~bF-1,data=dat2)
 barX <- colMeans(X)
 Xmd <- sweep(X,2,barX)
@@ -892,7 +891,7 @@ bigXdf <- data.frame(bigX,Y=dat2$Y)
 ate_nbwt4 <-lm(Y~.-1,data=bigXdf)
 ate_nbwt4se <- coeftest(ate_nbwt4,vcov.=vcovHC(ate_nbwt4,type="HC2"))
 
-### List all
+## List all
 nbwtates<-c(
   simple_block=ate_nbwt1,
   diffmeans=ate_nbwt2$coefficients[["Z"]],
@@ -908,7 +907,7 @@ nbwtates
 Let's also quickly review their standard errors:
 
 ```{r blockrandSEests,echo=T}
-### Comparing the Standard Errors
+## Comparing the Standard Errors
 ate_nbwt1se <- sqrt(sum(datB$nbwt^2 * datB$estvartaub))
 nbwtses <- c(
   simple_block=ate_nbwt1se,
@@ -937,22 +936,22 @@ weights
 Let's compare the estimates themselves:
 
 ```{r}
-### simple_block
+## simple_block
 ate_hbwt1 <- with(datB, sum(taub*hbwt01))
 
-### lm_fixed_effects1
+## lm_fixed_effects1
 ate_hbwt2 <- lm_robust(Y~Z+bF,data=dat2)
 
-### lm_fixed_effects2
+## lm_fixed_effects2
 ate_hbwt3 <- lm_robust(Y~Z,fixed_effects=~bF,data=dat2)
 
-### direct_wts
+## direct_wts
 ate_hbwt4 <- lm_robust(Y~Z,data=dat2,weights=hbwt3)
 
-### demeaned
+## demeaned
 ate_hbwt5 <- lm_robust(I(Y-ave(Y,b))~I(Z-ave(Z,b)),data=dat2)
 
-### List all
+## List all
 hbwtates<-c(
   simple_block=ate_hbwt1,
 	lm_fixed_effects1=ate_hbwt2$coefficients[["Z"]],
@@ -967,7 +966,7 @@ hbwtates
 Let's also quickly review their standard errors:
 
 ```{r,echo=T}
-### Comparing the Standard Errors
+## Comparing the Standard Errors
 ate_hbwt1se <- sqrt(sum(datB$hbwt01^2 * datB$estvartaub))
 hbwtses <- c(
   simple_block=ate_hbwt1se,
@@ -1087,7 +1086,7 @@ kable(reshape_diagnosis(thediagnosis)[, c(3, 6:10, 13)])
 ```
 
 ```{r setupblockdiaggraph, eval=FALSE, echo = F}
-### For a visualization below currently not included in the SOP
+## For a visualization below currently not included in the SOP
 simdesigns <- get_simulations(thediagnosis)
 ## simdesigns <- simulate_design(thedesign,sims=sims)
 simmeans <- simdesigns %>%
@@ -1097,7 +1096,7 @@ simmeans <- simdesigns %>%
 
 ```{r graphblockdiag, eval=FALSE, include=F}
 ## Now compare to better behaved outcomes.
-### 
+## 
 g <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
 	geom_density() +
 	geom_vline(xintercept=trueATE1) +
@@ -1111,7 +1110,7 @@ The simulated outcome data is highly skewed by design. Our goal here is illustra
 approaches also perform well. However, ignoring the blocked design is still a problem --- E0 and E1 continue to show substantial bias.
 
 ```{r ranktransblock, cache = T}
-### Define a function to rank-transform the potential outcomes
+## Define a function to rank-transform the potential outcomes
 po_functionNorm <- function(data){
 	data <- data %>%
 	  group_by(b) %>%
@@ -1122,7 +1121,7 @@ po_functionNorm <- function(data){
 	return(as.data.frame(data))
 }
 
-### Redefine relevant DeclareDesign objects
+## Redefine relevant DeclareDesign objects
 theysNorm <- declare_potential_outcomes(handler = po_functionNorm)
 thedesignNorm <- thepop2 + theysNorm + theestimand + theassign + theobsident
 datNorm <- draw_data(thedesignNorm)
@@ -1132,7 +1131,7 @@ thedesignPlusEstimatorsNorm <- thedesignNorm +
   esthbwt1 + esthbwt2 + esthbwt3 + 
   esthbwt4
 
-### Perform a new simulation
+## Perform a new simulation
 sims <- 200
 thediagnosisNorm <- diagnose_design(thedesignPlusEstimatorsNorm, sims = sims, bootstrap_sims = 0, diagnosands = diagnosands)
 ```
@@ -1142,14 +1141,14 @@ kable(reshape_diagnosis(thediagnosisNorm)[, c(3, 6:10, 13)])
 ```
 
 ```{r setupblockdiaggraph2s, eval=FALSE, echo = F}
-### Again, leaving this out of SOP for now
+## Again, leaving this out of SOP for now
 simdesignsNorm <- get_simulations(thediagnosisNorm)
 ## simdesigns <- simulate_design(thedesign,sims=sims)
 simmeansNorm <- simdesignsNorm %>% group_by(estimator) %>% summarize(expest=mean(estimate))
 ```
 
 ```{r plotthediagnosisNorm, eval=FALSE, echo = F}
-### Again, leaving this out of SOP for now
+## Again, leaving this out of SOP for now
 g2 <- ggplot(data=simdesignsNorm,aes(x=estimate,color=estimator)) +
 	geom_density() +
 	geom_vline(xintercept=trueATE1) +
@@ -1162,7 +1161,7 @@ print(g2)
 In a pair-randomized design, for instance, we know that bias should not arise from ignoring the blocking structure. But we could still improve precision by taking the pairing into account [@bowers2011mem]. This next simulation changes the design to still have unequal sized blocks, but with a uniform probability of treatment assignment in each. Here, only two estimators show appreciable bias (E5 and E8). However, ignoring the blocks leads to overly conservative standard errors.
 
 ```{r equalprobblocks, cache = T}
-### Re-define relevant declare design objects
+## Re-define relevant declare design objects
 theassignEqual <- declare_assignment(Z=block_ra(blocks = bF))
 thedesignNormEqual <- thepop2 + theysNorm + theestimand + 
   theassignEqual + theobsident
@@ -1172,7 +1171,7 @@ thedesignPlusEstimatorsNormEqual <- thedesignNormEqual +
   estnbwt2 + estnbwt3 + estnbwt4 +
   esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
 
-### Perform a new simulation
+## Perform a new simulation
 sims <- 200
 set.seed(12345)
 thediagnosisNormEqual <- diagnose_design(thedesignPlusEstimatorsNormEqual, sims = sims, bootstrap_sims = 0, diagnosands = diagnosands)
@@ -1183,13 +1182,13 @@ kable(reshape_diagnosis(thediagnosisNormEqual)[, c(3, 6:10, 13)])
 ```
 
 ```{r setupblockdiaggraph3, eval=FALSE, echo=F}
-### Again, leaving this out of SOP for now
+## Again, leaving this out of SOP for now
 simdesignsNormEqual <- get_simulations(thediagnosisNorm)
 simmeansNormEqual <- simdesignsNormEqual %>% group_by(estimator) %>% summarize(expest=mean(estimate))
 ```
 
 ```{r graphblockdiag3, eval=FALSE, echo=F}
-### Again, leaving this out of SOP for now
+## Again, leaving this out of SOP for now
 ## Now compare to better behaved outcomes.
 g3 <- ggplot(data=simdesignsNormEqual,aes(x=estimate,color=estimator)) +
 	geom_density() +
@@ -1211,13 +1210,13 @@ In a cluster randomized trial, treatment is assigned at the level of larger grou
 Since we analyze as we randomize, a cluster randomized experiment may require that we (1) weight cluster-level average treatment effects by cluster size if we are trying to estimate the average of the individual level causal effects [@middleton2015unbiased]. They also require that we (2) change how we calculate standard errors and $p$-values to account for the fact that uncertainty is generated at the level of the cluster and not at the level of the individual [@hansen_covariate_2008; @gerber_field_2012]. For example, imagine that we had 10 clusters (administrative offices, physicians groups, etc.) with half assigned to treatment and half assigned to control.
 
 ```{r makeblocksintoclusters, echo=T}
-### Create a copy of dat2 to use for our clustering examples
+## Create a copy of dat2 to use for our clustering examples
 dat3 <- dat2
 dat3$cluster <- dat3$b
 dat3$clusterF <- factor(dat3$cluster)
 ndat3 <- nrow(dat3)
 
-### Randomly assign half of the clusters to treatment and half to control
+## Randomly assign half of the clusters to treatment and half to control
 set.seed(12345)
 dat3$Zcluster <- cluster_ra(cluster=dat3$cluster)
 with(dat3,table(Zcluster,cluster))
@@ -1231,12 +1230,12 @@ either control or treatment because assignment is at the level of the cluster.
 Before continuing, let's set up some `DeclareDesign` elements for a simulation of clustered experimental designs:
 
 ```{r setupclusterdesign, results="hide"}
-### Get weights for one estimation strategy used below
+## Get weights for one estimation strategy used below
 library(ICC)
 iccres <- ICCest(x=clusterF,y=Y,data=dat3)
 dat3$varweight <- 1/(iccres$vara + (iccres$varw/dat3$nb))
 
-### Define various DeclareDesign elements
+## Define various DeclareDesign elements
 thepop3 <- declare_population(dat3)
 po_functionCluster <- function(data){
 	data$Y_Zcluster_0 <- data$y0
@@ -1257,7 +1256,7 @@ In everyday practice, with more than about 50 (equally-sized) clusters, we often
 The `difference_in_means()` function:
 
 ```{r simplecr1}
-### CR2 via difference in means
+## CR2 via difference in means
 estAndSE4a <- difference_in_means(Y~Zcluster, data=datCluster, clusters=cluster)
 estAndSE4a
 ```
@@ -1265,7 +1264,7 @@ estAndSE4a
 The `lm_robust()` function:
 
 ```{r simplecr2}
-### CR2 via linear regression
+## CR2 via linear regression
 estAndSE4b <- lm_robust(Y~Zcluster, data=datCluster, clusters=cluster, se_type="CR2")
 estAndSE4b
 ```
@@ -1276,57 +1275,57 @@ When clusters have unequal sizes, in addition to adjusting our standard error ca
 <https://declaredesign.org/blog/bias-cluster-randomized-trials.html>). Here, we demonstrate how bias could emerge in the analysis of a cluster randomized trial, as well as how to reduce that bias.
 
 ```{r defineestimatorsCluster, results="hide"}
-### Define estimators that can be repeated in the simulation below
+## Define estimators that can be repeated in the simulation below
 
-### No adjustment for clustering
+## No adjustment for clustering
 estC0 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm, label="C0: Ignores Clusters, IID SE")
 
-### HC2 SEs
+## HC2 SEs
 estC1 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, label="C1: Ignores Clusters, CR2 SE")
 
-### Clustered SEs (CR1; Stata default)
+## Clustered SEs (CR1; Stata default)
 estC2 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, clusters=cluster, se_type="stata", label="C2: OLS Clusters, Stata RCSE")
 
-### CR2 SEs (difference in means)
+## CR2 SEs (difference in means)
 estC3 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=difference_in_means, clusters = cluster, label="C3: Diff Means Cluster, CR2 SE")
 
-### CR2 SEs (linear regression)
+## CR2 SEs (linear regression)
 estC4 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, clusters = cluster, se_type="CR2", label="C4: OLS Cluster, CR2 SE")
 
-### Horvitz-Thompson estimator with clustering
+## Horvitz-Thompson estimator with clustering
 estC5 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=horvitz_thompson, clusters=cluster, simple=FALSE, condition_prs=.5, label="C5: Horvitz-Thompson Cluster, Young SE")
 
-### Linear regression, CR2 errors, weight by cluster size
+## Linear regression, CR2 errors, weight by cluster size
 estC6 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
 .method=lm_robust, weights = nb, clusters=cluster, se_type="CR2", label="C6: OLS Clusters with ClusterSize Weights, CR2 RCSE")
 
-### Linear regression, CR2 errors, control for cluster size, variance weights
+## Linear regression, CR2 errors, control for cluster size, variance weights
 estC7 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
 .method=lm_robust, weights=varweight, clusters=cluster, se_type="CR2", label="C7: OLS Clusters with Weights, CR2 RCSE")
 
-### Linear regression, CR2 errors, control for cluster size
+## Linear regression, CR2 errors, control for cluster size
 estC8 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand, .method=lm_robust, clusters=cluster, se_type="CR2",
 label="C8: OLS Clusters with adj for cluster size, CR2 RCSE")
 
-### Linear regression, CR2 errors, lin estimation for cluster size
+## Linear regression, CR2 errors, lin estimation for cluster size
 estC9 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
 .method=lm_lin, covariates=~nb, clusters=cluster, se_type="CR2",
 label="C9: OLS Clusters with adj for cluster size, CR2 RCSE")
 
-### Add all these estimators to the design
+## Add all these estimators to the design
 thedesignClusterPlusEstimators <- thedesignCluster +
 	estC0 + estC1 + estC2 + 
   estC3 + estC4 + estC5 + 
   estC6 + estC7 + estC8 + 
   estC9
 
-### Get a character vector of the estimators just created
-### (using a regular expression)
+## Get a character vector of the estimators just created
+## (using a regular expression)
 theestimatorsC <- ls(patt="^estC[0-9]")
 
-### Apply each of these estimators to the data
-### (get(x) calls an object with this name from the environment;
-### this function is then applied to the dataframe in question)
+## Apply each of these estimators to the data
+## (get(x) calls an object with this name from the environment;
+## this function is then applied to the dataframe in question)
 checkestC <- sapply(
   theestimatorsC,
   function(x){
@@ -1334,13 +1333,13 @@ checkestC <- sapply(
     }
   )
 
-### Review the results
+## Review the results
 checkestC
 
 ```
 
 ```{r diagnosisCluster, cache=TRUE, results="markup"}
-### Simulate the performance of these estimators
+## Simulate the performance of these estimators
 sims <- 200
 set.seed(12345)
 thediagnosisCluster <- diagnose_design(thedesignClusterPlusEstimators, sims = sims, bootstrap_sims = 0)
@@ -1353,7 +1352,7 @@ kable(reshape_diagnosis(thediagnosisCluster)[, c(3, 6:9, 11:12)])
 ```
 
 ```{r setupclustgraph1, echo = F, eval = F}
-### commenting out for now
+## commenting out for now
 simdesigns <- get_simulations(thediagnosis)
 ## simdesigns <- simulate_design(thedesign,sims=sims)
 simmeans <- simdesigns %>% group_by(estimator) %>% summarize(expest=mean(estimate))
@@ -1364,7 +1363,7 @@ simmeans <- simdesigns %>% group_by(estimator) %>% summarize(expest=mean(estimat
 <!-- precision of the estimators. -->
 
 ```{r clusterresultsplot, eval = F, echo = F}
-### commenting out for now
+## commenting out for now
 ## Now compare to better behaved outcomes.
 gDiagClust <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
 	geom_density() +
@@ -1421,7 +1420,7 @@ In this case, with 10 equal sized clusters, a simple outcome, and equal numbers 
 <!-- test (with black dots below the 45 degree line). -->
 
 ```{r plotfpr, eval = F, echo = F}
-### commenting out for now
+## commenting out for now
 plot(ecdf(fpresCR2),pch=19)
 plot(ecdf(fpresStata),pch=21)
 abline(0,1)

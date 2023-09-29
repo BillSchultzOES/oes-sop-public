@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-09-27">
+<meta name="date" content="2023-09-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -490,7 +490,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="1" data-path="statistical-and-causal-inference-for-policy-change.html"><a href="statistical-and-causal-inference-for-policy-change.html"><i class="fa fa-check"></i><b>1</b> Statistical and causal inference for policy change</a></li>
 <li class="chapter" data-level="2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html"><i class="fa fa-check"></i><b>2</b> Basics of Experimental Design and Analysis</a><ul>
-<li class="chapter" data-level="2.1" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise"><i class="fa fa-check"></i><b>2.1</b> Statistical Power: Designing Studies that effectively distinguish signal from noise</a></li>
+<li class="chapter" data-level="2.1" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise"><i class="fa fa-check"></i><b>2.1</b> Statistical power: Designing Studies that effectively distinguish signal from noise</a></li>
 <li class="chapter" data-level="2.2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#error-rates-of-tests"><i class="fa fa-check"></i><b>2.2</b> Error Rates of Tests</a></li>
 <li class="chapter" data-level="2.3" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#bias-in-estimators"><i class="fa fa-check"></i><b>2.3</b> Bias in Estimators</a></li>
 </ul></li>
@@ -502,8 +502,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="randomization-and-design.html"><a href="randomization-and-design.html"><i class="fa fa-check"></i><b>4</b> Randomization and Design</a><ul>
-<li class="chapter" data-level="4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#coin-flipping-randomization-versus-urn-drawing-randomization"><i class="fa fa-check"></i><b>4.1</b> Coin flipping randomization versus Urn-drawing randomization</a></li>
-<li class="chapter" data-level="4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#urn-drawing-or-complete-randomization-into-2-or-more-groups"><i class="fa fa-check"></i><b>4.2</b> Urn-Drawing or Complete Randomization into 2 or more groups</a></li>
+<li class="chapter" data-level="4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#coin-flipping-randomization-versus-urn-drawing-randomization"><i class="fa fa-check"></i><b>4.1</b> Coin flipping randomization versus urn-drawing randomization</a></li>
+<li class="chapter" data-level="4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#urn-drawing-or-complete-randomization-into-2-or-more-groups"><i class="fa fa-check"></i><b>4.2</b> Urn-drawing or complete randomization into 2 or more groups</a></li>
 <li class="chapter" data-level="4.3" data-path="randomization-and-design.html"><a href="randomization-and-design.html#factorial-designs"><i class="fa fa-check"></i><b>4.3</b> Factorial Designs</a></li>
 <li class="chapter" data-level="4.4" data-path="randomization-and-design.html"><a href="randomization-and-design.html#block-random-assignment"><i class="fa fa-check"></i><b>4.4</b> Block Random Assignment</a><ul>
 <li class="chapter" data-level="4.4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#using-only-a-few-covariates-to-create-blocks"><i class="fa fa-check"></i><b>4.4.1</b> Using only a few covariates to create blocks</a></li>
@@ -576,35 +576,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="statistical-and-causal-inference-for-policy-change" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Statistical and causal inference for policy change</h1>
-<p>Most of this this document dives into the details of our statistical decision
-making and assumes that the reader has heard of a hypothesis test and a
-statistical estimator. However, here we explain in very broad terms how tests
-and estimators help us do our job in helping the US federal government improve
-public policy.</p>
-<p>Recall that &#x201C;evidence-based public policy&#x201D; can refer to <em>both</em>
-&#x201C;evidence-as-insight&#x201D; (the use of previous scientific literature as input to
-the design of new policies) and &#x201C;evidence-as-evaluation&#x201D; (the careful design of
-studies to learn about how and whether a new policy worked)
-<span class="citation">(Bowers and Testa <a href="#ref-bowers2019better">2019</a>)</span>. Our team aims to help government agencies <strong>design</strong> new
-policies and also to <strong>learn</strong> about how those new ideas work. <strong>This document
-focuses on the learning part of our work.</strong></p>
+<p>Most of the rest of this document dives into the details of our statistical decision making. It assumes that the reader has heard of hypothesis tests and
+statistical estimators. Here, we explain in very broad terms how tests
+and estimators are useful for helping the US federal government improve public policy.</p>
+<p>&#x201C;Evidence-based public policy&#x201D; can refer to <em>both</em> &#x201C;evidence-as-insight&#x201D; (the use of previous scientific literature as input to the design of new policies) and &#x201C;evidence-as-evaluation&#x201D; (the careful design of studies to learn about how and whether a new policy worked) <span class="citation">(Bowers and Testa <a href="#ref-bowers2019better">2019</a>)</span>. Our team aims to help government agencies <strong>design</strong> new policies and <strong>learn</strong> about how those new ideas work. <em>This document focuses on the learning part of our work.</em></p>
 <p>How would we know whether and how a new policy worked? In an ideal and
 unrealistic case, we would know that a new policy improved the life of a single
 person, Jake, if we could compare Jake&#x2019;s decisions <em>both</em> under the new policy
 <em>and</em> under the status quo <em>at the same moment in time</em>. If we saw that Jake&#x2019;s
 decisions were better under the new policy than under the status quo, we would
-say that the new policy caused Jake to make better decisions.</p>
-<p>Since no one can observe Jake in both situations &#x2014; say, making health decisions both with and without a new procedure for visiting the doctor &#x2014; researchers try to find at least one other person (if not more) who represents how Jake would have acted if he had not been exposed to the new policy. <span class="citation">Holland (<a href="#ref-holland:1986a">1986</a>)</span> calls this the &#x201C;fundamental problem of causal inference&#x201D; and explains more formally when we might believe that other people are a good approximations for how Jake would have acted without the new policy. For example, if access to the new policy is randomized, we can claim that that the two groups are good counterfactuals for each other. That is, our team tends to think about the <em>causal effects</em> of a policy in <em>counterfactual</em> terms.</p>
+say that the new policy <em>caused</em> Jake to make better decisions.</p>
+<p>Since no one can observe Jake in both situations &#x2014; say, making health decisions with and without a new procedure for visiting the doctor &#x2014; researchers try to find at least one other person (or more) who represents how Jake would have acted without being exposed to the new policy. <span class="citation">Holland (<a href="#ref-holland:1986a">1986</a>)</span> calls this the &#x201C;fundamental problem of causal inference&#x201D; and explains more formally when we might believe that other people are a good approximations for how Jake would have acted without the new policy. For example, if access to the new policy is randomized, we can claim that that the two groups are good &#x201C;counterfactuals&#x201D; for each other. Our team tends to think about the <em>causal effects</em> of a policy in counterfactual terms.</p>
 <p>What do statistics have to do with learning about the causal effect of a new
 policy idea? We use randomized experiments to create groups of people who
 represent behavior under <em>both</em> the new policy and the status quo. In
 medical experiments to assess the effectiveness of new treatments, these two
-groups tend to be called the &#x201C;treatment group&#x201D; and the &#x201C;control group.&#x201D; Social scientists often use that same language even if we are not really providing a new treatment, but are, instead, offering a new communication or structure for a decision. If we pilot the new policy with people chosen at random, we can claim that the people chosen and the people not chosen represent each other. In a randomized study, we can use what we see from one group to learn about what would have happened had the other group instead received the treatment or new policy intervention.</p>
-<p>Now, in any given sample we won&#x2019;t know <em>exactly</em> how the treatment group would have behaved if they had been assigned to the control group instead. For example, if we pulled 500 out of 1000 names from a hat and assigned those 500 people to receive treatment, that&#x2019;s just one of many possible sets of 500 people we could have drawn. If we were to do the experiment again, and pulled another 500 names at random, this second experiment will also have a randomly selected treatment group, but the second 500 people will be different from the first 500 people. A single experiment offers us some information about the effect of treatment, but we need to ask other questions too, like, &#x201C;How much could our result differ just due to pulling a different 500 people from the hat?&#x201D; We also need to answer questions like, &#x201C;What do you mean by &#x2018;result&#x2019;? How do I know that this really is a good result rather than a bad result?&#x201D;</p>
-<p>Our team uses statistical theory to produce estimates of the causal effect of a new policy. We also use statistical theory to answer questions like &#x201C;Could the effect really have been zero?&#x201D; or &#x201C;How many people do we need to observe in order to distinguish a positive effect from a zero effect?&#x201D;</p>
-<p>The rest of this document presents decisions we have made about the particulars
-of estimators and tests, as well as other tricky decisions that we have had to
-confront &#x2014; like what to do when some of data are missing.</p>
+groups tend to be called the &#x201C;treatment group&#x201D; and the &#x201C;control group.&#x201D; Social scientists often use that same language even if we are not really providing a new treatment, but are, instead, offering a new communication or decision-making structure. If we pilot a new policy by offering it to people chosen at random, we can claim that the people chosen and the people not chosen represent or &#x201C;stand in for&#x201D; each other. With random assignment of a policy, we can use what we see from one group to learn about what would have happened if the control group had received the new policy instead, or if the treatment group had not.</p>
+<p>In any given sample we won&#x2019;t know <em>exactly</em> how the treatment group would have behaved if they had been assigned to the control group instead. For example, if we pulled 500 out of 1000 names from a hat and assigned those 500 people to receive treatment, that&#x2019;s just one of many possible sets of 500 people we could have drawn. If we were to do the experiment again, and pulled a different 500 names at random, this second experiment will also have a randomly selected treatment group, but the second 500 people will be at least a little different from the first 500 people. A single experiment offers us <em>some</em> information about the effect of treatment, but we need to ask other questions, too, like &#x201C;How much could our result differ just due to pulling a different 500 people from the hat?&#x201D; But we also need to answer subtler questions like &#x201C;What do you mean by &#x2018;result&#x2019;?&#x201D; or &#x201C;How do I know that this really is a &#x2018;good&#x2019; result rather than a bad result?&#x201D;</p>
+<p>Questions like those in mind, our team uses statistical theory to produce estimates of the causal effect of a new policy. We also use statistical theory to answer questions like &#x201C;Could the effect really have been zero?&#x201D; or &#x201C;How many people do we need to observe in order to distinguish a positive effect from a zero effect?&#x201D; The rest of this document presents decisions we have made about the particulars of estimators and tests, as well as other tricky decisions that we have had to confront &#x2014; like how we can design experiments using pre-intervention data to make our results as precise as possible.</p>
 <p>For more on the basics of how statistics helps us answer questions about causal
 effects, we recommend chapters 1&#x2013;3 of <span class="citation">Gerber and Green (<a href="#ref-gerber_field_2012">2012</a>)</span> (which focuses on
 randomized experiments) and the first part of <span class="citation">Rosenbaum (<a href="#ref-rosenbaum2017">2017</a>)</span> (which focuses on

@@ -5,9 +5,9 @@ if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1.csv')) }
 # Randomization and Design
 
 After working together with our agency partners to translate insights from the
-social and behavioral sciences into potential policy recommendations following [processes](https://oes.gsa.gov/methods/) described on our website, we assess these new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data). In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.
+social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).^[We develop the recommendations themselves following [processes](https://oes.gsa.gov/methods/) described in more detail on our website.] In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.
 
-## Coin flipping randomization versus Urn-drawing randomization
+## Coin flipping randomization versus urn-drawing randomization
 
 Many discussions of RCTs begin by talking about the intervention being assigned to units (people,  schools, offices, districts) "by the flip of a coin," or **simple** random assignment. In other words, each unit's assignment to treatment occurs separately, and there is no *ex ante* guarantee as to exactly what the final number of treated or control units will be. We rarely use this method in practice, even though it is a useful way to introduce the idea that RCTs guarantee fair access to the new policy.
 
@@ -18,17 +18,22 @@ Notice that the simple random assignment implemented in the code below results i
 ```{r completera}
 ## Start with a small experiment with only 10 units
 n <- 10
-## Set a seed for the pseudo-random number generator so that we always get the same results
+
+## Set a random seed for replicability
 set.seed(12345)
+
 ## Function to add more intuitive labels
 labelTC <- function(assignments) {ifelse(assignments == 1, "T", "C")}
+
 ## Simulation using functions from the randomizr package
 trt_coinflip <- labelTC(simple_ra(n))
 trt_urn <- labelTC(complete_ra(n))
+
 ## Coin flipping does not guarantee half and half treated and control.
 ## Drawing from an urn, guarantees half treated and control.
 table(trt_coinflip)
 table(trt_urn)
+
 ## Alternative approach using base R
 # set.seed(12345)
 # trt_coinflip <- labelTC(rbinom(10, size = 1, prob = .5))
@@ -37,7 +42,7 @@ table(trt_urn)
 # table(trt_urn)
 ```
 
-## Urn-Drawing or Complete Randomization into 2 or more groups
+## Urn-drawing or complete randomization into 2 or more groups
 
 We tend to use the `randomizr` R package [@R-randomizr] for simple designs
 rather than the base R `sample` function because `randomizr` does some
@@ -46,12 +51,15 @@ quality control checks. Notice that we implement a check on our code below with 
 ```{r completera2}
 N <- nrow(dat1)
 set.seed(12345)
+
 ## Two equal arms
 dat1$Z2armEqual <- labelTC(complete_ra(N))
+
 ## Two unequal arms: .25 chance of treatment (.75 chance of control0
 dat1$Z2armUnequalA <- labelTC(complete_ra(N,prob=.25))
 stopifnot(sum(dat1$Z2armUnequalA=="T")==N/4)
 dat1$Z2armUnequalB <- labelTC(complete_ra(N,m=N/4))
+
 ## Four equal arms
 dat1$Z4arms <- complete_ra(N,m_each=rep(N/4,4))
 
@@ -73,7 +81,7 @@ table(treatment1=dat1$Z2armEqual,treatment2=dat1$Z2armEqual2)
 
 Although factorial designs allow us to test more than one intervention at the
 same time, they tend to provide less statistical power when testing
-hypotheses about the *interaction* of the two treatments. If we want to
+hypotheses about the *interaction* between the two treatments. If we want to
 learn about how two different interventions work together, then the sample
 size requirements will be much larger than if we were satisfied with learning about each treatment separately.^[But see @small2011structured, for instance, for a way to increase the power of tests for such questions. This approach is not currently part of our standard practice.]
 
@@ -83,7 +91,7 @@ Statistical power depends not only on the size of the experiment and the strengt
 
 In a **block-randomized**, or stratified, design, we randomly assign units to the policy intervention *within* pre-specified groups.^[Some studies employ post-stratification, where simple or complete randomization might be used to assign treatment, but the data are still analyzed in a stratified manner. See @miratrix2013adjusting, for instance, for more discussion.] 
 
-Suppose we are evaluating whether dedicated navigators can increase the percentage of students living in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. In a real study we can never know the outcome in all buildings both with and without navigators (the "fundamental problem of causal inference"). But if we could, we might have the data below:
+Suppose we are evaluating whether dedicated navigators can increase the percentage of students living in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. In a real study we can never know the outcome in all buildings both with and without navigators (the "fundamental problem of causal inference" from the last chapter). But if we could, we might have the data below:
 
 ```{r maketab1, echo = F}
 tibble(
@@ -235,19 +243,20 @@ We assign half of the units in each hospital to each treatment condition:
 
 ```{r blockra15}
 dat1$Z2armBlocked <- labelTC(block_ra(blocks=dat1$blockID))
-with(dat1,table(blockID,Z2armBlocked))
+with(dat1, table(blockID, Z2armBlocked))
 ```
 
 If, say, there were fewer people eligible for treatment in hospital "A" --- or perhaps the intervention was more expensive in that block --- we might choose different treatment probabilities for each block. The code below assigns half of the hospital "A" patients to treatment, but only a quarter of those from hospital "B". Again, we also check that this code worked. This approach is an informal version of one of the best practices for writing code in general, called "unit testing." See the [EGAP Guide to Workflow](https://egap.org/resource/10-things-to-know-about-project-workflow/) for more examples.
 
 ```{r blockra2}
 ## Blocked assignment, unequal probability
-dat1$Z2armBlockedUneqProb <- labelTC(block_ra(blocks=dat1$blockID,block_prob = c(.5,.25)))
-with(dat1,table(blockID,Z2armBlockedUneqProb))
+dat1$Z2armBlockedUneqProb <- labelTC(block_ra(blocks=dat1$blockID, block_prob=c(.5,.25)))
+with(dat1, table(blockID, Z2armBlockedUneqProb))
+
 ## Unit testing
-NumTreatedB <- sum(dat1$Z2armBlockedUneqProb=="T"&dat1$blockID=="Block B")
+NumTreatedB <- sum(dat1$Z2armBlockedUneqProb=="T" & dat1$blockID=="Block B")
 ExpectedNumTreatedB <- sum(dat1$blockID=="Block B")/4
-stopifnot(NumTreatedB==ceiling(ExpectedNumTreatedB)|NumTreatedB==floor(ExpectedNumTreatedB))
+stopifnot(NumTreatedB==ceiling(ExpectedNumTreatedB) | NumTreatedB==floor(ExpectedNumTreatedB))
 ```
 
 Our team tries to implement block-randomized assignment whenever possible in
@@ -261,17 +270,19 @@ If we have background information on a few covariates, we can create blocks by h
 
 ```{r cutcovs}
 ## For example, make three groups from the cov2 variable
-dat1$cov2cat <- with(dat1,cut(cov2,breaks=3))
-table(dat1$cov2cat,exclude=c())
-with(dat1,tapply(cov2,cov2cat,summary))
+dat1$cov2cat <- with(dat1, cut(cov2, breaks=3))
+table(dat1$cov2cat, exclude=c())
+with(dat1, tapply(cov2, cov2cat, summary))
+
 ## And we can make blocks that are the same on two covariates
 dat1$cov1bin <- as.numeric(dat1$cov1>median(dat1$cov1)) # Binarize cov1
-dat1$blockV2 <- droplevels(with(dat1,interaction(cov1bin,cov2cat)))
-table(dat1$blockV2,exclude=c())
+dat1$blockV2 <- droplevels(with(dat1, interaction(cov1bin, cov2cat)))
+table(dat1$blockV2, exclude=c())
+
 ## And then assign within these blocks
 set.seed(12345)
 dat1$ZblockV2 <- labelTC(block_ra(blocks = dat1$blockV2))
-with(dat1,table(blockV2,ZblockV2,exclude=c()))
+with(dat1, table(blockV2, ZblockV2, exclude=c()))
 ```
 
 ### Multivariate blocking using many covariates
@@ -283,9 +294,10 @@ Creating pairs:
 
 ```{r}
 ## Using the blockTools package
-mvblocks <- block(dat1,id.vars="id",block.vars=c("cov1","cov2"),algorithm="optimal")
-dat1$blocksV3 <- createBlockIDs(mvblocks,data=dat1,id.var = "id")
+mvblocks <- block(dat1, id.vars="id", block.vars=c("cov1","cov2"), algorithm="optimal")
+dat1$blocksV3 <- createBlockIDs(mvblocks, data=dat1, id.var = "id")
 dat1$ZblockV3 <- labelTC(block_ra(blocks = dat1$blocksV3))
+
 ## Just show the first ten pairs
 with(dat1,table(blocksV3,ZblockV3,exclude=c()))[1:10,]
 ```
@@ -294,27 +306,32 @@ Creating larger blocks:
 
 ```{r}
 ## Using the quickblock package
-distmat <- distances(dat1,dist_variables = c("cov1bin", "cov2"),id_variable = "id", normalize="mahalanobiz")
+distmat <- distances(dat1, dist_variables = c("cov1bin", "cov2"), id_variable = "id", normalize="mahalanobiz")
 distmat[1:5,1:5]
-quantile(as.vector(distmat),seq(0,1,.1))
+quantile(as.vector(distmat), seq(0,1,.1))
+
 ## The caliper argument helps prevent ill-matched points
 mvbigblock <- quickblock(distmat, size_constraint = 6L, caliper = 2.5)
+
 ## Look for missing points
 table(mvbigblock,exclude=c()) # One point dropped due to caliper
 dat1$blocksV4 <- mvbigblock
 dat1$notblocked <- is.na(dat1$blocksV4) 
 dat1$ZblockV4[dat1$notblocked==F] <- labelTC(block_ra(blocks = dat1$blocksV4))
-with(dat1,table(blocksV4,ZblockV4,exclude=c()))[1:10,]
+with(dat1, table(blocksV4, ZblockV4, exclude=c()))[1:10,]
 ```
 
-It's worth pausing to examine the differences within blocks. We'll focus on the proportion of people in category "1" on the binary covariate (notice that the blocks are homogeneous on this covariate), as well as the difference between the largest and smallest value of the continuous covariate. This table also illustrates that, due to our use of a caliper when calling `quickblock` above, one observation was not included in block random assignment.
+It's worth pausing to examine the differences within blocks. We'll focus on the proportion of people in category "1" on the binary covariate (notice that the blocks are homogeneous on this covariate), as well as the difference between the largest and smallest value of the continuous covariate. This table also illustrates that, due to our use of a caliper when calling `quickblock` above, one observation was not included in treatment assignment.
 
 ```{r blockingeval}
 blockingDescEval <- dat1 %>% 
   group_by(blocksV4) %>%
-  summarize(cov2diff = max(abs(cov2)) - min(abs(cov2)),
-            cov1 = mean(cov1bin),
-            count_in_block = n())
+  summarize(
+    cov2diff = max(abs(cov2)) - min(abs(cov2)),
+    cov1 = mean(cov1bin),
+    count_in_block = n()
+    )
+
 blockingDescEval
 ```
 
@@ -323,16 +340,16 @@ blockingDescEval
 We often implement a new policy intervention at the level of some group of people --- like a doctor's practice, or a building, or some other administrative unit. Even though we have `r nrow(dat1)` units in our example data, imagine now that they are grouped into 10 buildings, and the policy intervention is at the building level. Below, we assign `r nrow(dat1)/2` of those units to treatment and `r nrow(dat1)/2` to control. Everyone in each building has the same treatment assignment.
 
 ```{r clusterRA}
-ndat1 <- nrow(dat1)
 ## Make an indicator for cluster membership
-dat1$buildingID <- rep(1:(ndat1/10),length=ndat1)
+ndat1 <- nrow(dat1)
+dat1$buildingID <- rep(1:(ndat1/10), length=ndat1)
 set.seed(12345)
 dat1$Zcluster <- labelTC(cluster_ra(cluster=dat1$buildingID))
-with(dat1,table(Zcluster,buildingID))
+with(dat1, table(Zcluster, buildingID))
 ```
 
 Cluster randomized designs raise new questions about estimation, testing, and statistical power. We describe our approaches to estimation and power
-analysis of cluster randomized designs [in the next chapter](#clusterrandanalysis).
+analysis of cluster randomized designs in the next chapter.
 
 ## Other designs
 
@@ -341,7 +358,7 @@ aimed at discovering whether the effects of the experimental intervention are
 communicated across people (via some spillover or network mechanism), and
 designs where we try to isolate certain experimental units (like buildings)
 from each other so that we can focus our learning about the effects of the
-intervention in isolation (rather than the effects when people can communicate with each other about the intervention). In later versions of this document we may include simple descriptions and code for those other, less common designs.
+intervention in isolation (rather than the effects when people can communicate with each other about the intervention). We may discuss some of these in more detail in later versions of this guide.
 
 ## Assessing randomization (balance testing)
 
@@ -354,28 +371,28 @@ The overall $p$-value below shows us that this test provides little evidence aga
 Keep in mind that the overall or "omnibus" nature of this test is key. If we had many covariates or many observations, it would easy to discover one or a few covariates with individual differences-in-means that differ detectably from zero due to random chance (rather than real implementation problems). That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates -- roughly 5 in 100. The value of an omnibus test is that it should not be so easily misled by these chance false positives.
 
 ```{r}
-randAssessV1 <- balanceTest(Z~cov1+cov2,data=dat1)
+randAssessV1 <- balanceTest(Z~cov1+cov2, data=dat1)
 randAssessV1$overall[,]
 ```
 
 We can also assess the implementation of block-randomized assignment:
 
 ```{r}
-randAssessV3 <- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3),data=dat1)
+randAssessV3 <- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), data=dat1)
 randAssessV3$overall[,]
 ```
 
 Lastly, it is possible to assess randomization under both blocked and clustered random assignment using a regression model like the following, where `strata(blockID)` and `cluster(clusterID)` refer to block and cluster fixed effects (FEs), respectively.
 
-`Z ~ cov1 + cov2 + strata(blockID) + cluster(clusterID)`.
+`Z ~ cov1 + cov2 + strata(blockID) + cluster(clusterID)`
 
 Again, a test statistic summarizing the estimated differences across covariates would then be used to calculate a p-value. This approach, implemented for instance by the `RItools` package, works well for experiments that are not overly small. In a very small experiment (with relatively few clusters) we might estimate this same regression model, but we would not compare our test statistic to the $\chi^2$ sampling distribution to calculate a p-value. Instead, we would perform a permutation-based test (see the previous chapter).
 
-When possible, we prefer not use $F$-tests or Likelihood Ratio tests to assess randomization. See @hansen_covariate_2008 for some evidence that a test based on randomization-inference (like the $d^2$ test developed in that article) maintains appropriate false positive rates better than the sampling- or likelihood-justified $F$ and likelihood ratio tests.
+We sometimes prefer not use $F$-tests or Likelihood Ratio tests to assess randomization. See @hansen_covariate_2008 for some evidence that a test based on randomization-inference (like the $d^2$ test developed in that article) maintains appropriate false positive rates better than the sampling- or likelihood-justified $F$ and likelihood ratio tests.
 
 ### What to do with "failed" randomization assessments?
 
-Observing a $p$-value of less than .05 in an omnibus test like the one above ought to trigger extra scrutiny about implementation and/or how the data were recorded. For example, we might respond by contacting our agency partner to learn more about how random numbers were generated or the code was used (particularly if we didn't perform the random assignment ourselves). In many cases, this follow-up investigation will indicate that random assignment was implemented correctly, and that our understanding of the design or the data was simply incorrect. Sometimes, the follow-up investigation may not turn up any issues or misunderstandings at all. In those situations, we will tend to assume that our rejection of the null hypothesis of appropriate random assignment was a false positive (consider that we would expect to see about 5 such errors in every 100 experiments).
+Observing a $p$-value of less than .05 in an omnibus test like the one above ought to trigger extra scrutiny about implementation and/or how the data were recorded. For example, we might respond by contacting our agency partner to learn more about how random numbers were generated or the code was used (particularly if we didn't perform the random assignment ourselves). In many circumstances, this follow-up investigation might indicate that random assignment was implemented correctly, and that our understanding of the design or the data was simply incorrect. But sometimes, the follow-up investigation may not turn up any misunderstandings at all. In those situations, we will tend to assume that our rejection of the null hypothesis of appropriate random assignment was a false positive (consider that we would expect to see about 5 such errors in every 100 experiments).
 
 If our rejection of the null hypothesis appears to be driven by one or more covariates that are substantively important --- say, the variable `age` looks very imbalanced between treated and control groups in a health-related randomized trial --- then we might present both the unadjusted results and a separate set of results that adjust for the covariate(s) in question (e.g., through a stratified difference-in-means estimator, or by using them as controls in a linear regression). Importantly, under a chance rejection of the null (i.e., a false positive) we would not want to treat the adjusted estimate as our primary finding --- in such a situation, the adjusted estimate would be biased while the unadjusted estimate would not. However, large differences between the adjusted and unadjusted estimates might help us interpret our findings: estimating separate effects within different age groups, for example, might tell us something useful about the particular context of a study and inform the conclusions we draw.
 

@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-09-27">
+<meta name="date" content="2023-09-29">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -490,7 +490,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="1" data-path="statistical-and-causal-inference-for-policy-change.html"><a href="statistical-and-causal-inference-for-policy-change.html"><i class="fa fa-check"></i><b>1</b> Statistical and causal inference for policy change</a></li>
 <li class="chapter" data-level="2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html"><i class="fa fa-check"></i><b>2</b> Basics of Experimental Design and Analysis</a><ul>
-<li class="chapter" data-level="2.1" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise"><i class="fa fa-check"></i><b>2.1</b> Statistical Power: Designing Studies that effectively distinguish signal from noise</a></li>
+<li class="chapter" data-level="2.1" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise"><i class="fa fa-check"></i><b>2.1</b> Statistical power: Designing Studies that effectively distinguish signal from noise</a></li>
 <li class="chapter" data-level="2.2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#error-rates-of-tests"><i class="fa fa-check"></i><b>2.2</b> Error Rates of Tests</a></li>
 <li class="chapter" data-level="2.3" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#bias-in-estimators"><i class="fa fa-check"></i><b>2.3</b> Bias in Estimators</a></li>
 </ul></li>
@@ -502,8 +502,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="randomization-and-design.html"><a href="randomization-and-design.html"><i class="fa fa-check"></i><b>4</b> Randomization and Design</a><ul>
-<li class="chapter" data-level="4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#coin-flipping-randomization-versus-urn-drawing-randomization"><i class="fa fa-check"></i><b>4.1</b> Coin flipping randomization versus Urn-drawing randomization</a></li>
-<li class="chapter" data-level="4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#urn-drawing-or-complete-randomization-into-2-or-more-groups"><i class="fa fa-check"></i><b>4.2</b> Urn-Drawing or Complete Randomization into 2 or more groups</a></li>
+<li class="chapter" data-level="4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#coin-flipping-randomization-versus-urn-drawing-randomization"><i class="fa fa-check"></i><b>4.1</b> Coin flipping randomization versus urn-drawing randomization</a></li>
+<li class="chapter" data-level="4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#urn-drawing-or-complete-randomization-into-2-or-more-groups"><i class="fa fa-check"></i><b>4.2</b> Urn-drawing or complete randomization into 2 or more groups</a></li>
 <li class="chapter" data-level="4.3" data-path="randomization-and-design.html"><a href="randomization-and-design.html#factorial-designs"><i class="fa fa-check"></i><b>4.3</b> Factorial Designs</a></li>
 <li class="chapter" data-level="4.4" data-path="randomization-and-design.html"><a href="randomization-and-design.html#block-random-assignment"><i class="fa fa-check"></i><b>4.4</b> Block Random Assignment</a><ul>
 <li class="chapter" data-level="4.4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#using-only-a-few-covariates-to-create-blocks"><i class="fa fa-check"></i><b>4.4.1</b> Using only a few covariates to create blocks</a></li>
@@ -577,32 +577,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</h1>
 <h4 class="author"><em>Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz</em></h4>
-<h4 class="date"><em>September 27, 2023</em></h4>
+<h4 class="date"><em>September 29, 2023</em></h4>
 </div>
 <div id="overview" class="section level1 unnumbered">
 <h1>Overview</h1>
-<p>This document explains <strong>how</strong> our team, the <a href="https://oes.gsa.gov/">Office of Evaluation Sciences in
+<p>This document explains how our team, the <a href="https://oes.gsa.gov/">Office of Evaluation Sciences in
 the General Services Administration</a> (the OES), tends to
-do statistical analysis and it also explains <strong>why</strong> we do what we do.<a href="references.html#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> The research integrity processes OES follows is already documented on our <a href="https://oes.gsa.gov/methods/">Evaluation Resources Web Page</a>. For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we get into the nitty gritty of our statistical work.</p>
+do statistical analysis. It also explains why we do what we do.<a href="references.html#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> The research integrity processes OES follows are already documented on our <a href="https://oes.gsa.gov/methods/">Evaluation Resources Web Page</a>. For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.</p>
 <div id="purposes-of-this-document" class="section level2 unnumbered">
 <h2>Purposes of this document</h2>
-<p>First, this document educates new team members about the decisions past team
+<p><em>First</em>, this document educates new team members about the decisions past team
 members have made regarding the design and analysis of the studies fielded so
 far. It also serves as a place to record decisions for <a href="http://dx.doi.org/10.4067/S0718-090X2016000300011">our
 own future selves</a>, and helps us harness the power that arises from our disciplinary diversity. That
-is, we have decided, as a team, how to do certain statistical analyses, and
-these decisions may differ from those that are common in any given academic
-discipline. This document, thus, helps explain why we have landed on those
-decisions (for now), and how to implement those practices.</p>
-<p>Second, this document records decisions that we have made in the absence of
-pre-analysis plans, or in the context of circumstances unforeseen by our
-pre-analysis planning. It should help guide our future experimental design
-and analysis.</p>
-<p>Third, this document should help us write better analysis plans and speed our
-practice of re-analysis. (Our team insists on a blind re-analysis of every
-study as a quality control for our results before they are reported to our
-agency partners.)</p>
-<p>Fourth, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the federal government&#x2019;s own work pursuing evidence-based public policy, but also helps other teams in other places doing work that is similar to our own.</p>
+is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them in R.</p>
+<p><em>Second</em>, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. It should help guide our future experimental design and analysis. However, any given project may encounter reasons to make different decisions than those we describe here. This SOP should be thought of as more of a coordination device than a set of firm requirements.</p>
+<p><em>Third</em>, on a related note, this document should help us write better analysis plans and speed our practice of re-analysis. (Our team insists on a blind re-analysis of every study as a quality control for our results before they are reported to our agency partners.)</p>
+<p><em>Fourth</em> and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government&#x2019;s own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.</p>
 </div>
 <div id="nature-and-limitations-of-this-document" class="section level2 unnumbered">
 <h2>Nature and limitations of this document</h2>
@@ -616,35 +607,27 @@ randomized field experiments. We plan to include more discussion of observationa
 <div id="we-present-examples-using-r" class="section level3 unnumbered">
 <h3>We present examples using R</h3>
 <p>As public servants and social and behavioral scientists, we use the <a href="http://r-project.org">R</a> statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R).</p>
-<p>Many members of our team use Stata or SAS or SPSS or Python. We welcome
-additions to this document using those languages as well.</p>
+<p>Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). We welcome future additions to this document using those languages as well.</p>
 </div>
 <div id="structure-of-the-document" class="section level3 unnumbered">
 <h3>Structure of the document</h3>
 <p>Each section of this document will include, if applicable:</p>
 <ol style="list-style-type: decimal">
 <li>A description of our approach.</li>
-<li>A description of how we implement our approach, including functions in R,
-key arguments that must be entered into the function, and key
-values that are outputs from the function.</li>
+<li>A description of how we implement our approach, including functions in R, key arguments that must be entered into the function, and key outputs from the function.</li>
 <li>A general example using simulated data (perhaps including some evaluation of the tool as compared to other possible choices).</li>
-<li>A discussion of a specific example from OES (if applicable) in which we implemented the given procedure.</li>
 </ol>
-<p>Throughout the document, we include links to the <a href="#glossary">Glossary</a> and
-<a href="appendix.html#appendix">Appendix</a>, to clarify terms or explain tools and procedures in
-more depth.</p>
+<p>Throughout the document, we will be adding links to the <a href="#glossary">Glossary</a> and <a href="appendix.html#appendix">Appendix</a>, clarifying terms or explaining tools and procedures in more depth. This aspect of the SOP is still under-development, but we plan to add more here moving forward.</p>
 </div>
 </div>
 <div id="help-us-improve-our-work" class="section level2 unnumbered">
 <h2>Help us improve our work!</h2>
-<p>Since we hope to improve our analytic workflow with every project, this document should be seen as provisional &#x2014; as a record and a guide for our continuous learning and improvement. We invite comments in the <a href="https://github.com/gsa-oes/sop/issues">Issues</a> and <a href="https://help.github.com/articles/creating-a-pull-request/">pull requests</a> for direct contributions.</p>
+<p>Since we hope to improve our analytic workflow with every project, this document should be seen as provisional &#x2014; as a record and a guide for our continuous learning and improvement. We invite comments in the form of <a href="https://github.com/gsa-oes/sop/issues">Issues</a> or <a href="https://help.github.com/articles/creating-a-pull-request/">pull requests</a> on Github. There is also a suggestion form in the OES Google Drive (for OES team members).</p>
 <!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
 </div>
 <div id="about-this-document" class="section level2 unnumbered">
 <h2>About this document</h2>
-<p>This book was written in <a href="http://bookdown.org/">bookdown</a>.
-The complete source is available from <a href="https://github.com/gsa-oes/sop">GitHub</a>.
-This version of the book was built with R version 4.2.1 (2022-06-23 ucrt) and the following packages.</p>
+<p>This book was written in <a href="http://bookdown.org/">bookdown</a>. The complete source is available from <a href="https://github.com/gsa-oes/sop">GitHub</a>. This version of the book was built with R version 4.2.1 (2022-06-23 ucrt) and the following packages.</p>
 <table>
 <colgroup>
 <col width="15%">

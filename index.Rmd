@@ -167,33 +167,23 @@ readr::write_lines(htmlhead, path = "header.html")
 
 # Overview {-}
 
-This document explains **how** our team, the [Office of Evaluation Sciences in
+This document explains how our team, the [Office of Evaluation Sciences in
 the General Services Administration](https://oes.gsa.gov/) (the OES), tends to
-do statistical analysis and it also explains **why** we do what we do. ^[We call this document a standard operating procedure (SOP) because we are inspired by the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).] The research integrity processes OES follows is already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we get into the nitty gritty of our statistical work.
+do statistical analysis. It also explains why we do what we do. ^[We call this document a standard operating procedure (SOP) because we are inspired by the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).] The research integrity processes OES follows are already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.
 
 ## Purposes of this document {-}
 
-First, this document educates new team members about the decisions past team
+*First*, this document educates new team members about the decisions past team
 members have made regarding the design and analysis of the studies fielded so
 far. It also serves as a place to record decisions for [our
 own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011), and helps us harness the power that arises from our disciplinary diversity. That
-is, we have decided, as a team, how to do certain statistical analyses, and
-these decisions may differ from those that are common in any given academic
-discipline. This document, thus, helps explain why we have landed on those
-decisions (for now), and how to implement those practices.
+is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them in R.
 
-Second, this document records decisions that we have made in the absence of
-pre-analysis plans, or in the context of circumstances unforeseen by our
-pre-analysis planning. It should help guide our future experimental design
-and analysis.
+*Second*, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. It should help guide our future experimental design and analysis. However, any given project may encounter reasons to make different decisions than those we describe here. This SOP should be thought of as more of a coordination device than a set of firm requirements.
 
-Third, this document should help us write better analysis plans and speed our
-practice of re-analysis. (Our team insists on a blind re-analysis of every
-study as a quality control for our results before they are reported to our
-agency partners.)
+*Third*, on a related note, this document should help us write better analysis plans and speed our practice of re-analysis. (Our team insists on a blind re-analysis of every study as a quality control for our results before they are reported to our agency partners.)
 
-Fourth, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the federal government's own work pursuing evidence-based public policy, but also helps other teams in other places doing work that is similar to our own.
-
+*Fourth* and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government's own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.
 
 ## Nature and limitations of this document {-}
 
@@ -208,36 +198,27 @@ randomized field experiments. We plan to include more discussion of observationa
 
 As public servants and social and behavioral scientists, we use the [R](http://r-project.org) statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R). 
 
-Many members of our team use Stata or SAS or SPSS or Python. We welcome
-additions to this document using those languages as well.
+Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). We welcome future additions to this document using those languages as well.
 
 ### Structure of the document {-}
 
 Each section of this document will include, if applicable:
 
- 1. A description of our approach.
- 2. A description of how we implement our approach, including functions in R,
-    key arguments that must be entered into the function, and key
-    values that are outputs from the function.
- 3. A general example using simulated data (perhaps including some evaluation of the tool as compared to other possible choices).
- 4. A discussion of a specific example from OES (if applicable) in which we implemented the given procedure.
+1. A description of our approach.
+2. A description of how we implement our approach, including functions in R, key arguments that must be entered into the function, and key outputs from the function.
+3. A general example using simulated data (perhaps including some evaluation of the tool as compared to other possible choices).
 
-
-Throughout the document, we include links to the [Glossary](#glossary) and
-[Appendix](#appendix), to clarify terms or explain tools and procedures in
-more depth.
+Throughout the document, we will be including links to the [Glossary](#glossary) and [Appendix](#appendix), clarifying terms or explaining tools and procedures in more depth. This aspect of the SOP is still under-development, but we plan to add more here moving forward.
 
 ## Help us improve our work! {-}
 
-Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement.  We invite comments in the [Issues](https://github.com/gsa-oes/sop/issues) and [pull requests](https://help.github.com/articles/creating-a-pull-request/) for direct contributions.
+Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of [Issues](https://github.com/gsa-oes/sop/issues) or [pull requests](https://help.github.com/articles/creating-a-pull-request/) on Github. There is also a suggestion form available to OES team members.
 
 <!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
 
 ## About this document {-}
 
-This book was written in [bookdown](http://bookdown.org/). 
-The complete source is available from [GitHub](https://github.com/gsa-oes/sop). 
-This version of the book was built with `r R.version.string` and the following packages.
+This book was written in [bookdown](http://bookdown.org/). The complete source is available from [GitHub](https://github.com/gsa-oes/sop). This version of the book was built with `r R.version.string` and the following packages.
 
 ```{r, echo = FALSE, results="asis"}
 deps <- desc::desc_get_deps()$package[-1]

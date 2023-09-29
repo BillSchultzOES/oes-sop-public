@@ -23,25 +23,25 @@ By "analytic tools," we refer to methods of calculating power (or a minimum requ
 <!-- Imagine that we thought a study would have an effect of about 1 standard deviation -- this is more or less the effect difference in the example data we've been using. How much statistical power would we have with a sample size of only 40 observations? -->
 
 ```{r, echo = F, eval = F}
-### Skipping for now
-### Set up some DeclareDesign objects for our simulation
+## Skipping for now
+## Set up some DeclareDesign objects for our simulation
 population <- declare_population(dat1)
 potentials <- declare_potential_outcomes(Y ~ y0 + Z * delta)
 assignment <- declare_assignment(Z=complete_ra(N))
 reveal <- declare_reveal(Y, Z)
 design <- population + potentials + assignment + reveal
 
-### Draw one simulated dataset
+## Draw one simulated dataset
 simdat1 <- draw_data(design)
 
-### Set inquiry and estiamtor
+## Set inquiry and estiamtor
 estimand <- declare_inquiry(ATE = mean(Y_Z_1 - Y_Z_0))
 estimator <- declare_estimator(Y ~ Z, inquiry = estimand, label = "Simple D-I-M")
 
-### Illustrate how the estimator works
+## Illustrate how the estimator works
 estimator(simdat1)
 
-### Add the inquiry and estimator to our design
+## Add the inquiry and estimator to our design
 designPlusEst <- design + estimand + estimator
 ```
 
@@ -52,14 +52,14 @@ designPlusEst <- design + estimand + estimator
 <!-- calculate and the true average treatment effect (called "Bias" below). -->
 
 ```{r diagpow1, cache=TRUE, echo = F, eval = F}
-### Skipping for now
+## Skipping for now
 sim_power <- diagnose_design(designPlusEst, sims = 200)
 ```
 
 <!-- Initially, this analytic approach suggests more power than the simulation based approach -- a difference that arises from our fairly skewed outcome. -->
 
 ```{r powerttest, echo = F, eval = F}
-### skipping for now
+## skipping for now
 analytic_power <- power.t.test(n = 100, delta = delta, sd = sd(dat1$y0))
 analytic_power
 ```
@@ -122,16 +122,16 @@ We can compare the output of `power.t.test()` to the output from a
 simulation-based (i.e., computational) approach, which we illustrate in the code chunk below. Notice that our example below relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple cases, but it provides useful flexibility for simulating more complicated designs (particularly designs we cannot specify as easily within the `DeclareDesign` framework).
 
 ```{r poweranalysistools}
-# OES Power Simulation Toolkit:
-# Replicate, Estimate, Evaluate (REE)
-# 
-# replicate_design(...) ---: Generate replicates of a simulated dataset
-# estimate(...) -----------: Estimate the null test-stat for treatment(s).
-# evaluate_power(...) -----: Evaluate power to detect non-zero effects.
-# evaluate_mde(...) -------: Find MDE, searching over range of effect sizes.
-# evaluate_bias(...) ------: Compute bias and other diagnostics.
+## OES Power Simulation Toolkit:
+## Replicate, Estimate, Evaluate (REE)
+## 
+## replicate_design(...) ---: Generate replicates of a simulated dataset
+## estimate(...) -----------: Estimate the null test-stat for treatment(s).
+## evaluate_power(...) -----: Evaluate power to detect non-zero effects.
+## evaluate_mde(...) -------: Find MDE, searching over range of effect sizes.
+## evaluate_bias(...) ------: Compute bias and other diagnostics.
 
-# Required packages
+## Required packages
 require(magrittr)
 require(fabricatr)
 require(foreach)
@@ -368,11 +368,11 @@ evaluate_bias <- function(
 Results are shown in the subsequent figure. Though the computational estimates are slightly different, they comport quite well with the analytic estimates.
 
 ```{r powersimvsanalytic}
-### Parameters used for both sets of calculations
+## Parameters used for both sets of calculations
 n <- 1000 # Sample size
 d <- 0.2 # Effect size to consider
 
-### Analytical power estimates
+## Analytical power estimates
 power_data <-
   
   tibble(
@@ -380,7 +380,7 @@ power_data <-
     power = power.t.test(n = n / 2, delta = d)$power
     )
 
-### Save initial plot; add simulation results below
+## Save initial plot; add simulation results below
 g <- ggplot(power_data) +
   
   geom_line(aes(d, power, linetype = "power.t.test()")) +
@@ -406,7 +406,7 @@ g <- ggplot(power_data) +
     font_size = 10
     ) 
 
-### Comutational power estimates, using the functions above
+## Comutational power estimates, using the functions above
 sim_power_data <-
   
   replicate_design(
@@ -425,7 +425,7 @@ sim_power_data <-
     delta = seq(0, 0.5, len = 200)
     )
 
-### Add results from the simulation to the plot and compare
+## Add results from the simulation to the plot and compare
 g + 
   
   geom_line(
@@ -461,8 +461,7 @@ This workflow is supported by three functions: `replicate_design()`,
 `estimate()`, and `evaluate_power()`. Here's the simulation code used to generate Figure 1, in more detail:
 
 ```{r, eval=FALSE}
-
-### 1. Replicate:
+## 1. Replicate:
 
 # Output is a list of dfs
 rep <- replicate_design(
@@ -472,7 +471,7 @@ rep <- replicate_design(
   x = rbinom(N, 1, 0.5) # Binary treatment indicator
   ) 
 
-### 2. Estimate:
+## 2. Estimate:
 
 # Output is a dataframe of estimates from each sample replicate
 est <- estimate(
@@ -481,7 +480,7 @@ est <- estimate(
   data = rep # Sample replicates
   ) 
 
-# 3. Evaluate:
+## 3. Evaluate:
 
 # Output is a list of dfs
 pwr_eval_sim <- evaluate_power(
@@ -495,10 +494,10 @@ The final product, `pwr_eval_sim` above, reports the power for each of the user-
 These functions help make the process of performing computational power analysis for OES projects easier, while still providing ample room for flexibility in both design and estimation strategy. For example, `replicate_design()` is a wrapper for `fabricate()` in the [fabricatr](https://declaredesign.org/r/fabricatr/) package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters. By default, estimates are returned using `lm_robust()` from the [estimatr](https://declaredesign.org/r/estimatr/) package, but alternative estimators can be specified. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:
 
 ```{r, eval=FALSE}
-### Define logit estimator function
+## Define logit estimator function
 logit <- function(...){ glm(..., family = binomial)}
 
-### Pass this to the estimate() function above
+## Pass this to the estimate() function above
 est <- estimate(
   y ~ x + z1 + z2, data = rep, estimator = logit
   ) 
@@ -541,7 +540,7 @@ We can easily calculate power to detect the main effect of each treatment as fol
 ```{r, eval=T}
 two_by_two <-
 
-  ### Basic elements of each simulated sample replicate
+  ## Basic elements of each simulated sample replicate
   replicate_design(
     N = 1000,
     y = rbinom(N, 1, 0.25),
@@ -549,13 +548,13 @@ two_by_two <-
     x2 = complete_ra(N, m = N / 2)
     ) %>%
   
-  ### Estimate main and interaction effects
+  ## Estimate main and interaction effects
   estimate(
     form = y ~ x1 + x2 + x1:x2,
     vars = c("x1", "x2", "x1:x2")
     ) %>%
   
-  ### Evaluate power
+  ## Evaluate power
   evaluate_power(
     delta = seq(0, 0.25, len = 200)
     )
@@ -567,27 +566,27 @@ in Figure 2.
 ```{r}
 ggplot(two_by_two) +
   
-  ### Add a line representing power for each effect/term
+  ## Add a line representing power for each effect/term
   geom_line(
     aes(delta, power, linetype = term)
     ) +
   
-  ### Choose linetypes that are easy to distinguish
+  ## Choose linetypes that are easy to distinguish
   scale_linetype_manual(values = c("solid", "longdash", "dotted")) +
   
-  ### Horizontal line for 80% power
+  ## Horizontal line for 80% power
   geom_hline(
     yintercept = 0.8,
     color = "grey25",
     alpha = 0.8
     ) +
   
-  ### y-axis scale
+  ## y-axis scale
   scale_y_continuous(
     n.breaks = 6
     ) +
   
-  ### Adding labels
+  ## Adding labels
   labs(
     x = expression(delta),
     y = "Power",
@@ -595,13 +594,13 @@ ggplot(two_by_two) +
     linetype = "Effect for..."
     ) +
   
-  ### Update some visual settings with the ridges theme
+  ## Update some visual settings with the ridges theme
   ggridges::theme_ridges(
     font_size = 10,
     center_axis_labels = TRUE
     ) +
   
-  ### Other settings (here: just legend location)
+  ## Other settings (here: just legend location)
   theme(
     legend.position = "bottom"
     ) 
@@ -645,7 +644,7 @@ We then estimate and evaluate. For comparison, power is computed (1) with
 covariate adjustment via the Lin estimator, (2) without covariate adjustment, and (3) with standard linear, additive covariate adjustment:
 
 ```{r}
-### With the Lin Estimator
+## With the Lin Estimator
 lin_adjust <- 
   
   rep_data %>%
@@ -659,7 +658,7 @@ lin_adjust <-
     delta = seq(0, 0.5, len = 200)
     )
 
-### With no covariate adjustment
+## With no covariate adjustment
 no_adjust <-
   
   rep_data %>%
@@ -673,7 +672,7 @@ no_adjust <-
     delta = seq(0, 0.5, len = 200)
     )
 
-### With linear, additive covariate adjustment
+## With linear, additive covariate adjustment
 standard_adjust <-
   
   rep_data %>%
@@ -691,7 +690,7 @@ standard_adjust <-
 We can now compare results under these alternative empirical strategies. Figure 3 shows the power curves for each approach. The Lin estimator provides substantial improvements in power over both no covariate adjustment and linear additive adjustment.^[This is, of course, true by design here. In real projects, the differences between these covariate adjustment strategies could often be smaller or negligible. But it is useful to remember that @lin_agnostic_2013 adjustment may be especially valuable with especially imbalanced designs and/or designs where covariates are likely correlated with treatment effect heterogeneity.] And it only took a few lines of code to get this result!
 
 ```{r}
-### Combine the results, and apply similar plotting code to above
+## Combine the results, and apply similar plotting code to above
 bind_rows(
   lin_adjust %>% mutate(Method = "Lin"),
   no_adjust %>% mutate(Method = "No Covariates"),

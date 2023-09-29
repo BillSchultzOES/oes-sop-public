@@ -1,0 +1,3333 @@
+---
+title: OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.
+author: Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+site: bookdown::bookdown_site
+knit: bookdown::render_book
+output:
+  bookdown::gitbook:
+    math_method: r-katex
+documentclass: book
+bibliography: ["sop.bib", "packages.bib"]
+link-citations: yes
+colorlinks: yes
+lot: yes
+lof: yes
+github-repo: gsa-oes/sop
+description: "These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA"
+fontsize: 12pt
+geometry: margin=1in
+graphics: yes
+---
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+
+```{r options, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
+# Required packages
+require(knitr)
+
+# Set options
+opts_chunk$set(strip.white=TRUE,
+               width.cutoff=132,
+               size='\\scriptsize',
+               out.width='.9\\textwidth',
+               message=FALSE,
+               warning=FALSE,
+               echo=TRUE,
+               comment=NA,
+               tidy='styler',
+               prompt=FALSE,
+               results='markup')
+
+# Force RStudio to use the bundled pandoc version (correct crossrefs)
+old_path <- Sys.getenv("PATH")
+Sys.setenv(
+  PATH = paste(
+    Sys.getenv("RSTUDIO_PANDOC"), old_path, 
+    sep = .Platform$path.sep
+  ))
+rmarkdown:::find_pandoc(FALSE)
+rmarkdown::pandoc_version()
+
+# Reproducible random numbers
+set.seed(20405)
+```
+
+```{r loadlibs}
+## Libraries are now managed by the renv system
+library(bfe)
+library(blockTools)
+library(coin)
+library(DeclareDesign)
+library(devtools)
+library(estimatr)
+library(fabricatr)
+library(foreach)
+library(future)
+library(future.apply)
+library(here)
+library(ICC)
+library(kableExtra)
+library(katex)
+library(knitr)
+library(lmtest)
+library(multcomp)
+library(nbpMatching)
+library(quickblock)
+library(randomizr)
+library(ri2)
+library(sandwich)
+library(tidyverse)
+library(RItools)
+library(V8)
+
+options(
+  htmltools.dir.version = FALSE, formatR.indent = 2,
+  width = 100, digits = 4, warnPartialMatchAttr = FALSE,
+  warnPartialMatchDollar = FALSE
+)
+
+local({
+  r = getOption('repos')
+  if (!length(r) || identical(unname(r['CRAN']), '@CRAN@'))
+    r['CRAN'] = 'https://cran.rstudio.com'
+  options(repos = r)
+})
+```
+
+
+```{r htmlTemp3, echo=FALSE, eval=TRUE}
+## This next from https://stackoverflow.com/questions/45360998/code-folding-in-bookdown
+codejs <- readr::read_lines("js/codefolding.js")
+collapsejs <- readr::read_lines("js/collapse.js")
+transitionjs <- readr::read_lines("js/transition.js")
+
+## Default to showing code
+## window.initializeCodeFolding("show" === "show");
+## Default to hiding code
+## window.initializeCodeFolding("show" === "show");
+
+htmlhead <-
+  paste('
+<script>',
+paste(transitionjs, collapse = "\n"),
+'</script>
+<script>',
+paste(collapsejs, collapse = "\n"),
+'</script>
+<script>',
+paste(codejs, collapse = "\n"),
+'</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+', sep = "\n")
+
+readr::write_lines(htmlhead, path = "header.html")
+```
+
+\newcommand{\var}{\mathrm{Var}}
+\newcommand{\sd}{\mathrm{sd}}
+\newcommand{\cov}{\mathrm{Cov}}
+\newcommand{\cor}{\mathrm{Cor}}
+\newcommand{\pr}{\text{Pr}}
+\newcommand{\rank}{\text{rank}}
+\newcommand{\Dt}{\Delta t}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bZ}{\mathbf{Z}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\be}{\mathbf{e}}
+\newcommand{\bE}{\mathbf{E}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bV}{\mathbf{V}}
+\newcommand{\bpsi}{\boldsymbol{\psi}}
+\newcommand{\bmu}{\boldsymbol{\mu}}%m
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\btau}{\boldsymbol{\tau}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\blambda}{\boldsymbol{\lambda}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+
+
+
+# Overview {-}
+
+This document explains how our team, the [Office of Evaluation Sciences in
+the General Services Administration](https://oes.gsa.gov/) (the OES), tends to
+do statistical analysis. It also explains why we do what we do. ^[We call this document a standard operating procedure (SOP) because we are inspired by the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).] The research integrity processes OES follows are already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.
+
+## Purposes of this document {-}
+
+*First*, this document educates new team members about the decisions past team
+members have made regarding the design and analysis of the studies fielded so
+far. It also serves as a place to record decisions for [our
+own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011), and helps us harness the power that arises from our disciplinary diversity. That
+is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them in R.
+
+*Second*, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. It should help guide our future experimental design and analysis. However, any given project may encounter reasons to make different decisions than those we describe here. This SOP should be thought of as more of a coordination device than a set of firm requirements.
+
+*Third*, on a related note, this document should help us write better analysis plans and speed our practice of re-analysis. (Our team insists on a blind re-analysis of every study as a quality control for our results before they are reported to our agency partners.)
+
+*Fourth* and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government's own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.
+
+## Nature and limitations of this document {-}
+
+### We (mostly) focus on randomized field experiments. {-}
+
+This document focuses on design and analysis of randomized field experiments.
+Although we include some discussion about non-randomized studies, often known
+as observational studies, until now, our team has focused primarily on
+randomized field experiments. We plan to include more discussion of observational studies over time.
+
+### We present examples using R {-}
+
+As public servants and social and behavioral scientists, we use the [R](http://r-project.org) statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R). 
+
+Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). We welcome future additions to this document using those languages as well.
+
+### Structure of the document {-}
+
+Each section of this document will include, if applicable:
+
+1. A description of our approach.
+2. A description of how we implement our approach, including functions in R, key arguments that must be entered into the function, and key outputs from the function.
+3. A general example using simulated data (perhaps including some evaluation of the tool as compared to other possible choices).
+
+Throughout the document, we will be including links to the [Glossary](#glossary) and [Appendix](#appendix), clarifying terms or explaining tools and procedures in more depth. This aspect of the SOP is still under-development, but we plan to add more here moving forward.
+
+## Help us improve our work! {-}
+
+Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of [Issues](https://github.com/gsa-oes/sop/issues) or [pull requests](https://help.github.com/articles/creating-a-pull-request/) on Github. There is also a suggestion form available to OES team members.
+
+<!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
+
+## About this document {-}
+
+This book was written in [bookdown](http://bookdown.org/). The complete source is available from [GitHub](https://github.com/gsa-oes/sop). This version of the book was built with `r R.version.string` and the following packages.
+
+```{r, echo = FALSE, results="asis"}
+deps <- desc::desc_get_deps()$package[-1]
+pkgs <- sessioninfo::package_info(deps, dependencies = FALSE)
+df <- tibble(
+  package = pkgs$package,
+  version = pkgs$ondiskversion,
+  source = gsub("@", "\\\\@", pkgs$source)
+)
+knitr::kable(df, format = "markdown")
+```
+```{r, include = FALSE}
+ruler <- function(width = getOption("width")) {
+  x <- seq_len(width)
+  y <- case_when(
+    x %% 10 == 0 ~ as.character((x %/% 10) %% 10),
+    x %% 5 == 0  ~ "+",
+    TRUE         ~ "-"
+  )
+  cat(y, "\n", sep = "")
+  cat(x %% 10, "\n", sep = "")
+}
+ruler()
+```
+
+```{r makepackagesbib, include=FALSE, warnings=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(unique(c( df$package, 'bookdown', 'knitr', 'rmarkdown')), 'packages.bib')
+```
+
+
+<!--chapter:end:index.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+# Statistical and causal inference for policy change
+
+Most of the rest of this document dives into the details of our statistical decision making. It assumes that the reader has heard of hypothesis tests and
+statistical estimators. Here, we explain in very broad terms how tests
+and estimators are useful for helping the US federal government improve public policy.
+
+"Evidence-based public policy" can refer to *both* "evidence-as-insight" (the use of previous scientific literature as input to the design of new policies) and "evidence-as-evaluation" (the careful design of studies to learn about how and whether a new policy worked) [@bowers2019better]. Our team aims to help government agencies **design** new policies and **learn** about how those new ideas work. *This document focuses on the learning part of our work.*
+
+How would we know whether and how a new policy worked? In an ideal and
+unrealistic case, we would know that a new policy improved the life of a single
+person, Jake, if we could compare Jake's decisions *both* under the new policy
+*and* under the status quo *at the same moment in time*. If we saw that Jake's
+decisions were better under the new policy than under the status quo, we would
+say that the new policy *caused* Jake to make better decisions.
+
+Since no one can observe Jake in both situations --- say, making health decisions with and without a new procedure for visiting the doctor --- researchers try to find at least one other person (or more) who represents how Jake would have acted without being exposed to the new policy. @holland:1986a calls this the "fundamental problem of causal inference" and explains more formally when we might believe that other people are a good approximations for how Jake would have acted without the new policy. For example, if access to the new policy is randomized, we can claim that that the two groups are good "counterfactuals" for each other. Our team tends to think about the *causal effects* of a policy in counterfactual terms.
+
+What do statistics have to do with learning about the causal effect of a new
+policy idea?  We use randomized experiments to create groups of people who
+represent behavior under *both* the new policy and the status quo. In
+medical experiments to assess the effectiveness of new treatments, these two
+groups tend to be called the "treatment group" and the "control group." Social scientists often use that same language even if we are not really providing a new treatment, but are, instead, offering a new communication or decision-making structure. If we pilot a new policy by offering it to people chosen at random, we can claim that the people chosen and the people not chosen represent or "stand in for" each other. With random assignment of a policy, we can use what we see from one group to learn about what would have happened if the control group had received the new policy instead, or if the treatment group had not.
+
+In any given sample we won't know *exactly* how the treatment group would have behaved if they had been assigned to the control group instead. For example, if we pulled 500 out of 1000 names from a hat and assigned those 500 people to receive treatment, that's just one of many possible sets of 500 people we could have drawn. If we were to do the experiment again, and pulled a different 500 names at random, this second experiment will also have a randomly selected treatment group, but the second 500 people will be at least a little different from the first 500 people. A single experiment offers us *some* information about the effect of treatment, but we need to ask other questions, too, like "How much could our result differ just due to pulling a different 500 people from the hat?" But we also need to answer subtler questions like "What do you mean by 'result'?" or "How do I know that this really is a 'good' result rather than a bad result?"
+
+Questions like those in mind, our team uses statistical theory to produce estimates of the causal effect of a new policy. We also use statistical theory to answer questions like "Could the effect really have been zero?" or "How many people do we need to observe in order to distinguish a positive effect from a zero effect?" The rest of this document presents decisions we have made about the particulars of estimators and tests, as well as other tricky decisions that we have had to confront --- like how we can design experiments using pre-intervention data to make our results as precise as possible. 
+
+For more on the basics of how statistics helps us answer questions about causal
+effects, we recommend chapters 1--3 of @gerber_field_2012 (which focuses on
+randomized experiments) and the first part of @rosenbaum2017 (which focuses on
+both experiments and research designs without randomization). Another good treatment comes from the opening chapters of @angrist2009mostly.
+
+
+
+
+
+<!--chapter:end:01-causalinference.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+
+
+# Basics of Experimental Design and Analysis
+
+Here, we briefly define and describe some of the characteristics we consider when evaluating statistical procedures. These characteristics guide our decision making in the rest of this guide. Briefly, we want to create research designs that (1) have enough statistical power to tell us something meaningful about the policy interventions that we are piloting. We also want to use statistical tests that will (2) rarely mislead us--- i.e., will rarely give a false positive result--- and we want to use estimators (3) without systematic error. These characteristics depend on both the design of the study and the choices we make about computational procedures. We discuss these issues in more depth in other chapters that follow.
+
+## Statistical power: Designing Studies that effectively distinguish signal from noise
+
+The research designs we use at OES aim to enhance our ability to
+distinguish signal from noise: studies with very few observations cannot tell
+us much about the treatment effect, while studies with very many observations
+provide a lot of information about the treatment effect. A study which
+effectively distinguishes signal from noise has excellent "statistical power,"
+while a study which cannot do this has low statistical power. The Evidence in Governance and Politics (EGAP) Methods Guide [10 Things You Need to Know about Statistical Power](https://egap.org/resource/10-things-to-know-about-hypothesis-testing/) explains more about what statistical power is and how to assess it.
+
+Before we field a research design, we assess its statistical power. If we
+anticipate that the intervention will only make a small change in peoples'
+behavior, then we will need a relatively large number of people in the study:
+too few people would result in a report saying something like, "The new policy
+might have improved the lives of participants, but we can't argue strongly that this is so because our margin of error is too wide."
+
+## Error Rates of Tests
+
+A good statistical test rarely rejects a true hypothesis and often rejects
+false hypotheses. The EGAP Methods Guide [10 Things to Know about Hypothesis
+Testing](https://egap.org/resource/10-things-to-know-about-hypothesis-testing/) describes the basics of hypothesis tests. It also explains how one might know that a given $p$-value arises from a test with good properties in a given research design. Our team tries to choose testing procedures that are not likely to mislead analysts, both when we make our analysis plans and as we complete our analyses and re-analyses.
+
+## Bias in Estimators
+
+A good estimator is not systematically different from the truth, and an even
+better estimator tends to produce estimates that are close to the truth across
+different experiments. The difference-in-means between a treatment and
+control group is a well known unbiased estimator of the average treatment
+effect within a given experimental sample, so this is often a primary quantity of interest that our team reports. In practice, we usually estimate this using linear regression [@angrist2009mostly]. Meanwhile, since we know that the coefficient in a logistic regression of a binary outcome on a treatment indicator and a covariate is a biased estimator of the underlying causal difference in log-odds, we use other approaches when we want to talk about the causal effect of a treatment on log-odds [@freedman2008randomization].
+
+
+
+<!--chapter:end:015-basics.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+# Design-Based Principles of Statistical Inference
+
+Most policy evaluations using administrative data or surveys report the results of their studies using *estimators* and *hypothesis tests*. Although we can never know the true causal effect of a new policy on our beneficiaries, we can provide a best guess ("The average amount saved for retirement by people in the treatment group was $1000 more than the average amount in the control group: our estimate of the average treatment effect is $1000"). We can also provide a test evaluating the plausibility of a particular hunch or hypothesis. Commonly, these tests evaluate the plausbility of the null hypothesis of no effect ("We can reject the null hypothesis at the 5% significance level with $p=.02$"). Confidence intervals can be used to summarize hypothesis tests, so we think of them as tests rather than estimators.
+
+Now, when we are asked *why* we used some method for calculating an
+average treatment effect, $p$-value, or confidence interval, our team has
+tended to say that our statistical analyses depend on the **design** of our
+studies. When applied to randomized experiments, this principle can be written
+simply as: **analyze as you randomize.** We provide an example of this
+principle in practice [below](#randinfex). This idea, often known as
+"randomization based" or "design based" inference, was proposed by two of the
+founders of modern statistics. Jerzy Neyman's 1923 paper showed how to use
+randomization to learn about what we would currently call "average treatment
+effects" [@neyman_application_1923], and Ronald A.  Fisher's 1935 book showed
+how to use randomization to test hypotheses about what we would currently call
+"treatment effects" [@fisher_design_1935].
+
+We use a design based approach because we often know how a study was designed
+--- after all, we and our agency collaborators tend to be the ones deciding on
+the sample size, the experimental arms, and the outcome data to be extracted
+from administrative databases. There are other ways to justify statistical
+procedures, and we do not exclude any reasonable approach in our work --- such
+as approaches based on theoretical probability models, or "asymptotic theory," which is standard in many applied research fields. However, building on what we know we did in a given study has served us well so far, and it thus forms the basis of our decisions in general.
+
+## An example using simulated data {#randinfex}
+
+Imagine we have a simple randomized experiment where the relationship between
+outcomes and treatment is shown in Figure \@ref(fig:boxplot1) (we illustrate the first 6 rows in the table below). Notice that, in this simulated experiment, the treatment changes the variability of the outcome in the treated group --- this is a common pattern when the control group is a status quo policy.
+
+```{r makedat1}
+## Read in data for the fake experiment.
+dat1 <- read.csv("dat1.csv")
+
+## Table of the first few observations.
+knitr::kable(head(dat1[, c(1, 23:27)]))
+```
+
+```{r boxplot1, fig.cap="Simulated Experimental Outcomes"}
+## y0 and y1 are the true underlying potential outcomes.
+with(dat1, {boxplot(list(y0,y1), names=c("Control","Treatment"), ylab="Outcomes")
+stripchart(list(y0,y1), add=TRUE, vertical=TRUE)
+stripchart(list(mean(y0), mean(y1)), add=TRUE, vertical=TRUE, pch=19, cex=2)})
+```
+
+In this simulated data, we know the true average treatment effect (ATE) because we know both of the underlying true potential outcomes. The control potential outcome, $y_{i|Z_i=0}$, is written in the code as `y0`, meaning "the response person $i$ would provide if he/she were in the status quo or control group". The treatment potential outcome,  $y_{i|Z_i = 1}$, is written in the code as `y1`, meaing "the response person $i$ would provide if he/she were in the new policy or treatment group." We use $Z_i$ to refer to the experimental arm. In this case $Z_i=0$ for people in the status quo group and $Z_i=1$ for people in the new policy group. (You can click to SHOW the code.)
+
+```{r trueATE}
+trueATE <- with(dat1, mean(y1) - mean(y0))
+trueATE
+```
+
+Now, we have one *realized* experiment (defined by randomly assigning half of the people to treatment and half to control). We know that the observed difference of means of the outcome, $Y$, between treated and control groups is an unbiased estimator of the true ATE (by virtue of random assignment to treatment). We can calculate this in a few ways: we can just calculate the difference of means, *or* we can take advantage of the fact that an ordinary least squares linear regression produces the same estimate when we have a binary treatment on the right hand side.
+
+```{r estATE, echo=TRUE}
+## Y is the observed outcome, Z is the observed treatment.
+estATE1 <- with(dat1, mean(Y[Z==1]) - mean(Y[Z==0]))
+estATE2 <- lm(Y~Z, data=dat1)$coef[["Z"]]
+c(estimatedATEv1=estATE1, estimatedATEv2=estATE2)
+stopifnot(all.equal(estATE1, estATE2))
+```
+
+This design-based perspective leads us to think differently about how to calculate standard errors (and thus $p$-values and confidence intervals), relative to a more common perspective based on asymptotic theory and sampling from a larger (potentially infinite) population.
+
+###  How do we calculate randomization-based standard errors?
+
+How much would an estimate of the average treatment effect vary as we repeat an experiment on the same group of people multiple times (randomly re-assigning treatment each time)? The **standard error** of an estimate of the average treatment effect is one answer to this question. Below, we simulate a simple, individual-level experiment to develop intuition about what the standard error is.^[See https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/ for a demonstration that the difference-in-means between the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.]
+
+```{r simsesetup, cache = T}
+## A function to re-assign treatment and recalculate the difference of means.
+## Treatment was assigned without blocking or other structure, so we
+## just permute or shuffle the existing treatment assignment vector.
+simEstAte <- function(Z,y1,y0){
+	Znew <- sample(Z)
+	Y <- Znew * y1 + (1-Znew) * y0
+	estate <- mean(Y[Znew == 1]) - mean(Y[Znew == 0])
+	return(estate)
+}
+
+## Set up and perform the simulation
+sims <- 10000
+set.seed(12345)
+simpleResults <- with(dat1,replicate(sims,simEstAte(Z = Z,y1 = y1,y0 = y0)))
+seEstATEsim <- sd(simpleResults)
+
+## The standard error of this estimate of the ATE (via simulation)
+seEstATEsim
+```
+
+Although this preceding standard error is intuitive (the standard deviation of the distribution arising from repeating the experiment), more statistics-savvy readers will recognize closed-form standard error estimators like the following.^[See @gerber_field_2012 and @dunning_natural_2012 for easy-to-read explanations and derivations of this design-based expression for the standard error of a simple estimator of average treatment effect.] If we write $T$ as the set of all $m$ treated units and $C$ as the set of all $n-m$ non-treated units, we then have:
+
+$$
+\widehat{\var}(T) = \frac{s^2(Y_{i,i \in T})}{m} + \frac{s^2(Y_{i,i \in C})}{(n-m)}
+$$
+
+where $s^2(x)$ is the sample variance such that $s^2(x) = (1/(n-1))\sum^n_{i = 1}(x_i-\bar{x})^2$.
+
+Let's compare the results of that simulation above to the standard error this expression produces, along with the *true* standard error. We can calculate the true standard error of the ATE in this example because we know the actual covariance between potential outcomes (normally we cannot observe this). You can think of the expression above as a *feasible* standard error, a modified version that is estimable in real datasets and designed to be *at least as large* as the true standard error on average (i.e., it is designed to be "conservative"). Although we don't formally write it out here, you can see a method of estimating the true standard error in our code.
+
+Among other things, this exercise helps illustrate that the "standard deviation of the estimated ATE after repeating the experiment" is the same as expressions like the one above which textbooks are more likely to teach. We'll calculate the true SE next.
+
+```{r oldcode, echo = F, include = F}
+# This was used previously to get the true SE, but may be wrong?
+#varestATE <- ((N-nt)/(N-1)) * (vart/(N-nt)) + ((N-nc)/(N-1)) * (varc/nc) + (2/(N-1)) * covtc
+```
+
+```{r calctruese}
+## True SE (Dunning Chap 6, Gerber and Green Chap 3, or Freedman, Pisani and Purves A-32).
+## Requires knowing the true covariance between potential outcomes.
+N <- nrow(dat1)
+V <- var(cbind(dat1$y0,dat1$y1))
+varc <- V[1,1]
+vart <- V[2,2]
+covtc <- V[1,2]
+nt <- sum(dat1$Z)
+nc <- N-nt
+
+## Gerber and Green, p.57, equation (3.4)
+varestATE <- (((varc * nt) / nc) + ((vart * nc) / nt) + (2 * covtc)) / (N - 1)
+seEstATETrue <- sqrt(varestATE)
+```
+
+Then, we'll calculate the feasible standard error represented in the expression above.
+
+```{r feasibleSE}
+## Feasible SE
+varYc <- with(dat1,var(Y[Z == 0]))
+varYt <- with(dat1,var(Y[Z == 1]))
+fvarestATE <- (N/(N-1)) * ( (varYt/nt) + (varYc/nc) )
+estSEEstATE <- sqrt(fvarestATE)
+```
+
+Note that this feasible SE *is not* the standard error OLS provides by default, if you were to use a standard OLS regression to calculate a difference-in-means. We'll calculate the OLS SE as well, and include it in our comparison for illustration.
+
+```{r olsSE}
+## OLS SE
+lm1 <- lm(Y~Z, data=dat1)
+iidSE <-  sqrt(diag(vcov(lm1)))[["Z"]]
+```
+
+Lastly, we'll calculate the HC2 standard error, which [@lin_agnostic_2013] shows to be a randomization-justified SE for OLS. From our design-based perspective, we prefer this method of estimating the standard error. Like the feasible SE above, it should be conservative relative to the true SE. 
+
+```{r NeymanSE}
+## Neyman SE (HC2)
+NeymanSE <- sqrt(diag(vcovHC(lm1, type = "HC2")))[["Z"]]
+```
+
+These SE estimates in hand, let's review differences between the true standard error, the feasible standard error, the HC2 SE, the standard error arising from direct repetition of the experiment, and the OLS standard error.
+
+What we call Neyman SE here (the HC2 OLS SE) is supposed to be conservative relative to the true SE (at least as large or larger on average). We show this to be the case in our example. The Neyman SE is, by design, similar to the feasible SE, and both are larger than the true SE. We also illustrate the accuracy of our SE simulation procedure above as a way of thinking intuitively about what the standard error represents (though such a simulation is generally not possible with real data). Finally, recall that our design involves different outcome variances between the treated group and the control group. We would therefore expect what we are calling the "OLD iid" SE to be biased on average (though not necessarily guaranteed to be overly conservative or liberal in all cases). Here, it actually underestimates the truth only slightly. But in other circumstances it may perform worse.
+
+```{r compareSEs2}
+compareSEs <- c(simSE = seEstATEsim,
+  feasibleSE = estSEEstATE,
+  trueSE = seEstATETrue,
+  olsIIDSE = iidSE,
+  NeymanDesignSE = NeymanSE)
+sort(compareSEs)
+```
+
+To provide a more reliable comparison of these SE estimation methods, the first code chunk below defines a function to calculate an average treatment effect, the OLS iid SE, and the OLS HC2 (Neyman) SE. The second code chunk below uses this function to calculate several of those SEs for 10000 simulated datasets, averaging across them to provide a better illustration of their relative performance. As expected, OLS *underestimates* the true SE, while the Neyman (HC2) SE is conservative. The risk of underestimating the SE is that it could lead us to be overconfident when interpreting statistical findings.
+
+```{r defsefn, cache = T}
+## Define a function to calculate several SEs, given potential outcomes and treatment
+sePerfFn <- function(Z,y1,y0){
+	Znew <- sample(Z)
+	Ynew <- Znew * y1 + (1-Znew) * y0
+	lm1 <- lm(Ynew~Znew)
+	iidSE <-  sqrt(diag(vcov(lm1)))[["Znew"]]
+	NeymanSE <- sqrt(diag(vcovHC(lm1,type = "HC2")))[["Znew"]]
+	return(c(estATE=coef(lm1)[["Znew"]],
+		 estSEiid=iidSE,
+		 estSENeyman=NeymanSE))
+}
+
+## Perform a simulation using this function
+set.seed(12345)
+sePerformance <- with(dat1, replicate(sims, sePerfFn(Z = Z, y1 = y1, y0 = y0)))
+ExpectedSEs <- apply(sePerformance[c("estSEiid", "estSENeyman"),], 1, mean)
+c(ExpectedSEs, trueSE=seEstATETrue, simSE=sd(sePerformance["estATE",]))
+```
+
+###  How do we calculate randomization-based confidence intervals?
+
+When we have a two arm trial (and a relatively large sample size), we can estimate the ATE, calculate design-based standard errors, and then use them to create large-sample justified confidence intervals through either of the following approaches:
+
+```{r estAndSEs}
+## The difference_in_means function comes from the estimatr package.
+estAndSE1 <- difference_in_means(Y ~ Z, data = dat1)
+
+## Note that coeftest and coefci come from the lmtest package
+est2 <- lm(Y ~ Z, data = dat1)
+estAndSE2 <- coeftest(est2, vcov.=vcovHC(est2, type = "HC2"))
+estAndCI2<- coefci(est2, vcov.=vcovHC(est2, type = "HC2"), parm = "Z")
+
+estAndSE1
+estAndSE2["Z", , drop=FALSE]
+estAndCI2
+```
+
+## Summary: What does a design based approach mean for policy evaluation?
+
+Let's review some important terms. Hypothesis tests produce $p$-values telling us how much information we have against a null hypothesis. Estimators produce guesses about the size of some causal effect like the average treatment effect (i.e., "estimates"). Standard errors summarize how our estimates might vary from experiment to experiment by random chance. Confidence intervals tell us which ranges of null hypotheses are more versus less consistent with our data.
+
+Recall that $p$-values refer to probability distributions of test statistics under a null hypothesis, while standard errors refer to probability distributions of estimators across repeated experiments. In the frequentist approach to probability, both of these probability distributions arise from some process of repetition. Statistics textbooks often encourage us to imagine that this process of repetition involves repeated sampling from a larger (potentially infinite) population. But most OES work involves a pool of people who do not represent a well-defined population, nor do we tend to have a strong probability model of how these people entered our sample. Instead, we have a known process of random assignment to an experimental intervention. This makes a randomization-based inference approach natural for our work, and helps our work be easiest to explain and interepret for our policy partners.
+
+<!--chapter:end:02-randomizationinference.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+```{r setupdat13,  echo=FALSE, include=FALSE}
+if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1.csv')) }
+```
+
+# Randomization and Design
+
+After working together with our agency partners to translate insights from the
+social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).^[We develop the recommendations themselves following [processes](https://oes.gsa.gov/methods/) described in more detail on our website.] In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.
+
+## Coin flipping randomization versus urn-drawing randomization
+
+Many discussions of RCTs begin by talking about the intervention being assigned to units (people,  schools, offices, districts) "by the flip of a coin," or **simple** random assignment. In other words, each unit's assignment to treatment occurs separately, and there is no *ex ante* guarantee as to exactly what the final number of treated or control units will be. We rarely use this method in practice, even though it is a useful way to introduce the idea that RCTs guarantee fair access to the new policy.
+
+The following code contrasts coin-flipping style random assignment with drawing-from-an-urn style, or **complete** random assignment (where a fixed number of units are randomly chosen for treatment). Coin-flipping based experiments are still valid and tell us about the underlying counterfactuals, but they can have less statistical power, so we often try to avoid them.
+
+Notice that the simple random assignment implemented in the code below results in more observations in the treatment group (group `T`) than in the control group (group `C`). Complete random assignment will always assign 5 units to the treatment, 5 to the control.
+
+```{r completera}
+## Start with a small experiment with only 10 units
+n <- 10
+
+## Set a random seed for replicability
+set.seed(12345)
+
+## Function to add more intuitive labels
+labelTC <- function(assignments) {ifelse(assignments == 1, "T", "C")}
+
+## Simulation using functions from the randomizr package
+trt_coinflip <- labelTC(simple_ra(n))
+trt_urn <- labelTC(complete_ra(n))
+
+## Coin flipping does not guarantee half and half treated and control.
+## Drawing from an urn, guarantees half treated and control.
+table(trt_coinflip)
+table(trt_urn)
+
+## Alternative approach using base R
+# set.seed(12345)
+# trt_coinflip <- labelTC(rbinom(10, size = 1, prob = .5))
+# trt_urn <- labelTC(sample(rep(c(1, 0), n / 2)))
+# table(trt_coinflip)
+# table(trt_urn)
+```
+
+## Urn-drawing or complete randomization into 2 or more groups
+
+We tend to use the `randomizr` R package [@R-randomizr] for simple designs
+rather than the base R `sample` function because `randomizr` does some
+quality control checks. Notice that we implement a check on our code below with the `stopifnot` command: the code will stop and issue a warning if we didn't actually assign 1/4 of the observations to the treatment condition. Here, we assign the units first to 2 arms with equal probability (`Z2armEqual`). Then, to show how the code works, we assign them to 2 arms where one arm has only a $\frac{1}{4}$ probability of receiving treatment (e.g., imagine a design with an expensive intervention). Last, we assign them based on a design with 4 different arms, each with equal probability (e.g., one control group and three different treatments under consideration). We often use $Z$ to refer to the variable recording our intervention arms.
+
+```{r completera2}
+N <- nrow(dat1)
+set.seed(12345)
+
+## Two equal arms
+dat1$Z2armEqual <- labelTC(complete_ra(N))
+
+## Two unequal arms: .25 chance of treatment (.75 chance of control0
+dat1$Z2armUnequalA <- labelTC(complete_ra(N,prob=.25))
+stopifnot(sum(dat1$Z2armUnequalA=="T")==N/4)
+dat1$Z2armUnequalB <- labelTC(complete_ra(N,m=N/4))
+
+## Four equal arms
+dat1$Z4arms <- complete_ra(N,m_each=rep(N/4,4))
+
+table(Z2armEqual=dat1$Z2armEqual)
+table(Z2armUnequalA=dat1$Z2armUnequalA)
+table(Z2armUnequalB=dat1$Z2armUnequalB)
+table(Z4arms=dat1$Z4arms)
+```
+
+## Factorial Designs
+
+It's possible to test the effects of more than one intervention without losing much statistical power by randomly assigning multiple treatments independently of each other. The simplest design that we use for this purpose is the $2 \times 2$ **factorial** design. For example, in the next table we see that we have assigned `r N/2` observations to each arm of two separate interventions. Since the randomization of `treatment1` is independent of `treatment2`, we can assess the effects of each treatment separately and pay less of a power penalty (unless one of the treatments dramatically increases the variance of the outcome compared to the experiment with only one treatment assigned).
+
+```{r factdesign2x2}
+## Two equal arms, adding a second cross treatment
+dat1$Z2armEqual2 <- labelTC(complete_ra(N))
+table(treatment1=dat1$Z2armEqual,treatment2=dat1$Z2armEqual2)
+```
+
+Although factorial designs allow us to test more than one intervention at the
+same time, they tend to provide less statistical power when testing
+hypotheses about the *interaction* between the two treatments. If we want to
+learn about how two different interventions work together, then the sample
+size requirements will be much larger than if we were satisfied with learning about each treatment separately.^[But see @small2011structured, for instance, for a way to increase the power of tests for such questions. This approach is not currently part of our standard practice.]
+
+## Block Random Assignment
+
+Statistical power depends not only on the size of the experiment and the strength of the treatment effect, but also on the amount of noise, or non-treatment-related variability, in outcomes. Block-randomized designs can help reduce this noise while simultaneously minimizing estimation error -- the amount that our particular experiment's estimate differs from the truth.  
+
+In a **block-randomized**, or stratified, design, we randomly assign units to the policy intervention *within* pre-specified groups.^[Some studies employ post-stratification, where simple or complete randomization might be used to assign treatment, but the data are still analyzed in a stratified manner. See @miratrix2013adjusting, for instance, for more discussion.] 
+
+Suppose we are evaluating whether dedicated navigators can increase the percentage of students living in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. In a real study we can never know the outcome in all buildings both with and without navigators (the "fundamental problem of causal inference" from the last chapter). But if we could, we might have the data below:
+
+```{r maketab1, echo = F}
+tibble(
+  Building = c(1:4, "Mean"),
+  Size = c(rep.int("Large", 2), rep.int("Small", 2), " "),
+  `% FAFSA (No Navigator)` = c(20, 30, 20, 30, 25),
+  `% FAFSA (With Navigator)` = c(60, 70, 30, 40, 50)
+  ) %>%
+  knitr::kable() %>%
+  kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid") %>%
+  kableExtra::row_spec(5, extra_css = "border-bottom: 1px solid") %>%
+  kable_styling(full_width = F)
+
+# This LaTex code was used previously
+# \begin{center}
+# \begin{tabular}{ccccc}
+# &&& FAFSA \% & FAFSA \% \\
+# Building & Size & Navigators? & if No Navigators & if Navigators   \\ \hline
+# 1 & Large & $\_$ & 20 & 60 \\
+# 2 & Large & $\_$ & 30 & 70 \\
+# 3 & Small & $\_$ & 20 & 30 \\
+# 4 & Small & $\_$ & 30 & 40 \\ \hline
+# && Means: & 25 & 50 \\
+# \end{tabular}
+# \end{center}
+```
+
+The true average treatment effect for this sample is the average under treatment (i.e., the average treated potential outcome) minus the average under control (i.e., the average control potential outcome): $\text{ATE} = 50-25=25$ percent more applications per building when a navigator is deployed.
+
+In a real study, we might randomly allocate two buildings to treatment and two buildings to control. If complete random assignment led to us treating the first two buildings, then we might observe:
+
+```{r maketab2, echo = F}
+tibble(
+  Building = c(1:4, "Mean"),
+  Size = c(rep.int("Large", 2), rep.int("Small", 2), " "),
+  Treated = c(1, 1, 0, 0, " "),
+  `% FAFSA (No Navigator)` = c(" ", " ", 20, 30, 25),
+  `% FAFSA (With Navigator)` = c(60, 70, " ", " ", 65)
+  ) %>%
+  knitr::kable() %>%
+  kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid") %>%
+  kableExtra::row_spec(5, extra_css = "border-bottom: 1px solid") %>%
+  kable_styling(full_width = F)
+
+# This LaTex code was used previously
+# \begin{center}
+# \begin{tabular}{ccccc}
+# &&& FAFSA \% & FAFSA \% \\
+# Building & Size & Navigators? & if No Navigators & if Navigators   \\ \hline
+# 1 & Large & Yes &  & 60 \\
+# 2 & Large & Yes &  & 70 \\
+# 3 & Small & No & 20 &  \\
+# 4 & Small & No & 30 &  \\ \hline
+# && Means: & 25 & 65 \\
+# \end{tabular}
+# \end{center}
+```
+
+This yields a treatment effect estimate of $65-25 = 40$ percent more applications due to the presence of a navigator. This is *larger* than the true value of $25$.
+
+Or, if random assignment led to the other two buildings being treated instead, we might then observe:
+
+```{r maketab3, echo = F}
+tibble(
+  Building = c(1:4, "Mean"),
+  Size = c(rep.int("Large", 2), rep.int("Small", 2), " "),
+  Treated = c(0, 0, 1, 1, " "),
+  `% FAFSA (No Navigator)` = c(20, 30, " ", " ", 25),
+  `% FAFSA (With Navigator)` = c(" ", " ", 30, 40, 35)
+  ) %>%
+  knitr::kable() %>%
+  kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid") %>%
+  kableExtra::row_spec(5, extra_css = "border-bottom: 1px solid") %>%
+  kable_styling(full_width = F)
+
+# This LaTex code was used previously
+# \begin{center}
+# \begin{tabular}{ccccc}
+# &&& FAFSA \% & FAFSA \% \\
+# Building & Size & Navigators? & if No Navigators & if Navigators   \\ \hline
+# 1 & Large & $\_$ &  & 60 \\
+# 2 & Large & $\_$ & 30 &  \\
+# 3 & Small & $\_$ &  & 30 \\
+# 4 & Small & $\_$ & 30 &  \\ \hline
+# && Means: & 30 & 45 \\
+# \end{tabular}
+# \end{center}
+```
+
+This, in contrast, yields an estimated treatment effect of $35-25 = 10$ percentage point more applications due to the navigators -- now *smaller* than the true value of $25$.
+
+All of the possible (equiprobable) assignments with two treated and two control units, along with their estimated treatment effects, are listed in the table below:
+
+```{r maketab4, echo = F}
+tibble(
+  Assignments = c("TTCC", "CTCT", "TCCT", "CTTC", "TCTC", "CCTT"),
+ `Estimated Effect` = c(40, 35, 25, 25, 15, 10)
+  ) %>%
+  knitr::kable() %>%
+  kable_styling(full_width = F)
+# This LaTex code was used previously
+# \begin{center}
+# \begin{tabular}{cc}
+# Assignments & Est TE \\ \hline
+# YYNN & 40  \\ 
+# NYNY & 35 \\
+# YNNY & 25 \\
+# NYYN & 25 \\
+# YNYN & 15 \\
+# NNYY & 10
+# \end{tabular}
+# \end{center}
+```
+
+These possible treatment effect estimates have a mean equal to the true value of 25, illustrating the difference in means is an unbiased estimator. However, some of these estimates are far from the truth, and they have a lot of variability.
+
+To design an experiment that better estimates the true value, and does so with more statistical power (less variability), we can randomly assign units within *blocks*. In general, units should be sorted into different blocks based on their similarity across one or more characteristics that we expect to be correlated with our outcome. Here, blocking implies restricting the possible random assignments to those that have one large and one small building in each treatment group:
+
+```{r maketab5, echo = F}
+tibble(
+  Assignments = c("CTCT", "TCCT", "CTTC", "TCTC"),
+ `Estimated Effect` = c(35, 25, 25, 15)
+  ) %>%
+  knitr::kable() %>%
+  kable_styling(full_width = F)
+# This LaTex code was used previously
+# \begin{center}
+# \begin{tabular}{cc}
+# Assignments & Est TE \\ \hline
+# NYNY & 35 \\
+# YNNY & 25 \\
+# NYYN & 25 \\
+# YNYN & 15 \\
+# \end{tabular}
+# \end{center}
+```
+
+With this blocked design restricting the random assignments that are possible, we now get an estimate that is no more than 10 percentage points from the truth. Further, our estimates will have less variability (an SD of `r round(sd(c(35, 25, 25, 15)), 2)` rather than `r round(sd(c(35, 25, 25, 15, 40, 10)), 2)`). This improves the statistical power of our design.
+
+For a more realistic example, suppose we are designing an experiment
+where the sample includes patients from two different hospitals. We might randomly assign patients to treatment and control *within* each hospital. For instance, we might assign half of the patients in hospital "A" to treatment and half to control, then do the same in hospital "B."^[We use "block" rather than "strata" throughout this document to refer to groups of experimental units that are fixed *before random assignment occurs*.] Below, we have `r nrow(dat1) / 2` units in hospital "A" and `r nrow(dat1) / 2` in hospital "B":
+
+```{r blockra1}
+dat1$blockID <- gl(n = 2, k = N/2, labels = c("Block A", "Block B"))
+with(dat1,table(blockID=dat1$blockID))
+```
+
+We assign half of the units in each hospital to each treatment condition:
+
+```{r blockra15}
+dat1$Z2armBlocked <- labelTC(block_ra(blocks=dat1$blockID))
+with(dat1, table(blockID, Z2armBlocked))
+```
+
+If, say, there were fewer people eligible for treatment in hospital "A" --- or perhaps the intervention was more expensive in that block --- we might choose different treatment probabilities for each block. The code below assigns half of the hospital "A" patients to treatment, but only a quarter of those from hospital "B". Again, we also check that this code worked. This approach is an informal version of one of the best practices for writing code in general, called "unit testing." See the [EGAP Guide to Workflow](https://egap.org/resource/10-things-to-know-about-project-workflow/) for more examples.
+
+```{r blockra2}
+## Blocked assignment, unequal probability
+dat1$Z2armBlockedUneqProb <- labelTC(block_ra(blocks=dat1$blockID, block_prob=c(.5,.25)))
+with(dat1, table(blockID, Z2armBlockedUneqProb))
+
+## Unit testing
+NumTreatedB <- sum(dat1$Z2armBlockedUneqProb=="T" & dat1$blockID=="Block B")
+ExpectedNumTreatedB <- sum(dat1$blockID=="Block B")/4
+stopifnot(NumTreatedB==ceiling(ExpectedNumTreatedB) | NumTreatedB==floor(ExpectedNumTreatedB))
+```
+
+Our team tries to implement block-randomized assignment whenever possible in
+order to increase the statistical power of our experiments. We also often find
+it useful in cases where different administrative units are implementing the
+treatment, or when we expect different groups of people to have different reactions to the treatment.
+
+### Using only a few covariates to create blocks
+
+If we have background information on a few covariates, we can create blocks by hand through a process like the one demonstrated here:
+
+```{r cutcovs}
+## For example, make three groups from the cov2 variable
+dat1$cov2cat <- with(dat1, cut(cov2, breaks=3))
+table(dat1$cov2cat, exclude=c())
+with(dat1, tapply(cov2, cov2cat, summary))
+
+## And we can make blocks that are the same on two covariates
+dat1$cov1bin <- as.numeric(dat1$cov1>median(dat1$cov1)) # Binarize cov1
+dat1$blockV2 <- droplevels(with(dat1, interaction(cov1bin, cov2cat)))
+table(dat1$blockV2, exclude=c())
+
+## And then assign within these blocks
+set.seed(12345)
+dat1$ZblockV2 <- labelTC(block_ra(blocks = dat1$blockV2))
+with(dat1, table(blockV2, ZblockV2, exclude=c()))
+```
+
+### Multivariate blocking using many covariates
+
+If instead we have many background variables, we can increase precision by thinking about the problem of blocking as one of matching, or creating sets of
+units which are as similar as possible overall, across the entire set of covariates [@moore2012multivariate;@moore2016bT063]. Here we show two approaches.
+
+Creating pairs:
+
+```{r}
+## Using the blockTools package
+mvblocks <- block(dat1, id.vars="id", block.vars=c("cov1","cov2"), algorithm="optimal")
+dat1$blocksV3 <- createBlockIDs(mvblocks, data=dat1, id.var = "id")
+dat1$ZblockV3 <- labelTC(block_ra(blocks = dat1$blocksV3))
+
+## Just show the first ten pairs
+with(dat1,table(blocksV3,ZblockV3,exclude=c()))[1:10,]
+```
+
+Creating larger blocks:
+
+```{r}
+## Using the quickblock package
+distmat <- distances(dat1, dist_variables = c("cov1bin", "cov2"), id_variable = "id", normalize="mahalanobiz")
+distmat[1:5,1:5]
+quantile(as.vector(distmat), seq(0,1,.1))
+
+## The caliper argument helps prevent ill-matched points
+mvbigblock <- quickblock(distmat, size_constraint = 6L, caliper = 2.5)
+
+## Look for missing points
+table(mvbigblock,exclude=c()) # One point dropped due to caliper
+dat1$blocksV4 <- mvbigblock
+dat1$notblocked <- is.na(dat1$blocksV4) 
+dat1$ZblockV4[dat1$notblocked==F] <- labelTC(block_ra(blocks = dat1$blocksV4))
+with(dat1, table(blocksV4, ZblockV4, exclude=c()))[1:10,]
+```
+
+It's worth pausing to examine the differences within blocks. We'll focus on the proportion of people in category "1" on the binary covariate (notice that the blocks are homogeneous on this covariate), as well as the difference between the largest and smallest value of the continuous covariate. This table also illustrates that, due to our use of a caliper when calling `quickblock` above, one observation was not included in treatment assignment.
+
+```{r blockingeval}
+blockingDescEval <- dat1 %>% 
+  group_by(blocksV4) %>%
+  summarize(
+    cov2diff = max(abs(cov2)) - min(abs(cov2)),
+    cov1 = mean(cov1bin),
+    count_in_block = n()
+    )
+
+blockingDescEval
+```
+
+## Cluster random assignment
+
+We often implement a new policy intervention at the level of some group of people --- like a doctor's practice, or a building, or some other administrative unit. Even though we have `r nrow(dat1)` units in our example data, imagine now that they are grouped into 10 buildings, and the policy intervention is at the building level. Below, we assign `r nrow(dat1)/2` of those units to treatment and `r nrow(dat1)/2` to control. Everyone in each building has the same treatment assignment.
+
+```{r clusterRA}
+## Make an indicator for cluster membership
+ndat1 <- nrow(dat1)
+dat1$buildingID <- rep(1:(ndat1/10), length=ndat1)
+set.seed(12345)
+dat1$Zcluster <- labelTC(cluster_ra(cluster=dat1$buildingID))
+with(dat1, table(Zcluster, buildingID))
+```
+
+Cluster randomized designs raise new questions about estimation, testing, and statistical power. We describe our approaches to estimation and power
+analysis of cluster randomized designs in the next chapter.
+
+## Other designs
+
+Our team has also employed stepped-wedge style designs, saturation designs
+aimed at discovering whether the effects of the experimental intervention are
+communicated across people (via some spillover or network mechanism), and
+designs where we try to isolate certain experimental units (like buildings)
+from each other so that we can focus our learning about the effects of the
+intervention in isolation (rather than the effects when people can communicate with each other about the intervention). We may discuss some of these in more detail in later versions of this guide.
+
+## Assessing randomization (balance testing)
+
+If we have covariates, we can evaluate the implementation of a random assignment procedure by testing the hypothesis that the treatment-vs-control differences in covariates, or differences across treatment arms, are consistent with our intended randomization strategy. Also, in the absence of covariates, we can at least assess whether the number of units assigned to each arm (conditional on other design features, such as blocking or stratification) is consistent with our intended strategy.
+
+We provide an example below with a binary treatment, a continuous outcome, and 10 covariates. In this case we use the $d^2$ omnibus balance test function `xBalance()` in the package `RItools` [see @hansen_covariate_2008; @bowers_ritools_2016].
+
+The overall $p$-value below shows us that this test provides little evidence against the null hypothesis that treatment ($Z$) really was assigned at random --- at least in terms of the relationships between treatment assignment and the two covariates. The test statistic here is a summary measure of mean differences across each covariate.
+
+Keep in mind that the overall or "omnibus" nature of this test is key. If we had many covariates or many observations, it would easy to discover one or a few covariates with individual differences-in-means that differ detectably from zero due to random chance (rather than real implementation problems). That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates -- roughly 5 in 100. The value of an omnibus test is that it should not be so easily misled by these chance false positives.
+
+```{r}
+randAssessV1 <- balanceTest(Z~cov1+cov2, data=dat1)
+randAssessV1$overall[,]
+```
+
+We can also assess the implementation of block-randomized assignment:
+
+```{r}
+randAssessV3 <- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), data=dat1)
+randAssessV3$overall[,]
+```
+
+Lastly, it is possible to assess randomization under both blocked and clustered random assignment using a regression model like the following, where `strata(blockID)` and `cluster(clusterID)` refer to block and cluster fixed effects (FEs), respectively.
+
+`Z ~ cov1 + cov2 + strata(blockID) + cluster(clusterID)`
+
+Again, a test statistic summarizing the estimated differences across covariates would then be used to calculate a p-value. This approach, implemented for instance by the `RItools` package, works well for experiments that are not overly small. In a very small experiment (with relatively few clusters) we might estimate this same regression model, but we would not compare our test statistic to the $\chi^2$ sampling distribution to calculate a p-value. Instead, we would perform a permutation-based test (see the previous chapter).
+
+We sometimes prefer not use $F$-tests or Likelihood Ratio tests to assess randomization. See @hansen_covariate_2008 for some evidence that a test based on randomization-inference (like the $d^2$ test developed in that article) maintains appropriate false positive rates better than the sampling- or likelihood-justified $F$ and likelihood ratio tests.
+
+### What to do with "failed" randomization assessments?
+
+Observing a $p$-value of less than .05 in an omnibus test like the one above ought to trigger extra scrutiny about implementation and/or how the data were recorded. For example, we might respond by contacting our agency partner to learn more about how random numbers were generated or the code was used (particularly if we didn't perform the random assignment ourselves). In many circumstances, this follow-up investigation might indicate that random assignment was implemented correctly, and that our understanding of the design or the data was simply incorrect. But sometimes, the follow-up investigation may not turn up any misunderstandings at all. In those situations, we will tend to assume that our rejection of the null hypothesis of appropriate random assignment was a false positive (consider that we would expect to see about 5 such errors in every 100 experiments).
+
+If our rejection of the null hypothesis appears to be driven by one or more covariates that are substantively important --- say, the variable `age` looks very imbalanced between treated and control groups in a health-related randomized trial --- then we might present both the unadjusted results and a separate set of results that adjust for the covariate(s) in question (e.g., through a stratified difference-in-means estimator, or by using them as controls in a linear regression). Importantly, under a chance rejection of the null (i.e., a false positive) we would not want to treat the adjusted estimate as our primary finding --- in such a situation, the adjusted estimate would be biased while the unadjusted estimate would not. However, large differences between the adjusted and unadjusted estimates might help us interpret our findings: estimating separate effects within different age groups, for example, might tell us something useful about the particular context of a study and inform the conclusions we draw.
+
+### Minimizing the chances of "failed" randomization
+
+Our preference for block-randomization helps us avoid these problems. We can also restrict random assignments in more flexible ways that minimize opportunities for error even more. That said, we prefer not to rely on **re-randomization** --- one of the other possible restricted randomization options --- in the interests of minimizing the complexity of our analyses. But since we adopt a randomization-based approach to the analysis of  experiments, we can easily (in concept) estimate causal effects under a wide variety of random assignment strategies.
+
+```{r savedat1, echo=FALSE}
+write.csv(dat1,file="dat1_with_designs.csv")
+```
+
+
+<!--chapter:end:03-randomizeddesigns.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+```{r setupdat14, echo=FALSE}
+## Read in the dat1 file created from 03-randomizeddesigns.Rmd
+if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1_with_designs.csv')) }
+dat1$rankY <- rank(dat1$Y)
+ndat1 <- nrow(dat1)
+```
+
+# Analysis Choices
+
+We've organized our discussion of analysis tactics in this chapter by a study's design. After all, different study designs often require different analyses. But there are a few general tactics that we use to ensure that we can make transparent, valid, and statistically precise statements about the results of our research. We'll start this chapter by discussing those.
+
+First, the nature of the data that we expect to see from a given experiment informs our analysis plans. For example, we may make some choices based on the nature of the outcome --- a binary outcome, a symmetrically distributed continuous outcome, and a heavily skewed continuous outcome each could each call for different analytical approaches.
+
+Second, we tend to ask three different questions in each of our studies, and we answer them with different statistical procedures:
+
+ 1. Can we *detect an effect* in our experiment? (We use hypothesis tests to answer this question.)
+ 2. What is our best guess about the *size of the effect* of the experiment? (We estimate the average treatment effect of our interventions to answer this question.)
+ 3. *How precise* is our guess? (We report confidence intervals or standard errors to answer this question.)
+
+Finally, in the [Analysis Plans](https://oes.gsa.gov/methodsdetail/#analysis-plans) that we post online before receiving outcome data for a project, we try to anticipate many common decisions involved in data analysis --- how we will treat missing data, how we will rescale, recode, and combine columns of raw data, etc. We touch on some of these topics in more detail below, and will cover others in a future chapter on **Working with Data**.
+
+## Completely or Urn-Draw Randomized Trials
+
+### Two arms
+
+#### Continuous outcomes
+
+In a completely randomized trial where outcomes take on many levels (units
+like times, counts of events, dollars, percentages, etc.) we generally assess the *weak null hypothesis* of no average effects, estimate an average treatment effect, and may also assess the *sharp null hypothesis* of no effect for any unit using some test statistic beside a difference-in-means.^[What we call the "weak null" here corresponds to the null hypothesis this is evaluated by default in many software packages (like R and Stata) when implementing common procedures like a difference-in-means test or a linear regression. Meanwhile, the "sharp null" is more often evaluated when employing permutation-based procedures like those discussed in our earlier chapter on design-based inference.] This last assessment allows us to check on whether our choice to focus on mean differences matters for our substantive interpretation of the results.
+
+##### Estimating the average treatment effect and testing the weak null of no average effects
+
+We show the kind of code we use for these purposes here. Below, `Y` is the outcome variable and `Z` is an indicator of the assignment to treatment. 
+
+```{r contoutcome}
+## This function comes from the estimatr package
+estAndSE1 <- difference_in_means(Y ~ Z,data = dat1)
+print(estAndSE1)
+```
+
+Notice that the standard errors that we use are not the default OLS errors:
+
+```{r notolsse}
+estAndSE1OLS <- lm(Y~Z,data=dat1)
+summary(estAndSE1OLS)$coef
+```
+
+The standard errors we prefer reflect repeated randomization from a fixed experimental pool. This is known as the HC2 standard error. @lin_agnostic_2013 and @samii_equivalencies_2012 show that the standard error estimator of an unbiased average treatment effect within a "finite-sample" or design-based framework (i.e., the Neyman standard error; see Chapter 3) is equivalent to the HC2 standard error. These SEs are produced by default by the `estimatr` package's function `difference_in_means()` and the `lmtest` package's functions `coeftest()` and `coefci()`. They can also be produced using the `vcovHC()` function from the `sandwich` package.
+
+Our preference for HC2 errors follows from their design-based justification, but many researchers encounter them as one of several methods of correcting OLS standard errors for *heteroscedasticity*. Essentially, this means that the variance of the regression model's error term is not constant across observations.^[Classical OLS standard errors assume away heteroscedasticity, rendering them potentially inaccurate when heteroscedasticity is present.] When using OLS to analyze data from a two-arm randomized trial, heteroscedasticity might appear because the variance of the outcome is different in the treatment and control groups. This is common in practice.
+
+##### Testing the sharp null of no effects
+
+We may assess the sharp null of no effects via direct permutation as a check on the assumptions underlying the calculations and statistical inferences above. We tend to use a $t$-statistic as our test statistic here to parallel the above tests. But we could use a rank-based test statistic instead if we were concerned about long-tails (i.e., skew) reducing statistical power.
+
+Below, we show how to perform these tests using two different R packages: `coin`, and `ri2`.  First the `coin` package [@R-coin]:
+
+```{r RItest1, eval=FALSE, cache=TRUE, include=F}
+## Currently, RItest is only in the randomization-distribution
+## development branch of RItools. This code would work if that branch
+## were installed. Right now (current renv package versions, as of 9/7/23)
+## it is not, and I'm (Bill) hesistant to make the code here reliant
+## on a development package that some Fellows may not be able to
+## easily install under GSA IT permissions. So, excluding this chunk.
+set.seed(12345)
+test1T <- RItest(y=dat1$Y,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
+print(test1T)
+test1R <- RItest(y=dat1$rankY,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
+print(test1R)
+```
+
+```{r otherri}
+## The coin package
+test1coinT <- oneway_test(Y~factor(Z),data=dat1,distribution=approximate(nresample=1000))
+test1coinT
+test1coinR<- oneway_test(rankY~factor(Z),data=dat1,distribution=approximate(nresample=1000))
+test1coinR
+test1coinWR <- wilcox_test(Y~factor(Z),data=dat1,distribution=approximate(nresample=1000))
+test1coinWR
+```
+
+Next, the ri2 package [@R-ri2]:
+
+```{r ri2example}
+## The ri2 package
+thedesign1 <- randomizr:::declare_ra(N=ndat1,m=sum(dat1$Z))
+thedesign1
+test1riT <- conduct_ri(Y ~ Z, declaration = thedesign1,
+                       sharp_hypothesis = 0, data = dat1, sims = 1000)
+tidy(test1riT)
+test1riR <- conduct_ri(rankY ~ Z, declaration = thedesign1,
+                       sharp_hypothesis = 0, data = dat1, sims = 1000)
+tidy(test1riR)
+```
+
+#### Binary outcomes
+
+We tend to focus on differences in percentage points when we are working with binary outcomes, usually estimated via OLS linear regression. A statement like "the effect was a 5 percentage point increase" has made communication with partners easier than a discussion in terms of log odds or odds ratios. In addition to difficulties in interpretation and communication, we also avoid logistic regression coefficients because of the bias problem noticed by @freedman2008randomization in the case of covariance adjustment or more complicated research designs.
+
+##### Estimating the average treatment effect and testing the weak null of no average effects
+
+We can estimate effects (and produce standard errors) for differences of proportions using the same process as above. The average treatment effect estimate here represents the difference in the proportions of positive responses (i.e., $Y=1$) between treatment conditions. The standard error is still valid because it is based on the design of the study and not the distribution of the outcomes.
+
+```{r makebinoutcomes}
+## Make some binary outcomes
+dat1$u <- runif(ndat1)
+dat1$v <- runif(ndat1)
+dat1$y0bin <- ifelse(dat1$u>.5, 1, 0) # control potential outcome
+dat1$y1bin <- ifelse((dat1$u+dat1$v) >.75, 1, 0) # treated potential outcomes
+dat1$Ybin <- with(dat1, Z*y1bin + (1-Z)*y0bin)
+truePropDiff <- mean(dat1$y1bin) - mean(dat1$y0bin)
+```
+
+```{r diffofproportions}
+estAndSE2 <- difference_in_means(Ybin~Z,data=dat1)
+print(estAndSE2)
+```
+
+When we have an experiment that includes a treatment and control group with binary outcomes, and when we are estimating the ATE, the standard error from a difference in proportions test is the same as the Neyman standard error (and therefore the HC2 error). In contrast, the standard error from a regular OLS regression with a binary outcome --- sometimes called a *linear probability model* --- will be at least slightly incorrect due to inherent heteroscecdasticity [@angrist2009mostly].
+
+To see some logic for this, first consider that difference-in-proportion standard errors are estimated with the following equation:
+
+$$\widehat{SE}_{prop} = \sqrt{\frac{p_{1}(1-p_{1})}{n_{1}}+\frac{p_{2}(1-p_{2})}{n_{2}}}$$
+
+$n_1$ is the size of the group assigned treatment, $n_2$ is the size of the group assigned control, $p_1$ is the proportion of "successes" in the group assigned treatment, and $p_2$iss the proportion of "successes" in the group assigned control. Notice that the numerator in the fractions above represents the variance of the proportion in each treatment group.
+
+Compare this with the Neyman standard error equation [@lin_agnostic_2013]:^[Specifically, the equation for feasible SE discussed in Chapter 2]
+
+$$\widehat{SE}_{Neyman} = \sqrt{\frac{VAR(Y_{t})}{n_1}+\frac{VAR(Y_{c})}{n_2}}$$
+
+$Y_c$ is the vector of observed outcomes under control, and $Y_t$ is the vector of observed outcomes under treatment. This equation indicates that we use the observed variances in each treatment group to estimate the Neyman standard error for a difference in means.
+
+The code below compares the various standard error estimators discussed here.
+
+```{r, eval = TRUE, echo = TRUE}
+nt <- sum(dat1$Z)
+nc <- sum(1-dat1$Z)
+
+## 2. Find SE for difference of proportions.
+p1 <- mean(dat1$Ybin[dat1$Z==1])
+p0 <- mean(dat1$Ybin[dat1$Z==0])
+se1 <- (p1*(1-p1))/nt
+se0 <- (p0*(1-p0))/nc
+se_prop <- round(sqrt(se1 + se0), 4)
+
+## 3. Find Neyman SE
+varc_s <- var(dat1$Ybin[dat1$Z == 0])
+vart_s <- var(dat1$Ybin[dat1$Z == 1])
+se_neyman <- round(sqrt((vart_s/nt) + (varc_s/nc)), 4)
+
+## 4. Find OLS SE
+simpOLS <- lm(Ybin~Z,dat1)
+se_ols <- round(coef(summary(simpOLS))["Z", "Std. Error"], 2)
+
+## 5. Find Neyman SE (which are the HC2 SEs)
+se_neyman2 <- coeftest(simpOLS,vcov = vcovHC(simpOLS,type="HC2"))[2,2]
+se_neyman3 <- estAndSE2$std.error
+
+## 6. Show SEs
+se_compare <- as.data.frame(cbind(se_prop, se_neyman, se_neyman2, se_neyman3, se_ols))
+rownames(se_compare) <- "SE(ATE)"
+colnames(se_compare) <- c("diff in prop", "neyman1","neyman2","neyman3", "ols")
+print(se_compare)
+```
+
+##### Testing the sharp null of no effects
+
+With a binary treatment and a binary outcome, we could test hypothesis that outcomes are totally independent of treatment assignment using what is called *Fisher's exact test*. We can also use the permutation-based approaches above to produce results that do not rely on asymptotic assumptions. Below we show how Fisher's exact test, the Exact Cochran-Mantel-Haenszel test, and the Exact $\chi$-squared test produce the same answers.
+
+```{r fisherexact}
+test2fisher <- fisher.test(x=dat1$Z,y=dat1$Ybin)
+print(test2fisher)
+test2chisq <- chisq_test(factor(Ybin)~factor(Z),data=dat1,distribution=exact())
+print(test2chisq)
+test2cmh <- cmh_test(factor(Ybin)~factor(Z),data=dat1,distribution=exact())
+print(test2cmh)
+```
+
+A difference-in-proportions test can also be performed directly (rather than relying on OLS to approximate this). In that case, the null hypothesis is tested while using a binomial distribution (rather than a Normal distribution) to approximate the underlying randomization distribution. In reasonably-sized samples, both approximations perform well.
+
+```{r diffprop}
+mat <- with(dat1,table(Z,Ybin))
+matpt<-prop.test(mat[,2:1])
+matpt
+```
+
+### Multiple arms
+
+Multiple treatment arms can be analyzed as above, except that we now have
+more than one comparison between a treated group and a control group. Such studies raise both substantive and statistical questions about multiple
+testing (or "multiple comparisons"). For example, the `difference_in_means`
+function asks which average treatment effect it should estimate, and it
+only presents one comparison at a time. We *could* compare the treatment `T2`
+with the baseline outcome of `T1`. But we *could also* compare both of `T2` and `T3` with `T1` at the same time, as in the second set of results (`lm_robust` implements the same standard errors as `difference_in_means`, but allows for more flexible model specification).
+
+```{r}
+estAndSE3 <- difference_in_means(Y~Z4arms,data=dat1,condition1="T1",condition2="T2")
+print(estAndSE3)
+estAndSE3multarms <- lm_robust(Y~Z4arms,data=dat1)
+print(estAndSE3multarms)
+```
+
+In this case, we could make $((4 \times 4)-4)/2)=6$ different possible comparisons between pairs of treatment groups. Consider that if there were really no effects of any treatment, and if we chose to reject the null at the standard significance threshold of $\alpha=.05$, we would actually claim that there was at least one effect *more than 5% of the time*. $1 - ( 1 - .05)^6 = .27$, or 27% of the time, we would make a false positive error, claiming an effect existed when it did not.
+
+In general, our analyses of studies with multiple arms should reflect the fact that we are making multiple comparisons. Two points are worth emphasizing here. First, the family-wise error rate (FWER) of these tests will differ from the individual error rate of single test. In short, testing more than one hypothesis increases the chance of making at least one Type I error (i.e., incorrectly rejecting a true null hypothesis). Suppose instead of testing a single hypothesis at a conventional significance level of $\alpha = 0.05$ we tested two hypothesis at $\alpha = 0.05$. The probability of retaining both hypotheses is $(1-\alpha)^2 = .9025$  and the probability of rejecting at least one of these hypotheses is $1-(1-\alpha)^2 = .0975$ --- almost double our stated significance threshold of $\alpha = 0.05$.
+
+Second, multiple tests will often be correlated, and corrections for multiple testing should recognize these relationships --- importantly, accounting for this correlation *will penalize multiple testing less*! When we say that tests are "correlated," we mean that there is some relationship between the test statistics (e.g., a student's t-statistic, or a $\chi^{2}$ statistic) used to perform statistical inference in each case. In other words, it means that the test statistics are jointly distributed --- when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$, but the assumed reference distributions for the test statistics were identical: by accident, ran the same exact code twice. In that case, we are really just doing one test and so we haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
+
+That issue in mind, our default recommendations for multi-arm trials are as follows:
+
+ - First, decide on a focal, **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. Such a test would likely have more statistical power that a test that evaluates each arm separately, and would also have a correctly controlled false positive rate. This would then serve as the primary confirmatory finding we report.
+
+ - Next, we perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for overall conclusions on their own. *Or*, perform a series of additional confirmatory comparisons that adjusts for the collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] Other options to consider are using the Tukey HSD procedure for pairwise comparisons, or testing the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
+
+#### Adjusting p-values and confidence intervals for multiple comparisons
+
+Here is an illustration of different methods of adjusting for multiple comparisons in R.
+
+To reflect that fact that we are making multiple comparisons, we could adjust
+$p$-values from (uncorrelated) tests to control the familywise error rate at $\alpha$ through either a single step procedure (e.g. [Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise stepwise procedure (such as the [Holm correction](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We might also control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)).
+
+Our standard practice is to adjust the FWER for uncorrelated tests using Holm adjustment. For more on such adjustments and multiple comparisons see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
+
+<!-- Explain
+here about what constitutes a family and how we choose. Also why Holm. And
+when FDR.-->
+
+```{r}
+## Get p-values but exclude intercept
+pvals <- summary(estAndSE3multarms)$coef[2:4,4]
+## Illustrate different corrections (or lack thereof)
+round(p.adjust(pvals, "none"), 3)
+round(p.adjust(pvals, "bonferroni"), 3)
+round(p.adjust(pvals, "holm"), 3)
+round(p.adjust(pvals, "hochberg"), 3) # FDR instead of FWER
+```
+
+Simply adjusting $p$-values from this linear model, however, ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. It also ignores potential correlations in the distribution of test statistics (i.e., we are leaving statistical power "on the table").
+
+Instead of the above, and instead of employing simulation to control the FWER (step 7 on [this page](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/)), we can also implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
+Tukey test) calculates multiple-comparison-adjusted $p$-values and simultaneous confidence intervals *for all pairwise comparisons* in a model, while taking into account possible correlations between test statistics. It is similar to a two-sample t-test, but with built in adjustment for multiple comparisons. The test statistic for any comparison between two equally-sized groups $i$ and $j$ is:
+
+$$ t_{ij} = \frac{\bar{y_i}-\bar{y_j}}{s\sqrt{\frac{2}{n}}} $$
+
+$\bar{y_i}$ and $\bar{y_j}$ are the means in groups $i$ and
+$j$, respectively. $s$ is the pooled standard deviation of the outcome, and $n$ is the common sample size. A critical value is then chosen for $t_{ij}$ given the desired significance level, $\alpha$, the number of groups being compared, $k$, and the degrees of freedom, $n-k$. We'll represent this critical value with $t_{\alpha,k,n}$.
+
+The confidence interval for any difference between equally-sized groups is then:^[We focus on the classic Tukey HSD procedure for this illustration, which assumes equally sized groups. There are modifications to apply this procedure in other settings, such as the Tukey-Kramer test.]
+
+$$\left[\bar{y_i}-\bar{y_j}-t_{\alpha,k,n}s\sqrt{\frac{2}{n}}\hspace{2mm},\hspace{2mm} \bar{y_i}-\bar{y_j}+t_{\alpha,k,n}s\sqrt{\frac{2}{n}}\right]$$
+
+We present an implementation of the Tukey HSD test using the `glht()` function from the `multcomp` package, which offers more flexiblity than the
+`TukeyHSD` in the base `stats` package (at the price of a slightly more complicated syntax).
+
+```{r}
+## We can use aov() or lm()
+## aovmod <- aov(Y~Z4arms, dat1)
+lmmod <- lm(Y~Z4arms, dat1)
+```
+
+Using the `glht()` function's `linfcnt` argument, we tell the function to
+conduct a Tukey test of all pairwise comparisons for our treatment indicator, $Z$.
+
+```{r}
+tukey_mc <- glht(lmmod, linfct = mcp(Z4arms = "Tukey"))
+summary(tukey_mc)
+```
+
+We can then plot the 95% family wise confidence intervals for these comparisons.
+
+```{r tukeyplot}
+## Save dfault ploting parameters
+op <- par()
+## Add space to left-hand outer margin
+par(oma = c(1, 3, 0, 0))
+plot(tukey_mc)
+```
+
+We can also obtain simultaneous confidence intervals at other levels of statistical significance using the `confint()` function.
+
+```{r plot_tukey_ci, warnings=FALSE}
+## Generate and plot 90% confidence intervals
+tukey_mc_90ci <- confint(tukey_mc, level = .90)
+plot(tukey_mc_90ci)
+## Restore plotting defaults, now
+par(op)
+```
+
+See also: `pairwise.prop.test` for binary outcomes.
+
+### Multiple Outcomes
+
+Our studies often involve more than one outcome measure. Assessing the effect of even a simple two-arm treatment on 10 different outcomes raises the same kinds of questions that come up in the context of multi-arm trials, generally requiring applications of the methods discussed above.
+
+<!-- Insert examples here? Or not?-->
+
+## Covariance adjustment (the use of background information to increase precision)
+
+When we have background or baseline information about experimental units, we
+can use this to increase the precision with which we estimate our treatment
+effects (i.e., increase the statistical power of our tests). We prefer to use this information during the design phase to create block randomized designs. But we may only have access to such background information after the study has been fielded, and so we will pre-specify use of this information to increase our statistical power.
+
+We sometimes avoid the practice of adjusting for covariates (or fixed effect dummies) in a linear and additive fashion. This estimator of the average treatment effect can be subject to small-sample bias and may be --- counterintuitively --- *less* efficient [@freedman2008rae].^[@lin_agnostic_2013 notes that the latter problem appears *asymptotically* when a 2-arm design is sufficiently imbalanced (many more observations in one arm), or when a covariate has a stronger relationship with a unit's treatment effect than with it's expected outcome. This problem may also appear *asymptotically* in a 3+ arm design, regardless of balance.] In contrast, an approach to covariate adjustment that we call the "Lin estimator" performs better [@lin_agnostic_2013]. To be clear, the bias/precision-loss attributable to linear covariance adjustment estimator often tends to be quite small, especially when sample sizes are large [@lin_agnostic_2013]. Yet, because it is frequently costless to use the Lin estimator in sufficiently large samples, this is our default recommendation (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, a number of our projects encounter situations where linear, additive covariate adjustment is preferred.^[For instance, as the number of parameters to be estimated becomes large relative to a study's sample size, we may judge that the loss of degrees of freedom due to Lin adjustment in a particular case is not worth it's potential benefits.]
+
+### Intuition about bias in the least squares estimator of the ATE with covariates
+
+When we estimate the average treatment effect using least squares we tend to say that we "regress" some outcome for each unit $i$, $Y_i$, on (often binary) treatment assignment, $Z_i$, where $Z_i=1$ if a unit is assigned to treatment and 0 if assigned to control. And we write a linear model relating $Z$ and $Y$ as below, where $\beta_1$ represents the difference in means of $Y$ between units with $Z=1$ and $Z=0$:
+
+$$
+\begin{equation}
+Y_i = \beta_0 + \beta_1 Z_i + e_i
+\end{equation}
+$$
+
+This is a common practice because we know that the formula to estimate $\beta_1$ in Equation (1) is the same as the difference-in-means when comparing $Y$ across the treatment and control groups:
+
+$$
+\begin{equation}
+\hat{\beta}_1 = \overline{Y}_{Z=1} - \overline{Y}_{Z=0} = \frac{\cov(Y,Z)}{\var(Z)}.
+\end{equation}
+$$
+This last term, expressed with covariances and variances, is the expression for the slope coefficient in a bivariate OLS regression model. This estimator of the average treatment effect has no systematic error (i.e., it is unbiased), so we can write $E_R(\hat{\beta}_1)=\beta_1 \equiv \text{ATE}$, where $E_R(\hat{\beta}_1)$ refers to the expectation of $\hat{\beta}_{1}$ across randomizations consistent with the experimental design.
+
+Sometimes we have an additional (pre-treatment) covariate, $X_i$, commonly included in the analysis as follows:
+
+$$
+\begin{equation}
+Y_i = \beta_0 + \beta_1 Z_i + \beta_2 X_i + e_i
+\end{equation}
+$$
+
+What is $\beta_1$ in this case? The matrix representation here is: $(\beta X^{T}\beta X)^{-1}\beta X^{T}\beta y$. But it will be more useful to examine the scalar formula:
+
+$$ \hat{\beta}_1 = \frac{\var(X)\cov(Z,Y) - \cov(X,Z)\cov(X,Y)}{\var(Z)\var(X) - \cov(Z,X)^2} $$
+
+In very large experiments $\cov(X,Z) \approx 0$ because $Z$ is randomly
+assigned and is thus independent of background variables like $X$. However in any given finite sized experiment $\cov(X,Z) \ne 0$, so this does not reduce to an unbiased estimator as it does in the bivariate case. Thus, @freedman2008rae showed that there is a small amount of bias in using the equation above to estimate the average treatment effect.
+
+To engage with this problem, and an asymptotic inefficiency issue associated with linear covariance adjustment, @lin_agnostic_2013 suggested using the following least squares approach --- regressing the outcome on binary treatment assignment $Z_i$ and its interaction with mean-centered covariates:
+
+$$
+\begin{equation}
+Y_i = \beta_0 + \beta_1 Z_i + \beta_2 ( X_i - \bar{X} ) + \beta_3 Z_i (X_i - \bar{X}) +  e_i
+\end{equation}
+$$
+
+When implementing this covariance adjustment strategy, remember that every covariate, *including binary indicators used to estimate fixed effects or to control for categorical covariates*, should be mean-centered and interacted with treatment. For instance, imagine a design with two treatment arms (treatment vs control) and three covariates. Linear adjustment for these covariates would involve fitting an OLS regression with *four* slope coefficients (one for the treatment group, and one for each covariate). @lin_agnostic_2013 adjustment for these covariates would instead involve fitting a regression with *seven* slope coefficients (one for the treatment group, one for each mean-centered covariate, and one for each interaction of treatment with a mean-centered covariate).^[The covariates outside the treatment interactions do not actually need to be mean-centered, but the version of each covariate in the interaction term does. E.g., in Equation 4, $\beta_2 (X_i - \bar{X})$ could be replaced by $\beta_2 X_i$, but $Z_i (X_i - \bar{X})$ must be kept as-is. It is often easier to simply only use mean-centered covariates in Lin adjustment here to avoid confusion.]
+
+See the [Green-Lin-Coppock SOP](https://alexandercoppock.com/Green-Lab-SOP/Green_Lab_SOP.html#using-covariates-in-analysis) for more examples of this approach to covariance adjustment.
+
+### Illustrating the Lin Approach to Covariance Adjustment
+
+Here, we show how covariance adjustment can create bias in estimation of the average treatment effect --- and how to reduce this bias while using the Lin procedure as well as by increasing the size of the experiment. In this case, we compare an experiment with 20 units to an experiement with 100 units, in each case with half of the units assigned to treatment by complete random assignment.
+
+We use the [DeclareDesign](https://declaredesign.org/) R package to make
+this process of assessing bias easier.^[For more, see also [this accompanying book](https://book.declaredesign.org/introduction/preface.html).] Much of the code that follows is providing instructions to the `diagnose_design` command, which repeats the design of the experiment many times, each time estimating an average treatment effect, and comparing the mean of those estimate to the truth (labeled "Mean Estimand" below).
+
+The true potential outcomes (`y1` and `y0`) are generated using one covariate, called `cov2`, with *no true treatment effect*. In what follows, we compare the performance of (1) the simple estimator using OLS to (2) estimators that use Lin's procedure involving just the correct covariate, and also to (3) estimators that use incorrect covariates (since we rarely know exactly the covariates that help generate any given behavioral outcome).
+
+We'll break this code up into sections to help with legibility. First, let's prepare `design` objects (a class used by `DeclareDesign`) for the $n=20$ and $n=100$ designs.
+
+```{r lianestimatorexample,results="hide"}
+## Keep a dataframe of select variables
+wrkdat1 <- dat1 %>% dplyr::select(id,y1,y0,contains("cov"))
+
+## Declare this as our larger population
+## (an experimental sample of 100 units)
+popbigdat1 <- declare_population(wrkdat1)
+
+## A dataset to represent a smaller experiment,
+## or a cluster randomized experiment with few clusters
+## (an experimental sample of 20 units)
+set.seed(12345)
+smalldat1 <- dat1 %>% dplyr::select(id,y1,y0,contains("cov")) %>% sample_n(20)
+
+## The relevant covariate is a reasonably strong predictor of the outcome
+summary(lm(y0~cov2,data=smalldat1))$r.squared
+
+## Now declare the differeent inputs for DeclareDesign
+## (declare the smaller population, and assign treatment in each)
+popsmalldat1 <- declare_population(smalldat1)
+assignsmalldat1  <- declare_assignment(Znew=complete_ra(N,m=10))
+assignbigdat1  <- declare_assignment(Znew=complete_ra(N,m=50))
+
+## No additional treatment effects
+## (potential outcomes)
+po_functionNull <- function(data){
+	data$Y_Znew_0 <- data$y0
+	data$Y_Znew_1 <- data$y1
+	data
+}
+
+## A few additional declare design settings
+ysdat1  <- declare_potential_outcomes(handler = po_functionNull)
+theestimanddat1 <- declare_inquiry(ATE = mean(Y_Znew_1 - Y_Znew_0))
+theobsidentdat1 <- declare_reveal(Y, Znew)
+
+## The smaller sample design
+thedesignsmalldat1 <- popsmalldat1 + assignsmalldat1 + ysdat1 + theestimanddat1 + theobsidentdat1
+
+## The larger sample design
+thedesignbigdat1 <- popbigdat1 + assignbigdat1 + ysdat1 + theestimanddat1 + theobsidentdat1
+
+```
+
+Next, we'll prepare a list of estimators (i.e., models) we want to compare. These include different numbers of covariates, with and without Lin (2013) adjustment.
+
+```{r covadjestimators}
+## Declare a selection of different estimation strategies
+estCov0 <- declare_estimator(Y~Znew, inquiry=theestimanddat1, .method=lm_robust, label="CovAdj0: Lm, No Covariates")
+estCov1 <- declare_estimator(Y~Znew+cov2, inquiry=theestimanddat1, .method=lm_robust, label="CovAdj1: Lm, Correct Covariate")
+estCov2 <- declare_estimator(Y~Znew+cov1+cov2+cov3+cov4+cov5+cov6+cov7+cov8, inquiry=theestimanddat1, .method=lm_robust, label="CovAdj2: Lm, Mixed Covariates")
+estCov3 <- declare_estimator(Y~Znew+cov1+cov3+cov4+cov5+cov6, inquiry=theestimanddat1, .method=lm_robust, label="CovAdj3: Lm, Wrong Covariates")
+estCov4 <- declare_estimator(Y~Znew,covariates=~cov1+cov2+cov3+cov4+cov5+cov6+cov7+cov8, inquiry=theestimanddat1, .method=lm_lin, label="CovAdj4: Lin, Mixed Covariates")
+estCov5 <- declare_estimator(Y~Znew,covariates=~cov2, inquiry=theestimanddat1, .method=lm_lin, label="CovAdj5: Lin, Correct Covariate")
+
+## List them all together
+all_estimators <- estCov0 + estCov1 + estCov2 + estCov3 + estCov4 + estCov5
+```
+
+```{r testestimators, echo=FALSE, results=FALSE}
+## Testing, hidden from book
+blah <- draw_data(thedesignsmalldat1)
+blahBig <- draw_data(thedesignbigdat1)
+estCov0(blah)
+estCov1(blah)
+estCov2(blah)
+estCov3(blah)
+estCov4(blah)
+estCov5(blah)
+```
+
+After this, we'll add those estimators to our `design` class objects.
+
+```{r setup_design_plus_est_objects}
+## Smaller sample
+thedesignsmalldat1PlusEstimators <- thedesignsmalldat1 + all_estimators
+
+## Larger sample
+thedesignbigdat1PlusEstimators <- thedesignbigdat1 + all_estimators
+```
+
+Now, let's simulate each design 200 times and evaluate their performance. First, the smaller sample:
+
+```{r diagnosisCovAdj1, cache=TRUE, results="hide"}
+## Summarize characteristics of the smaller-sample designs
+sims <- 200
+set.seed(12345)
+thediagnosisCovAdj1 <- diagnose_design(
+  thedesignsmalldat1PlusEstimators,
+  sims = sims,
+  bootstrap_sims = 0
+  )
+```
+
+Second, the larger sample: 
+
+```{r diagnosisCovAdj2, cache=TRUE, results="hide"}
+## Summarize characteristics of the larger-sample designs
+set.seed(12345)
+thediagnosisCovAdj2 <- diagnose_design(
+  thedesignbigdat1PlusEstimators,
+  sims = sims,
+  bootstrap_sims = 0
+  )
+```
+
+From the small sample simulation (N=20), we can see that "CovAdj1: Lm, Correct Covariate" shows fairly large bias compared to the estimator using no covariates at all. The Lin approach using only the correct covariate reduces the bias, but does not erase it. However, the unadjusted estimator has fairly low power where as the Lin approach with the correct covariate "CovAdj5: Lin, Correct Covariate" has excellent power to detect the 1 SD effect built into this experiment. One interesting result here is that the Lin approach is worst (in terms of power) when a mixture of correct and incorrect covariates are added to the linear model following the interaction-and-centering based approach.
+
+```{r diagnostCovAdj1, echo = F}
+diagcols <- c(3,5,6,7,8,9,10,11)
+kable(reshape_diagnosis(thediagnosisCovAdj1)[,diagcols] )
+```
+
+The experiment with $N=100$ shows much smaller bias than the small experiment
+above. Since all estimators allow us to detect the 1 SD effect (Power=1), we can look to the RMSE (Root Mean Squared Error) column to learn about the precision of these estimators. Again, the unadjusted approach has low bias, but it now has the largest standard error. While the Lin approach with a mixture of correct and incorrect covariates has low bias, it shows slightly worse precision than one that gets the choice of covariates correct.
+
+```{r diagnostCovAdj2}
+kable(reshape_diagnosis(thediagnosisCovAdj2)[,diagcols] )
+```
+
+```{r setupgraph, eval = F, echo = F}
+## Bill: not sure what the intended takeaway is here.
+## This code (and chunk below) was already left out of the SOP.
+## Past authors have trouble getting this to run? To potentially revisit.
+simdesignsCovAdj1 <- get_simulations(thediagnosisCovAdj1)
+trueATE1covadj <- with(dat1,mean(y1-y0))
+## simdesigns <- simulate_design(thedesign,sims=sims)
+simmeansCovAdj1 <- simdesignsCovAdj1 %>% group_by(estimator) %>% summarize(expest=mean(estimate))
+```
+
+```{r plotcovadjsims, eval=FALSE, echo=FALSE}
+g <- ggplot(data=simdesignsCovAdj1,aes(x=estimate,color=estimator)) +
+	geom_density(size=2) +
+	geom_vline(xintercept=trueATE1covadj) +
+	geom_point(data=simmeansCovAdj1,aes(x=expest,y=rep(0,6)),shape=17,size=6) +
+	theme_bw() +
+	theme(legend.position = c(.9,.8)) +
+scale_x_continuous(limits = c(-10, 20))
+
+print(g)
+```
+
+The Lin approach works well when covariates are few and sample sizes
+are large, but these simulations show where the approach is weaker: when there are many covariates (relative to the number of observations), some of which may not actually be correlated with the outcome. In this case, the estimator involving both correct and irrelevant covariates included 18 terms. Fitting a model with 18 terms using a small sample, e.g. $N=20$, allows nearly any observation to exert undue influence, increases the risk of serious multicollinearity, and leads to overfitting problems in general.
+
+Our team does not often run into such an extreme version of this problem because our studies have tended to involve many thousands of units and relatively few covariates. However, when we do encounter situations where the number of covariates (or fixed effects) we'd like to account for is large, we consider a few alternative approaches: (1) standard linear covariate adjustment; (2) collapsing the covariates into fewer dimensions (e.g., using principal component analysis); or (3) working with a residualized version of the outcome, as described below.
+
+### The Rosenbaum Approach to Covariance Adjustment
+
+When we have many covariates, sometimes Lin adjustment prevents us from calculating appropriate standard errors and/or can lead to overfitting. @rosenbaum:2002a showed an approach in which the outcomes are regressed on covariates, ignoring treatment assignment, and then the residuals from that first regression are used as the outcome in a second regression to estimate an average treatment effect. Again, we evaluate this approach through simulation.
+
+First, code we use to generate Rosenbaum (2002) estimators:
+
+```{r rosenbaumstylecov}
+## The argument covs is a character vector of names of covariates.
+## The function below generates a separate estimation command 
+## that performs Rosenbaum (2002) adjustment for the specified
+## covariates, given a sample of data. This new function can
+## then by used as an estimator in simulations below. This code
+## takes advantage of the concept of "function factories."
+## See, e.g.: https://adv-r.hadley.nz/function-factories.html.
+make_est_fun<-function(covs){
+  
+  force(covs)
+  
+  ## Generate a formula from the character vector of covariates
+  covfmla <- reformulate(covs,response="Y")
+  
+  ## What the new function to-be-generated will do,
+  ## given the model generated above:
+  function(data){
+    data$e_y <- residuals(lm(covfmla,data=data))
+    obj <- lm_robust(e_y~Znew,data=data)
+    res <- tidy(obj) %>% filter(term=="Znew")
+    return(res)
+    }
+  
+  }
+
+## Make Rosenbaum (2002) estimators for different groups of covariates
+est_fun_correct <- make_est_fun("cov2")
+est_fun_mixed<- make_est_fun(c("cov1","cov2","cov3","cov4","cov5","cov6","cov7","cov8"))
+est_fun_incorrect <- make_est_fun(c("cov1","cov2","cov3","cov4","cov5","cov6"))
+
+## Declare additional estimators, to add to the designs above
+estCov6 <- declare_estimator(handler = label_estimator(est_fun_correct), inquiry=theestimanddat1, label="CovAdj6: Resid, Correct")
+estCov7 <- declare_estimator(handler = label_estimator(est_fun_mixed), inquiry=theestimanddat1, label="CovAdj7: Resid, Mixed")
+estCov8 <- declare_estimator(handler = label_estimator(est_fun_incorrect), inquiry=theestimanddat1, label="CovAdj8: Resid, InCorrect")
+
+## Add the additional estimators
+thedesignsmalldat1PlusRoseEstimators <- thedesignsmalldat1 + all_estimators + estCov6 + estCov7 + estCov8
+thedesignbigdat1PlusRoseEstimators <- thedesignbigdat1 + all_estimators + estCov6 + estCov7 + estCov8
+
+```
+
+Second, we evaluate a design that applies those estimators (alongside the others) to our smaller sample:
+
+```{r diagnosisCovAdj3, cache=TRUE, results="hide"}
+set.seed(12345)
+thediagnosisCovAdj3 <- diagnose_design(
+  thedesignsmalldat1PlusRoseEstimators,
+  sims = sims,
+  bootstrap_sims = 0
+  )
+```
+
+Finally, we evaluate a design that applies those estimators (alongside the others above) to our larger sample:
+
+```{r diagnosisCovAdj4, cache=TRUE, results="hide"}
+set.seed(12345)
+thediagnosisCovAdj4 <- diagnose_design(
+  thedesignbigdat1PlusRoseEstimators,
+  sims = sims,
+  bootstrap_sims = 0
+  )
+```
+
+With a small sample (N=20), the Rosenbaum-style approach yields very little
+bias and quite high power using the correct covariate ("CovAdj6: Resid,
+Correct"), but performs poorly in terms of bias and precision with incorrect
+covariates.
+
+```{r diagnostCovAdj3, echo = F}
+kable(reshape_diagnosis(thediagnosisCovAdj3)[7:9,diagcols] )
+```
+
+With a larger experiment, the bias goes down, but coverage is still relatively worse when incorrect covariates are included. We speculate that performance might improve if we fit covariance adjustment models that produce residuals separately for the treated and control groups.
+
+```{r diagnostCovAdj4, echo = F}
+kable(reshape_diagnosis(thediagnosisCovAdj4)[7:9,diagcols] )
+```
+
+## How to choose covariates for covariance adjustment?
+
+Our analysis plans commonly specify a few covariates based on what we know about the mechanisms and context of the study. In general, if we have a measurement of the outcome *before the treatment was assigned* --- the baseline outcome --- we try to use it as a part of a blocking or covariance adjustment strategy.
+
+When we have access to many covariates, we may sometimes use simple machine
+learning methods to select variables that strongly predict the outcome, such as a lasso model. In particular, we tend to prefer the *adaptive lasso* rather than a simple lasso because it has better theoretical properties [@zou2006adaptive], but also because the adaptive lasso tends to produce sparser results --- and the bias from covariance adjustment can sometimes be significance if we include too many covariates.
+
+<!-- #### Example of using the adaptive lasso for variable selection -->
+
+<!-- Here, we show how we use *baseline data*, or data collected before treatment was assigned or a new policy was implemented, to choose covariates to include later in blocking or covariance adjustment. -->
+
+<!-- We tend to use the adaptive lasso rather than the simple lasso because the adaptive lasso has better theoretical properties [@zou2006adaptive] but also because the adaptive lasso tends to produce sparser results --- and the bias from covariance adjustment can be severe if we add many many covariates to a covriance adjustment procedure. -->
+
+<!-- **TO DO** -->
+
+## Block-randomized trials {#blockrandanalysis}
+
+We design block-randomized trials by splitting units into groups based on predefined characteristics --- covariates that cannot be changed by the experimental treatment --- and then randomly assigning treatment within each
+group. We use this procedure when we want to increase our ability to detect
+signal from noise. It assumes that the noise, or random variation in the outcome measure, is associated with the variables that we use to assign blocks. For example, if we imagine that patterns of energy use will tend to differ according to size of family, we may create blocks or strata of different family sizes and randomly assign an energy saving intervention separately within those blocks.
+
+We also design block-randomized experiments when we want to assess effects within and across subgroups (for example, if we want to ensure that we have enough statistical power to detect a *difference in effects* between veterans and non-veterans). If we have complete random assignment, it is likely that the proportion of veterans assigned treatment will not be exactly same as the proportion of non-veterans receiving treatment. However, if we stratify or block the group on military status, and randomly assign treatment and control within each group, we can then ensure that equal proportions (or numbers) or veterans and non-veterans receive the treatment and control.
+
+Most of the general ideas that we demonstrated in the context of completely randomized trials have direct analogues in the case of block randomized trials. The only additional question that arises with block randomized trials is about how to weight the contributions of each individual block when calculating an overall average treatment effect or testing an overall hypothesis about treatment effects. We begin with the simple case of testing the sharp null of no effects when we have a binary outcome --- in the case of a Cochran-Mantel-Haenszel test the weighting of different blocks is handled automatically.
+
+### Testing binary outcomes under block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables
+
+For block-randomized trials with a binary outcome, we might use the CMH test to evaluate the null of no effect.^[As discussed above, by "binary outcome," we mean that there are only two possible values, and we have recorded one or the other. Usually, we use indicator variables (0, 1) to record these outcomes.] This is one way of keeping the outcomes for each strata separate rather than pooling them together --- under blocking, we are effectively repeating the same experiment separately within each stratum. The CMH test tells us if the odds ratios across strata support an association between the outcome and treatment [@cochran_methods_1954;@mantel_statistical_1959].
+
+To set up the CMH test, we need *k* sets of 2x2 contingency tables. Suppose
+the table below represents outcomes from stratum *i* where A, B, C, and D are
+counts of observations:
+
+Assignment| Response  | No response | Total
+--------- |---------- |----------   |----------
+Treatment | A         | B           | A+B
+Control   | C         | D           | C+D
+Total     | A+C       | B+D         | A+B+C+D = T
+
+The CMH test statistic takes the sum of the deviations between observed and expected outcomes within each stratum ($O_{i}$ and $E_{i}$, respectively), squares this sum, and compares it to the sum of the variance within each strata:
+
+$$
+CMH = \frac{\big[\sum_{i=1}^{k} (O_{i} -
+E_{i})\big]^{2}}{\sum_{i=1}^{k}{\mathrm{\var}[O_{i}]}}
+$$
+
+where $$O_{i} = \frac{(A_i+B_i)(A_i+C_i)}{T_i}$$
+
+and $$\var[O_{i}] =
+\frac{(A_i+B_i)(A_i+C_i)(B_i+D_i)(C_i+D_i)}{{T_i}^2(T_i-1)}$$
+
+In large-enough samples, if there are no associations between treatment and
+outcomes across strata, we would expect to see an odds ratio equal to 1. Across randomizations of large-enough samples, this test statistic follows an asymptotic $\chi^2$ distribution with degrees of freedom = 1.
+
+For a standard two-arm trial, the odds ratio for a given stratum would be:
+
+$$OR = \frac{A/B}{C/D} = \frac{AD}{BC}$$
+
+Across strata, could then find an overall common odds ratio as follows:
+
+$$
+\begin{equation}
+ OR_{CMH} = \frac{\sum_{i=1}^{k} (A_{i}D_{i}/T_{i})}{\sum_{i=1}^{k}{B_{i}C_{i}}{T_{i}}}
+\end{equation}
+$$
+If this common odds ratio is substantially greater than 1, then we should suspect that there is an association between the outcome and treatment across strata, and the CMH test statistic would be large. If $OR_{CMH} = 1$, this would instead support the null hypothesis that there is no association between treatment and the outcome, and the CMH test statistic would be small.
+
+We could also use the CMH test to compare odds ratios between experiments, rather than comparing against the null that the common odds ratio = 1.
+
+### Estimating an overall Average Treatment Effect {#blockrandate}
+
+Whether or not we randomly assign a policy intervention within blocks or strata, our team nearly always reports a single estimate of the average treatment effect. To review, we define the overall ATE (the theoretical estimand) as a simple average of the individual treatment effects. For two treatments, we might write this individual-level causal effect as $\tau_i = y_{i,0} - y_{i,1}$. We'd therefore express the overall (true) ATE across our sample as as $\bar{\tau}=(1/n) \sum_{i=1}^n \tau_i$. Unfortunately, this quantity is unobservable.
+
+In blocked designs, we have randomly assigned the intervention within each block independently. As we note above, this (1) increases precision and (2) supports more credible subgroup analysis. How might we "analyze as we have randomized" to learn about $\bar{\tau}$ using observable data? Our approach is to build up from the block-level. See @gerber_field_2012 for more context.
+
+Say, for example, that the unobserved ATE within a given block, $b$, was $\text{ATE}_{b}=\bar{\tau}_b=(1/n_b)\sum_{i=1}^{n_b} \tau_{i}$. Here, we are averaging the individual level treatment effects ($\tau_{i}$) across all $n_b$ people in block $b$. Now, imagine that we had an experiment with blocks of different sizes (and perhaps with different proportions of units assigned to treatment --- e.g., certain blocks may be more expensive places in which to run an experiment). We can imagine learning about $\bar{\tau}$ through another estimand, the block-size weighted average of the true within-block treatment effects: $$\bar{\tau} = \bar{\tau}_{\text{nbwt}} = (1/B) \sum_{b=1}^B (n_b/n) \bar{\tau}_b$$
+
+We can estimate $\bar{\tau}_{\text{nbwt}}$ based on its the observed analogue just as we have with a completely randomized experiment. Blocks are essentially their own randomized experiments, so we can estimate each $\bar{\tau}_b$ using the following unbiased estimator, where $i \in t$ means "for $i$ in the treatment group" and where $m_b$ is the number of units assigned to treatment in block $b$: $$\hat{\tau}_b=\sum_{i \in t} Y_{ib}/m_b - \sum_{i \in c} Y_{ib}/(n_b - m_b)$$
+
+We would then plug the $\hat{\tau}_b$ estimates into the expression for $\bar{\tau}_{\text{nbwt}}$ above, yielding $\hat{\bar{\tau}}_{\text{nbwt}}$. *Note that many people do not use this unbiased estimator because its precision is worse that those of another, slightly biased estimator.* We illustrate both methods below, the block-size weighted estimator and what we call the "precision-weighted" estimator. We also offer some reflections on when a biased estimator that tends to produce answers closer to the truth might be preferred over an unbiased estimator where any given estimate may be farther from the truth.
+
+The precision-weighted estimator uses *harmonic-weights*. We have also tended to call it a "precision-weighted average." The weights combine block size, $n_b$, and the proportion of the block assigned to treatment, $p_b = (1/n_b) \sum_{i=1}^{n_b} Z_{ib}$, for a binary treatment, $Z_{ib}$. The weight within each block is $h_b = n_b p_b (1 - p_b)$, and the estimand is: $$\bar{\tau}_{\text{hbwt}}= (1/B) \sum_{b=1}^B (1/h_b) \bar{\tau}_b$$
+
+Notice that, by weighting blocks proportionally to their contributions to overall sample size, $\bar{\tau}_{\text{nbwt}}$ effectively treats all units equally in terms of their contributions to the ATE. In contrast, $\bar{\tau}_{\text{hbwt}}$ weights blocks (and therefore the individuals within them) relatively more if they have a treatment probability closer to 0.5.^[A block of 100 units would have a harmonic weight of 25 with a treatment probability of 0.5 $(100 \times 0.5 \times 0.5)$, but a harmonic weight of 18.75 with under an alternative treatment probability of 0.25 $(100 \times 0.25 \times 0.75)$.] In effect, the precision benefits come from giving slightly more explanatory power to units in blocks with more balanced treatment assignment, rather than using the weights that recover $\bar{\tau}$.
+
+Now, we'll show multiple approaches to applying these estimators. We'll also demonstrate (1) that ignoring the blocks when estimating treatment effects can produce problems in both estimation and testing, and (2) that the block-size weighted approaches are unbiased but possibly less precise than the precision weighted approaches.
+
+```{r newblockeddat}
+## Create block sizes and create block weights
+B <- 10 # Number of blocks
+dat <- data.frame(b=rep(1:B,c(8,20,30,40,50,60,70,80,100,800)))
+dat$bF <- factor(dat$b)
+
+## x1 is a covariate that strongly predicts the outcome without treatment
+set.seed(2201)
+dat <- group_by(dat,b) %>%
+  mutate(
+    nb=n(),
+    x1=rpois(n = nb,lambda=runif(1,min=1,max=2000))
+    )
+
+## The treatment effect varies by block size (sqrt(nb) because nb has such a large range.)
+dat <- group_by(dat,b) %>% 
+  mutate(
+    y0=sd(x1)*x1+rchisq(n=nb,df=1),
+    y0=y0*(y0>quantile(y0,.05)),
+    tauib = -(sd(y0))*sqrt(nb) + rnorm(n(),mean=0,sd=sd(y0)),
+    y1=y0+tauib,
+    y1=y1*(y1>0)
+    )
+blockpredpower <- summary(lm(y0~bF,data=dat))$r.squared
+```
+
+To make the differences between these estimation approaches more vivid,
+we've create a dataset with blocks of widely varying sizes. Half of the blocks have half of the units assigned to treatment and the other half 10% of the units assigned to treatment. Notice also that the baseline outcomes are strongly predicted by the blocks ($R^2$ around $`r round(blockpredpower,2)`$).
+
+We use `DeclareDesign` to assess bias, coverage and power (or precision) of several different approaches to applying each estimator. The next code block sets up the simulation and also demonstrates different approaches to estimating an ATE (as usual, we can only do this because we are using simulation to compare these different statistical techniques in a setting where we know the true data generating process).
+
+```{r setup_dd_blockrand}
+## Using the Declare Design Machinery to ensure that 
+## the data here and the simulations below match
+
+## Declare the population
+thepop <- declare_population(dat)
+
+## Represent the potential outcomes with a function
+po_function <- function(data){
+	data$Y_Z_0 <- data$y0
+	data$Y_Z_1 <- data$y1
+	data
+}
+
+## Use this function to declare the potential outcomes
+theys <- declare_potential_outcomes(handler = po_function)
+
+## Declare the desired inquiry
+theestimand <- declare_inquiry(ATE = mean(Y_Z_1 - Y_Z_0))
+
+## Declare treatment assignment
+numtreated <- sort(unique(dat$nb))/rep(c(2,10),B/2)
+theassign <- declare_assignment(Z=block_ra(blocks = bF, block_m=numtreated))
+
+## Declare revealed data
+theobsident <- declare_reveal(Y, Z)
+
+## Combine these design elements together
+thedesign <- thepop + theys + theestimand + theassign + theobsident
+
+# Draw data matching this design
+set.seed(2201)
+dat2 <- draw_data(thedesign)
+
+## Adding rank transformed outcomes for use later
+dat2 <- dat2 %>% 
+  group_by(b) %>%
+  mutate(
+    y0md = y0 - mean(y0),
+    y1md = y1 - mean(y1),
+    alignedY = Y - mean(Y),
+    rankalignedY = rank(alignedY)
+    )
+
+## Now add individual-level weights to the data.
+## Different textbooks and algebra yield different expressions.
+## We show that they are all the same.
+dat2 <- dat2 %>% 
+  group_by(b) %>% 
+  mutate(
+    nb = n(), # Size of block
+    pib=mean(Z), # Prob. of treatment assignment
+    nTb=sum(Z), # Number treated
+    nCb=nb - nTb, # Number control
+    nbwt =  ( Z/pib ) + ( (1-Z)/(1-pib) ), 
+    nbwt2 = nb/nrow(dat2),
+    #hbwt = 2 * (nCb * nTb )  / (nTb + nCb), # Precision weight
+    #hbwt2 = 2 * ( nbwt2 )*(pib*(1-pib)),
+    hbwt3 =  nbwt * ( pib * (1 - pib) )
+    )
+dat2$nbwt3 <- dat2$nbwt2/dat2$nb
+
+## Declare a new population, and generate another design
+thepop2 <- declare_population(dat2)
+thedesign2 <- thepop2 + theys + theestimand + theassign + theobsident
+
+## Create the block level dataset, with block level weights.
+datB <- group_by(dat2,b) %>%
+  summarize(
+    taub = mean(Y[Z==1]) - mean(Y[Z==0]), # Estimated effect (variance below)
+    truetaub = mean(y1) - mean(y0), # True effect
+    nb = n(), # Number in block
+    nTb = sum(Z), # Number treated
+    nCb = nb - nTb, # Number control
+    estvartaub = (nb/(nb-1)) * (var(Y[Z==1])/nTb) + (var(Y[Z==0])/nCb),
+    pb=mean(Z), # Proportion treated
+    nbwt = unique(nb/nrow(dat2)), # Block-size weights
+    pbwt = pb * ( 1 - pb),
+    hbwt2 = nbwt * pbwt, # Precision weights
+    hbwt5 = pbwt * nb,
+    hbwt = (2*(nCb * nTb )/(nTb + nCb))
+    )
+datB$greenlabrule <- 20*datB$hbwt5/sum(datB$hbwt5)
+
+## All of these expressions of the harmonic mean weight are the same
+datB$hbwt01 <- datB$hbwt/sum(datB$hbwt)
+datB$hbwt201 <- datB$hbwt2/sum(datB$hbwt2)
+datB$hbwt501 <- datB$hbwt5/sum(datB$hbwt5)
+stopifnot(all.equal(datB$hbwt01,datB$hbwt201))
+stopifnot(all.equal(datB$hbwt01,datB$hbwt501))
+
+## What is the "true" ATE?
+trueATE1 <- with(dat2, mean(y1) - mean(y0))
+trueATE2 <- with(datB, sum(truetaub*nbwt))
+stopifnot(all.equal(trueATE1,trueATE2))
+## We could define the following as an estimand, too.
+## trueATE3 <- with(datB, sum(truetaub*hbwt01))
+## c(trueATE1,trueATE2,trueATE3)
+
+## We can get the same answer using R's weighted.mean command
+trueATE2b <- weighted.mean(datB$truetaub,w=datB$nbwt)
+stopifnot(all.equal(trueATE2b,trueATE2))
+```
+
+We can now review the design:
+
+```{r blockdesign}
+with(dat2, table(treatment=Z,blocknumber=b))
+```
+
+With those simulations prepared, we'll start by comparing multiple approaches to getting an unbiased block-size-weighted average treatment effect estimate, $\bar{\tau}_{\text{nbwt}}$. Notice that we do not use linear, additive fixed effects adjustment in any of these.^[I.e., we are not employing the least squares dummy variable, or LSDV, method of including fixed effects in a linear regression. For our purposes here, including fixed effects in the regression via a *within-estimator* instead would yield the same results [@cameron2005microeconometrics].] Two of these approaches do include fixed effects dummies, but they are mean-centered and interacted with treatment assignment --- in other words, we include the fixed effects via @lin_agnostic_2013 adjustment.^[See also @miratrix2013adjusting]
+
+```{r utilityfns, echo=FALSE}
+## bfe doesn't have a summary function so making one here, using their
+## print.iwe
+summary.iwe <- function(obj,level=.95){
+  results <- data.frame(estimate = c(obj$fe.est, obj$swe.est))
+  results$std.error <- c(sqrt(obj$fe.var), sqrt(obj$swe.var))
+  results$statistic <- results$estimate / results$std.error
+  results$p.value <- 2 * pnorm(abs(results$statistic), lower.tail = FALSE)
+  a <- (1 - level)/2
+  a <- c(a, 1 - a)
+  ## fac <- qt(a, obj$reg.int$df)
+  ## Using Normal approx following the print.iwe provided by the maintainers
+  fac <- qnorm(a, lower.tail=FALSE)
+
+  results$conf.low <- results$estimate - results$std.error * abs(fac)
+  results$conf.high <- results$estimate + results$std.error * abs(fac)
+
+  rownames(results) <- c("FE", "SWE")
+  return(results)
+
+  ##cat("Interaction weighted estimator results: \n\n")
+  ##print(round(results, digits = digits))
+  ##diff.pct <- (obj$fe.est - obj$swe.est) / obj$fe.est * 100
+  ##cat("\n")
+  ##cat("Percent difference:", round(diff.pct, 2), "\n\n")
+  ##cat("Observations:", obj$N, "\n")
+  ##cat("Groups:      ", obj$M, "\n\n")
+}
+```
+
+1. `simple_block` refers to calculating mean differences within blocks and then taking the block-size weighted average of them
+2. `diffmeans` uses the `difference_in_means` function from the `estimatr`
+package [@R-estimatr]
+3. `lmlin` applies Lin covariance adjustment *via* block indicators, using the `lm_lin` function
+4. `lmlinbyhand` verifies that function using matrix operations; see [this entry](https://alexandercoppock.com/Green-Lab-SOP/Green_Lab_SOP.html#taking-block-randomization-into-account-in-ses-and-cis) from the Green lab's SOP.
+5. `interactionBFE` uses the `EstimateIWE` function from the `bfe` package [@R-bfe]
+6. `regwts` uses the basic OLS function from R `lm` with appropriate weights.
+
+Let's compare the estimates themselves:
+
+```{r blockrandests,echo=TRUE}
+## simple_block
+ate_nbwt1 <- with(datB,sum(taub*nbwt))
+
+## diffmeans
+ate_nbwt2 <- difference_in_means(Y~Z,blocks = b,data=dat2)
+
+## lmlin
+ate_nbwt3 <- lm_lin(Y~Z,covariates=~bF,data=dat2)
+
+## interactionBFE
+ate_nbwt5 <- EstimateIWE(y="Y",treatment="Z",group="bF",controls=NULL,data=as.data.frame(dat2))
+
+## regwts
+ate_nbwt6 <- lm_robust(Y~Z,data=dat2,weights=nbwt)
+ate_nbwt6a <- lm(Y~Z,data=dat2,weights=nbwt)
+ate_nbwt6ase <- coeftest(ate_nbwt6a,vcov=vcovHC(ate_nbwt6a,type="HC2"))
+
+## lmlinbyhand
+X <- model.matrix(~bF-1,data=dat2)
+barX <- colMeans(X)
+Xmd <- sweep(X,2,barX)
+stopifnot( all.equal( (X[,3]-mean(X[,3])), Xmd[,3] ) )
+ZXmd <- sweep(Xmd,1,dat2$Z,FUN="*")
+stopifnot( all.equal( dat2$Z*Xmd[,3],ZXmd[,3]  ))
+bigX <- cbind(Intercept=1,Z=dat2$Z,Xmd[,-1],ZXmd[,-1])
+bigXdf <- data.frame(bigX,Y=dat2$Y)
+ate_nbwt4 <-lm(Y~.-1,data=bigXdf)
+ate_nbwt4se <- coeftest(ate_nbwt4,vcov.=vcovHC(ate_nbwt4,type="HC2"))
+
+## List all
+nbwtates<-c(
+  simple_block=ate_nbwt1,
+  diffmeans=ate_nbwt2$coefficients[["Z"]],
+  lmlin=ate_nbwt3$coefficients[["Z"]],
+  lmlinbyhand=ate_nbwt4$coefficients[["Z"]],
+  interactionBFE=ate_nbwt5$swe.est,
+  regwts=ate_nbwt6$coefficients[["Z"]]
+  )
+
+nbwtates
+```
+
+Let's also quickly review their standard errors:
+
+```{r blockrandSEests,echo=T}
+## Comparing the Standard Errors
+ate_nbwt1se <- sqrt(sum(datB$nbwt^2 * datB$estvartaub))
+nbwtses <- c(
+  simple_block=ate_nbwt1se,
+  diffmeans=ate_nbwt2$std.error,
+	lmlin=ate_nbwt3$std.error[["Z"]],
+	lmlinbyhand=ate_nbwt4se["Z","Std. Error"],
+	interactionBFE=ate_nbwt5$swe.var^.5,
+	regwts=ate_nbwt6$std.error[["Z"]]
+  )
+
+nbwtses
+```
+
+As noted above, weighting by block size allows us to define the average treatment effect in a way that treats each unit equally. And we have just illustrated six different ways to estimate this effect. If we want to calculate standard errors for these estimators (e.g., to produce confidence intervals), we will, in general, be leaving statistical power on the table in exchange for an easier to interpret estimate, and an estimator that relates to its underlying target in an unbiased manner.
+
+Next, we show an approach to blocking adjustment that is optimal from the perspective of statistical power, or narrow confidence intervals. As discussed above, we call this the "precision-weighted" average treatment effect.^[See Section 5 of @hansen_covariate_2008 for proof that this kind of weighting is optimal from the perspective of precision.] In some literatures, it's typical to use OLS regression machinery to calculate an ATE that is weighted to account for blocking --- i.e., a "Least Squared Dummy Variables" (LSDV) approach to including block fixed effects in a regression. We show here that this is simply another version of the precision-weighted ATE estimator.
+
+1. `simple_block` calculates a simple differences of means within blocks and
+then takes a weighted average of those differences, using precision
+weights
+2. `lm_fixed_effects1` uses `lm_robust` with binary indicators for blocks
+3. `lm_fixed_effects2` uses `lm_robust` with the `fixed_effects` option including a factor variable recording block membership
+4. `direct_wts` uses `lm_robust` without block-indicators but with precision weights
+4. `demeaned` regresses a block-centered version of the outcome on a block-centered version of the treatment indicator (i.e., including block fixed effects through a *within estimator*).
+
+Let's compare the estimates themselves:
+
+```{r}
+## simple_block
+ate_hbwt1 <- with(datB, sum(taub*hbwt01))
+
+## lm_fixed_effects1
+ate_hbwt2 <- lm_robust(Y~Z+bF,data=dat2)
+
+## lm_fixed_effects2
+ate_hbwt3 <- lm_robust(Y~Z,fixed_effects=~bF,data=dat2)
+
+## direct_wts
+ate_hbwt4 <- lm_robust(Y~Z,data=dat2,weights=hbwt3)
+
+## demeaned
+ate_hbwt5 <- lm_robust(I(Y-ave(Y,b))~I(Z-ave(Z,b)),data=dat2)
+
+## List all
+hbwtates<-c(
+  simple_block=ate_hbwt1,
+	lm_fixed_effects1=ate_hbwt2$coefficients[["Z"]],
+	lm_fixed_effects2=ate_hbwt3$coefficients[["Z"]],
+	direct_wts=ate_hbwt4$coefficients[["Z"]],
+	demeaned=ate_hbwt5$coefficient[[2]]
+  )
+
+hbwtates
+```
+
+Let's also quickly review their standard errors:
+
+```{r,echo=T}
+## Comparing the Standard Errors
+ate_hbwt1se <- sqrt(sum(datB$hbwt01^2 * datB$estvartaub))
+hbwtses <- c(
+  simple_block=ate_hbwt1se,
+  lm_fixed_effects1=ate_hbwt2$std.error[["Z"]],
+	lm_fixed_effects2=ate_hbwt3$std.error[["Z"]],
+	direct_wts=ate_hbwt4$std.error[["Z"]],
+	demeaned=ate_hbwt5$std.error[[2]]
+  )
+
+hbwtses
+```
+
+Now, we claimed that the block size weighted estimator is unbiased but perhaps less precise than the precision-weighted estimator. We'll use `DeclareDesign` to compare the performance of those estimators and illustrate our point. We implement those estimators as functions passed to the `diagnose_design` function in the next code block.
+
+```{r defineestimators1, results="hide", cache = T}
+## Define estimator functions employed in the simulation below
+
+# Two options that don't account for blocking
+estnowtHC2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust, label="E1: Ignores Blocks, Design (HC2) SE")
+estnowtIID <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm, label="E0: Ignores Blocks, OLS SE")
+
+# Two options applying block-size weights
+estnbwt1 <- declare_estimator(Y~Z, inquiry=theestimand, .method=difference_in_means, blocks=b, label="E2: Diff Means Block Size Weights, Design SE")
+estnbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_lin, covariates=~bF, label="E3: Treatment Interaction with Block Indicators, Design SE")
+
+# Using the BFE package (also block-size weights)
+iwe_est_fun <- function(data) {
+	obj <- EstimateIWE(y="Y", treatment="Z", group="bF", controls=NULL, data=data)
+	res <- summary.iwe(obj)["SWE",]
+	res$term <- "Z"
+	return(res)
+}
+estnbwt3 <- declare_estimator(handler=label_estimator(iwe_est_fun), inquiry=theestimand, label="E4: Treatment Interaction with Block Indicators, Design SE")
+
+# Another block-size-weighted option (via regression weights)
+nbwt_est_fun <- function(data){
+	data$newnbwt <- with(data,( Z/pib ) + ( (1-Z)/(1-pib) ) )
+	obj <-lm_robust(Y~Z,data=data, weights=newnbwt)
+	res <- tidy(obj) %>% filter(term=="Z")
+	return(res)
+}
+estnbwt4 <- declare_estimator(handler=label_estimator(nbwt_est_fun), inquiry=theestimand, label="E5: Least Squares with Block Size Weights, Design SE")
+
+# Two precision-weighted options
+esthbwt1 <- declare_estimator(Y~Z+bF, inquiry=theestimand, .method=lm_robust, label="E6: Precision Weights via Fixed Effects, Design SE")
+esthbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust, fixed_effects=~bF, label="E7: Precision Weights via Demeaning, Design SE")
+
+# Another precision-weighted option (regression weights)
+hbwt_est_fun <- function(data){
+	data$newnbwt <- with(data,( Z/pib ) + ( (1-Z)/(1-pib) ) )
+	data$newhbwt <-  with(data, newnbwt * ( pib * (1 - pib) ) )
+	obj <-lm_robust(Y~Z,data=data, weights=newhbwt)
+	res <- tidy(obj) %>% filter(term=="Z")
+	return(res)
+}
+esthbwt3 <- declare_estimator(handler=label_estimator(hbwt_est_fun), inquiry=theestimand, label="E8: Direct Precision Weights, Design SE")
+
+# A final precision-weighted option (demeaning)
+direct_demean_fun <- function(data){
+	data$Y <- with(data, Y - ave(Y,b))
+	data$Z <- with(data, Z - ave(Z,b))
+	obj <- lm_robust(Y~Z, data=data)
+	data.frame(term = "Z" ,
+		   estimate = obj$coefficients[[2]],
+		   std.error = obj$std.error[[2]],
+		   statistic = obj$statistic[[2]],
+		   p.value=obj$p.value[[2]],
+		   conf.low=obj$conf.low[[2]],
+		   conf.high=obj$conf.high[[2]],
+		   df=obj$df[[2]],
+		   outcome="Y")
+}
+esthbwt4 <- declare_estimator(handler=label_estimator(direct_demean_fun), inquiry=theestimand, label="E9: Direct Demeaning, Design SE")
+
+## Vector of all the estimator function names just created
+## (via regular expression)
+theestimators <- ls(patt="^est.*?wt")
+theestimators
+
+## Get results for each estimator
+checkest <- sapply(
+  theestimators,
+  function(x){
+    get(x)(as.data.frame(dat2))[c("estimate","std.error")]
+    }
+  )
+
+## Combine all of these design objects
+thedesignPlusEstimators <- thedesign2 +
+	estnowtHC2 + estnowtIID + estnbwt1 + estnbwt2 + estnbwt3 + estnbwt4 +
+	esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
+
+## Update the default diagnosands for this simulation
+diagnosands <- declare_diagnosands(
+   mean_estimand = mean(estimand),
+   mean_estimate = mean(estimate),
+   bias = mean(estimate - estimand),
+   sd_estimate = sqrt(pop.var(estimate)),
+   mean_se = mean(std.error),
+   rmse = sqrt(mean((estimate - estimand) ^ 2)),
+   power = mean(p.value <= 0.05),
+   coverage = mean(estimand <= conf.high & estimand >= conf.low)
+   )
+
+## Perform the simulation
+sims <- 200
+set.seed(12345)
+thediagnosis <- diagnose_design(thedesignPlusEstimators, sims=sims, bootstrap_sims = 0, diagnosands = diagnosands)
+```
+
+We can see in the diagnostic output below that the estimators using block-size weights (E2, E3, E4, or E5) all eliminate bias (within simulation error).^[We've omitted power, since all the estimators in this example have a power of approximately 100%] The estimators ignoring blocks (E0 and E1), are biased, and in this particular simulation the precision weighed estimators (E6--E9) are also highly biased --- with some of them also producing poor "coverage" or false positive rates (E7 and E9).
+
+This output also shows us the "SD Estimate" (which is a good estimate of the standard error of the estimate) and the "Mean SE" (which is the average of the analytic estimates of the standard error). In the case of E2, E3, E4 or E5 the Mean SE is larger than the SD Estimate --- this is good in that it means that our analytic standard errors will be conservative. However, we also would prefer that our analytic standard errors not be *too* conservative.
+
+```{r diagnosisblocks}
+kable(reshape_diagnosis(thediagnosis)[, c(3, 6:10, 13)])
+```
+
+```{r setupblockdiaggraph, eval=FALSE, echo = F}
+## For a visualization below currently not included in the SOP
+simdesigns <- get_simulations(thediagnosis)
+## simdesigns <- simulate_design(thedesign,sims=sims)
+simmeans <- simdesigns %>%
+  group_by(estimator) %>%
+  summarize(expest=mean(estimate))
+```
+
+```{r graphblockdiag, eval=FALSE, include=F}
+## Now compare to better behaved outcomes.
+## 
+g <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
+	geom_density() +
+	geom_vline(xintercept=trueATE1) +
+	geom_point(data=simmeans,aes(x=expest,y=rep(0,10)),shape=17,size=6) +
+	theme_bw() +
+	theme(legend.position = c(.9,.8))
+print(g)
+```
+
+The simulated outcome data is highly skewed by design. Our goal here is illustrating that the biases of precision-weighted estimates could be exacerbated by common problems in administrative data like skewed outcomes or zero-inflation (i.e., many 0s). One solution we could apply in this case is rank-transforming the outcome measure. This transformed outcome nearly erases the bias from the block-size weighted estimators, and the precision-weighted
+approaches also perform well. However, ignoring the blocked design is still a problem --- E0 and E1 continue to show substantial bias.
+
+```{r ranktransblock, cache = T}
+## Define a function to rank-transform the potential outcomes
+po_functionNorm <- function(data){
+	data <- data %>%
+	  group_by(b) %>%
+	  mutate(
+	    Y_Z_0=rank(y0),
+	    Y_Z_1=rank(y1)
+	    )
+	return(as.data.frame(data))
+}
+
+## Redefine relevant DeclareDesign objects
+theysNorm <- declare_potential_outcomes(handler = po_functionNorm)
+thedesignNorm <- thepop2 + theysNorm + theestimand + theassign + theobsident
+datNorm <- draw_data(thedesignNorm)
+thedesignPlusEstimatorsNorm <- thedesignNorm +
+  estnowtHC2 + estnowtIID + estnbwt1 +
+  estnbwt2 + estnbwt3 + estnbwt4 +
+  esthbwt1 + esthbwt2 + esthbwt3 + 
+  esthbwt4
+
+## Perform a new simulation
+sims <- 200
+thediagnosisNorm <- diagnose_design(thedesignPlusEstimatorsNorm, sims = sims, bootstrap_sims = 0, diagnosands = diagnosands)
+```
+
+```{r blockdiagres2, results='asis'}
+kable(reshape_diagnosis(thediagnosisNorm)[, c(3, 6:10, 13)])
+```
+
+```{r setupblockdiaggraph2s, eval=FALSE, echo = F}
+## Again, leaving this out of SOP for now
+simdesignsNorm <- get_simulations(thediagnosisNorm)
+## simdesigns <- simulate_design(thedesign,sims=sims)
+simmeansNorm <- simdesignsNorm %>% group_by(estimator) %>% summarize(expest=mean(estimate))
+```
+
+```{r plotthediagnosisNorm, eval=FALSE, echo = F}
+## Again, leaving this out of SOP for now
+g2 <- ggplot(data=simdesignsNorm,aes(x=estimate,color=estimator)) +
+	geom_density() +
+	geom_vline(xintercept=trueATE1) +
+	geom_point(data=simmeansNorm,aes(x=expest,y=rep(0,10)),shape=17,size=6) +
+	theme_bw() +
+	theme(legend.position = c(.9,.8))
+print(g2)
+```
+
+In a pair-randomized design, for instance, we know that bias should not arise from ignoring the blocking structure. But we could still improve precision by taking the pairing into account [@bowers2011mem]. This next simulation changes the design to still have unequal sized blocks, but with a uniform probability of treatment assignment in each. Here, only two estimators show appreciable bias (E5 and E8). However, ignoring the blocks leads to overly conservative standard errors.
+
+```{r equalprobblocks, cache = T}
+## Re-define relevant declare design objects
+theassignEqual <- declare_assignment(Z=block_ra(blocks = bF))
+thedesignNormEqual <- thepop2 + theysNorm + theestimand + 
+  theassignEqual + theobsident
+datNormEqual <- draw_data(thedesignNormEqual)
+thedesignPlusEstimatorsNormEqual <- thedesignNormEqual +
+  estnowtHC2 + estnowtIID + estnbwt1 + 
+  estnbwt2 + estnbwt3 + estnbwt4 +
+  esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
+
+## Perform a new simulation
+sims <- 200
+set.seed(12345)
+thediagnosisNormEqual <- diagnose_design(thedesignPlusEstimatorsNormEqual, sims = sims, bootstrap_sims = 0, diagnosands = diagnosands)
+```
+
+```{r blockdiagres3}
+kable(reshape_diagnosis(thediagnosisNormEqual)[, c(3, 6:10, 13)])
+```
+
+```{r setupblockdiaggraph3, eval=FALSE, echo=F}
+## Again, leaving this out of SOP for now
+simdesignsNormEqual <- get_simulations(thediagnosisNorm)
+simmeansNormEqual <- simdesignsNormEqual %>% group_by(estimator) %>% summarize(expest=mean(estimate))
+```
+
+```{r graphblockdiag3, eval=FALSE, echo=F}
+## Again, leaving this out of SOP for now
+## Now compare to better behaved outcomes.
+g3 <- ggplot(data=simdesignsNormEqual,aes(x=estimate,color=estimator)) +
+	geom_density() +
+	geom_vline(xintercept=trueATE1) +
+	geom_point(data=simmeansNormEqual,aes(x=expest,y=rep(0,10)),shape=17,size=6) +
+	theme_bw() +
+	theme(legend.position = c(.9,.8))
+print(g3)
+```
+
+#### Summary of Approaches to the Analysis of Block Randomized Trials
+
+Our team prefers block randomized trials because of their potential to increase statistical power, as well as their ability to let us focus on subgroup effects. Our approach has been guided by evidence like the simulations we present above: we "analyze as we randomize" to avoid bias and increase statistical power, and we are careful in our choice of weighting approaches. Different designs will require different analytical decisions --- sometimes we may be willing to trade a small amount of bias for a guarantee that our estimates will be closer to the truth and more precise, on average (i.e. get lower mean-squared error, but more bias). Other studies will be so large or small that one or another strategy will become obvious. We use our Analysis Plans to explain our choices, and simulation studies like those shown here when we are uncertain about the applicability of statistical rules of thumb to any given design.
+
+## Cluster-randomized trials {#clusterrandanalysis}
+
+In a cluster randomized trial, treatment is assigned at the level of larger groups of units, called "clusters," instead of at the individual level.^[It's also possible to have trials where treatment is influenced *but not entirely determined* at the cluster level.] These studies tend to distinguish signal from noise less effectively than an experiment where we assign treatment directly to individuals --- i.e., they have less precision. The number of independent pieces of information available to learn about the treatment effect will generally be closer to the number of clusters (each of which tends to be assigned to treatment independently of each other) than the number of dependent observations within a cluster (See EGAP's [10 Things You Need to Know about Cluster Randomization](https://egap.org/resource/10-things-to-know-about-cluster-randomization/)).^[When treatment assignment is *influenced by clustering* but not completely determined at the cluster level, standard error adjustments for clustering will tend to be too conservative. See @abadie2023should for more discussion of this and some potential solutions.]
+
+Since we analyze as we randomize, a cluster randomized experiment may require that we (1) weight cluster-level average treatment effects by cluster size if we are trying to estimate the average of the individual level causal effects [@middleton2015unbiased]. They also require that we (2) change how we calculate standard errors and $p$-values to account for the fact that uncertainty is generated at the level of the cluster and not at the level of the individual [@hansen_covariate_2008; @gerber_field_2012]. For example, imagine that we had 10 clusters (administrative offices, physicians groups, etc.) with half assigned to treatment and half assigned to control.
+
+```{r makeblocksintoclusters, echo=T}
+## Create a copy of dat2 to use for our clustering examples
+dat3 <- dat2
+dat3$cluster <- dat3$b
+dat3$clusterF <- factor(dat3$cluster)
+ndat3 <- nrow(dat3)
+
+## Randomly assign half of the clusters to treatment and half to control
+set.seed(12345)
+dat3$Zcluster <- cluster_ra(cluster=dat3$cluster)
+with(dat3,table(Zcluster,cluster))
+```
+
+Although our example data has `r ndat3` observations, we do not have `r ndat3` pieces of independent information about the effect of the treatment because people were assigned in groups. Rather we have some amount of information in between `r ndat3` and the number of clusters (in this case, 
+`r length(unique(dat3$cluster))`). We can see above that the number of
+people within each cluster --- and notice that all of the people are coded as
+either control or treatment because assignment is at the level of the cluster.
+
+Before continuing, let's set up some `DeclareDesign` elements for a simulation of clustered experimental designs:
+
+```{r setupclusterdesign, results="hide"}
+## Get weights for one estimation strategy used below
+library(ICC)
+iccres <- ICCest(x=clusterF,y=Y,data=dat3)
+dat3$varweight <- 1/(iccres$vara + (iccres$varw/dat3$nb))
+
+## Define various DeclareDesign elements
+thepop3 <- declare_population(dat3)
+po_functionCluster <- function(data){
+	data$Y_Zcluster_0 <- data$y0
+	data$Y_Zcluster_1 <- data$y1
+	data
+}
+theysCluster  <- declare_potential_outcomes(handler = po_functionCluster)
+theestimandCluster <- declare_inquiry(ATE = mean(Y_Zcluster_1 - Y_Zcluster_0))
+theassignCluster <- declare_assignment(Zcluster=cluster_ra(clusters=cluster))
+theobsidentCluster <- declare_reveal(Y, Zcluster)
+thedesignCluster <- thepop3 + theysCluster + theestimandCluster + 
+  theassignCluster + theobsidentCluster
+datCluster <- draw_data(thedesignCluster)
+```
+
+In everyday practice, with more than about 50 (equally-sized) clusters, we often produce estimates using more or less the same kinds estimators as those above, but changing our standard error calculations to instead rely on `CR2` cluster-robust standard error [@pustejovsky2019cr]. Here are two approaches to such adjustment in R, using the `estimatr` package.
+
+The `difference_in_means()` function:
+
+```{r simplecr1}
+## CR2 via difference in means
+estAndSE4a <- difference_in_means(Y~Zcluster, data=datCluster, clusters=cluster)
+estAndSE4a
+```
+
+The `lm_robust()` function:
+
+```{r simplecr2}
+## CR2 via linear regression
+estAndSE4b <- lm_robust(Y~Zcluster, data=datCluster, clusters=cluster, se_type="CR2")
+estAndSE4b
+```
+
+### Bias when cluster size is correlated with potential outcomes
+
+When clusters have unequal sizes, in addition to adjusting our standard error calculations, we might worry about bias as well [@middleton2015unbiased] (see also
+<https://declaredesign.org/blog/bias-cluster-randomized-trials.html>). Here, we demonstrate how bias could emerge in the analysis of a cluster randomized trial, as well as how to reduce that bias.
+
+```{r defineestimatorsCluster, results="hide"}
+## Define estimators that can be repeated in the simulation below
+
+## No adjustment for clustering
+estC0 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm, label="C0: Ignores Clusters, IID SE")
+
+## HC2 SEs
+estC1 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, label="C1: Ignores Clusters, CR2 SE")
+
+## Clustered SEs (CR1; Stata default)
+estC2 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, clusters=cluster, se_type="stata", label="C2: OLS Clusters, Stata RCSE")
+
+## CR2 SEs (difference in means)
+estC3 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=difference_in_means, clusters = cluster, label="C3: Diff Means Cluster, CR2 SE")
+
+## CR2 SEs (linear regression)
+estC4 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=lm_robust, clusters = cluster, se_type="CR2", label="C4: OLS Cluster, CR2 SE")
+
+## Horvitz-Thompson estimator with clustering
+estC5 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=horvitz_thompson, clusters=cluster, simple=FALSE, condition_prs=.5, label="C5: Horvitz-Thompson Cluster, Young SE")
+
+## Linear regression, CR2 errors, weight by cluster size
+estC6 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
+.method=lm_robust, weights = nb, clusters=cluster, se_type="CR2", label="C6: OLS Clusters with ClusterSize Weights, CR2 RCSE")
+
+## Linear regression, CR2 errors, control for cluster size, variance weights
+estC7 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
+.method=lm_robust, weights=varweight, clusters=cluster, se_type="CR2", label="C7: OLS Clusters with Weights, CR2 RCSE")
+
+## Linear regression, CR2 errors, control for cluster size
+estC8 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand, .method=lm_robust, clusters=cluster, se_type="CR2",
+label="C8: OLS Clusters with adj for cluster size, CR2 RCSE")
+
+## Linear regression, CR2 errors, lin estimation for cluster size
+estC9 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
+.method=lm_lin, covariates=~nb, clusters=cluster, se_type="CR2",
+label="C9: OLS Clusters with adj for cluster size, CR2 RCSE")
+
+## Add all these estimators to the design
+thedesignClusterPlusEstimators <- thedesignCluster +
+	estC0 + estC1 + estC2 + 
+  estC3 + estC4 + estC5 + 
+  estC6 + estC7 + estC8 + 
+  estC9
+
+## Get a character vector of the estimators just created
+## (using a regular expression)
+theestimatorsC <- ls(patt="^estC[0-9]")
+
+## Apply each of these estimators to the data
+## (get(x) calls an object with this name from the environment;
+## this function is then applied to the dataframe in question)
+checkestC <- sapply(
+  theestimatorsC,
+  function(x){
+    get(x)(as.data.frame(datCluster))[c("estimate","std.error")]
+    }
+  )
+
+## Review the results
+checkestC
+
+```
+
+```{r diagnosisCluster, cache=TRUE, results="markup"}
+## Simulate the performance of these estimators
+sims <- 200
+set.seed(12345)
+thediagnosisCluster <- diagnose_design(thedesignClusterPlusEstimators, sims = sims, bootstrap_sims = 0)
+```
+
+The results of our simulation show how certain approaches can yield very biased estimates, while other approaches can reduce the bias. With variaion in cluster size, the C5 and C6 estimators have the lowest bias in this particular example (with very few clusters). We also see evidence of problems with some of these standard errors --- the actual standard errors (in "SD Estimate") should be much higher than those estimated by the approaches ignoring the clustered design (C0 and C1).
+
+```{r diagclustres1}
+kable(reshape_diagnosis(thediagnosisCluster)[, c(3, 6:9, 11:12)])
+```
+
+```{r setupclustgraph1, echo = F, eval = F}
+## commenting out for now
+simdesigns <- get_simulations(thediagnosis)
+## simdesigns <- simulate_design(thedesign,sims=sims)
+simmeans <- simdesigns %>% group_by(estimator) %>% summarize(expest=mean(estimate))
+```
+
+<!-- The following plot shows many of the estimators produce results far from the -->
+<!-- truth (shown by the vertical black bar), and also shows the diversity in -->
+<!-- precision of the estimators. -->
+
+```{r clusterresultsplot, eval = F, echo = F}
+## commenting out for now
+## Now compare to better behaved outcomes.
+gDiagClust <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
+	geom_density() +
+	geom_vline(xintercept=trueATE1) +
+	geom_point(data=simmeans,aes(x=expest,y=rep(0,10)),shape=17,size=6) +
+	theme_bw() #+
+	#theme(legend.position = c(.9,.8))
+print(gDiagClust)
+```
+
+### Incorrect false positive rates from tests and confidence intervals
+
+When we have few clusters, analytic standard errors could lead to incorrect false positive rates for our hypothesis tests or confidence intervals, even after we adjust our standard errors for clustering (e.g., using the default adjustment in Stata, CR1). The CR2 errors OES prefers tend to perform slightly better in settings with fewer clusters [@pustejovsky2019cr]. We demonstrate below using CR2 errors rather than CR1 can sometimes help ensure that the false positive rates of our hypothesis tests is controlled correctly.
+
+To distinguish between (1) the problems of bias arising from unequal sized clusters and (2) problems of false positive rates or poor covereage arising from the presence of few clusters, we use a design with equal numbers of units per cluster:
+
+```{r clusterdesign2}
+with(dat1,table(Zcluster,buildingID))
+```
+
+```{r fprateCR2, cache=TRUE, resuls="hide"}
+## Break any relationship between treatment and outcomes by permuting
+## or shuffling the treatment variable. This means that H0,  the null,
+## of no effects is true.
+checkFP <- function(dat, setype="CR2"){
+	dat$newZ <-  cluster_ra(cluster=dat$buildingID)
+	newest <- lm_robust(Y~newZ, dat=dat, clusters=buildingID, se_type=setype)
+	return(nullp = newest$p.value["newZ"])
+}
+
+## Construct a separate dataset for this example
+smalldat <- dat1[, c("Y","buildingID")]
+
+## Apply the function above 1000 times (CR2)
+set.seed(123)
+fpresCR2 <- replicate(1000, checkFP(dat=smalldat))
+
+## Apply the function above 1000 times (CR1, Stata)
+set.seed(123)
+fpresStata <- replicate(1000, checkFP(dat=smalldat, setype="stata"))
+
+## Summarize the results
+fprateCR205 <- mean(fpresCR2 <=  .05)
+fprateCR205
+fprateStata05 <- mean(fpresStata <= .05)
+fprateStata05
+```
+
+In this case, with 10 equal sized clusters, a simple outcome, and equal numbers of clusters in treatment and control, we see that the CR2 standard error controls the false positive rate (*less than* 5% of the 1000 simulations testing a true null hypothesis of no effect return a $p$-value of less than .05) while the default "Stata" (CR1) standard error has a slightly too high false positive rate of `r fprateStata05` at the 5\% error level.
+
+<!-- The following plot shows that, in this case the Stata standard error tends to -->
+<!-- make slightly too many false positive errors (shown by open circles above the -->
+<!-- 45 degree line) and the CR2 standard error tends control the error rate of the -->
+<!-- test (with black dots below the 45 degree line). -->
+
+```{r plotfpr, eval = F, echo = F}
+## commenting out for now
+plot(ecdf(fpresCR2),pch=19)
+plot(ecdf(fpresStata),pch=21)
+abline(0,1)
+```
+
+If a simulation like the one above shows false positive rate problems with the CR2 standard error as well, we may prefer to rely on permutation-based randomization inference. For more discussion of issues with standard error calculation in the presence of few clusters, and examples of some other possible approaches to testing with few clusters, see @esarey2019practical.
+
+<!-- [TO DO: An example using permutation based inference, illustrating a better false positive rate]. -->
+
+
+<!--chapter:end:04-analysischoices.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+```{r setupdat055, echo=FALSE}
+# Read in the dat1 file created from 03-randomizeddesigns.Rmd
+if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1_with_designs.csv')) }
+
+dat1$rankY <- rank(dat1$Y)
+ndat1 <- nrow(dat1)
+
+dat1$y1s <- dat1$y1 / sd(dat1$y1)
+dat1$y0s <- dat1$y0 / sd(dat1$y0)
+
+trueates <- mean(dat1$y1s) - mean(dat1$y0s)
+trueate <- mean(dat1$y1) - mean(dat1$y0)
+```
+
+# Power Analysis {#poweranalysis}
+
+In this chapter, we provide examples of how we assess statistical power for different experimental research designs. We often prefer to use simulation to assess the power of different research designs because we rarely have designs that fit easily into the assumptions made by analytic tools.
+
+By "analytic tools," we refer to methods of calculating power (or a minimum required sample size, etc.) based on mathematical derivations under particular assumptions. For instance, in an *i.i.d.* two-arm design with random assignment of half the sample, no covariates, a roughly normally distributed outcome, and equal variance in each treatment group, it's possible show that we would have 80% power to estimate a difference in means of $\Delta$ if we collect data on approximately $n = (5.6 \sigma /\Delta)^{2}$ observations, where $\sigma$ is the overall standard deviation of the outcome.^[See @gelman2006data, section 20.3, page 443.] But we frequently consider situations where such derivations are not readily available.
+
+<!-- I'm not sure this introductory example is useful, in that it doesn't show what we claimed to want (that analytical and simulation yield the same results in a simple example; I cut this text [Bill] in my recent edit) due to the skewed nature of this outcome. For the purposes of this walkthrough, I think skew is a complication we want to put aside? And also, both designs have power of basically 100% with this example data, so the description in the text is no longer accurate. So let's just jump to the more detailed examples of each approach below?  -->
+
+<!-- Imagine that we thought a study would have an effect of about 1 standard deviation -- this is more or less the effect difference in the example data we've been using. How much statistical power would we have with a sample size of only 40 observations? -->
+
+```{r, echo = F, eval = F}
+## Skipping for now
+## Set up some DeclareDesign objects for our simulation
+population <- declare_population(dat1)
+potentials <- declare_potential_outcomes(Y ~ y0 + Z * delta)
+assignment <- declare_assignment(Z=complete_ra(N))
+reveal <- declare_reveal(Y, Z)
+design <- population + potentials + assignment + reveal
+
+## Draw one simulated dataset
+simdat1 <- draw_data(design)
+
+## Set inquiry and estiamtor
+estimand <- declare_inquiry(ATE = mean(Y_Z_1 - Y_Z_0))
+estimator <- declare_estimator(Y ~ Z, inquiry = estimand, label = "Simple D-I-M")
+
+## Illustrate how the estimator works
+estimator(simdat1)
+
+## Add the inquiry and estimator to our design
+designPlusEst <- design + estimand + estimator
+```
+
+<!-- Now that the setup is complete, we can assess the statistical power of our -->
+<!-- proposed design with $N=100$ and an effect of roughly 1 SD. The output below -->
+<!-- shows the statistical power as well as the false positive rate (called -->
+<!-- "Coverage" below), as well as the difference between the mean difference we -->
+<!-- calculate and the true average treatment effect (called "Bias" below). -->
+
+```{r diagpow1, cache=TRUE, echo = F, eval = F}
+## Skipping for now
+sim_power <- diagnose_design(designPlusEst, sims = 200)
+```
+
+<!-- Initially, this analytic approach suggests more power than the simulation based approach -- a difference that arises from our fairly skewed outcome. -->
+
+```{r powerttest, echo = F, eval = F}
+## skipping for now
+analytic_power <- power.t.test(n = 100, delta = delta, sd = sd(dat1$y0))
+analytic_power
+```
+
+<!-- For ways to compare different sample sizes, effect sizes, etc. see [more -->
+<!-- information from the DeclareDesign -->
+<!-- package](https://declaredesign.org/blog/2018-10-02-power-strategies.html). -->
+
+## An example of the off-the-shelf approach
+
+To demonstrate how analytical power analysis works in principle, consider the R function `power.t.test()`. This can be used for power calculations in designs where a two-sample t-test is an appropriate estimation strategy (with no adjustment for blocking, clustering, or covariates).
+
+When using this function, there are three parameters that we're most concerned
+with, two of which must be specified by the user. The third is then calculated and returned by the function. These are:
+
+* `n` = sample size, or number of observations *per treatment group*
+* `delta` = the target effect size, or a minimum detectable effect (MDE)
+* `power` = the probability of detecting an effect if in fact there is a true effect of size `delta`
+
+Note that there is also the parameter `sd`, representing the standard deviation of the outcome. This is set to 1 by default unless `power.t.test()` is instructed otherwise.
+
+Say, for example, you want to know the MDE for a two-arm study with 1,000
+participants, of which half are assigned to treatment. Using `power.t.test()` you would specify:
+
+```{r powerttest2}
+power.t.test(
+  n = 500, # The number of observations per treatment arm
+  power = 0.8 # The traditional power threshold of 80%
+  )
+```
+
+If all we wanted to extract was the MDE, we could instead write:
+
+```{r}
+power.t.test(n = 500, power = 0.8)$delta
+```
+
+If we request the sample size instead, we can illustrate that this is applying an expression like the one we mention above: $$n = (5.6/0.1773605)^{2} \approx 1000$$
+
+And now via R code:
+
+```{r}
+power.t.test(delta = 0.1773605, power = 0.8)$n * 2
+```
+
+If you need to, you can adjust other parameters, like the standard deviation of the outcome, the level of the test, or whether the test is one-sided rather than two-sided. There are also other functions available for different types of outcomes. For example, if you have a binary response, you can use `power.prop.test()` to calculate power for a similar kind of simple difference in proportions test.
+
+An equivalent approach in Stata is as follows:
+
+```
+power twomeans 0, power(0.8) n(1000) sd(1)
+```
+
+Stata users can learn more about available tools by checking out Stata’s
+plethora of [relevant help files](https://www.stata.com/features/power-and-sample-size/).
+
+## An example of the simulation approach
+
+We can compare the output of `power.t.test()` to the output from a
+simulation-based (i.e., computational) approach, which we illustrate in the code chunk below. Notice that our example below relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple cases, but it provides useful flexibility for simulating more complicated designs (particularly designs we cannot specify as easily within the `DeclareDesign` framework).
+
+```{r poweranalysistools}
+## OES Power Simulation Toolkit:
+## Replicate, Estimate, Evaluate (REE)
+## 
+## replicate_design(...) ---: Generate replicates of a simulated dataset
+## estimate(...) -----------: Estimate the null test-stat for treatment(s).
+## evaluate_power(...) -----: Evaluate power to detect non-zero effects.
+## evaluate_mde(...) -------: Find MDE, searching over range of effect sizes.
+## evaluate_bias(...) ------: Compute bias and other diagnostics.
+
+## Required packages
+require(magrittr)
+require(fabricatr)
+require(foreach)
+
+##### REPLICATE a hypothetical design R times #####
+
+# Inputs:
+# - (1) number of replicates desired
+# - (2) additional arguments that are passed to fabricate() (see the ...).
+#   - Generally, each arg is a separate variable to generate.
+#   - Later vars can be a function of earlier ones.
+#   - See our examples below, it's simpler than it sounds!
+replicate_design <- 
+  
+  function(R = 200, ...) {
+    
+    # Function: produce one draw of the simulated dataset/design
+    design <- function() {
+      fabricatr::fabricate(
+        ...
+        ) %>%
+        list
+      }    
+    
+    # Use replicate() to replicate that design R times
+    rep <- replicate(
+      n = R,
+      expr = design()
+      )
+    
+    # Output will be a list of dataframes.
+    # For each, add a variable indicating which sim# it is
+    for(i in 1:length(rep)) {
+      rep[[i]] <- rep[[i]] %>%
+        dplyr::mutate(
+          sim = i
+        )
+      }
+    
+    return(rep)
+    
+  }
+
+##### ESTIMATE results using those replicated dfs #####
+
+# Inputs:
+# - (1) Estimation formula (y ~ x1 + x2 + ...)
+# - (2) Variables(s) we want to be powered to estimate the effects of
+#     - Generally just the treatment var(s)
+# - (3) Data the estimator should be applied to (list of dfs)
+# - (4) The estimator (the default is OLS with HC2 errors)
+estimate <- function(
+  formula,
+  vars,
+  data = NULL,
+  estimator = estimatr::lm_robust
+  ) {
+
+  # Pass the list of dfs to map().
+  # map() applies the procedure specified below to each df in the list.
+  data %>%
+    
+    purrr::map(
+      
+      # For each dataframe in the list, apply the specified estimator,
+      # using the specified formula.
+      ~ estimator(
+          formula,
+          data = .
+          ) %>%
+        
+        # tidy up the results and specify the rows of estimates to keep
+        estimatr::tidy() %>%
+          dplyr::filter(
+            .data$term %in% vars
+            ) 
+      
+      ) %>%
+    
+    # Append the results from each sim replicate into a single dataframe
+    dplyr::bind_rows() %>%
+    
+    # Add some more useful labels
+    dplyr::mutate(
+      sim = rep(1:length(data), each = n() / length(data)),
+      term = factor(.data$term, levels = vars)
+      )
+  
+}
+
+##### EVALUATE power of the design #####
+
+# Inputs:
+# - (1) Results produced by estimate() above
+# - (2) Hypothetical effects we want power estimates for
+# - (3) Desired alpha (significance) level
+evaluate_power <- function(data, delta, level = 0.05) {
+  
+  # Make sure delta (may be scalar or vector) was specified
+  if (missing(delta)) {
+    stop("Specify 'delta' to proceed.")
+  }
+  
+  # Apply the following (i.e., after %do%) to each delta separately,
+  # appending the results with bind_rows at the end.
+  foreach::foreach(
+    i = 1:length(delta),
+    .combine = "bind_rows"
+    ) %do% {
+      
+      # Start with the df of estimates
+      data %>%
+        
+        # Create variables storing the relevant delta and new test stat
+        dplyr::mutate(
+          delta = delta[i],
+          new_statistic = (.data$estimate + .data$delta) / .data$std.error
+          ) %>%
+        
+        # Similar to group_by, result here is list of dfs for each term
+        dplyr::group_split(.data$term) %>%
+        
+        # Separately for the df for each term, get p for each replicate
+        purrr::map(
+          ~ {
+            tibble::tibble(
+              term = .$term,
+              delta = .$delta,
+              p.value = foreach(
+                j = 1:length(.$new_statistic),
+                .combine = "c"
+                ) %do% mean(abs(.$statistic) >= abs(.$new_statistic[j]))
+              )
+            }
+          )
+      } %>%
+    
+    # Organize by term and delta
+    group_by(.data$term, .data$delta) %>%
+    
+    # Average over repliacates to get power for each term/delta combination
+    summarize(
+      power = mean(.data$p.value <= level),
+      .groups = "drop"
+      )
+  
+}
+
+##### EVALUATE the min. detectable effect #####
+# Helps summarize the results of evaluate_power() above,
+# basically a wrapper for evaluate_power()
+
+# Inputs:
+# - (1) Results produced by estimate() above
+# - (2) Range of hypothetical effects we want to consider (delta above)
+# - (3) How fine-grained do we want changes in delta to be?
+# - (4) Alpha (significance) level
+# - (5) Minimum power we want to accept
+evaluate_mde <- function(
+  data, 
+  delta_range = c(0, 1),
+  how_granular = 0.01,
+  level = 0.05,
+  min_power = 0.8
+  ) {
+  
+  # Use the function designed above to get power estimates
+  eval <- evaluate_power(
+    data = data, 
+    delta = seq(delta_range[1], delta_range[2], how_granular),
+    level = level
+    ) %>%
+    
+    # Organize data by term
+    dplyr::group_by(
+      .data$term
+      ) %>%
+    
+    # Get the MDE at our desired power level for each term
+    dplyr::summarize(
+      MDE = min(.data$delta[.data$power >= min_power]),
+      .groups = "drop"
+      )
+  
+  return(eval)
+  
+}
+
+##### EVALUATE Bias #####
+# Helps summarize the results of estimate() above.
+# Pass results of estimate() to this function.
+
+# Inputs:
+# - (1) Data produced by estimate() above
+# - (2) True ATE
+evaluate_bias <- function(
+  data, 
+  ATE = 0
+  ) {
+  
+  # Start with the estimates for each replicated dataset
+  smry <- data %>%
+    
+    # Add a variable representing the true ATE
+    dplyr::mutate(
+      ATE = rep(ATE, len = n())
+      ) %>%
+    
+    # Organize estimates by term
+    dplyr::group_by(
+      .data$term
+      ) %>%
+    
+    # Summarize across replicates, within each term
+    dplyr::summarize(
+      "True ATE" = unique(.data$ATE),
+      "Mean Estimate" = mean(.data$estimate),
+      Bias = mean(.data$estimate - .data$ATE),
+      MSE = mean((.data$estimate - .data$ATE)^2),
+      Coverage = mean(
+        .data$conf.low <= .data$ATE & .data$conf.high >= .data$ATE
+        ),
+      "SD of Estimates" = sd(.data$estimate),
+      "Mean SE" = mean(.data$std.error),
+      Power = mean(.data$p.value <= 0.05),
+      .groups = "drop"
+    )
+  
+  return(smry)
+  
+}
+```
+
+Results are shown in the subsequent figure. Though the computational estimates are slightly different, they comport quite well with the analytic estimates.
+
+```{r powersimvsanalytic}
+## Parameters used for both sets of calculations
+n <- 1000 # Sample size
+d <- 0.2 # Effect size to consider
+
+## Analytical power estimates
+power_data <-
+  
+  tibble(
+    d = seq(0, 0.5, len = 200),
+    power = power.t.test(n = n / 2, delta = d)$power
+    )
+
+## Save initial plot; add simulation results below
+g <- ggplot(power_data) +
+  
+  geom_line(aes(d, power, linetype = "power.t.test()")) +
+  
+  labs(
+    x = expression(delta),
+    y = "Power",
+    title = "Power for Simple Difference in Means Test"
+    ) +
+  
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  geom_hline(
+    yintercept = 0.8,
+    col = "grey25",
+    alpha = 08
+    ) +
+  
+  ggridges::theme_ridges(
+    center_axis_labels = TRUE,
+    font_size = 10
+    ) 
+
+## Comutational power estimates, using the functions above
+sim_power_data <-
+  
+  replicate_design(
+    N = n,
+    y = rnorm(N),
+    x = randomizr::complete_ra(
+      N, m = N / 2
+      )
+    ) %>%
+  
+  estimate(
+    form = y ~ x, vars = "x"
+    ) %>%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## Add results from the simulation to the plot and compare
+g + 
+  
+  geom_line(
+    data = sim_power_data,
+    aes(delta, power, linetype = "simulation"),
+    color = "grey25"
+    ) +
+  
+  labs(
+    linetype = "Method:"
+    ) +
+  
+  theme(
+    legend.position = "bottom"
+    ) 
+```
+
+As mentioned above, we produced those computational estimates using some pre-written functions that are currently housed in OES's GitHub code library. These functions are also laid out and explained step-by-step in comments in a code chunk above.
+
+These tools are designed around a simple workflow, and they should help remove some of the programming that may otherwise be a barrier to project teams calculating power computationally. The workflow proceeds as follows:
+
+1. Replicate
+2. Estimate  
+3. Evaluate
+  
+The first step, **Replicate**, entails specifying an example data-generation process (which may include only an outcome variable and treatment assignment) and simulating it multiple times to create a series of randomly generated datasets. Each individual dataset produced is a *sample replicate*.
+
+The next step, **Estimate**, entails estimating effects for select treatments within each sample replicate. We can use those estimates to produce a distribution of test statistics for each effect size of interest.
+
+Finally, the last step, **Evaluate**, entails using those test statistics to evaluate our power to detect a range of different effect sizes.
+
+This workflow is supported by three functions: `replicate_design()`,
+`estimate()`, and `evaluate_power()`. Here's the simulation code used to generate Figure 1, in more detail:
+
+```{r, eval=FALSE}
+## 1. Replicate:
+
+# Output is a list of dfs
+rep <- replicate_design(
+  R = 200,   # Number of sample replicates
+  N = 1000,  # Sample size of each replicate
+  y = rnorm(N), # Normally distributed response
+  x = rbinom(N, 1, 0.5) # Binary treatment indicator
+  ) 
+
+## 2. Estimate:
+
+# Output is a dataframe of estimates from each sample replicate
+est <- estimate(
+  y ~ x, # Regression formula
+  vars = "x", # Treatment variable(s)
+  data = rep # Sample replicates
+  ) 
+
+## 3. Evaluate:
+
+# Output is a list of dfs
+pwr_eval_sim <- evaluate_power(
+  data = est, # Estimates, from estimate() above
+  delta = seq(0, 0.5, len = 200) # Effect sizes to consider
+  )   
+```
+
+The final product, `pwr_eval_sim` above, reports the power for each of the user-specified effect sizes (`delta`) and (`vars`) model terms specified when calling `estimate()`. The output can be used to plot power curves or to compute minimum detectable effects.
+
+These functions help make the process of performing computational power analysis for OES projects easier, while still providing ample room for flexibility in both design and estimation strategy. For example, `replicate_design()` is a wrapper for `fabricate()` in the [fabricatr](https://declaredesign.org/r/fabricatr/) package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters. By default, estimates are returned using `lm_robust()` from the [estimatr](https://declaredesign.org/r/estimatr/) package, but alternative estimators can be specified. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:
+
+```{r, eval=FALSE}
+## Define logit estimator function
+logit <- function(...){ glm(..., family = binomial)}
+
+## Pass this to the estimate() function above
+est <- estimate(
+  y ~ x + z1 + z2, data = rep, estimator = logit
+  ) 
+```
+
+Other tools for power simulation exist as well. For instance, throughout this SOP, we have used [DeclareDesign](https://declaredesign.org/r/declaredesign/articles/DeclareDesign_101.html) to simulate hypothetical research designs and compare their performance. And there is no shortage of further simulation
+examples that can be found online for more specialized use-cases.
+
+## When to use which approach
+
+For a simple difference in means test, the programming required for an analytical power analysis is much much less involved. When is computational power analysis worth the extra time investment?
+
+To start, in cases where we’re interested in the power to detect a simple difference in means, or a difference in proportions for binary responses, it is probably sufficient to use `power.t.test()` (for means) or `power.prop.test()` (for proportions).
+
+However, OES projects often involve design features or analytic strategies that are difficult to account for using off-the-shelf tools. For example, we often include covariates in our statistical models to enhance the precision of our treatment effect estimates. If the gain in precision is small, then it might not be important to account for this in power calculations in the design phase of the project. But if we expect a substantial gain in precision due to including covariates, then we probably want to account for estimating power. The natural way to do this is by simulation, including the covariates in the "replicate" and "estimate" steps above. Accounting for covariates is especially useful if we can use real historical or pre-treatment data that represent the correlations we expect to see between covariates and outcomes in our later analysis of the trial data.
+
+More complex design features or analytic strategies may make investing in the
+simulation approach even more worthwhile, or downright necessary. Examples
+include heterogeneity in treatment effects, a multi-arm or factorial design, or block randomization with differing probabilities of treatment between blocks -- none of which is usually easily accounted for with off-the-shelf tools. In the next section, we provide some additional examples of simulations for more complex designs or analytic strategies.
+
+## Additional examples of the simulation approach
+
+Here we provide two examples of research designs where simulation is well worth the extra effort. Attendant R code is included to illustrate how we could use the functions above in these cases.
+
+### A two-by-two design with interaction
+
+One instance where computational power analysis may be worth the investment is
+in assessing power for a two-by-two factorial design with an interaction. In
+such a design, the goal is to assess not only the power to detect main effects
+(the average effect of each individual treatment), but also power to detect a
+non-zero interaction effect between the treatments.
+
+Say we have a design with 1,000 observations and we would like to know the
+effect of two treatments on a binary outcome with a baseline of 0.25. Each
+treatment is assigned to $M = 500$ individuals at random, resulting in four
+roughly equal sized groups of observations after randomization: (1) a control group, (2) those assigned to treatment 1 but not treatment 2, (3) those assigned to treatment 2 but not treatment 1, and (4) those assigned to both treatment 1 and 2.
+
+We can easily calculate power to detect the main effect of each treatment as follows:
+
+```{r, eval=T}
+two_by_two <-
+
+  ## Basic elements of each simulated sample replicate
+  replicate_design(
+    N = 1000,
+    y = rbinom(N, 1, 0.25),
+    x1 = complete_ra(N, m = N / 2), 
+    x2 = complete_ra(N, m = N / 2)
+    ) %>%
+  
+  ## Estimate main and interaction effects
+  estimate(
+    form = y ~ x1 + x2 + x1:x2,
+    vars = c("x1", "x2", "x1:x2")
+    ) %>%
+  
+  ## Evaluate power
+  evaluate_power(
+    delta = seq(0, 0.25, len = 200)
+    )
+```
+
+Using the output reported in the object `two_by_two`, we can plot the power curves for each of the main effects and the interaction effect, as shown
+in Figure 2.
+
+```{r}
+ggplot(two_by_two) +
+  
+  ## Add a line representing power for each effect/term
+  geom_line(
+    aes(delta, power, linetype = term)
+    ) +
+  
+  ## Choose linetypes that are easy to distinguish
+  scale_linetype_manual(values = c("solid", "longdash", "dotted")) +
+  
+  ## Horizontal line for 80% power
+  geom_hline(
+    yintercept = 0.8,
+    color = "grey25",
+    alpha = 0.8
+    ) +
+  
+  ## y-axis scale
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  ## Adding labels
+  labs(
+    x = expression(delta),
+    y = "Power",
+    title = "Power for a 2x2 Design",
+    linetype = "Effect for..."
+    ) +
+  
+  ## Update some visual settings with the ridges theme
+  ggridges::theme_ridges(
+    font_size = 10,
+    center_axis_labels = TRUE
+    ) +
+  
+  ## Other settings (here: just legend location)
+  theme(
+    legend.position = "bottom"
+    ) 
+```
+
+Of course, in this simple example, we could still have relied on some reasonable analytical assumptions to arrive at these estimates (see a helpful discussion [here](https://statmodeling.stat.columbia.edu/2018/03/15/need-16-times-sample-size-estimate-interaction-estimate-main-effect/)). But running a simulation saves us the trouble.
+
+### Covariate adjustment with the Lin estimator
+
+Another scenario where computational power analysis is worth the investment is if a design calls for covariate adjustment. This is common in OES projects, and, in many instances, the @lin_agnostic_2013 saturated regression estimator is the solution we choose.
+
+Devising an off-the-shelf method to calculate power for such a study is
+possible, but would likely require investing time doing background research to
+ensure its accuracy. Alternatively, we could simply replicate, estimate, and
+evaluate such a design computationally. The results will be roughly just as accurate, without regarding a review of the methods literature.
+
+Suppose we have a sample of 1,000 observations and a continuous outcome
+variable. We wish to assess the effect of some policy intervention on this
+continuous outcome. Our design calls for randomly assigning only $M = 100$
+individuals to receive the intervention --- perhaps because it is expensive to implement --- and the rest to control.
+
+In addition to having data on the outcome and on treatment assignment, let's say that we also anticipate obtaining a dataset of covariates for our 1,000 observations. This data contains two variables that are prognostic of the outcome *and the treatment effect*. We’ll call these `z1` and `z2`. The first is a continuous measure and the latter is a binary indicator. Our design calls for adjusting for these covariates to improve the precision of our estimated treatment effect. We can simulate such a design to illustrate the possible benefits of covariate adjustment in terms of improved statistical power.
+
+We begin by replicating the data-generating process:
+
+```{r}
+rep_data <-
+  
+  replicate_design(
+    N = 1000,
+    z1 = rnorm(N, sd = 3),   # Continuous covariate
+    z2 = rbinom(N, 1, 0.25), # Binary covariate
+    cz1 = z1 - mean(z1),     # Mean centered versions of the covariates
+    cz2 = z2 - mean(z2),
+    x = complete_ra(N, m = N / 10), # Randomly assign 10% to treatment
+    y = ((z1 + z2) * x) + (0.8 * z1) - (1 * z2) + rnorm(N) # Simulate Y
+    )
+```
+
+We then estimate and evaluate. For comparison, power is computed (1) with
+covariate adjustment via the Lin estimator, (2) without covariate adjustment, and (3) with standard linear, additive covariate adjustment:
+
+```{r}
+## With the Lin Estimator
+lin_adjust <- 
+  
+  rep_data %>%
+  
+  estimate(
+    form = y ~ x + z1 + z2 + x:cz1 + x:cz2,
+    vars = "x"
+    ) %>%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## With no covariate adjustment
+no_adjust <-
+  
+  rep_data %>%
+  
+  estimate(
+    form = y ~ x,
+    vars = "x"
+    ) %>%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## With linear, additive covariate adjustment
+standard_adjust <-
+  
+  rep_data %>%
+  
+  estimate(
+    form = y ~ x + z1 + z2,
+    vars = "x"
+    ) %>%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+```
+
+We can now compare results under these alternative empirical strategies. Figure 3 shows the power curves for each approach. The Lin estimator provides substantial improvements in power over both no covariate adjustment and linear additive adjustment.^[This is, of course, true by design here. In real projects, the differences between these covariate adjustment strategies could often be smaller or negligible. But it is useful to remember that @lin_agnostic_2013 adjustment may be especially valuable with especially imbalanced designs and/or designs where covariates are likely correlated with treatment effect heterogeneity.] And it only took a few lines of code to get this result!
+
+```{r}
+## Combine the results, and apply similar plotting code to above
+bind_rows(
+  lin_adjust %>% mutate(Method = "Lin"),
+  no_adjust %>% mutate(Method = "No Covariates"),
+  standard_adjust %>% mutate(Method = "Additive")
+  ) %>%
+  
+  ggplot() +
+  
+  geom_line(
+    aes(delta, power, linetype = Method)
+    ) +
+  
+  scale_linetype_manual(values = c("solid", "longdash", "dotted")) +
+  
+  geom_hline(
+    yintercept = 0.8,
+    color = "grey25",
+    alpha = 0.8
+    ) +
+  
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  labs(
+    x = expression(delta),
+    y = "Power",
+    title = "Power with Lin Adjustment",
+    linetype = "Method:"
+    ) +
+  
+  ggridges::theme_ridges(
+    font_size = 10,
+    center_axis_labels = TRUE
+    ) +
+  
+  theme(
+    legend.position = "bottom"
+    ) 
+```
+
+### Incorporating DeclareDesign into OES Power Tools
+
+We can also use `DeclareDesign` within this **Replicate**, **Estimate**, **Evaluate** framework. This involves using `DeclareDesign` to draw estimates, and then feeding the results into the OES `evaluate_power()` function. We compare the `DeclareDesign` approach to the OES `Replicate` and `Estimate` steps below.
+
+First, we simulate a simple design with the OES tools introduced above:
+
+```{r}
+eval <- 
+  
+  replicate_design(
+    R = 1000,
+    N = 100,
+    Y = rnorm(N),
+    Z = rbinom(N, 1, 0.5)
+    ) %>%
+  
+  estimate(
+    form = Y ~ Z, vars = "Z"
+    ) %>%
+  
+  evaluate_power(
+    delta = seq(0, 0.6, len = 10)
+    )
+```
+
+Then, we do the same with `DeclareDesign`, declaring a population, potential outcomes, assignments, a target quantity of interest, and an estimator:
+
+```{r}
+design <-
+  
+  declare_population(
+    N = 100,
+    U = rnorm(N),
+    potential_outcomes(Y ~ U)
+    ) +
+  
+  declare_assignment(Z = simple_ra(N, prob = 0.5)) +
+  
+  declare_inquiry(ATE = mean(Y_Z_1 - Y_Z_0)) +
+  
+  declare_measurement(Y = reveal_outcomes(Y ~ Z)) +
+  
+  declare_estimator(
+    Y ~ Z,
+    inquiry = "ATE",
+    .method = lm_robust
+    )
+```
+
+We then use draws from this design within the OES tools:
+
+```{r}
+dd_eval <-
+  
+  replicate(
+    n = 1000,
+    expr = draw_estimates(design) %>% list
+    ) %>%
+  
+  bind_rows() %>%
+  
+  evaluate_power(
+    delta = seq(0, 0.6, len = 10)
+    )
+```
+
+We show the similarity between the two approaches to generating the simulated
+data in the figure below:
+
+```{r}
+bind_rows(
+  eval %>% mutate(method = "OES Power Tools"),
+  dd_eval %>% mutate(method = "DeclareDesign")
+  ) %>%
+  
+  ggplot() +
+  
+  geom_line(
+    aes(delta, power, linetype = method)
+    ) +
+  
+  scale_linetype_manual(values = c("solid", "longdash")) +
+  
+  labs(
+    x = expression(delta),
+    y = "Power",
+    linetype = NULL
+    ) +
+  
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  geom_hline(
+    yintercept = 0.8,
+    col = "grey25",
+    size = 1,
+    alpha = 0.8
+    ) +
+  
+  ggridges::theme_ridges(
+    center_axis_labels = TRUE,
+    font_size = 10
+    ) +
+  
+  theme(
+    legend.position = "bottom"
+    )
+```
+
+
+
+
+<!--chapter:end:055-poweranalysis.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+
+# Working with data
+
+Our team works with administrative data, data not collected specifically for the purpose of evaluating the impact of new policy ideas. This means that we, and our agency collaborators, spend a **ton** of time cleaning, merging, and checking data. Here, we describe some standard practices that we have developed over time.
+
+## General questions we ask of a data set
+
+ - Are there any duplicated observations? (This mostly means rows in a rectangular data set).
+  - If there is an ID variable, are there duplicated IDs? 
+ - Are there missing data on outcomes? Why are outcomes missing?
+ - Are there missing data on our record of treatment assignment? Why might we not know whether or not a given unit was assigned the new policy intervention?
+
+## Missing data
+
+<!-- Thinking through ideas for a missing data simulation -->
+
+```{r, eval = F, echo = F}
+## Basic example data
+eg_dat <- read.csv("dat1.csv")
+
+## Get vector of cov names
+covs <- colnames(eg_dat)[grepl("cov", colnames(eg_dat))]
+
+## Which appear to be correlated with Y?
+lapply(covs, function(.x) {
+  
+  reformulate(.x, response = "Y", intercept = T) %>%
+    lm(data = eg_dat) %>%
+    tidy() %>%
+    filter(term != "(Intercept)") %>%
+    select(term, estimate, p.value)
+  }) %>%
+  
+  bind_rows() %>%
+  
+  mutate(p.value = round(p.value, 4))
+```
+
+
+<!--chapter:end:095-workingwithdata.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+# [Glossary of Terms](#glossary)
+
+Average treatment effect [ATE](#ATE)
+
+
+<!--chapter:end:10-glossary.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+# [Appendix](#appendix)
+
+<!--chapter:end:11-appendix.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+## Currently empty.
+
+```
+`r if (knitr:::is_html_output()) '
+# References {-}
+'`
+
+<!--chapter:end:99-references.Rmd-->
+
