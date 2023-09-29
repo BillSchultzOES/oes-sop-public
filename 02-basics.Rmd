@@ -1,0 +1,36 @@
+
+
+# Basics of Experimental Design and Analysis
+
+Here, we briefly define and describe some of the characteristics we consider when evaluating statistical procedures. These characteristics guide our decision making in the rest of this guide. Briefly, we want to create research designs that (1) have enough statistical power to tell us something meaningful about the policy interventions that we are piloting. We also want to use statistical tests that will (2) rarely mislead us--- i.e., will rarely give a false positive result--- and we want to use estimators (3) without systematic error. These characteristics depend on both the design of the study and the choices we make about computational procedures. We discuss these issues in more depth in other chapters that follow.
+
+## Statistical power: Designing Studies that effectively distinguish signal from noise
+
+The research designs we use at OES aim to enhance our ability to
+distinguish signal from noise: studies with very few observations cannot tell
+us much about the treatment effect, while studies with very many observations
+provide a lot of information about the treatment effect. A study which
+effectively distinguishes signal from noise has excellent "statistical power,"
+while a study which cannot do this has low statistical power. The Evidence in Governance and Politics (EGAP) Methods Guide [10 Things You Need to Know about Statistical Power](https://egap.org/resource/10-things-to-know-about-hypothesis-testing/) explains more about what statistical power is and how to assess it.
+
+Before we field a research design, we assess its statistical power. If we
+anticipate that the intervention will only make a small change in peoples'
+behavior, then we will need a relatively large number of people in the study:
+too few people would result in a report saying something like, "The new policy
+might have improved the lives of participants, but we can't argue strongly that this is so because our margin of error is too wide."
+
+## Error Rates of Tests
+
+A good statistical test rarely rejects a true hypothesis and often rejects
+false hypotheses. The EGAP Methods Guide [10 Things to Know about Hypothesis
+Testing](https://egap.org/resource/10-things-to-know-about-hypothesis-testing/) describes the basics of hypothesis tests. It also explains how one might know that a given $p$-value arises from a test with good properties in a given research design. Our team tries to choose testing procedures that are not likely to mislead analysts, both when we make our analysis plans and as we complete our analyses and re-analyses.
+
+## Bias in Estimators
+
+A good estimator is not systematically different from the truth, and an even
+better estimator tends to produce estimates that are close to the truth across
+different experiments. The difference-in-means between a treatment and
+control group is a well known unbiased estimator of the average treatment
+effect within a given experimental sample, so this is often a primary quantity of interest that our team reports. In practice, we usually estimate this using linear regression [@angrist2009mostly]. Meanwhile, since we know that the coefficient in a logistic regression of a binary outcome on a treatment indicator and a covariate is a biased estimator of the underlying causal difference in log-odds, we use other approaches when we want to talk about the causal effect of a treatment on log-odds [@freedman2008randomization].
+
+

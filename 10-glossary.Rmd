@@ -1,4 +1,0 @@
-# [Glossary of Terms](#glossary)
-
-Average treatment effect [ATE](#ATE)
-

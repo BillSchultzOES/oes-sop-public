@@ -5,17 +5,17 @@ You can find the preview of this example at <http://gsa-oes.github.com/sop>.
 
 # Package management
 
-Maintaining the SOP has been made difficult in the past by inconsistent package versions across the computers of those building it, or by occasional package updates breaking things. To fix the packages used in time and make the document more stable, we'll try using [renv](https://rstudio.github.io/renv/articles/renv.html). See that vignette for more details on what it does and how it works.
+To control package versions used in the SOP, we're currently relying on [renv](https://rstudio.github.io/renv/articles/renv.html). See that vignette for more details on what `renv` does and how it works.
 
-In brief, `renv` helps us maintain a curated set of installed packages that is local to this R project. The file "renv.lock" (the "lock file") contains a snapshot of the packages that currently should be used to compile the SOP, including the version of each that should be installed. You'll have to work with `renv` to install the right packages and build the SOP on your machine, or if you want to add any new packages. But it doesn't actually make updating the SOP much more complicated.
+Briefly, `renv` maintains a curated set packages local to this R project. The file "renv.lock" (the "lock file") contains a snapshot of the packages that should be used to compile the SOP, along with the version we want of each. You'll need to work within `renv` to install the right packages and build the SOP on your machine, or if you want to add any new packages. But it doesn't actually make updating the SOP much more complicated.
 
-After cloning the most recent version of this repository onto your machine, opening the project should prompt `renv` to automatically install itself on your computer. After this, running `renv::restore` while the R project is open will automatically prepare the right set of packages/versions in the project directory on your machine, based on the instructions from the lock file. If you run into a message saying `renv` isn't activated yet when trying to restore from the lock file, run `renv::activate` or `renv::load`. This should happen automatically according to the vignette, but I had to run `renv::load` to get it to activate properly (not sure if this is related to our security setup).
+After cloning the most recent version of this repository onto your machine, opening the project should prompt `renv` to automatically install itself. After this, running `renv::restore` while the R project is open will automatically prepare the right set of packages/versions in the project directory on your machine, based on the instructions from the lock file. If you run into a message saying `renv` isn't activated yet when trying to restore from the lock file, run `renv::activate` or `renv::load`.
 
-If you ever install a new package to include in a chapter of the SOP, run `renv::snapshot()` to update the lock file, and make sure you commit the new lock file to Github alonside your other changes (also be sure to commit ".Rprofile," "renv/settings.json," and "renv/activate.R"). Then, others can use `renv::restore` to make sure this package/version is used when they build the updated SOP on their own machines.
+If you ever install a new package to include in a chapter of the SOP, run `renv::snapshot()` to update the lock file, and make sure you commit the new lock file to Github alonside your other changes (also be sure to commit ".Rprofile," "renv/settings.json," and "renv/activate.R").
 
 # To make changes and build
 
-This project requires the `bookdown` package for R. We have to use version .7 for now.
+This project requires the `bookdown` package for R. We need to use version .7 for now.
 
 ```
 library(devtools)
@@ -34,7 +34,11 @@ Finally, it may be necessary to install a development version of the `bfe` packa
 devtools::install_github('gibbonscharlie/bfe')
 ```
 
-The current reliance `renv` should take care of all of those version control issues for us, and help prevent new ones if any packages change in the future in a way that breaks our code. But this section of the README has been retained just in case we decide to drop `renv` in the future.
+Our current use of `renv` should take care of all of those version control issues for us, and help prevent new ones if any packages change in the future in a way that breaks our code. But this section of the README has been retained just in case we decide to drop `renv` in the future.
+
+# Adding or removing chapters
+
+To add or remove chapters, once the `.rmd` file is finished, open `_bookdown.yml` and its name to the list (or take it's name out of the list). As needed, be sure to update the numbers of the beginning of chapter names accordingly. To help keep things clear, only assign numbers to the names of *live* chapters, in their current order. Finally, be sure to keep the glossary, appendix, and references at the end of the list.
 
 # To update the web preview:
 
