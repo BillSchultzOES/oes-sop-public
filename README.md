@@ -1,8 +1,8 @@
-This repository contains the Standard Operating Procedure for the statistical analysis done by the Office of Evaluation Sciences in the US General Services Administration. Currently in R Markdown and **bookdown** (https://github.com/rstudio/bookdown). This version of the OES SOP was built using `R` 4.2.1 (2022-06-23 ucrt), `RStudio` 1.2.1335, and `pandoc` 2.6. Math is rendered using the `katex` package 1.4.1.
+This repository contains the Standard Operating Procedures for statistical analyses done by the Office of Evaluation Sciences in the US General Services Administration. It is currently built using R Markdown and [bookdown](https://github.com/rstudio/bookdown). Specifically, this version of the OES SOP was built using `R` 4.2.1 (2022-06-23 ucrt), `RStudio` 1.2.1335, and `pandoc` 2.6. Math is rendered using the `katex` package 1.4.1.
 
 # Package management
 
-To control package versions used in the SOP, we're currently relying on [renv](https://rstudio.github.io/renv/articles/renv.html). See that vignette for more details on what `renv` does and how it works.
+To control package versions used in the SOP, we're relying on [renv](https://rstudio.github.io/renv/articles/renv.html). See that vignette for more details on what `renv` does and how it works.
 
 Briefly, `renv` maintains a curated set packages local to this R project. The file "renv.lock" (the "lock file") contains a snapshot of the packages that should be used to compile the SOP, along with the version we want of each. You'll need to use `renv` to install the right packages and build the SOP on your machine, or add any new packages for use in one of the chapters. But this doesn't make updating the SOP much more complicated.
 
