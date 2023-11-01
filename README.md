@@ -1,10 +1,10 @@
-This is the repository for statistical standard operating procedures for the OES. Currently in R Markdown and **bookdown** (https://github.com/rstudio/bookdown).
+This repository contains the Standard Operating Procedure for the statistical analysis done by the Office of Evaluation Sciences in the US General Services Administration. Currently in R Markdown and **bookdown** (https://github.com/rstudio/bookdown). This version of the OES SOP was built using `R` 4.2.1 (2022-06-23 ucrt), `RStudio` 1.2.1335, and `pandoc` 2.6. Math is rendered using the `katex` package 1.4.1.
 
 # Package management
 
 To control package versions used in the SOP, we're currently relying on [renv](https://rstudio.github.io/renv/articles/renv.html). See that vignette for more details on what `renv` does and how it works.
 
-Briefly, `renv` maintains a curated set packages local to this R project. The file "renv.lock" (the "lock file") contains a snapshot of the packages that should be used to compile the SOP, along with the version we want of each. You'll need to use `renv` to install the right packages and build the SOP on your machine, or add any new packages for use in one of the chapters. But this doesn't actually make updating the SOP much more complicated.
+Briefly, `renv` maintains a curated set packages local to this R project. The file "renv.lock" (the "lock file") contains a snapshot of the packages that should be used to compile the SOP, along with the version we want of each. You'll need to use `renv` to install the right packages and build the SOP on your machine, or add any new packages for use in one of the chapters. But this doesn't make updating the SOP much more complicated.
 
 After cloning the most recent version of this repository onto your machine, opening the project should prompt `renv` to automatically install itself. After this, running `renv::restore` while the R project is open will automatically prepare the right set of packages/versions in the project directory on your machine, based on the instructions from the lock file. If you run into a message saying `renv` isn't activated yet when trying to restore from the lock file, run `renv::activate` or `renv::load`.
 
@@ -12,7 +12,7 @@ If you ever install a new package to include in a chapter of the SOP, run `renv:
 
 # To make changes and build
 
-This project requires the `bookdown` package for R. We need to use version .7 for now.
+This project requires the `bookdown` package for R. We are using version .7 for now.
 
 ```
 library(devtools)
@@ -58,3 +58,13 @@ git commit -m"Update the book" || true
 git push -q origin gh-pages
 
 ```
+
+# Building the book
+
+There is more than one way to compile the book to .html, .pdf, and .epub.
+
+- You can use `render_book()` as described [here](https://bookdown.org/yihui/bookdown/build-the-book.html)
+
+- If you open the sop.Rproj file in RStudio, then you may be able to click on "Build_Book" in the "Build" pane.
+
+- RStudio also has some [add-ins](https://bookdown.org/yihui/bookdown/rstudio-ide.html) that make bookdown easier to use

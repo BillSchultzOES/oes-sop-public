@@ -659,7 +659,7 @@ If this common odds ratio is substantially greater than 1, then we should suspec
 
 We could also use the CMH test to compare odds ratios between experiments, rather than comparing against the null that the common odds ratio = 1.
 
-### Estimating an overall Average Treatment Effect {#blockrandate}
+### Estimating an overall average treatment effect {#blockrandate}
 
 Whether or not we randomly assign a policy intervention within blocks or strata, our team nearly always reports a single estimate of the average treatment effect. To review, we define the overall ATE (the theoretical estimand) as a simple average of the individual treatment effects. For two treatments, we might write this individual-level causal effect as $\tau_i = y_{i,0} - y_{i,1}$. We'd therefore express the overall (true) ATE across our sample as as $\bar{\tau}=(1/n) \sum_{i=1}^n \tau_i$. Unfortunately, this quantity is unobservable.
 
@@ -730,7 +730,7 @@ theestimand <- declare_inquiry(ATE = mean(Y_Z_1 - Y_Z_0))
 
 ## Declare treatment assignment
 numtreated <- sort(unique(dat$nb))/rep(c(2,10),B/2)
-theassign <- declare_assignment(Z=block_ra(blocks = bF, block_m=numtreated))
+theassign <- declare_assignment(Z = block_ra(blocks = bF, block_m = numtreated))
 
 ## Declare revealed data
 theobsident <- declare_reveal(Y, Z)
@@ -752,23 +752,17 @@ dat2 <- dat2 %>%
     rankalignedY = rank(alignedY)
     )
 
-## Now add individual-level weights to the data.
-## Different textbooks and algebra yield different expressions.
-## We show that they are all the same.
+## Now add individual-level weights to the data
 dat2 <- dat2 %>% 
   group_by(b) %>% 
   mutate(
     nb = n(), # Size of block
-    pib=mean(Z), # Prob. of treatment assignment
-    nTb=sum(Z), # Number treated
-    nCb=nb - nTb, # Number control
-    nbwt =  ( Z/pib ) + ( (1-Z)/(1-pib) ), 
-    nbwt2 = nb/nrow(dat2),
-    #hbwt = 2 * (nCb * nTb )  / (nTb + nCb), # Precision weight
-    #hbwt2 = 2 * ( nbwt2 )*(pib*(1-pib)),
-    hbwt3 =  nbwt * ( pib * (1 - pib) )
+    pib = mean(Z), # Prob. of treatment assignment
+    nTb = sum(Z), # Number treated
+    nCb = nb - nTb, # Number control
+    nbwt = (Z/pib) + ((1-Z)/(1-pib)), # Unbiased regression weight
+    hbwt = nbwt * (pib * (1 - pib)) # Precision regression weight
     )
-dat2$nbwt3 <- dat2$nbwt2/dat2$nb
 
 ## Declare a new population, and generate another design
 thepop2 <- declare_population(dat2)
@@ -777,39 +771,39 @@ thedesign2 <- thepop2 + theys + theestimand + theassign + theobsident
 ## Create the block level dataset, with block level weights.
 datB <- group_by(dat2,b) %>%
   summarize(
-    taub = mean(Y[Z==1]) - mean(Y[Z==0]), # Estimated effect (variance below)
+    taub = mean(Y[Z==1]) - mean(Y[Z==0]), # Effect (variance below)
     truetaub = mean(y1) - mean(y0), # True effect
     nb = n(), # Number in block
     nTb = sum(Z), # Number treated
     nCb = nb - nTb, # Number control
     estvartaub = (nb/(nb-1)) * (var(Y[Z==1])/nTb) + (var(Y[Z==0])/nCb),
-    pb=mean(Z), # Proportion treated
-    nbwt = unique(nb/nrow(dat2)), # Block-size weights
+    pb = mean(Z), # Proportion treated
+    nbwt = unique(nb/nrow(dat2)), # Block-size weight
     pbwt = pb * ( 1 - pb),
     hbwt2 = nbwt * pbwt, # Precision weights
-    hbwt5 = pbwt * nb,
-    hbwt = (2*(nCb * nTb )/(nTb + nCb))
+    hbwt3 = pbwt * nb,
+    hbwt = (2*(nCb * nTb)/(nTb + nCb))
     )
-datB$greenlabrule <- 20*datB$hbwt5/sum(datB$hbwt5)
+datB$greenlabrule <- 20*datB$hbwt3/sum(datB$hbwt3)
 
 ## All of these expressions of the harmonic mean weight are the same
 datB$hbwt01 <- datB$hbwt/sum(datB$hbwt)
-datB$hbwt201 <- datB$hbwt2/sum(datB$hbwt2)
-datB$hbwt501 <- datB$hbwt5/sum(datB$hbwt5)
-stopifnot(all.equal(datB$hbwt01,datB$hbwt201))
-stopifnot(all.equal(datB$hbwt01,datB$hbwt501))
+datB$hbwt02 <- datB$hbwt2/sum(datB$hbwt2)
+datB$hbwt03 <- datB$hbwt3/sum(datB$hbwt3)
+stopifnot(all.equal(datB$hbwt01, datB$hbwt02))
+stopifnot(all.equal(datB$hbwt01, datB$hbwt03))
 
 ## What is the "true" ATE?
 trueATE1 <- with(dat2, mean(y1) - mean(y0))
 trueATE2 <- with(datB, sum(truetaub*nbwt))
-stopifnot(all.equal(trueATE1,trueATE2))
+stopifnot(all.equal(trueATE1, trueATE2))
 ## We could define the following as an estimand, too.
 ## trueATE3 <- with(datB, sum(truetaub*hbwt01))
 ## c(trueATE1,trueATE2,trueATE3)
 
 ## We can get the same answer using R's weighted.mean command
-trueATE2b <- weighted.mean(datB$truetaub,w=datB$nbwt)
-stopifnot(all.equal(trueATE2b,trueATE2))
+trueATE2b <- weighted.mean(datB$truetaub, w=datB$nbwt)
+stopifnot(all.equal(trueATE2b, trueATE2))
 ```
 
 We can now review the design:
@@ -865,7 +859,7 @@ Let's compare the estimates themselves:
 ate_nbwt1 <- with(datB,sum(taub*nbwt))
 
 ## diffmeans
-ate_nbwt2 <- difference_in_means(Y~Z,blocks = b,data=dat2)
+ate_nbwt2 <- difference_in_means(Y~Z,blocks=b,data=dat2)
 
 ## lmlin
 ate_nbwt3 <- lm_lin(Y~Z,covariates=~bF,data=dat2)
@@ -882,9 +876,9 @@ ate_nbwt6ase <- coeftest(ate_nbwt6a,vcov=vcovHC(ate_nbwt6a,type="HC2"))
 X <- model.matrix(~bF-1,data=dat2)
 barX <- colMeans(X)
 Xmd <- sweep(X,2,barX)
-stopifnot( all.equal( (X[,3]-mean(X[,3])), Xmd[,3] ) )
+stopifnot(all.equal((X[,3]-mean(X[,3])), Xmd[,3]))
 ZXmd <- sweep(Xmd,1,dat2$Z,FUN="*")
-stopifnot( all.equal( dat2$Z*Xmd[,3],ZXmd[,3]  ))
+stopifnot(all.equal(dat2$Z*Xmd[,3],ZXmd[,3]))
 bigX <- cbind(Intercept=1,Z=dat2$Z,Xmd[,-1],ZXmd[,-1])
 bigXdf <- data.frame(bigX,Y=dat2$Y)
 ate_nbwt4 <-lm(Y~.-1,data=bigXdf)
@@ -945,7 +939,7 @@ ate_hbwt2 <- lm_robust(Y~Z+bF,data=dat2)
 ate_hbwt3 <- lm_robust(Y~Z,fixed_effects=~bF,data=dat2)
 
 ## direct_wts
-ate_hbwt4 <- lm_robust(Y~Z,data=dat2,weights=hbwt3)
+ate_hbwt4 <- lm_robust(Y~Z,data=dat2,weights=hbwt)
 
 ## demeaned
 ate_hbwt5 <- lm_robust(I(Y-ave(Y,b))~I(Z-ave(Z,b)),data=dat2)
@@ -1002,8 +996,8 @@ estnbwt3 <- declare_estimator(handler=label_estimator(iwe_est_fun), inquiry=thee
 
 # Another block-size-weighted option (via regression weights)
 nbwt_est_fun <- function(data){
-	data$newnbwt <- with(data,( Z/pib ) + ( (1-Z)/(1-pib) ) )
-	obj <-lm_robust(Y~Z,data=data, weights=newnbwt)
+	data$newnbwt <- with(data, (Z/pib) + ((1-Z)/(1-pib)))
+	obj <- lm_robust(Y~Z,data=data, weights=newnbwt)
 	res <- tidy(obj) %>% filter(term=="Z")
 	return(res)
 }
@@ -1015,9 +1009,9 @@ esthbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust, fixed
 
 # Another precision-weighted option (regression weights)
 hbwt_est_fun <- function(data){
-	data$newnbwt <- with(data,( Z/pib ) + ( (1-Z)/(1-pib) ) )
-	data$newhbwt <-  with(data, newnbwt * ( pib * (1 - pib) ) )
-	obj <-lm_robust(Y~Z,data=data, weights=newhbwt)
+	data$newnbwt <- with(data, (Z/pib) + ((1-Z)/(1-pib)))
+	data$newhbwt <- with(data, newnbwt * (pib * (1 - pib)))
+	obj <- lm_robust(Y~Z,data=data, weights=newhbwt)
 	res <- tidy(obj) %>% filter(term=="Z")
 	return(res)
 }
@@ -1105,8 +1099,9 @@ g <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
 print(g)
 ```
 
-The simulated outcome data is highly skewed by design. Our goal here is illustrating that the biases of precision-weighted estimates could be exacerbated by common problems in administrative data like skewed outcomes or zero-inflation (i.e., many 0s). One solution we could apply in this case is rank-transforming the outcome measure. This transformed outcome nearly erases the bias from the block-size weighted estimators, and the precision-weighted
-approaches also perform well. However, ignoring the blocked design is still a problem --- E0 and E1 continue to show substantial bias.
+The simulated outcome data we used here is highly skewed by design. This helps illustrate that the biases of precision-weighted estimates could be exacerbated by common problems in administrative data like skewed outcomes or zero-inflation (i.e., many 0s). In this case, the skew even prevents us from illustrating the precision benefits of harmonic weights.
+
+One solution we could apply in this case is rank-transforming the outcome measure. This transformed outcome nearly erases the bias from the block-size weighted estimators, and the precision-weighted approaches also perform as expected. However, ignoring the blocked design is still a problem --- E0 and E1 continue to show substantial bias. Moreover, notice here and above that although using regression weights alone to apply these blocking adjustments (rather than, e.g., an appropriate fixed effects specification) produces the right estimates, it does so at the cost of a larger standard error.
 
 ```{r ranktransblock, cache = T}
 ## Define a function to rank-transform the potential outcomes

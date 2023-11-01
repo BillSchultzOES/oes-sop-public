@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-10-02">
+<meta name="date" content="2023-11-01">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -530,7 +530,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.3" data-path="analysis-choices.html"><a href="analysis-choices.html#how-to-choose-covariates-for-covariance-adjustment"><i class="fa fa-check"></i><b>5.3</b> How to choose covariates for covariance adjustment?</a></li>
 <li class="chapter" data-level="5.4" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandanalysis"><i class="fa fa-check"></i><b>5.4</b> Block-randomized trials</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="analysis-choices.html"><a href="analysis-choices.html#testing-binary-outcomes-under-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables"><i class="fa fa-check"></i><b>5.4.1</b> Testing binary outcomes under block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables</a></li>
-<li class="chapter" data-level="5.4.2" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandate"><i class="fa fa-check"></i><b>5.4.2</b> Estimating an overall Average Treatment Effect</a></li>
+<li class="chapter" data-level="5.4.2" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandate"><i class="fa fa-check"></i><b>5.4.2</b> Estimating an overall average treatment effect</a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="analysis-choices.html"><a href="analysis-choices.html#clusterrandanalysis"><i class="fa fa-check"></i><b>5.5</b> Cluster-randomized trials</a><ul>
 <li class="chapter" data-level="5.5.1" data-path="analysis-choices.html"><a href="analysis-choices.html#bias-when-cluster-size-is-correlated-with-potential-outcomes"><i class="fa fa-check"></i><b>5.5.1</b> Bias when cluster size is correlated with potential outcomes</a></li>
@@ -573,23 +573,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</h1>
 <h4 class="author"><em>Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz</em></h4>
-<h4 class="date"><em>October 02, 2023</em></h4>
+<h4 class="date"><em>November 01, 2023</em></h4>
 </div>
 <div id="overview" class="section level1 unnumbered">
 <h1>Overview</h1>
 <p>This document explains how our team, the <a href="https://oes.gsa.gov/">Office of Evaluation Sciences in
-the General Services Administration</a> (the OES), tends to
-do statistical analysis. It also explains why we do what we do.<a href="references.html#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> The research integrity processes OES follows are already documented on our <a href="https://oes.gsa.gov/methods/">Evaluation Resources Web Page</a>. For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.</p>
+the General Services Administration</a> (the OES), tends to do statistical analysis. It also explains why we do what we do.<a href="references.html#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> The research integrity processes OES follows are already documented on our <a href="https://oes.gsa.gov/methods/">Evaluation Resources Web Page</a>. For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.</p>
 <div id="purposes-of-this-document" class="section level2 unnumbered">
 <h2>Purposes of this document</h2>
-<p><em>First</em>, this document educates new team members about the decisions past team
-members have made regarding the design and analysis of the studies fielded so
-far. It also serves as a place to record decisions for <a href="http://dx.doi.org/10.4067/S0718-090X2016000300011">our
+<p><em>First</em>, this document educates new team members about the decisions past team members have made regarding the design and analysis of the studies fielded so far. It also serves as a place to record decisions for <a href="http://dx.doi.org/10.4067/S0718-090X2016000300011">our
 own future selves</a>, and helps us harness the power that arises from our disciplinary diversity. That
 is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them in R.</p>
 <p><em>Second</em>, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. It should help guide our future experimental design and analysis. However, any given project may encounter reasons to make different decisions than those we describe here. This SOP should be thought of as more of a coordination device than a set of firm requirements.</p>
 <p><em>Third</em>, on a related note, this document should help us write better analysis plans and speed our practice of re-analysis. (Our team insists on a blind re-analysis of every study as a quality control for our results before they are reported to our agency partners.)</p>
-<p><em>Fourth</em> and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government&#x2019;s own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.</p>
+<p><em>Fourth</em>, and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government&#x2019;s own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.</p>
 </div>
 <div id="nature-and-limitations-of-this-document" class="section level2 unnumbered">
 <h2>Nature and limitations of this document</h2>

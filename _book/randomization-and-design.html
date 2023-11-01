@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-10-02">
+<meta name="date" content="2023-11-01">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -530,7 +530,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.3" data-path="analysis-choices.html"><a href="analysis-choices.html#how-to-choose-covariates-for-covariance-adjustment"><i class="fa fa-check"></i><b>5.3</b> How to choose covariates for covariance adjustment?</a></li>
 <li class="chapter" data-level="5.4" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandanalysis"><i class="fa fa-check"></i><b>5.4</b> Block-randomized trials</a><ul>
 <li class="chapter" data-level="5.4.1" data-path="analysis-choices.html"><a href="analysis-choices.html#testing-binary-outcomes-under-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables"><i class="fa fa-check"></i><b>5.4.1</b> Testing binary outcomes under block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables</a></li>
-<li class="chapter" data-level="5.4.2" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandate"><i class="fa fa-check"></i><b>5.4.2</b> Estimating an overall Average Treatment Effect</a></li>
+<li class="chapter" data-level="5.4.2" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandate"><i class="fa fa-check"></i><b>5.4.2</b> Estimating an overall average treatment effect</a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="analysis-choices.html"><a href="analysis-choices.html#clusterrandanalysis"><i class="fa fa-check"></i><b>5.5</b> Cluster-randomized trials</a><ul>
 <li class="chapter" data-level="5.5.1" data-path="analysis-choices.html"><a href="analysis-choices.html#bias-when-cluster-size-is-correlated-with-potential-outcomes"><i class="fa fa-check"></i><b>5.5.1</b> Bias when cluster size is correlated with potential outcomes</a></li>
@@ -572,8 +572,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="randomization-and-design" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> Randomization and Design</h1>
-<p>After working together with our agency partners to translate insights from the
-social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).<a href="references.html#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.</p>
+<p>After working together with our agency partners to translate insights from the social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).<a href="references.html#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.</p>
 <div id="coin-flipping-randomization-versus-urn-drawing-randomization" class="section level2">
 <h2><span class="header-section-number">4.1</span> Coin flipping randomization versus urn-drawing randomization</h2>
 <p>Many discussions of RCTs begin by talking about the intervention being assigned to units (people, schools, offices, districts) &#x201C;by the flip of a coin,&#x201D; or <strong>simple</strong> random assignment. In other words, each unit&#x2019;s assignment to treatment occurs separately, and there is no <em>ex ante</em> guarantee as to exactly what the final number of treated or control units will be. We rarely use this method in practice, even though it is a useful way to introduce the idea that RCTs guarantee fair access to the new policy.</p>
@@ -660,11 +659,12 @@ same time, they tend to provide less statistical power when testing
 hypotheses about the <em>interaction</em> between the two treatments. If we want to
 learn about how two different interventions work together, then the sample
 size requirements will be much larger than if we were satisfied with learning about each treatment separately.<a href="references.html#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a></p>
+<p>Note that <a href="https://direct.mit.edu/rest/article-abstract/doi/10.1162/rest_a_01317/115272/Factorial-Designs-Model-Selection-and-Incorrect?redirectedFrom=fulltext">recent work</a> highlights some important concerns regarding (1) the interpretation of factorial treatment effects and (2) the consequences of omitting interaction terms when estimating separate effects of each treatment <span class="citation">(Muralidharan, Romero, and W&#xFC;thrich <a href="#ref-muralidharan2023factorial">2023</a>)</span>. In regards to (2), even if the interaction term is not of interest, including it in the estimation model may be important for making correct inferences.<a href="references.html#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> Meanwhile, in regards to (1), these authors emphasize that a factorial treatment effect from a model without an interaction should be interpreted as a weighted average of interactions with other treatments administered across the sample.<a href="references.html#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
 </div>
 <div id="block-random-assignment" class="section level2">
 <h2><span class="header-section-number">4.4</span> Block Random Assignment</h2>
 <p>Statistical power depends not only on the size of the experiment and the strength of the treatment effect, but also on the amount of noise, or non-treatment-related variability, in outcomes. Block-randomized designs can help reduce this noise while simultaneously minimizing estimation error &#x2013; the amount that our particular experiment&#x2019;s estimate differs from the truth.</p>
-<p>In a <strong>block-randomized</strong>, or stratified, design, we randomly assign units to the policy intervention <em>within</em> pre-specified groups.<a href="references.html#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+<p>In a <strong>block-randomized</strong>, or stratified, design, we randomly assign units to the policy intervention <em>within</em> pre-specified groups.<a href="references.html#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a></p>
 <p>Suppose we are evaluating whether dedicated navigators can increase the percentage of students living in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. In a real study we can never know the outcome in all buildings both with and without navigators (the &#x201C;fundamental problem of causal inference&#x201D; from the last chapter). But if we could, we might have the data below:</p>
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
@@ -1077,7 +1077,7 @@ TCTC
 </table>
 <p>With this blocked design restricting the random assignments that are possible, we now get an estimate that is no more than 10 percentage points from the truth. Further, our estimates will have less variability (an SD of 8.16 rather than 11.4). This improves the statistical power of our design.</p>
 <p>For a more realistic example, suppose we are designing an experiment
-where the sample includes patients from two different hospitals. We might randomly assign patients to treatment and control <em>within</em> each hospital. For instance, we might assign half of the patients in hospital &#x201C;A&#x201D; to treatment and half to control, then do the same in hospital &#x201C;B.&#x201D;<a href="references.html#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> Below, we have 50 units in hospital &#x201C;A&#x201D; and 50 in hospital &#x201C;B&#x201D;:</p>
+where the sample includes patients from two different hospitals. We might randomly assign patients to treatment and control <em>within</em> each hospital. For instance, we might assign half of the patients in hospital &#x201C;A&#x201D; to treatment and half to control, then do the same in hospital &#x201C;B.&#x201D;<a href="references.html#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> Below, we have 50 units in hospital &#x201C;A&#x201D; and 50 in hospital &#x201C;B&#x201D;:</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1">dat1<span class="op">$</span>blockID &lt;-<span class="st"> </span><span class="kw">gl</span>(<span class="dt">n =</span> <span class="dv">2</span>, <span class="dt">k =</span> N<span class="op">/</span><span class="dv">2</span>, <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Block A&quot;</span>, <span class="st">&quot;Block B&quot;</span>))</a>
 <a class="sourceLine" id="cb40-2" title="2"><span class="kw">with</span>(dat1,<span class="kw">table</span>(<span class="dt">blockID=</span>dat1<span class="op">$</span>blockID))</a></code></pre></div>
 <pre><code>blockID
@@ -1299,6 +1299,9 @@ blocksV3    2.8342  2  0.2424
 <div id="refs" class="references">
 <div id="ref-R-randomizr">
 <p>Coppock, Alexander. 2022a. <em>Randomizr: Easy-to-Use Tools for Common Forms of Random Assignment and Sampling</em>. <a href="https://CRAN.R-project.org/package=randomizr">https://CRAN.R-project.org/package=randomizr</a>.</p>
+</div>
+<div id="ref-muralidharan2023factorial">
+<p>Muralidharan, Karthik, Mauricio Romero, and Kaspar W&#xFC;thrich. 2023. &#x201C;Factorial Designs, Model Selection, and (Incorrect) Inference in Randomized Experiments.&#x201D; <em>Review of Economics and Statistics</em>, 1&#x2013;44.</p>
 </div>
 <div id="ref-moore2012multivariate">
 <p>Moore, Ryan T. 2012. &#x201C;Multivariate Continuous Blocking to Improve Political Science Experiments.&#x201D; <em>Political Analysis</em> 20 (4): 460&#x2013;79.</p>

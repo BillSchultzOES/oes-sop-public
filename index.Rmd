@@ -168,14 +168,11 @@ readr::write_lines(htmlhead, path = "header.html")
 # Overview {-}
 
 This document explains how our team, the [Office of Evaluation Sciences in
-the General Services Administration](https://oes.gsa.gov/) (the OES), tends to
-do statistical analysis. It also explains why we do what we do. ^[We call this document a standard operating procedure (SOP) because we are inspired by the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).] The research integrity processes OES follows are already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.
+the General Services Administration](https://oes.gsa.gov/) (the OES), tends to do statistical analysis. It also explains why we do what we do. ^[We call this document a standard operating procedure (SOP) because we are inspired by the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).] The research integrity processes OES follows are already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.
 
 ## Purposes of this document {-}
 
-*First*, this document educates new team members about the decisions past team
-members have made regarding the design and analysis of the studies fielded so
-far. It also serves as a place to record decisions for [our
+*First*, this document educates new team members about the decisions past team members have made regarding the design and analysis of the studies fielded so far. It also serves as a place to record decisions for [our
 own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011), and helps us harness the power that arises from our disciplinary diversity. That
 is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them in R.
 
@@ -183,7 +180,7 @@ is, current and past team members have made decisions about how to approach stat
 
 *Third*, on a related note, this document should help us write better analysis plans and speed our practice of re-analysis. (Our team insists on a blind re-analysis of every study as a quality control for our results before they are reported to our agency partners.)
 
-*Fourth* and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government's own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.
+*Fourth*, and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government's own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.
 
 ## Nature and limitations of this document {-}
 

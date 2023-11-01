@@ -4,8 +4,7 @@ if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1.csv')) }
 
 # Randomization and Design
 
-After working together with our agency partners to translate insights from the
-social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).^[We develop the recommendations themselves following [processes](https://oes.gsa.gov/methods/) described in more detail on our website.] In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.
+After working together with our agency partners to translate insights from the social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).^[We develop the recommendations themselves following [processes](https://oes.gsa.gov/methods/) described in more detail on our website.] In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.
 
 ## Coin flipping randomization versus urn-drawing randomization
 
@@ -84,6 +83,8 @@ same time, they tend to provide less statistical power when testing
 hypotheses about the *interaction* between the two treatments. If we want to
 learn about how two different interventions work together, then the sample
 size requirements will be much larger than if we were satisfied with learning about each treatment separately.^[But see @small2011structured, for instance, for a way to increase the power of tests for such questions. This approach is not currently part of our standard practice.]
+
+Note that [recent work](https://direct.mit.edu/rest/article-abstract/doi/10.1162/rest_a_01317/115272/Factorial-Designs-Model-Selection-and-Incorrect?redirectedFrom=fulltext) highlights some important concerns regarding (1) the interpretation of factorial treatment effects and (2) the consequences of omitting interaction terms when estimating separate effects of each treatment [@muralidharan2023factorial]. In regards to (2), even if the interaction term is not of interest, including it in the estimation model may be important for making correct inferences.^[In particular, if the interaction is not truly zero, excluding it from the model could increase the risk of Type I errors (i.e., false positives).] Meanwhile, in regards to (1), these authors emphasize that a factorial treatment effect from a model without an interaction should be interpreted as a weighted average of interactions with other treatments administered across the sample.^[As the authors discuss, this could be framed as an internal or external validity concern.]
 
 ## Block Random Assignment
 
