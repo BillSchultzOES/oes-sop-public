@@ -25,13 +25,7 @@ We also need to use version 1.33 of `knitr`.
 install_version("knitr", version = 1.33)
 ```
 
-Finally, it may be necessary to install a development version of the `bfe` package, depending on the version of R you have loaded.
-
-```
-devtools::install_github('gibbonscharlie/bfe')
-```
-
-Our current use of `renv` should take care of all of those version control issues for us, and help prevent new ones if any packages change in the future in a way that would otherwise break our code. But this section of the README has been retained just in case we decide to drop `renv` in the future.
+Our current use of `renv` should take care of all of these version control issues for us, and help prevent new ones if any packages change in the future in a way that would otherwise break our code. But this section of the README has been retained just in case we decide to drop `renv` in the future.
 
 # Adding or removing chapters
 

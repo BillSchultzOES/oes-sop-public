@@ -25,7 +25,6 @@ Imports:
   future,
   future.apply,
   ri2,
-  bfe,
   remotes,
   devtools,
   withr,
@@ -36,5 +35,4 @@ Imports:
   V8,
   knitr
 Remotes:
-  rstudio/bookdown,
-  gibbonscharlie/bfe
+  rstudio/bookdown

@@ -2401,43 +2401,12 @@ with(dat2, table(treatment=Z,blocknumber=b))
 
 With those simulations prepared, we'll start by comparing multiple approaches to getting an unbiased block-size-weighted average treatment effect estimate, $\bar{\tau}_{\text{nbwt}}$. Notice that we do not use linear, additive fixed effects adjustment in any of these.^[I.e., we are not employing the least squares dummy variable, or LSDV, method of including fixed effects in a linear regression. For our purposes here, including fixed effects in the regression via a *within-estimator* instead would yield the same results [@cameron2005microeconometrics].] Two of these approaches do include fixed effects dummies, but they are mean-centered and interacted with treatment assignment --- in other words, we include the fixed effects via @lin_agnostic_2013 adjustment.^[See also @miratrix2013adjusting]
 
-```{r utilityfns, echo=FALSE}
-## bfe doesn't have a summary function so making one here, using their
-## print.iwe
-summary.iwe <- function(obj,level=.95){
-  results <- data.frame(estimate = c(obj$fe.est, obj$swe.est))
-  results$std.error <- c(sqrt(obj$fe.var), sqrt(obj$swe.var))
-  results$statistic <- results$estimate / results$std.error
-  results$p.value <- 2 * pnorm(abs(results$statistic), lower.tail = FALSE)
-  a <- (1 - level)/2
-  a <- c(a, 1 - a)
-  ## fac <- qt(a, obj$reg.int$df)
-  ## Using Normal approx following the print.iwe provided by the maintainers
-  fac <- qnorm(a, lower.tail=FALSE)
-
-  results$conf.low <- results$estimate - results$std.error * abs(fac)
-  results$conf.high <- results$estimate + results$std.error * abs(fac)
-
-  rownames(results) <- c("FE", "SWE")
-  return(results)
-
-  ##cat("Interaction weighted estimator results: \n\n")
-  ##print(round(results, digits = digits))
-  ##diff.pct <- (obj$fe.est - obj$swe.est) / obj$fe.est * 100
-  ##cat("\n")
-  ##cat("Percent difference:", round(diff.pct, 2), "\n\n")
-  ##cat("Observations:", obj$N, "\n")
-  ##cat("Groups:      ", obj$M, "\n\n")
-}
-```
-
 1. `simple_block` refers to calculating mean differences within blocks and then taking the block-size weighted average of them
 2. `diffmeans` uses the `difference_in_means` function from the `estimatr`
 package [@R-estimatr]
 3. `lmlin` applies Lin covariance adjustment *via* block indicators, using the `lm_lin` function
 4. `lmlinbyhand` verifies that function using matrix operations; see [this entry](https://alexandercoppock.com/Green-Lab-SOP/Green_Lab_SOP.html#taking-block-randomization-into-account-in-ses-and-cis) from the Green lab's SOP.
-5. `interactionBFE` uses the `EstimateIWE` function from the `bfe` package [@R-bfe]
-6. `regwts` uses the basic OLS function from R `lm` with appropriate weights.
+5. `regwts` uses the basic OLS function from R `lm` with appropriate weights.
 
 Let's compare the estimates themselves using a single dataset before running our simulation:
 
@@ -2457,13 +2426,10 @@ ate_nbwt2 <- difference_in_means(Y~Z,blocks=b,data=dat2)
 ## lmlin
 ate_nbwt3 <- lm_lin(Y~Z,covariates=~bF,data=dat2)
 
-## interactionBFE
-ate_nbwt5 <- EstimateIWE(y="Y",treatment="Z",group="bF",controls=NULL,data=as.data.frame(dat2))
-
 ## regwts
-ate_nbwt6 <- lm_robust(Y~Z,data=dat2,weights=nbwt)
-ate_nbwt6a <- lm(Y~Z,data=dat2,weights=nbwt)
-ate_nbwt6ase <- coeftest(ate_nbwt6a,vcov=vcovHC(ate_nbwt6a,type="HC2"))
+ate_nbwt5 <- lm_robust(Y~Z,data=dat2,weights=nbwt)
+ate_nbwt5a <- lm(Y~Z,data=dat2,weights=nbwt)
+ate_nbwt5ase <- coeftest(ate_nbwt5a,vcov=vcovHC(ate_nbwt5a,type="HC2"))
 
 ## lmlinbyhand
 X <- model.matrix(~bF-1,data=dat2)
@@ -2483,8 +2449,7 @@ nbwtates<-c(
   diffmeans=ate_nbwt2$coefficients[["Z"]],
   lmlin=ate_nbwt3$coefficients[["Z"]],
   lmlinbyhand=ate_nbwt4$coefficients[["Z"]],
-  interactionBFE=ate_nbwt5$swe.est,
-  regwts=ate_nbwt6$coefficients[["Z"]]
+  regwts=ate_nbwt5$coefficients[["Z"]]
   )
 
 nbwtates
@@ -2536,14 +2501,14 @@ global ate_nbwt3se = _se[1.znew]
 
 ** regwts
 qui reg ynew znew [aw = nbwt], vce(hc2)
-global ate_nbwt6 = _b[znew]
-global ate_nbwt6se = _se[znew]
+global ate_nbwt5 = _b[znew]
+global ate_nbwt5se = _se[znew]
 
 ** List all
 di "simple_block = $ate_nbwt1"
 di "diffmeans = $ate_nbwt2"
 di "lmlinbyhand = $ate_nbwt3"
-di "regwts = $ate_nbwt6"
+di "regwts = $ate_nbwt5"
 ```
 ::: 
 ::: {#ch5Hide24 .tabcontent}
@@ -2560,13 +2525,10 @@ ate_nbwt2 <- difference_in_means(Y~Z,blocks=b,data=dat2)
 ## lmlin
 ate_nbwt3 <- lm_lin(Y~Z,covariates=~bF,data=dat2)
 
-## interactionBFE
-ate_nbwt5 <- EstimateIWE(y="Y",treatment="Z",group="bF",controls=NULL,data=as.data.frame(dat2))
-
 ## regwts
-ate_nbwt6 <- lm_robust(Y~Z,data=dat2,weights=nbwt)
-ate_nbwt6a <- lm(Y~Z,data=dat2,weights=nbwt)
-ate_nbwt6ase <- coeftest(ate_nbwt6a,vcov=vcovHC(ate_nbwt6a,type="HC2"))
+ate_nbwt5 <- lm_robust(Y~Z,data=dat2,weights=nbwt)
+ate_nbwt5a <- lm(Y~Z,data=dat2,weights=nbwt)
+ate_nbwt5ase <- coeftest(ate_nbwt5a,vcov=vcovHC(ate_nbwt5a,type="HC2"))
 
 ## lmlinbyhand
 X <- model.matrix(~bF-1,data=dat2)
@@ -2586,8 +2548,7 @@ nbwtates<-c(
   diffmeans=ate_nbwt2$coefficients[["Z"]],
   lmlin=ate_nbwt3$coefficients[["Z"]],
   lmlinbyhand=ate_nbwt4$coefficients[["Z"]],
-  interactionBFE=ate_nbwt5$swe.est,
-  regwts=ate_nbwt6$coefficients[["Z"]]
+  regwts=ate_nbwt5$coefficients[["Z"]]
   )
 
 nbwtates
@@ -2609,8 +2570,7 @@ nbwtses <- c(
   diffmeans=ate_nbwt2$std.error,
 	lmlin=ate_nbwt3$std.error[["Z"]],
 	lmlinbyhand=ate_nbwt4se["Z","Std. Error"],
-	interactionBFE=ate_nbwt5$swe.var^.5,
-	regwts=ate_nbwt6$std.error[["Z"]]
+	regwts=ate_nbwt5$std.error[["Z"]]
   )
 
 nbwtses
@@ -2623,7 +2583,7 @@ nbwtses
 di "simple_block = $ate_nbwt1se"
 di "diffmeans = $ate_nbwt2se"
 di "lmlinbyhand = $ate_nbwt3se"
-di "regwts = $ate_nbwt6se"
+di "regwts = $ate_nbwt5se"
 ```
 ::: 
 ::: {#ch5Hide25 .tabcontent}
@@ -2638,8 +2598,7 @@ nbwtses <- c(
   diffmeans=ate_nbwt2$std.error,
 	lmlin=ate_nbwt3$std.error[["Z"]],
 	lmlinbyhand=ate_nbwt4se["Z","Std. Error"],
-	interactionBFE=ate_nbwt5$swe.var^.5,
-	regwts=ate_nbwt6$std.error[["Z"]]
+	regwts=ate_nbwt5$std.error[["Z"]]
   )
 
 nbwtses
@@ -2844,15 +2803,6 @@ estnowtIID <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm, label="E0:
 estnbwt1 <- declare_estimator(Y~Z, inquiry=theestimand, .method=difference_in_means, blocks=b, label="E2: Diff Means Block Size Weights, Design SE")
 estnbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_lin, covariates=~bF, label="E3: Treatment Interaction with Block Indicators, Design SE")
 
-# Using the BFE package (also block-size weights)
-iwe_est_fun <- function(data) {
-	obj <- EstimateIWE(y="Y", treatment="Z", group="bF", controls=NULL, data=data)
-	res <- summary.iwe(obj)["SWE",]
-	res$term <- "Z"
-	return(res)
-}
-estnbwt3 <- declare_estimator(handler=label_estimator(iwe_est_fun), inquiry=theestimand, label="E4: Treatment Interaction with Block Indicators, Design SE")
-
 # Another block-size-weighted option (via regression weights)
 nbwt_est_fun <- function(data){
 	data$newnbwt <- with(data, (Z/pib) + ((1-Z)/(1-pib)))
@@ -2860,11 +2810,11 @@ nbwt_est_fun <- function(data){
 	res <- tidy(obj) %>% filter(term=="Z")
 	return(res)
 }
-estnbwt4 <- declare_estimator(handler=label_estimator(nbwt_est_fun), inquiry=theestimand, label="E5: Least Squares with Block Size Weights, Design SE")
+estnbwt3 <- declare_estimator(handler=label_estimator(nbwt_est_fun), inquiry=theestimand, label="E4: Least Squares with Block Size Weights, Design SE")
 
 # Two precision-weighted options
-esthbwt1 <- declare_estimator(Y~Z+bF, inquiry=theestimand, .method=lm_robust, label="E6: Precision Weights via Fixed Effects, Design SE")
-esthbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust, fixed_effects=~bF, label="E7: Precision Weights via Demeaning, Design SE")
+esthbwt1 <- declare_estimator(Y~Z+bF, inquiry=theestimand, .method=lm_robust, label="E5: Precision Weights via Fixed Effects, Design SE")
+esthbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust, fixed_effects=~bF, label="E6: Precision Weights via Demeaning, Design SE")
 
 # Another precision-weighted option (regression weights)
 hbwt_est_fun <- function(data){
@@ -2874,7 +2824,7 @@ hbwt_est_fun <- function(data){
 	res <- tidy(obj) %>% filter(term=="Z")
 	return(res)
 }
-esthbwt3 <- declare_estimator(handler=label_estimator(hbwt_est_fun), inquiry=theestimand, label="E8: Direct Precision Weights, Design SE")
+esthbwt3 <- declare_estimator(handler=label_estimator(hbwt_est_fun), inquiry=theestimand, label="E7: Direct Precision Weights, Design SE")
 
 # A final precision-weighted option (demeaning)
 direct_demean_fun <- function(data){
@@ -2891,7 +2841,7 @@ direct_demean_fun <- function(data){
 		   df=obj$df[[2]],
 		   outcome="Y")
 }
-esthbwt4 <- declare_estimator(handler=label_estimator(direct_demean_fun), inquiry=theestimand, label="E9: Direct Demeaning, Design SE")
+esthbwt4 <- declare_estimator(handler=label_estimator(direct_demean_fun), inquiry=theestimand, label="E8: Direct Demeaning, Design SE")
 
 ## Vector of all the estimator function names just created
 ## (via regular expression)
@@ -2908,7 +2858,7 @@ checkest <- sapply(
 
 ## Combine all of these design objects
 thedesignPlusEstimators <- thedesign2 +
-	estnowtHC2 + estnowtIID + estnbwt1 + estnbwt2 + estnbwt3 + estnbwt4 +
+	estnowtHC2 + estnowtIID + estnbwt1 + estnbwt2 + estnbwt3 + 
 	esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
 
 ## Update the default diagnosands for this simulation
@@ -2987,31 +2937,31 @@ program define apply_estimators, rclass
 	return scalar estnbwt2_se = _se[1.znew]
 	return scalar estnbwt2_p = r(table)["pvalue", "1.znew"]
 	
-	** E5: Least Squares with Block Size Weights, Design SE
+	** E4: Least Squares with Block Size Weights, Design SE
 	qui reg ynew znew [aw = nbwt], vce(hc2)
 	return scalar estnbwt4_est = _b[znew]
 	return scalar estnbwt4_se = _se[znew]
 	return scalar estnbwt4_p = r(table)["pvalue", "znew"]
 
-	** E6: Precision Weights via Fixed Effects, Design SE
+	** E5: Precision Weights via Fixed Effects, Design SE
 	qui reg ynew znew i.bf, vce(hc2)
 	return scalar esthbwt1_est = _b[znew]
 	return scalar esthbwt1_se = _se[znew]
 	return scalar esthbwt1_p = r(table)["pvalue", "znew"]
 	
-	** E7: Precision Weights via Demeaning, Design SE
+	** E6: Precision Weights via Demeaning, Design SE
 	qui areg ynew znew, absorb(bf) vce(hc2)
 	return scalar esthbwt2_est = _b[znew]
 	return scalar esthbwt2_se = _se[znew]
 	return scalar esthbwt2_p = r(table)["pvalue", "znew"]
 	
-	** E8: Direct Precision Weights, Design SE
+	** E7: Direct Precision Weights, Design SE
 	qui reg ynew znew [aw = hbwt], vce(hc2)
 	return scalar esthbwt3_est = _b[znew]
 	return scalar esthbwt3_se = _se[znew]
 	return scalar esthbwt3_p = r(table)["pvalue", "znew"]
 	
-	** E9: Direct Demeaning, Design SE
+	** E8: Direct Demeaning, Design SE
 	bysort bf: egen meanz = mean(znew)
 	bysort bf: egen meany = mean(ynew)
 	gen demeany = ynew - meany
@@ -3039,7 +2989,7 @@ apply_estimators
 qui des, short
 di (`r(k)' - 1)/3
 matrix diagnosands = J((`r(k)' - 1)/3, 6, .)
-matrix rownames diagnosands = "E0: Ignores Blocks, OLS SE" "E1: Ignores Blocks, Design (HC2) SE" "E2: Diff Means BW, Design SE" "E3: Lin BW, Design SE" "E5: Direct BW, Design SE" "E6: FE PW, Design SE" "E7: Demean PW, Design SE" "E8: Direct PW, Design SE" "E9: Direct Demeaning, Design SE"
+matrix rownames diagnosands = "E0: Ignores Blocks, OLS SE" "E1: Ignores Blocks, Design (HC2) SE" "E2: Diff Means BW, Design SE" "E3: Lin BW, Design SE" "E4: Direct BW, Design SE" "E5: FE PW, Design SE" "E6: Demean PW, Design SE" "E7: Direct PW, Design SE" "E8: Direct Demeaning, Design SE"
 matrix colnames diagnosands = "Mean estimand" "Mean estimate" "Bias" "SD Estimate" "MeanSE" "Coverage"
 
 ** Get variable name roots to loop through
@@ -3105,15 +3055,6 @@ estnowtIID <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm, label="E0:
 estnbwt1 <- declare_estimator(Y~Z, inquiry=theestimand, .method=difference_in_means, blocks=b, label="E2: Diff Means Block Size Weights, Design SE")
 estnbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_lin, covariates=~bF, label="E3: Treatment Interaction with Block Indicators, Design SE")
 
-# Using the BFE package (also block-size weights)
-iwe_est_fun <- function(data) {
-	obj <- EstimateIWE(y="Y", treatment="Z", group="bF", controls=NULL, data=data)
-	res <- summary.iwe(obj)["SWE",]
-	res$term <- "Z"
-	return(res)
-}
-estnbwt3 <- declare_estimator(handler=label_estimator(iwe_est_fun), inquiry=theestimand, label="E4: Treatment Interaction with Block Indicators, Design SE")
-
 # Another block-size-weighted option (via regression weights)
 nbwt_est_fun <- function(data){
 	data$newnbwt <- with(data, (Z/pib) + ((1-Z)/(1-pib)))
@@ -3121,11 +3062,11 @@ nbwt_est_fun <- function(data){
 	res <- tidy(obj) %>% filter(term=="Z")
 	return(res)
 }
-estnbwt4 <- declare_estimator(handler=label_estimator(nbwt_est_fun), inquiry=theestimand, label="E5: Least Squares with Block Size Weights, Design SE")
+estnbwt3 <- declare_estimator(handler=label_estimator(nbwt_est_fun), inquiry=theestimand, label="E4: Least Squares with Block Size Weights, Design SE")
 
 # Two precision-weighted options
-esthbwt1 <- declare_estimator(Y~Z+bF, inquiry=theestimand, .method=lm_robust, label="E6: Precision Weights via Fixed Effects, Design SE")
-esthbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust, fixed_effects=~bF, label="E7: Precision Weights via Demeaning, Design SE")
+esthbwt1 <- declare_estimator(Y~Z+bF, inquiry=theestimand, .method=lm_robust, label="E5: Precision Weights via Fixed Effects, Design SE")
+esthbwt2 <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_robust, fixed_effects=~bF, label="E6: Precision Weights via Demeaning, Design SE")
 
 # Another precision-weighted option (regression weights)
 hbwt_est_fun <- function(data){
@@ -3135,7 +3076,7 @@ hbwt_est_fun <- function(data){
 	res <- tidy(obj) %>% filter(term=="Z")
 	return(res)
 }
-esthbwt3 <- declare_estimator(handler=label_estimator(hbwt_est_fun), inquiry=theestimand, label="E8: Direct Precision Weights, Design SE")
+esthbwt3 <- declare_estimator(handler=label_estimator(hbwt_est_fun), inquiry=theestimand, label="E7: Direct Precision Weights, Design SE")
 
 # A final precision-weighted option (demeaning)
 direct_demean_fun <- function(data){
@@ -3152,7 +3093,7 @@ direct_demean_fun <- function(data){
 		   df=obj$df[[2]],
 		   outcome="Y")
 }
-esthbwt4 <- declare_estimator(handler=label_estimator(direct_demean_fun), inquiry=theestimand, label="E9: Direct Demeaning, Design SE")
+esthbwt4 <- declare_estimator(handler=label_estimator(direct_demean_fun), inquiry=theestimand, label="E8: Direct Demeaning, Design SE")
 
 ## Vector of all the estimator function names just created
 ## (via regular expression)
@@ -3169,7 +3110,7 @@ checkest <- sapply(
 
 ## Combine all of these design objects
 thedesignPlusEstimators <- thedesign2 +
-	estnowtHC2 + estnowtIID + estnbwt1 + estnbwt2 + estnbwt3 + estnbwt4 +
+	estnowtHC2 + estnowtIID + estnbwt1 + estnbwt2 + estnbwt3 + 
 	esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
 
 ## Update the default diagnosands for this simulation

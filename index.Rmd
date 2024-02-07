@@ -24,7 +24,6 @@ graphics: yes
 ```{r options, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
 ## Libraries are now managed by the renv system
 require(knitr)
-library(bfe)
 library(blockTools)
 library(coin)
 library(DeclareDesign)
