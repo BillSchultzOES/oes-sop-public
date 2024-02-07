@@ -617,10 +617,10 @@ with, two of which must be specified by the user. The third is then calculated a
 <p>Note that there is also the parameter <code>sd</code>, representing the standard deviation of the outcome. This is set to 1 by default unless <code>power.t.test()</code> is instructed otherwise.</p>
 <p>Say, for example, you want to know the MDE for a two-arm study with 1,000
 participants, of which half are assigned to treatment. Using <code>power.t.test()</code> you would specify:</p>
-<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1"><span class="kw">power.t.test</span>(</a>
-<a class="sourceLine" id="cb168-2" title="2">  <span class="dt">n =</span> <span class="dv">500</span>, <span class="co"># The number of observations per treatment arm</span></a>
-<a class="sourceLine" id="cb168-3" title="3">  <span class="dt">power =</span> <span class="fl">0.8</span> <span class="co"># The traditional power threshold of 80%</span></a>
-<a class="sourceLine" id="cb168-4" title="4">  )</a></code></pre></div>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb166-1" title="1"><span class="kw">power.t.test</span>(</a>
+<a class="sourceLine" id="cb166-2" title="2">  <span class="dt">n =</span> <span class="dv">500</span>, <span class="co"># The number of observations per treatment arm</span></a>
+<a class="sourceLine" id="cb166-3" title="3">  <span class="dt">power =</span> <span class="fl">0.8</span> <span class="co"># The traditional power threshold of 80%</span></a>
+<a class="sourceLine" id="cb166-4" title="4">  )</a></code></pre></div>
 <pre><code>
      Two-sample t test power calculation 
 
@@ -633,11 +633,11 @@ participants, of which half are assigned to treatment. Using <code>power.t.test(
 
 NOTE: n is number in *each* group</code></pre>
 <p>If all we wanted to extract was the MDE, we could instead write:</p>
-<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">n =</span> <span class="dv">500</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>delta</a></code></pre></div>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">n =</span> <span class="dv">500</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>delta</a></code></pre></div>
 <pre><code>[1] 0.1774</code></pre>
 <p>If we request the sample size instead, we can illustrate that this is applying an expression like the one we mention above: <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.6</mn><mi mathvariant="normal">/</mi><mn>0.1773605</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>&#x2248;</mo><mn>1000</mn></mrow><annotation encoding="application/x-tex">n = (5.6/0.1773605)^{2} \approx 1000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1141em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">5.6/0.1773605</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&#x2248;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1000</span></span></span></span></span></p>
 <p>And now via R code:</p>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb172-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">delta =</span> <span class="fl">0.1773605</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>n <span class="op">*</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">delta =</span> <span class="fl">0.1773605</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>n <span class="op">*</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
 <pre><code>[1] 1000</code></pre>
 <p>If you need to, you can adjust other parameters, like the standard deviation of the outcome, the level of the test, or whether the test is one-sided rather than two-sided. There are also other functions available for different types of outcomes. For example, if you have a binary response, you can use <code>power.prop.test()</code> to calculate power for a similar kind of simple difference in proportions test.</p>
 <p>An equivalent approach in Stata would be as follows:</p>
@@ -1404,13 +1404,13 @@ delta_steps(0.005) // Increments to apply</code></pre>
 <p>The final product&#x2014;<code>pwr_eval_sim</code> above in the R code&#x2014;reports the power for each of the user-specified effect sizes (<code>delta</code>) and (<code>vars</code>) model terms specified when calling <code>estimate()</code>. The output can be used to plot power curves or to compute minimum detectable effects.</p>
 <p>These functions help make the process of performing computational power analysis for OES projects easier, while still providing ample room for flexibility in both design and estimation strategy. For example, <code>replicate_design()</code> in the R code is a wrapper for <code>fabricate()</code> in the <a href="https://declaredesign.org/r/fabricatr/">fabricatr</a> package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters.</p>
 <p>By default, estimates in R are returned using <code>lm_robust()</code> from the <a href="https://declaredesign.org/r/estimatr/">estimatr</a> package, but alternative estimators can be specified. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:</p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb181-1" title="1"><span class="co">## Define logit estimator function</span></a>
-<a class="sourceLine" id="cb181-2" title="2">logit &lt;-<span class="st"> </span><span class="cf">function</span>(...){ <span class="kw">glm</span>(..., <span class="dt">family =</span> binomial)}</a>
-<a class="sourceLine" id="cb181-3" title="3"></a>
-<a class="sourceLine" id="cb181-4" title="4"><span class="co">## Pass this to the estimate() function above</span></a>
-<a class="sourceLine" id="cb181-5" title="5">est &lt;-<span class="st"> </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb181-6" title="6">  y <span class="op">~</span><span class="st"> </span>x <span class="op">+</span><span class="st"> </span>z1 <span class="op">+</span><span class="st"> </span>z2, <span class="dt">data =</span> rep, <span class="dt">estimator =</span> logit</a>
-<a class="sourceLine" id="cb181-7" title="7">  ) </a></code></pre></div>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb179-1" title="1"><span class="co">## Define logit estimator function</span></a>
+<a class="sourceLine" id="cb179-2" title="2">logit &lt;-<span class="st"> </span><span class="cf">function</span>(...){ <span class="kw">glm</span>(..., <span class="dt">family =</span> binomial)}</a>
+<a class="sourceLine" id="cb179-3" title="3"></a>
+<a class="sourceLine" id="cb179-4" title="4"><span class="co">## Pass this to the estimate() function above</span></a>
+<a class="sourceLine" id="cb179-5" title="5">est &lt;-<span class="st"> </span><span class="kw">estimate</span>(</a>
+<a class="sourceLine" id="cb179-6" title="6">  y <span class="op">~</span><span class="st"> </span>x <span class="op">+</span><span class="st"> </span>z1 <span class="op">+</span><span class="st"> </span>z2, <span class="dt">data =</span> rep, <span class="dt">estimator =</span> logit</a>
+<a class="sourceLine" id="cb179-7" title="7">  ) </a></code></pre></div>
 <p>Other tools for power simulation exist as well. For instance, throughout this SOP, we have used <a href="https://declaredesign.org/r/declaredesign/articles/DeclareDesign_101.html">DeclareDesign</a> to simulate hypothetical research designs and compare their performance. And there is no shortage of further simulation
 examples that can be found online for more specialized use-cases.</p>
 </div>
@@ -1596,7 +1596,7 @@ yline(0.8) title(&quot;Power for a 2x2 Design&quot;)</code></pre>
 
 </div>
 </div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-162-1.png" width=".9\textwidth"></p>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-160-1.png" width=".9\textwidth"></p>
 <p>Of course, in this simple example, we could still have relied on some reasonable analytical assumptions to arrive at these estimates (see a helpful discussion <a href="https://statmodeling.stat.columbia.edu/2018/03/15/need-16-times-sample-size-estimate-interaction-estimate-main-effect/">here</a>). But running a simulation saves us the trouble.</p>
 </div>
 <div id="covariate-adjustment-with-the-lin-estimator" class="section level3">
@@ -1870,102 +1870,102 @@ title(&quot;Power with Lin adjustment&quot;) yline(0.8)</code></pre>
 
 </div>
 </div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-171-1.png" width=".9\textwidth"></p>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-169-1.png" width=".9\textwidth"></p>
 </div>
 <div id="incorporating-declaredesign-into-oes-power-tools" class="section level3">
 <h3><span class="header-section-number">6.4.3</span> Incorporating DeclareDesign into OES Power Tools</h3>
 <p>In R, we can also use <code>DeclareDesign</code> within this <strong>Replicate</strong>, <strong>Estimate</strong>, <strong>Evaluate</strong> framework. This involves using <code>DeclareDesign</code> to draw estimates, and then feeding the results into the OES <code>evaluate_power()</code> function. We compare the <code>DeclareDesign</code> approach to the OES <code>Replicate</code> and <code>Estimate</code> steps below.</p>
 <p>First, we simulate a simple design with the OES tools introduced above:</p>
-<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb192-1" title="1">eval &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb192-2" title="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb192-3" title="3"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
-<a class="sourceLine" id="cb192-4" title="4">    <span class="dt">R =</span> <span class="dv">1000</span>,</a>
-<a class="sourceLine" id="cb192-5" title="5">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
-<a class="sourceLine" id="cb192-6" title="6">    <span class="dt">Y =</span> <span class="kw">rnorm</span>(N),</a>
-<a class="sourceLine" id="cb192-7" title="7">    <span class="dt">Z =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.5</span>)</a>
-<a class="sourceLine" id="cb192-8" title="8">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb192-9" title="9"><span class="st">  </span></a>
-<a class="sourceLine" id="cb192-10" title="10"><span class="st">  </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb192-11" title="11">    <span class="dt">form =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">vars =</span> <span class="st">&quot;Z&quot;</span></a>
-<a class="sourceLine" id="cb192-12" title="12">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb192-13" title="13"><span class="st">  </span></a>
-<a class="sourceLine" id="cb192-14" title="14"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb192-15" title="15">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb192-16" title="16">    )</a></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb190-1" title="1">eval &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb190-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb190-3" title="3"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
+<a class="sourceLine" id="cb190-4" title="4">    <span class="dt">R =</span> <span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb190-5" title="5">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
+<a class="sourceLine" id="cb190-6" title="6">    <span class="dt">Y =</span> <span class="kw">rnorm</span>(N),</a>
+<a class="sourceLine" id="cb190-7" title="7">    <span class="dt">Z =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.5</span>)</a>
+<a class="sourceLine" id="cb190-8" title="8">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb190-9" title="9"><span class="st">  </span></a>
+<a class="sourceLine" id="cb190-10" title="10"><span class="st">  </span><span class="kw">estimate</span>(</a>
+<a class="sourceLine" id="cb190-11" title="11">    <span class="dt">form =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">vars =</span> <span class="st">&quot;Z&quot;</span></a>
+<a class="sourceLine" id="cb190-12" title="12">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb190-13" title="13"><span class="st">  </span></a>
+<a class="sourceLine" id="cb190-14" title="14"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
+<a class="sourceLine" id="cb190-15" title="15">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb190-16" title="16">    )</a></code></pre></div>
 <p>Then, we do the same with <code>DeclareDesign</code>, declaring a population, potential outcomes, assignments, a target quantity of interest, and an estimator:</p>
-<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" title="1">design &lt;-</a>
-<a class="sourceLine" id="cb193-2" title="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb193-3" title="3"><span class="st">  </span><span class="kw">declare_population</span>(</a>
-<a class="sourceLine" id="cb193-4" title="4">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
-<a class="sourceLine" id="cb193-5" title="5">    <span class="dt">U =</span> <span class="kw">rnorm</span>(N),</a>
-<a class="sourceLine" id="cb193-6" title="6">    <span class="kw">potential_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>U)</a>
-<a class="sourceLine" id="cb193-7" title="7">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb193-8" title="8"><span class="st">  </span></a>
-<a class="sourceLine" id="cb193-9" title="9"><span class="st">  </span><span class="kw">declare_assignment</span>(<span class="dt">Z =</span> <span class="kw">simple_ra</span>(N, <span class="dt">prob =</span> <span class="fl">0.5</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb193-10" title="10"><span class="st">  </span></a>
-<a class="sourceLine" id="cb193-11" title="11"><span class="st">  </span><span class="kw">declare_inquiry</span>(<span class="dt">ATE =</span> <span class="kw">mean</span>(Y_Z_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Y_Z_<span class="dv">0</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb193-12" title="12"><span class="st">  </span></a>
-<a class="sourceLine" id="cb193-13" title="13"><span class="st">  </span><span class="kw">declare_measurement</span>(<span class="dt">Y =</span> <span class="kw">reveal_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>Z)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb193-14" title="14"><span class="st">  </span></a>
-<a class="sourceLine" id="cb193-15" title="15"><span class="st">  </span><span class="kw">declare_estimator</span>(</a>
-<a class="sourceLine" id="cb193-16" title="16">    Y <span class="op">~</span><span class="st"> </span>Z,</a>
-<a class="sourceLine" id="cb193-17" title="17">    <span class="dt">inquiry =</span> <span class="st">&quot;ATE&quot;</span>,</a>
-<a class="sourceLine" id="cb193-18" title="18">    <span class="dt">.method =</span> lm_robust</a>
-<a class="sourceLine" id="cb193-19" title="19">    )</a></code></pre></div>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb191-1" title="1">design &lt;-</a>
+<a class="sourceLine" id="cb191-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-3" title="3"><span class="st">  </span><span class="kw">declare_population</span>(</a>
+<a class="sourceLine" id="cb191-4" title="4">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
+<a class="sourceLine" id="cb191-5" title="5">    <span class="dt">U =</span> <span class="kw">rnorm</span>(N),</a>
+<a class="sourceLine" id="cb191-6" title="6">    <span class="kw">potential_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>U)</a>
+<a class="sourceLine" id="cb191-7" title="7">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb191-8" title="8"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-9" title="9"><span class="st">  </span><span class="kw">declare_assignment</span>(<span class="dt">Z =</span> <span class="kw">simple_ra</span>(N, <span class="dt">prob =</span> <span class="fl">0.5</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb191-10" title="10"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-11" title="11"><span class="st">  </span><span class="kw">declare_inquiry</span>(<span class="dt">ATE =</span> <span class="kw">mean</span>(Y_Z_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Y_Z_<span class="dv">0</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb191-12" title="12"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-13" title="13"><span class="st">  </span><span class="kw">declare_measurement</span>(<span class="dt">Y =</span> <span class="kw">reveal_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>Z)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb191-14" title="14"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-15" title="15"><span class="st">  </span><span class="kw">declare_estimator</span>(</a>
+<a class="sourceLine" id="cb191-16" title="16">    Y <span class="op">~</span><span class="st"> </span>Z,</a>
+<a class="sourceLine" id="cb191-17" title="17">    <span class="dt">inquiry =</span> <span class="st">&quot;ATE&quot;</span>,</a>
+<a class="sourceLine" id="cb191-18" title="18">    <span class="dt">.method =</span> lm_robust</a>
+<a class="sourceLine" id="cb191-19" title="19">    )</a></code></pre></div>
 <p>We then use draws from this design within the OES tools:</p>
-<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb194-1" title="1">dd_eval &lt;-</a>
-<a class="sourceLine" id="cb194-2" title="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb194-3" title="3"><span class="st">  </span><span class="kw">replicate</span>(</a>
-<a class="sourceLine" id="cb194-4" title="4">    <span class="dt">n =</span> <span class="dv">1000</span>,</a>
-<a class="sourceLine" id="cb194-5" title="5">    <span class="dt">expr =</span> <span class="kw">draw_estimates</span>(design) <span class="op">%&gt;%</span><span class="st"> </span>list</a>
-<a class="sourceLine" id="cb194-6" title="6">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb194-7" title="7"><span class="st">  </span></a>
-<a class="sourceLine" id="cb194-8" title="8"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb194-9" title="9"><span class="st">  </span></a>
-<a class="sourceLine" id="cb194-10" title="10"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb194-11" title="11">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb194-12" title="12">    )</a></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb192-1" title="1">dd_eval &lt;-</a>
+<a class="sourceLine" id="cb192-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-3" title="3"><span class="st">  </span><span class="kw">replicate</span>(</a>
+<a class="sourceLine" id="cb192-4" title="4">    <span class="dt">n =</span> <span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb192-5" title="5">    <span class="dt">expr =</span> <span class="kw">draw_estimates</span>(design) <span class="op">%&gt;%</span><span class="st"> </span>list</a>
+<a class="sourceLine" id="cb192-6" title="6">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb192-7" title="7"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-8" title="8"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb192-9" title="9"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-10" title="10"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
+<a class="sourceLine" id="cb192-11" title="11">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb192-12" title="12">    )</a></code></pre></div>
 <p>We show the similarity between the two approaches to generating the simulated
 data in the figure below:</p>
-<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb195-1" title="1"><span class="kw">bind_rows</span>(</a>
-<a class="sourceLine" id="cb195-2" title="2">  eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;OES Power Tools&quot;</span>),</a>
-<a class="sourceLine" id="cb195-3" title="3">  dd_eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;DeclareDesign&quot;</span>)</a>
-<a class="sourceLine" id="cb195-4" title="4">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb195-5" title="5"><span class="st">  </span></a>
-<a class="sourceLine" id="cb195-6" title="6"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb195-7" title="7"><span class="st">  </span></a>
-<a class="sourceLine" id="cb195-8" title="8"><span class="st">  </span><span class="kw">geom_line</span>(</a>
-<a class="sourceLine" id="cb195-9" title="9">    <span class="kw">aes</span>(delta, power, <span class="dt">linetype =</span> method)</a>
-<a class="sourceLine" id="cb195-10" title="10">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb195-11" title="11"><span class="st">  </span></a>
-<a class="sourceLine" id="cb195-12" title="12"><span class="st">  </span><span class="kw">scale_linetype_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb195-13" title="13"><span class="st">  </span></a>
-<a class="sourceLine" id="cb195-14" title="14"><span class="st">  </span><span class="kw">labs</span>(</a>
-<a class="sourceLine" id="cb195-15" title="15">    <span class="dt">x =</span> <span class="kw">expression</span>(delta),</a>
-<a class="sourceLine" id="cb195-16" title="16">    <span class="dt">y =</span> <span class="st">&quot;Power&quot;</span>,</a>
-<a class="sourceLine" id="cb195-17" title="17">    <span class="dt">linetype =</span> <span class="ot">NULL</span></a>
-<a class="sourceLine" id="cb195-18" title="18">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb195-19" title="19"><span class="st">  </span></a>
-<a class="sourceLine" id="cb195-20" title="20"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
-<a class="sourceLine" id="cb195-21" title="21">    <span class="dt">n.breaks =</span> <span class="dv">6</span></a>
-<a class="sourceLine" id="cb195-22" title="22">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb195-23" title="23"><span class="st">  </span></a>
-<a class="sourceLine" id="cb195-24" title="24"><span class="st">  </span><span class="kw">geom_hline</span>(</a>
-<a class="sourceLine" id="cb195-25" title="25">    <span class="dt">yintercept =</span> <span class="fl">0.8</span>,</a>
-<a class="sourceLine" id="cb195-26" title="26">    <span class="dt">col =</span> <span class="st">&quot;grey25&quot;</span>,</a>
-<a class="sourceLine" id="cb195-27" title="27">    <span class="dt">size =</span> <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb195-28" title="28">    <span class="dt">alpha =</span> <span class="fl">0.8</span></a>
-<a class="sourceLine" id="cb195-29" title="29">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb195-30" title="30"><span class="st">  </span></a>
-<a class="sourceLine" id="cb195-31" title="31"><span class="st">  </span>ggridges<span class="op">::</span><span class="kw">theme_ridges</span>(</a>
-<a class="sourceLine" id="cb195-32" title="32">    <span class="dt">center_axis_labels =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb195-33" title="33">    <span class="dt">font_size =</span> <span class="dv">10</span></a>
-<a class="sourceLine" id="cb195-34" title="34">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb195-35" title="35"><span class="st">  </span></a>
-<a class="sourceLine" id="cb195-36" title="36"><span class="st">  </span><span class="kw">theme</span>(</a>
-<a class="sourceLine" id="cb195-37" title="37">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
-<a class="sourceLine" id="cb195-38" title="38">    )</a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-175-1.png" width=".9\textwidth"></p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" title="1"><span class="kw">bind_rows</span>(</a>
+<a class="sourceLine" id="cb193-2" title="2">  eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;OES Power Tools&quot;</span>),</a>
+<a class="sourceLine" id="cb193-3" title="3">  dd_eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;DeclareDesign&quot;</span>)</a>
+<a class="sourceLine" id="cb193-4" title="4">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb193-5" title="5"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-6" title="6"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-7" title="7"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-8" title="8"><span class="st">  </span><span class="kw">geom_line</span>(</a>
+<a class="sourceLine" id="cb193-9" title="9">    <span class="kw">aes</span>(delta, power, <span class="dt">linetype =</span> method)</a>
+<a class="sourceLine" id="cb193-10" title="10">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-11" title="11"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-12" title="12"><span class="st">  </span><span class="kw">scale_linetype_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-13" title="13"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-14" title="14"><span class="st">  </span><span class="kw">labs</span>(</a>
+<a class="sourceLine" id="cb193-15" title="15">    <span class="dt">x =</span> <span class="kw">expression</span>(delta),</a>
+<a class="sourceLine" id="cb193-16" title="16">    <span class="dt">y =</span> <span class="st">&quot;Power&quot;</span>,</a>
+<a class="sourceLine" id="cb193-17" title="17">    <span class="dt">linetype =</span> <span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb193-18" title="18">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-19" title="19"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-20" title="20"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb193-21" title="21">    <span class="dt">n.breaks =</span> <span class="dv">6</span></a>
+<a class="sourceLine" id="cb193-22" title="22">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-23" title="23"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-24" title="24"><span class="st">  </span><span class="kw">geom_hline</span>(</a>
+<a class="sourceLine" id="cb193-25" title="25">    <span class="dt">yintercept =</span> <span class="fl">0.8</span>,</a>
+<a class="sourceLine" id="cb193-26" title="26">    <span class="dt">col =</span> <span class="st">&quot;grey25&quot;</span>,</a>
+<a class="sourceLine" id="cb193-27" title="27">    <span class="dt">size =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb193-28" title="28">    <span class="dt">alpha =</span> <span class="fl">0.8</span></a>
+<a class="sourceLine" id="cb193-29" title="29">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-30" title="30"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-31" title="31"><span class="st">  </span>ggridges<span class="op">::</span><span class="kw">theme_ridges</span>(</a>
+<a class="sourceLine" id="cb193-32" title="32">    <span class="dt">center_axis_labels =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb193-33" title="33">    <span class="dt">font_size =</span> <span class="dv">10</span></a>
+<a class="sourceLine" id="cb193-34" title="34">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-35" title="35"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-36" title="36"><span class="st">  </span><span class="kw">theme</span>(</a>
+<a class="sourceLine" id="cb193-37" title="37">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
+<a class="sourceLine" id="cb193-38" title="38">    )</a></code></pre></div>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-173-1.png" width=".9\textwidth"></p>
 
 </div>
 </div>

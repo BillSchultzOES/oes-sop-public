@@ -27,7 +27,6 @@ Imports:
   ri2,
   bfe,
   remotes,
-  RItools (>= 3.0.0),
   devtools,
   withr,
   here,
@@ -38,5 +37,4 @@ Imports:
   knitr
 Remotes:
   rstudio/bookdown,
-  markmfredrickson/RItools@proj1-balT,
   gibbonscharlie/bfe

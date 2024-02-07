@@ -1392,19 +1392,19 @@ T4 - T2 == 0    1.304      1.226    1.06     0.71
 T4 - T3 == 0    1.857      1.226    1.51     0.43
 (Adjusted p values reported -- single-step method)</code></pre>
 <p>Focusing on the R results, we can then plot the 95% family wise confidence intervals for these comparisons.</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" title="1"><span class="co">## Save dfault ploting parameters</span></a>
-<a class="sourceLine" id="cb111-2" title="2">op &lt;-<span class="st"> </span><span class="kw">par</span>()</a>
-<a class="sourceLine" id="cb111-3" title="3"><span class="co">## Add space to left-hand outer margin</span></a>
-<a class="sourceLine" id="cb111-4" title="4"><span class="kw">par</span>(<span class="dt">oma =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>))</a>
-<a class="sourceLine" id="cb111-5" title="5"><span class="kw">plot</span>(tukey_mc)</a></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb109-1" title="1"><span class="co">## Save dfault ploting parameters</span></a>
+<a class="sourceLine" id="cb109-2" title="2">op &lt;-<span class="st"> </span><span class="kw">par</span>()</a>
+<a class="sourceLine" id="cb109-3" title="3"><span class="co">## Add space to left-hand outer margin</span></a>
+<a class="sourceLine" id="cb109-4" title="4"><span class="kw">par</span>(<span class="dt">oma =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb109-5" title="5"><span class="kw">plot</span>(tukey_mc)</a></code></pre></div>
 <p><img src="OES_SOP_files/figure-html/tukeyplot-1.png" width=".9\textwidth"></p>
 <p>We can also obtain simultaneous confidence intervals at other levels of statistical significance using the <code>confint()</code> function.</p>
-<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb112-1" title="1"><span class="co">## Generate and plot 90% confidence intervals</span></a>
-<a class="sourceLine" id="cb112-2" title="2">tukey_mc_90ci &lt;-<span class="st"> </span><span class="kw">confint</span>(tukey_mc, <span class="dt">level =</span> <span class="fl">.90</span>)</a>
-<a class="sourceLine" id="cb112-3" title="3"><span class="kw">plot</span>(tukey_mc_90ci)</a></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb110-1" title="1"><span class="co">## Generate and plot 90% confidence intervals</span></a>
+<a class="sourceLine" id="cb110-2" title="2">tukey_mc_90ci &lt;-<span class="st"> </span><span class="kw">confint</span>(tukey_mc, <span class="dt">level =</span> <span class="fl">.90</span>)</a>
+<a class="sourceLine" id="cb110-3" title="3"><span class="kw">plot</span>(tukey_mc_90ci)</a></code></pre></div>
 <p><img src="OES_SOP_files/figure-html/plot_tukey_ci-1.png" width=".9\textwidth"></p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb113-1" title="1"><span class="co">## Restore plotting defaults, now</span></a>
-<a class="sourceLine" id="cb113-2" title="2"><span class="kw">par</span>(op)</a></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" title="1"><span class="co">## Restore plotting defaults, now</span></a>
+<a class="sourceLine" id="cb111-2" title="2"><span class="kw">par</span>(op)</a></code></pre></div>
 <p>See also, in R: <code>pairwise.prop.test</code> for binary outcomes.</p>
 </div>
 </div>
@@ -1651,11 +1651,11 @@ end</code></pre>
 </div>
 </div>
 <p>After this, as a last step in R, we&#x2019;ll add those estimators to our <code>design</code> class objects.</p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb118-1" title="1"><span class="co">## Smaller sample</span></a>
-<a class="sourceLine" id="cb118-2" title="2">thedesignsmalldat1PlusEstimators &lt;-<span class="st"> </span>thedesignsmalldat1 <span class="op">+</span><span class="st"> </span>all_estimators</a>
-<a class="sourceLine" id="cb118-3" title="3"></a>
-<a class="sourceLine" id="cb118-4" title="4"><span class="co">## Larger sample</span></a>
-<a class="sourceLine" id="cb118-5" title="5">thedesignbigdat1PlusEstimators &lt;-<span class="st"> </span>thedesignbigdat1 <span class="op">+</span><span class="st"> </span>all_estimators</a></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb116-1" title="1"><span class="co">## Smaller sample</span></a>
+<a class="sourceLine" id="cb116-2" title="2">thedesignsmalldat1PlusEstimators &lt;-<span class="st"> </span>thedesignsmalldat1 <span class="op">+</span><span class="st"> </span>all_estimators</a>
+<a class="sourceLine" id="cb116-3" title="3"></a>
+<a class="sourceLine" id="cb116-4" title="4"><span class="co">## Larger sample</span></a>
+<a class="sourceLine" id="cb116-5" title="5">thedesignbigdat1PlusEstimators &lt;-<span class="st"> </span>thedesignbigdat1 <span class="op">+</span><span class="st"> </span>all_estimators</a></code></pre></div>
 <p>Now, let&#x2019;s simulate each design 200 times and evaluate their performance. First, the smaller sample:</p>
 <div class="tab">
 <button class="tablinks" onclick="unrolltab(event, &apos;ch5R17&apos;)">
@@ -4953,9 +4953,9 @@ end</code></pre>
 </div>
 <p>In everyday practice, with more than about 50 (equally-sized) clusters, we often produce estimates using more or less the same kinds estimators as those above, but changing our standard error calculations to instead rely on <code>CR2</code> cluster-robust standard error <span class="citation">(Pustejovsky <a href="#ref-pustejovsky2019cr">2019</a>)</span>. We show two approaches to such adjustment.</p>
 <p>First, the design-based <code>difference_in_means()</code> function in R:<a href="references.html#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a></p>
-<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb157-1" title="1"><span class="co">## CR2 via difference in means</span></a>
-<a class="sourceLine" id="cb157-2" title="2">estAndSE4a &lt;-<span class="st"> </span><span class="kw">difference_in_means</span>(Y<span class="op">~</span>Zcluster, <span class="dt">data=</span>datCluster, <span class="dt">clusters=</span>cluster)</a>
-<a class="sourceLine" id="cb157-3" title="3">estAndSE4a</a></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb155-1" title="1"><span class="co">## CR2 via difference in means</span></a>
+<a class="sourceLine" id="cb155-2" title="2">estAndSE4a &lt;-<span class="st"> </span><span class="kw">difference_in_means</span>(Y<span class="op">~</span>Zcluster, <span class="dt">data=</span>datCluster, <span class="dt">clusters=</span>cluster)</a>
+<a class="sourceLine" id="cb155-3" title="3">estAndSE4a</a></code></pre></div>
 <pre><code>Design:  Clustered 
          Estimate Std. Error t value Pr(&gt;|t|) CI Lower CI Upper   DF
 Zcluster   -15597       8336  -1.871   0.1232   -37356     6162 4.76</code></pre>

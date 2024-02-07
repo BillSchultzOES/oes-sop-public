@@ -71,7 +71,7 @@ In case this is useful context for others: that back-end code finds the R code c
 
 Adding a code chunk with tabs for R/Stata options is a bit tricker (take a look at existing chapters first to get a sense of what this looks like). Note that these tabbed chunks are *just for illustrative purposes* and aren't actually being run (they all have `eval = F`). After every tabbed chunk, you'll see another hidden (`echo = F`) R code chunk that is actually being run and generating results/figures shown in the SOP (`eval = T`). These hidden chunks just repeat the R code from the tabbed chunks.
 
-The primary challenge to adding tabbed chunks is making sure each tab has a unique HTML ID (e.g., "ch3R1," "ch3Stata1," and "ch3Hide1" in the first tabbed chunk of chapter 3). If they don't, only the first instance of a duplicated ID will work properly; the second with this ID just won't open and show the code. Luckily, we've developed a keyboard macro that automates HTML ID generation without you needing to keep track manually. This macro also inserts template for you, so there's no need to do any copy-pasting (except copying the right R and Stata code into that template)!
+The primary challenge to adding tabbed chunks is making sure each tab has a unique HTML ID (e.g., "ch3R1," "ch3Stata1," and "ch3Hide1" in the first tabbed chunk of chapter 3). If they don't, only the first instance of a duplicated ID will work properly; the second with this ID just won't open and show the code. Luckily, we've developed a keyboard macro that automates HTML ID generation without you needing to keep track manually. This macro also a inserts template, so there's no need to do any copy-pasting (except copying the right R and Stata code into that template)!
 
 There are two steps to set this up. First, around when we first start using R code in any existing chapter, you'll notice the following code chunk:
 
@@ -110,13 +110,13 @@ snippet {oes_code_tab}
 	::: 
 	:::
 ```
-Code snippets are keyboard macros you can use to more easily insert a common chunk of code without having to re-type it every time. Once `ch` and `cnum` exist in R, this macro will automatically generate a new, sequential HTML ID (ch = current ch, cnum = current cnum + 1). All you have to do now is type:
+Code snippets are keyboard macros you can use to more easily insert a common chunk of code without having to re-type it every time. Once `ch` and `cnum` exist in R, this macro will automatically generate a template tabbed chunk with a new, sequential HTML ID (ch = current ch, cnum = current cnum + 1). All you have to do now is type:
 
 ```
 {oes_code_tab}
 ```
 
-And then hit `shift+tab` when your cursor is to the right of `}`. This will generate a template for you with appropriate IDs. Then just copy in R and Stata code where the comments indicate (# R code here, * Stata code here).
+And then hit `shift+tab` when your cursor is to the right of `}`. Then copy in R and Stata code where the comments indicate (# R code here, * Stata code here).
 
 # Building the book
 

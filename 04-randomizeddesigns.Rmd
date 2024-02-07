@@ -724,7 +724,7 @@ We provide an example below with a binary treatment, a continuous outcome, and 1
 
 The overall $p$-value below shows us that this test provides little evidence against the null hypothesis that treatment ($Z$) really was assigned at random --- at least in terms of the relationships between treatment assignment and the two covariates. The test statistic here is a summary measure of mean differences across each covariate.
 
-Keep in mind that the overall or "omnibus" nature of this test is key. If we had many covariates or many observations, it would easy to discover one or a few covariates with individual differences-in-means that differ detectably from zero due to random chance (rather than real implementation problems). That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates -- roughly 5 in 100. The value of an omnibus test is that it should not be so easily misled by these chance false positives.
+Keep in mind that the overall or "omnibus" nature of this test is key. If we had many covariates or many observations, it would be easy to discover one or a few covariates with individual differences-in-means that differ detectably from zero due to random chance (rather than real implementation problems). That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates -- roughly 5 in 100. The value of an omnibus test is that it should not be so easily misled by these chance false positives.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch4R9')">R code</button>
@@ -732,7 +732,7 @@ Keep in mind that the overall or "omnibus" nature of this test is key. If we had
 <button class="tablinks" onclick="unrolltab(event, 'ch4Hide9')">Hide</button>
 ::: {#ch4R9 .tabcontent} 
 <br />
-```{r, highlight = F, eval = F}
+```{stata, highlight = F, eval = F}
 randAssessV1 <- balanceTest(Z~cov1+cov2, data=dat1)
 randAssessV1$overall[,]
 ```
@@ -756,11 +756,6 @@ xbalance z single_block cov1 cov2
 ::: 
 :::
 
-```{r, eval = T, echo = F}
-randAssessV1 <- balanceTest(Z~cov1+cov2, data=dat1)
-randAssessV1$overall[,]
-```
-
 We can also assess the implementation of block-randomized assignment:
 
 ::: {.tab} 
@@ -769,7 +764,7 @@ We can also assess the implementation of block-randomized assignment:
 <button class="tablinks" onclick="unrolltab(event, 'ch4Hide10')">Hide</button>
 ::: {#ch4R10 .tabcontent} 
 <br />
-```{r, highlight = F, eval = F}
+```{stata, highlight = F, eval = F}
 randAssessV3 <- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), data=dat1)
 randAssessV3$overall[,]
 ```
@@ -785,11 +780,6 @@ xbalance zblockV2 blockV2 cov1 cov2
 ::: {#ch4Hide10 .tabcontent}
 ::: 
 :::
-
-```{r, eval = T, echo = F}
-randAssessV3 <- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), data=dat1)
-randAssessV3$overall[,]
-```
 
 Lastly, it is possible to assess randomization under both blocked and clustered random assignment using a regression model like the following, where `strata(blockID)` and `cluster(clusterID)` refer to block and cluster fixed effects (FEs), respectively.
 

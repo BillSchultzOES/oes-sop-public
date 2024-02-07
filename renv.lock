@@ -132,29 +132,6 @@
       ],
       "Hash": "45f0398006e83a5b10b72a90663d8d8c"
     },
-    "RItools": {
-      "Package": "RItools",
-      "Version": "0.3-3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "SparseM",
-        "abind",
-        "dplyr",
-        "ggplot2",
-        "grDevices",
-        "graphics",
-        "methods",
-        "stats",
-        "survival",
-        "svd",
-        "tibble",
-        "tidyr",
-        "xtable"
-      ],
-      "Hash": "ad1816d3b0c2d276a53cb702ed26a0cb"
-    },
     "Rcpp": {
       "Package": "Rcpp",
       "Version": "1.0.10",
@@ -178,20 +155,6 @@
         "utils"
       ],
       "Hash": "4c86baed78388ceb06f88e3e9a1d87f5"
-    },
-    "SparseM": {
-      "Package": "SparseM",
-      "Version": "1.81",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "graphics",
-        "methods",
-        "stats",
-        "utils"
-      ],
-      "Hash": "2042cd9759cc89a453c4aefef0ce9aae"
     },
     "TH.data": {
       "Package": "TH.data",
@@ -217,18 +180,6 @@
         "utils"
       ],
       "Hash": "20d81ec18bde233d8cc3265761fe8c93"
-    },
-    "abind": {
-      "Package": "abind",
-      "Version": "1.4-5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "methods",
-        "utils"
-      ],
-      "Hash": "4f57884290cc75ab22f4af9e9d4ca862"
     },
     "askpass": {
       "Package": "askpass",
@@ -2455,16 +2406,6 @@
         "utils"
       ],
       "Hash": "04411ae66ab4659230c067c32966fc20"
-    },
-    "svd": {
-      "Package": "svd",
-      "Version": "0.5.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "methods"
-      ],
-      "Hash": "de9d7d4cbc77884e45b8fe4b20ebf2e4"
     },
     "svglite": {
       "Package": "svglite",

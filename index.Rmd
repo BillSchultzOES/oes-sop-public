@@ -47,7 +47,6 @@ library(randomizr)
 library(ri2)
 library(sandwich)
 library(tidyverse)
-library(RItools)
 library(V8)
 
 # Set options

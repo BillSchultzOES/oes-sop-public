@@ -117,7 +117,7 @@ We may assess the sharp null of no effects via direct permutation as a check on 
 
 Below, we show how to perform these tests using two different R packages (`coin` and `ri2`), along with several Stata commands (`permute` and `ritest`).  First, the `coin` package [@R-coin] in R and `permute` in Stata:
 
-```{r RItest1, eval=FALSE, cache=F,include=F, echo=F}
+```{stata RItest1, eval=FALSE, cache=F,include=F, echo=F}
 ## As of Fall 2023, RItest is only in the randomization-distribution
 ## development branch of RItools. This code would work if that branch
 ## were installed. Right now (current renv package versions, as of 9/7/23)
@@ -125,11 +125,11 @@ Below, we show how to perform these tests using two different R packages (`coin`
 ## on a development package that some Fellows may not be able to
 ## easily install under GSA IT permissions. So, excluding this chunk.
 
-set.seed(12345)
-test1T <- RItest(y=dat1$Y,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
-print(test1T)
-test1R <- RItest(y=dat1$rankY,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
-print(test1R)
+# set.seed(12345)
+# test1T <- RItest(y=dat1$Y,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
+# print(test1T)
+# test1R <- RItest(y=dat1$rankY,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
+# print(test1R)
 ```
 
 ::: {.tab} 
