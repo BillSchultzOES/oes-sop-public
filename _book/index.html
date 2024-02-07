@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-11-01">
+<meta name="date" content="2024-02-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -47,6 +47,10 @@
 
 
 
+<script src="libs/clipboard/clipboard.min.js"></script>
+<link href="libs/primer-tooltips/build.css" rel="stylesheet">
+<link href="libs/klippy/css/klippy.min.css" rel="stylesheet">
+<script src="libs/klippy/js/klippy.min.js"></script>
 <script src="libs/kePrint/kePrint.js"></script>
 <link href="libs/lightable/lightable.css" rel="stylesheet">
 
@@ -344,7 +348,7 @@ window.initializeCodeFolding = function(show) {
   var currentIndex = 1;
 
   // select all R code blocks
-  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.cpp, pre.sql, pre.stan, pre.stata, pre.python, pre.bash');
   rCodeBlocks.each(function() {
 
     // create a collapsable div to wrap the code in
@@ -395,6 +399,21 @@ window.initializeCodeFolding = function(show) {
 $(document).ready(function () {
   window.initializeCodeFolding("show" === "hide");
 });
+</script>
+<script>
+function unrolltab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
 </script>
 
 
@@ -482,7 +501,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#purposes-of-this-document"><i class="fa fa-check"></i>Purposes of this document</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#nature-and-limitations-of-this-document"><i class="fa fa-check"></i>Nature and limitations of this document</a><ul>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-focus-on-randomized-field-experiments."><i class="fa fa-check"></i>We (mostly) focus on randomized field experiments.</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-present-examples-using-r"><i class="fa fa-check"></i>We present examples using R</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-present-examples-using-r"><i class="fa fa-check"></i>We (mostly) present examples using R</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-document"><i class="fa fa-check"></i>Structure of the document</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#help-us-improve-our-work"><i class="fa fa-check"></i>Help us improve our work!</a></li>
@@ -573,7 +592,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</h1>
 <h4 class="author"><em>Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz</em></h4>
-<h4 class="date"><em>November 01, 2023</em></h4>
+<h4 class="date"><em>February 07, 2024</em></h4>
 </div>
 <div id="overview" class="section level1 unnumbered">
 <h1>Overview</h1>
@@ -597,10 +616,10 @@ Although we include some discussion about non-randomized studies, often known
 as observational studies, until now, our team has focused primarily on
 randomized field experiments. We plan to include more discussion of observational studies over time.</p>
 </div>
-<div id="we-present-examples-using-r" class="section level3 unnumbered">
-<h3>We present examples using R</h3>
+<div id="we-mostly-present-examples-using-r" class="section level3 unnumbered">
+<h3>We (mostly) present examples using R</h3>
 <p>As public servants and social and behavioral scientists, we use the <a href="http://r-project.org">R</a> statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R).</p>
-<p>Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). We welcome future additions to this document using those languages as well.</p>
+<p>Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task or something similar could be accomplished in Stata. However, this is for illustrative purposes, and all reported results and all figures are generated based only on the R code.</p>
 </div>
 <div id="structure-of-the-document" class="section level3 unnumbered">
 <h3>Structure of the document</h3>

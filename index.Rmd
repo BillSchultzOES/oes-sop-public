@@ -7,6 +7,7 @@ knit: bookdown::render_book
 output:
   bookdown::gitbook:
     math_method: r-katex
+    highlight: default
 documentclass: book
 bibliography: ["sop.bib", "packages.bib"]
 link-citations: yes
@@ -21,11 +22,36 @@ graphics: yes
 ---
 
 ```{r options, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
-# Required packages
+## Libraries are now managed by the renv system
 require(knitr)
+library(bfe)
+library(blockTools)
+library(coin)
+library(DeclareDesign)
+library(devtools)
+library(estimatr)
+library(fabricatr)
+library(foreach)
+library(future)
+library(future.apply)
+library(here)
+library(ICC)
+library(kableExtra)
+library(katex)
+library(klippy)
+library(lmtest)
+library(multcomp)
+library(nbpMatching)
+library(quickblock)
+library(randomizr)
+library(ri2)
+library(sandwich)
+library(tidyverse)
+library(RItools)
+library(V8)
 
 # Set options
-opts_chunk$set(strip.white=TRUE,
+knitr::opts_chunk$set(strip.white=TRUE,
                width.cutoff=132,
                size='\\scriptsize',
                out.width='.9\\textwidth',
@@ -49,50 +75,20 @@ rmarkdown::pandoc_version()
 
 # Reproducible random numbers
 set.seed(20405)
-```
-
-```{r loadlibs}
-## Libraries are now managed by the renv system
-library(bfe)
-library(blockTools)
-library(coin)
-library(DeclareDesign)
-library(devtools)
-library(estimatr)
-library(fabricatr)
-library(foreach)
-library(future)
-library(future.apply)
-library(here)
-library(ICC)
-library(kableExtra)
-library(katex)
-library(knitr)
-library(lmtest)
-library(multcomp)
-library(nbpMatching)
-library(quickblock)
-library(randomizr)
-library(ri2)
-library(sandwich)
-library(tidyverse)
-library(RItools)
-library(V8)
 
 options(
   htmltools.dir.version = FALSE, formatR.indent = 2,
   width = 100, digits = 4, warnPartialMatchAttr = FALSE,
   warnPartialMatchDollar = FALSE
-)
+  )
 
 local({
   r = getOption('repos')
   if (!length(r) || identical(unname(r['CRAN']), '@CRAN@'))
     r['CRAN'] = 'https://cran.rstudio.com'
   options(repos = r)
-})
+  })
 ```
-
 
 ```{r htmlTemp3, echo=FALSE, eval=TRUE}
 ## This next from https://stackoverflow.com/questions/45360998/code-folding-in-bookdown
@@ -126,8 +122,23 @@ paste(codejs, collapse = "\n"),
 $(document).ready(function () {
   window.initializeCodeFolding("show" === "hide");
 });
-</script>
-', sep = "\n")
+</script>',
+'<script>
+function unrolltab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>',
+sep = "\n")
 
 readr::write_lines(htmlhead, path = "header.html")
 ```
@@ -191,11 +202,11 @@ Although we include some discussion about non-randomized studies, often known
 as observational studies, until now, our team has focused primarily on
 randomized field experiments. We plan to include more discussion of observational studies over time.
 
-### We present examples using R {-}
+### We (mostly) present examples using R {-}
 
 As public servants and social and behavioral scientists, we use the [R](http://r-project.org) statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R). 
 
-Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). We welcome future additions to this document using those languages as well.
+Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task or something similar could be accomplished in Stata. However, this is for illustrative purposes, and all reported results and all figures are generated based only on the R code.
 
 ### Structure of the document {-}
 

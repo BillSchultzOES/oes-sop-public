@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-11-01">
+<meta name="date" content="2024-02-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -47,6 +47,10 @@
 
 
 
+<script src="libs/clipboard/clipboard.min.js"></script>
+<link href="libs/primer-tooltips/build.css" rel="stylesheet">
+<link href="libs/klippy/css/klippy.min.css" rel="stylesheet">
+<script src="libs/klippy/js/klippy.min.js"></script>
 <script src="libs/kePrint/kePrint.js"></script>
 <link href="libs/lightable/lightable.css" rel="stylesheet">
 
@@ -344,7 +348,7 @@ window.initializeCodeFolding = function(show) {
   var currentIndex = 1;
 
   // select all R code blocks
-  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.cpp, pre.sql, pre.stan, pre.stata, pre.python, pre.bash');
   rCodeBlocks.each(function() {
 
     // create a collapsable div to wrap the code in
@@ -395,6 +399,21 @@ window.initializeCodeFolding = function(show) {
 $(document).ready(function () {
   window.initializeCodeFolding("show" === "hide");
 });
+</script>
+<script>
+function unrolltab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
 </script>
 
 
@@ -482,7 +501,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#purposes-of-this-document"><i class="fa fa-check"></i>Purposes of this document</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#nature-and-limitations-of-this-document"><i class="fa fa-check"></i>Nature and limitations of this document</a><ul>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-focus-on-randomized-field-experiments."><i class="fa fa-check"></i>We (mostly) focus on randomized field experiments.</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-present-examples-using-r"><i class="fa fa-check"></i>We present examples using R</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-present-examples-using-r"><i class="fa fa-check"></i>We (mostly) present examples using R</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-document"><i class="fa fa-check"></i>Structure of the document</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#help-us-improve-our-work"><i class="fa fa-check"></i>Help us improve our work!</a></li>
@@ -714,8 +733,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li id="fn25"><p>We&#x2019;ve omitted power, since all the estimators in this example have a power of approximately 100%<a href="analysis-choices.html#fnref25" class="footnote-back">&#x21A9;</a></p></li>
 <li id="fn26"><p>It&#x2019;s also possible to have trials where treatment is influenced <em>but not entirely determined</em> at the cluster level.<a href="analysis-choices.html#fnref26" class="footnote-back">&#x21A9;</a></p></li>
 <li id="fn27"><p>When treatment assignment is <em>influenced by clustering</em> but not completely determined at the cluster level, standard error adjustments for clustering will tend to be too conservative. See <span class="citation">Abadie et al. (<a href="#ref-abadie2023should">2023</a>)</span> for more discussion of this and some potential solutions.<a href="analysis-choices.html#fnref27" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn28"><p>See <span class="citation">Gelman and Hill (<a href="#ref-gelman2006data">2006</a>)</span>, section 20.3, page 443.<a href="poweranalysis.html#fnref28" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn29"><p>This is, of course, true by design here. In real projects, the differences between these covariate adjustment strategies could often be smaller or negligible. But it is useful to remember that <span class="citation">Lin (<a href="#ref-lin_agnostic_2013">2013</a>)</span> adjustment may be especially valuable with especially imbalanced designs and/or designs where covariates are likely correlated with treatment effect heterogeneity.<a href="poweranalysis.html#fnref29" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn28"><p>See the <code>estimatr</code> <a href="https://declaredesign.org/r/estimatr/articles/mathematical-notes.html">mathematical notes</a> for more detail on how this is implemented.<a href="analysis-choices.html#fnref28" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn29"><p>See <span class="citation">Gelman and Hill (<a href="#ref-gelman2006data">2006</a>)</span>, section 20.3, page 443.<a href="poweranalysis.html#fnref29" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn30"><p>This is, of course, true by design in our example here. In real projects, the differences between these covariate adjustment strategies could often be negligible. But it is useful to remember that <span class="citation">Lin (<a href="#ref-lin_agnostic_2013">2013</a>)</span> adjustment may be especially valuable with especially imbalanced treatment assignment or designs where covariates may be highly correlated with treatment effect heterogeneity; see our discussion in the Analysis Choices chapter.<a href="poweranalysis.html#fnref30" class="footnote-back">&#x21A9;</a></p></li>
 </ol>
 </div>
 <h3>References</h3>

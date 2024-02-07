@@ -14,7 +14,96 @@ The following code contrasts coin-flipping style random assignment with drawing-
 
 Notice that the simple random assignment implemented in the code below results in more observations in the treatment group (group `T`) than in the control group (group `C`). Complete random assignment will always assign 5 units to the treatment, 5 to the control.
 
-```{r completera}
+<!-- Adds copy code button -->
+```{r klippych4, echo=FALSE, include=TRUE}
+klippy::klippy(all_precode = T, position = c("top", "right"))
+```
+
+<!-- Used (and iteratively updated) in the {oes_code_tab} snippets below. -->
+<!-- set chapter number and reset count -->
+```{r, include = F, echo = F}
+# cnum is modified automatically to iteratively count chunks
+# when using the oes_code_tab markdown snippet. each use of
+# the snippet adds a value of 1.
+ch <- 4
+cnum <- 0
+```
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R1')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata1')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide1')">Hide</button>
+::: {#ch4R1 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Start with a small experiment with only 10 units
+n <- 10
+
+## Set a random seed for replicability
+set.seed(12345)
+
+## Function to add more intuitive labels
+labelTC <- function(assignments) {ifelse(assignments == 1, "T", "C")}
+
+## Simulation using functions from the randomizr package
+trt_coinflip <- labelTC(simple_ra(n))
+trt_urn <- labelTC(complete_ra(n))
+
+## Coin flipping does not guarantee half and half treated and control.
+## Drawing from an urn, guarantees half treated and control.
+table(trt_coinflip)
+table(trt_urn)
+
+## Alternative approach using base R
+# set.seed(12345)
+# trt_coinflip <- labelTC(rbinom(10, size = 1, prob = .5))
+# trt_urn <- labelTC(sample(rep(c(1, 0), n / 2)))
+# table(trt_coinflip)
+# table(trt_urn)
+```
+:::
+::: {#ch4Stata1 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Start with a small experiment with only 10 units
+clear
+global n = 10
+set obs $n
+
+** Set a random seed for replicability
+set seed 12345
+
+** Simulation using functions from the randomizr package
+* ssc install randomizr
+simple_ra trt_coinflip
+  * Or, e.g.: gen trt_coinflip = rbinomial(1, 0.5)
+complete_ra trt_urn
+  /* 
+  * Or, e.g.:
+  local num_treat = $n/2
+  gen rand = runiform()
+  sort rand
+  gen trt_urn = 1 in 1/`num_treat'
+  replace trt_urn = 0 if missing(trt_urn)
+  drop rand
+  */
+
+** Add more informative labels
+label define tc 0 "C" 1 "T"
+label values trt_coinflip tc
+label values trt_urn tc
+
+** Coin flipping does not guarantee half and half treated and control.
+** Drawing from an urn, guarantees half treated and control.
+table trt_coinflip
+table trt_urn
+```
+::: 
+::: {#ch4Hide1 .tabcontent}
+::: 
+:::
+
+```{r completera, echo = F, eval = T, results = "hold", collapse = T}
 ## Start with a small experiment with only 10 units
 n <- 10
 
@@ -47,7 +136,73 @@ We tend to use the `randomizr` R package [@R-randomizr] for simple designs
 rather than the base R `sample` function because `randomizr` does some
 quality control checks. Notice that we implement a check on our code below with the `stopifnot` command: the code will stop and issue a warning if we didn't actually assign 1/4 of the observations to the treatment condition. Here, we assign the units first to 2 arms with equal probability (`Z2armEqual`). Then, to show how the code works, we assign them to 2 arms where one arm has only a $\frac{1}{4}$ probability of receiving treatment (e.g., imagine a design with an expensive intervention). Last, we assign them based on a design with 4 different arms, each with equal probability (e.g., one control group and three different treatments under consideration). We often use $Z$ to refer to the variable recording our intervention arms.
 
-```{r completera2}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R2')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata2')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide2')">Hide</button>
+::: {#ch4R2 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+N <- nrow(dat1)
+set.seed(12345)
+
+## Two equal arms
+dat1$Z2armEqual <- labelTC(complete_ra(N))
+
+## Two unequal arms: .25 chance of treatment (.75 chance of control0
+dat1$Z2armUnequalA <- labelTC(complete_ra(N,prob=.25))
+stopifnot(sum(dat1$Z2armUnequalA=="T")==N/4)
+dat1$Z2armUnequalB <- labelTC(complete_ra(N,m=N/4))
+
+## Four equal arms
+dat1$Z4arms <- complete_ra(N, m_each=rep(N/4,4))
+
+table(Z2armEqual=dat1$Z2armEqual)
+table(Z2armUnequalA=dat1$Z2armUnequalA)
+table(Z2armUnequalB=dat1$Z2armUnequalB)
+table(Z4arms=dat1$Z4arms)
+```
+:::
+::: {#ch4Stata2 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Return to data for the fake experiment.
+import delimited using "dat1.csv", clear
+
+qui count
+global N = r(N)
+set seed 12345
+
+** Two equal arms
+complete_ra z2armEqual
+label define tc 0 "C" 1 "T"
+label values z2armEqual tc
+
+** Two unequal arms: .25 chance of treatment (.75 chance of control)
+complete_ra z2armUnequalA, prob(0.25)
+label values z2armUnequalA tc
+qui sum z2armUnequalA
+global expected = $N/4
+assert r(sum) == $expected
+complete_ra z2armUnequalB, m($expected)
+label values z2armUnequalB tc
+
+** Four equal arms
+local count_list : di _dup(4) "$expected " // List of sample sizes for each group
+macro list _count_list
+complete_ra z4arms, m_each(`count_list')
+
+table z2armEqual
+table z2armUnequalA
+table z2armUnequalB
+table z4arms
+```
+::: 
+::: {#ch4Hide2 .tabcontent}
+::: 
+:::
+
+```{r completera2, echo = F, eval = T, results = "hold", collapse = T}
 N <- nrow(dat1)
 set.seed(12345)
 
@@ -72,7 +227,34 @@ table(Z4arms=dat1$Z4arms)
 
 It's possible to test the effects of more than one intervention without losing much statistical power by randomly assigning multiple treatments independently of each other. The simplest design that we use for this purpose is the $2 \times 2$ **factorial** design. For example, in the next table we see that we have assigned `r N/2` observations to each arm of two separate interventions. Since the randomization of `treatment1` is independent of `treatment2`, we can assess the effects of each treatment separately and pay less of a power penalty (unless one of the treatments dramatically increases the variance of the outcome compared to the experiment with only one treatment assigned).
 
-```{r factdesign2x2}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R3')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata3')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide3')">Hide</button>
+::: {#ch4R3 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Two equal arms, adding a second cross treatment
+dat1$Z2armEqual2 <- labelTC(complete_ra(N))
+table(treatment1=dat1$Z2armEqual,treatment2=dat1$Z2armEqual2)
+```
+:::
+::: {#ch4Stata3 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Two equal arms, adding a second cross treatment
+complete_ra z2armEqual2
+label var z2armEqual2 "Treatment 2"
+label var z2armEqual "Treatment 1"
+label val z2armEqual2 tc
+table z2armEqual z2armEqual2
+```
+::: 
+::: {#ch4Hide3 .tabcontent}
+::: 
+:::
+
+```{r factdesign2x2, eval = T, echo = F}
 ## Two equal arms, adding a second cross treatment
 dat1$Z2armEqual2 <- labelTC(complete_ra(N))
 table(treatment1=dat1$Z2armEqual,treatment2=dat1$Z2armEqual2)
@@ -235,21 +417,113 @@ With this blocked design restricting the random assignments that are possible, w
 For a more realistic example, suppose we are designing an experiment
 where the sample includes patients from two different hospitals. We might randomly assign patients to treatment and control *within* each hospital. For instance, we might assign half of the patients in hospital "A" to treatment and half to control, then do the same in hospital "B."^[We use "block" rather than "strata" throughout this document to refer to groups of experimental units that are fixed *before random assignment occurs*.] Below, we have `r nrow(dat1) / 2` units in hospital "A" and `r nrow(dat1) / 2` in hospital "B":
 
-```{r blockra1}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R4')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata4')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide4')">Hide</button>
+::: {#ch4R4 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+dat1$blockID <- gl(n = 2, k = N/2, labels = c("Block A", "Block B"))
+with(dat1,table(blockID=dat1$blockID))
+```
+:::
+::: {#ch4Stata4 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+local Anum = $N/2
+gen blockID = .
+tempvar rand
+gen `rand' = runiform()
+sort `rand'
+replace blockID = 1 in 1/`Anum'
+replace blockID = 2 if missing(blockID)
+label define blocklab 1 "Block A" 2 "Block B"
+label values blockID blocklab
+table blockID
+```
+::: 
+::: {#ch4Hide4 .tabcontent}
+::: 
+:::
+
+```{r blockra1, eval = T, echo = F}
 dat1$blockID <- gl(n = 2, k = N/2, labels = c("Block A", "Block B"))
 with(dat1,table(blockID=dat1$blockID))
 ```
 
 We assign half of the units in each hospital to each treatment condition:
 
-```{r blockra15}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R5')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata5')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide5')">Hide</button>
+::: {#ch4R5 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+dat1$Z2armBlocked <- labelTC(block_ra(blocks=dat1$blockID))
+with(dat1, table(blockID, Z2armBlocked))
+```
+:::
+::: {#ch4Stata5 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+block_ra z2armBlocked, block_var(blockID) replace
+label val z2armBlocked tc
+table blockID z2armBlocked
+capture drop __00* // Clean up block_var temporary var
+```
+::: 
+::: {#ch4Hide5 .tabcontent}
+::: 
+:::
+
+```{r blockra15, echo = F, eval = T}
 dat1$Z2armBlocked <- labelTC(block_ra(blocks=dat1$blockID))
 with(dat1, table(blockID, Z2armBlocked))
 ```
 
 If, say, there were fewer people eligible for treatment in hospital "A" --- or perhaps the intervention was more expensive in that block --- we might choose different treatment probabilities for each block. The code below assigns half of the hospital "A" patients to treatment, but only a quarter of those from hospital "B". Again, we also check that this code worked. This approach is an informal version of one of the best practices for writing code in general, called "unit testing." See the [EGAP Guide to Workflow](https://egap.org/resource/10-things-to-know-about-project-workflow/) for more examples.
 
-```{r blockra2}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R6')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata6')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide6')">Hide</button>
+::: {#ch4R6 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Blocked assignment, unequal probability
+dat1$Z2armBlockedUneqProb <- labelTC(block_ra(blocks=dat1$blockID, block_prob=c(.5,.25)))
+with(dat1, table(blockID, Z2armBlockedUneqProb))
+
+## Unit testing
+NumTreatedB <- sum(dat1$Z2armBlockedUneqProb=="T" & dat1$blockID=="Block B")
+ExpectedNumTreatedB <- sum(dat1$blockID=="Block B")/4
+stopifnot(NumTreatedB==ceiling(ExpectedNumTreatedB) | NumTreatedB==floor(ExpectedNumTreatedB))
+```
+:::
+::: {#ch4Stata6 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Blocked assignment, unequal probability
+block_ra z2armBlockedUneqProb, block_var(blockID) block_prob(0.5 0.25) replace
+label val z2armBlockedUneqProb tc
+table blockID z2armBlockedUneqProb
+capture drop __00* // Clean up block_var temporary var
+
+** Unit Testing
+qui count if z2armBlockedUneqProb == 1 & blockID == 2
+global NumTreatedB = `r(N)'
+qui count if blockID == 2
+global ExpectedNumTreatedB = `r(N)'/4
+assert ($NumTreatedB == ceil($ExpectedNumTreatedB)) | ($NumTreatedB == floor($ExpectedNumTreatedB))
+```
+::: 
+::: {#ch4Hide6 .tabcontent}
+::: 
+:::
+
+```{r blockra2, echo = F, eval = T, results = "hold", collapse=T}
 ## Blocked assignment, unequal probability
 dat1$Z2armBlockedUneqProb <- labelTC(block_ra(blocks=dat1$blockID, block_prob=c(.5,.25)))
 with(dat1, table(blockID, Z2armBlockedUneqProb))
@@ -269,7 +543,57 @@ treatment, or when we expect different groups of people to have different reacti
 
 If we have background information on a few covariates, we can create blocks by hand through a process like the one demonstrated here:
 
-```{r cutcovs}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R7')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata7')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide7')">Hide</button>
+::: {#ch4R7 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## For example, make three groups from the cov2 variable
+dat1$cov2cat <- with(dat1, cut(cov2, breaks=3))
+table(dat1$cov2cat, exclude=c())
+with(dat1, tapply(cov2, cov2cat, summary))
+
+## And we can make blocks that are the same on two covariates
+dat1$cov1bin <- as.numeric(dat1$cov1>median(dat1$cov1)) # Binarize cov1
+dat1$blockV2 <- droplevels(with(dat1, interaction(cov1bin, cov2cat)))
+table(dat1$blockV2, exclude=c())
+
+## And then assign within these blocks
+set.seed(12345)
+dat1$ZblockV2 <- labelTC(block_ra(blocks = dat1$blockV2))
+with(dat1, table(blockV2, ZblockV2, exclude=c()))
+```
+:::
+::: {#ch4Stata7 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** For example, make three groups from the cov2 variable
+egen cov2cat = cut(cov2), group(3) label
+table cov2cat
+bysort cov2cat : sum cov2 // Divides into intervals differently from R
+
+** And we can make blocks that are the same on two covariates
+qui sum cov1, d
+gen cov1bin = cond(cov1 > r(p50), 1, 0) // Similar to ifelse() in R
+decode cov2cat, generate(string_cov2cat)
+gen blockV2 = string(cov1bin) + " " + string_cov2cat
+table blockV2
+
+** And then assign within these blocks
+set seed 12345
+block_ra zblockV2, block_var(blockV2)
+label val zblockV2 tc
+table blockV2 zblockV2
+capture drop __00* // Clean up
+```
+::: 
+::: {#ch4Hide7 .tabcontent}
+::: 
+:::
+
+```{r cutcovs, eval = T, echo = F, collapse=T, results = "hold"}
 ## For example, make three groups from the cov2 variable
 dat1$cov2cat <- with(dat1, cut(cov2, breaks=3))
 table(dat1$cov2cat, exclude=c())
@@ -289,7 +613,7 @@ with(dat1, table(blockV2, ZblockV2, exclude=c()))
 ### Multivariate blocking using many covariates
 
 If instead we have many background variables, we can increase precision by thinking about the problem of blocking as one of matching, or creating sets of
-units which are as similar as possible overall, across the entire set of covariates [@moore2012multivariate;@moore2016bT063]. Here we show two approaches.
+units which are as similar as possible overall, across the entire set of covariates [@moore2012multivariate;@moore2016bT063]. Here we show two approaches using R.
 
 Creating pairs:
 
@@ -340,7 +664,38 @@ blockingDescEval
 
 We often implement a new policy intervention at the level of some group of people --- like a doctor's practice, or a building, or some other administrative unit. Even though we have `r nrow(dat1)` units in our example data, imagine now that they are grouped into 10 buildings, and the policy intervention is at the building level. Below, we assign `r nrow(dat1)/2` of those units to treatment and `r nrow(dat1)/2` to control. Everyone in each building has the same treatment assignment.
 
-```{r clusterRA}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R8')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata8')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide8')">Hide</button>
+::: {#ch4R8 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Make an indicator for cluster membership
+ndat1 <- nrow(dat1)
+dat1$buildingID <- rep(1:(ndat1/10), length=ndat1)
+set.seed(12345)
+dat1$Zcluster <- labelTC(cluster_ra(cluster=dat1$buildingID))
+with(dat1, table(Zcluster, buildingID))
+```
+:::
+::: {#ch4Stata8 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Make an indicator for cluster membership
+qui count
+global ndat1 = r(N)
+egen buildingID = seq(), from(1) to(10) block(1)
+set seed 12345
+cluster_ra zcluster, cluster_var(buildingID)
+table zcluster buildingID
+```
+::: 
+::: {#ch4Hide8 .tabcontent}
+::: 
+:::
+
+```{r clusterRA, eval = T, echo = F}
 ## Make an indicator for cluster membership
 ndat1 <- nrow(dat1)
 dat1$buildingID <- rep(1:(ndat1/10), length=ndat1)
@@ -371,14 +726,67 @@ The overall $p$-value below shows us that this test provides little evidence aga
 
 Keep in mind that the overall or "omnibus" nature of this test is key. If we had many covariates or many observations, it would easy to discover one or a few covariates with individual differences-in-means that differ detectably from zero due to random chance (rather than real implementation problems). That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates -- roughly 5 in 100. The value of an omnibus test is that it should not be so easily misled by these chance false positives.
 
-```{r}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R9')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata9')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide9')">Hide</button>
+::: {#ch4R9 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+randAssessV1 <- balanceTest(Z~cov1+cov2, data=dat1)
+randAssessV1$overall[,]
+```
+:::
+::: {#ch4Stata9 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+* ssc install xbalance.
+* See "help xbalance" for additional Stata setup instructions.
+* This is calling the RItools R package, so you will need R installed.
+* The necessary path to Rterm.exe may look something like this:
+global Rterm_path "C:\Program Files\R\R-4.2.1\bin\x64\Rterm.exe"
+gen single_block = 1 // To force only unstratified balance testing
+label val zblockV2 // Remove value labels first
+label val z
+
+xbalance z single_block cov1 cov2
+```
+::: 
+::: {#ch4Hide9 .tabcontent}
+::: 
+:::
+
+```{r, eval = T, echo = F}
 randAssessV1 <- balanceTest(Z~cov1+cov2, data=dat1)
 randAssessV1$overall[,]
 ```
 
 We can also assess the implementation of block-randomized assignment:
 
-```{r}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R10')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata10')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide10')">Hide</button>
+::: {#ch4R10 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+randAssessV3 <- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), data=dat1)
+randAssessV3$overall[,]
+```
+:::
+::: {#ch4Stata10 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+* zblockV2 instead of zblockV3
+* zblockV3 is generated using blockTools, with no Stata equivalent
+xbalance zblockV2 blockV2 cov1 cov2 
+```
+::: 
+::: {#ch4Hide10 .tabcontent}
+::: 
+:::
+
+```{r, eval = T, echo = F}
 randAssessV3 <- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), data=dat1)
 randAssessV3$overall[,]
 ```
@@ -404,4 +812,3 @@ Our preference for block-randomization helps us avoid these problems. We can als
 ```{r savedat1, echo=FALSE}
 write.csv(dat1,file="dat1_with_designs.csv")
 ```
-

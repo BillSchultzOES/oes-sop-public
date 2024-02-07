@@ -1,3 +1,7 @@
 # [Appendix](#appendix)
 
-*Under construction*
+Note: these internal links will only work for OES team members, and are not publicly accessible.
+
+* Example data processing templates
+    + [R](https://drive.google.com/drive/folders/1kzsXWhkZrOkVUGlFcmDccMIqWVUvprvV?usp=drive_link)
+    + [Stata](https://drive.google.com/drive/folders/1Gwv-ndU4bbnnjgQWli__y6NnztjrGlkd?usp=drive_link)

@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-11-01">
+<meta name="date" content="2024-02-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -47,6 +47,10 @@
 
 
 
+<script src="libs/clipboard/clipboard.min.js"></script>
+<link href="libs/primer-tooltips/build.css" rel="stylesheet">
+<link href="libs/klippy/css/klippy.min.css" rel="stylesheet">
+<script src="libs/klippy/js/klippy.min.js"></script>
 <script src="libs/kePrint/kePrint.js"></script>
 <link href="libs/lightable/lightable.css" rel="stylesheet">
 
@@ -344,7 +348,7 @@ window.initializeCodeFolding = function(show) {
   var currentIndex = 1;
 
   // select all R code blocks
-  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.cpp, pre.sql, pre.stan, pre.stata, pre.python, pre.bash');
   rCodeBlocks.each(function() {
 
     // create a collapsable div to wrap the code in
@@ -395,6 +399,21 @@ window.initializeCodeFolding = function(show) {
 $(document).ready(function () {
   window.initializeCodeFolding("show" === "hide");
 });
+</script>
+<script>
+function unrolltab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
 </script>
 
 
@@ -482,7 +501,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#purposes-of-this-document"><i class="fa fa-check"></i>Purposes of this document</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#nature-and-limitations-of-this-document"><i class="fa fa-check"></i>Nature and limitations of this document</a><ul>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-focus-on-randomized-field-experiments."><i class="fa fa-check"></i>We (mostly) focus on randomized field experiments.</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-present-examples-using-r"><i class="fa fa-check"></i>We present examples using R</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-present-examples-using-r"><i class="fa fa-check"></i>We (mostly) present examples using R</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-document"><i class="fa fa-check"></i>Structure of the document</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#help-us-improve-our-work"><i class="fa fa-check"></i>Help us improve our work!</a></li>
@@ -573,8 +592,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="poweranalysis" class="section level1">
 <h1><span class="header-section-number">Chapter 6</span> Power Analysis</h1>
 <p>In this chapter, we provide examples of how we assess statistical power for different experimental research designs. We often prefer to use simulation to assess the power of different research designs because we rarely have designs that fit easily into the assumptions made by analytic tools.</p>
-<p>By &#x201C;analytic tools,&#x201D; we refer to methods of calculating power (or a minimum required sample size, etc.) based on mathematical derivations under particular assumptions. For instance, in an <em>i.i.d.</em> two-arm design with random assignment of half the sample, no covariates, a roughly normally distributed outcome, and equal variance in each treatment group, it&#x2019;s possible show that we would have 80% power to estimate a difference in means of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">&#x394;</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">&#x394;</span></span></span></span> if we collect data on approximately <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.6</mn><mi>&#x3C3;</mi><mi mathvariant="normal">/</mi><mi mathvariant="normal">&#x394;</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">n = (5.6 \sigma /\Delta)^{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">5.6</span><span class="mord mathnormal" style="margin-right:0.03588em;">&#x3C3;</span><span class="mord">/&#x394;</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span> observations, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3C3;</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">&#x3C3;</span></span></span></span> is the overall standard deviation of the outcome.<a href="references.html#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a> But we frequently consider situations where such derivations are not readily available.</p>
-<!-- I'm not sure this introductory example is useful, in that it doesn't show what we claimed to want (that analytical and simulation yield the same results in a simple example; I cut this text [Bill] in my recent edit) due to the skewed nature of this outcome. For the purposes of this walkthrough, I think skew is a complication we want to put aside? And also, both designs have power of basically 100% with this example data, so the description in the text is no longer accurate. So let's just jump to the more detailed examples of each approach below?  -->
+<p>By &#x201C;analytic tools,&#x201D; we refer to methods of calculating power (or a minimum required sample size, etc.) based on mathematical derivations under particular assumptions. For instance, in an <em>i.i.d.</em> two-arm design with random assignment of half the sample, no covariates, a roughly normally distributed outcome, and equal variance in each treatment group, it&#x2019;s possible show that we would have 80% power to estimate a difference in means of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">&#x394;</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">&#x394;</span></span></span></span> if we collect data on approximately <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.6</mn><mi>&#x3C3;</mi><mi mathvariant="normal">/</mi><mi mathvariant="normal">&#x394;</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">n = (5.6 \sigma /\Delta)^{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">5.6</span><span class="mord mathnormal" style="margin-right:0.03588em;">&#x3C3;</span><span class="mord">/&#x394;</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span> observations, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3C3;</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">&#x3C3;</span></span></span></span> is the overall standard deviation of the outcome.<a href="references.html#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a> But we frequently consider situations where such derivations are not readily available.</p>
+<!-- I'm not sure this introductory example is useful, in that it doesn't show what we claimed to want (that analytical and simulation yield the same results in a simple example; I cut this text [Bill] in my recent edit) due to the skewed nature of this outcome. For the purposes of this walkthrough, I think skew is a complication we want to put aside? And also, both designs have power of basically 100% with this example data, so the description in the text is no longer accurate. So let's just jump to the more detailed examples of each approach below? -->
 <!-- Imagine that we thought a study would have an effect of about 1 standard deviation -- this is more or less the effect difference in the example data we've been using. How much statistical power would we have with a sample size of only 40 observations? -->
 <!-- Now that the setup is complete, we can assess the statistical power of our -->
 <!-- proposed design with $N=100$ and an effect of roughly 1 SD. The output below -->
@@ -598,10 +617,10 @@ with, two of which must be specified by the user. The third is then calculated a
 <p>Note that there is also the parameter <code>sd</code>, representing the standard deviation of the outcome. This is set to 1 by default unless <code>power.t.test()</code> is instructed otherwise.</p>
 <p>Say, for example, you want to know the MDE for a two-arm study with 1,000
 participants, of which half are assigned to treatment. Using <code>power.t.test()</code> you would specify:</p>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb160-1" title="1"><span class="kw">power.t.test</span>(</a>
-<a class="sourceLine" id="cb160-2" title="2">  <span class="dt">n =</span> <span class="dv">500</span>, <span class="co"># The number of observations per treatment arm</span></a>
-<a class="sourceLine" id="cb160-3" title="3">  <span class="dt">power =</span> <span class="fl">0.8</span> <span class="co"># The traditional power threshold of 80%</span></a>
-<a class="sourceLine" id="cb160-4" title="4">  )</a></code></pre></div>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1"><span class="kw">power.t.test</span>(</a>
+<a class="sourceLine" id="cb168-2" title="2">  <span class="dt">n =</span> <span class="dv">500</span>, <span class="co"># The number of observations per treatment arm</span></a>
+<a class="sourceLine" id="cb168-3" title="3">  <span class="dt">power =</span> <span class="fl">0.8</span> <span class="co"># The traditional power threshold of 80%</span></a>
+<a class="sourceLine" id="cb168-4" title="4">  )</a></code></pre></div>
 <pre><code>
      Two-sample t test power calculation 
 
@@ -614,340 +633,669 @@ participants, of which half are assigned to treatment. Using <code>power.t.test(
 
 NOTE: n is number in *each* group</code></pre>
 <p>If all we wanted to extract was the MDE, we could instead write:</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">n =</span> <span class="dv">500</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>delta</a></code></pre></div>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">n =</span> <span class="dv">500</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>delta</a></code></pre></div>
 <pre><code>[1] 0.1774</code></pre>
 <p>If we request the sample size instead, we can illustrate that this is applying an expression like the one we mention above: <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.6</mn><mi mathvariant="normal">/</mi><mn>0.1773605</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>&#x2248;</mo><mn>1000</mn></mrow><annotation encoding="application/x-tex">n = (5.6/0.1773605)^{2} \approx 1000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1141em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">5.6/0.1773605</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&#x2248;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1000</span></span></span></span></span></p>
 <p>And now via R code:</p>
-<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb164-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">delta =</span> <span class="fl">0.1773605</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>n <span class="op">*</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb172-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">delta =</span> <span class="fl">0.1773605</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>n <span class="op">*</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
 <pre><code>[1] 1000</code></pre>
 <p>If you need to, you can adjust other parameters, like the standard deviation of the outcome, the level of the test, or whether the test is one-sided rather than two-sided. There are also other functions available for different types of outcomes. For example, if you have a binary response, you can use <code>power.prop.test()</code> to calculate power for a similar kind of simple difference in proportions test.</p>
-<p>An equivalent approach in Stata is as follows:</p>
-<pre><code>power twomeans 0, power(0.8) n(1000) sd(1)</code></pre>
-<p>Stata users can learn more about available tools by checking out Stata&#x2019;s
-plethora of <a href="https://www.stata.com/features/power-and-sample-size/">relevant help files</a>.</p>
+<p>An equivalent approach in Stata would be as follows:</p>
+<pre class="stata"><code>power twomeans 0, power(0.8) n(1000) sd(1)
+di r(delta) // See: return list</code></pre>
+<p>Stata users can learn more about available off-the-shelf tools by checking out Stata&#x2019;s
+plethora of <a href="https://www.stata.com/features/power-and-sample-size/">relevant help files</a>. Meanwhile, R users could start by consulting the <code>pwrss</code>&#x2019;s packages <a href="https://cran.r-project.org/web/packages/pwrss/vignettes/examples.html">guide</a>.</p>
 </div>
 <div id="an-example-of-the-simulation-approach" class="section level2">
 <h2><span class="header-section-number">6.2</span> An example of the simulation approach</h2>
+<!-- Adds copy code button -->
+<script>
+  addClassKlippyToPreCode();
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<!-- Used (and iteratively updated) in the {oes_code_tab} snippets below. -->
+<!-- set chapter number and reset count -->
 <p>We can compare the output of <code>power.t.test()</code> to the output from a
-simulation-based (i.e., computational) approach, which we illustrate in the code chunk below. Notice that our example below relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple cases, but it provides useful flexibility for simulating more complicated designs (particularly designs we cannot specify as easily within the <code>DeclareDesign</code> framework).</p>
-<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb167-1" title="1"><span class="co">## OES Power Simulation Toolkit:</span></a>
-<a class="sourceLine" id="cb167-2" title="2"><span class="co">## Replicate, Estimate, Evaluate (REE)</span></a>
-<a class="sourceLine" id="cb167-3" title="3"><span class="co">## </span></a>
-<a class="sourceLine" id="cb167-4" title="4"><span class="co">## replicate_design(...) ---: Generate replicates of a simulated dataset</span></a>
-<a class="sourceLine" id="cb167-5" title="5"><span class="co">## estimate(...) -----------: Estimate the null test-stat for treatment(s).</span></a>
-<a class="sourceLine" id="cb167-6" title="6"><span class="co">## evaluate_power(...) -----: Evaluate power to detect non-zero effects.</span></a>
-<a class="sourceLine" id="cb167-7" title="7"><span class="co">## evaluate_mde(...) -------: Find MDE, searching over range of effect sizes.</span></a>
-<a class="sourceLine" id="cb167-8" title="8"><span class="co">## evaluate_bias(...) ------: Compute bias and other diagnostics.</span></a>
-<a class="sourceLine" id="cb167-9" title="9"></a>
-<a class="sourceLine" id="cb167-10" title="10"><span class="co">## Required packages</span></a>
-<a class="sourceLine" id="cb167-11" title="11"><span class="kw">require</span>(magrittr)</a>
-<a class="sourceLine" id="cb167-12" title="12"><span class="kw">require</span>(fabricatr)</a>
-<a class="sourceLine" id="cb167-13" title="13"><span class="kw">require</span>(foreach)</a>
-<a class="sourceLine" id="cb167-14" title="14"></a>
-<a class="sourceLine" id="cb167-15" title="15"><span class="co">##### REPLICATE a hypothetical design R times #####</span></a>
-<a class="sourceLine" id="cb167-16" title="16"></a>
-<a class="sourceLine" id="cb167-17" title="17"><span class="co"># Inputs:</span></a>
-<a class="sourceLine" id="cb167-18" title="18"><span class="co"># - (1) number of replicates desired</span></a>
-<a class="sourceLine" id="cb167-19" title="19"><span class="co"># - (2) additional arguments that are passed to fabricate() (see the ...).</span></a>
-<a class="sourceLine" id="cb167-20" title="20"><span class="co">#   - Generally, each arg is a separate variable to generate.</span></a>
-<a class="sourceLine" id="cb167-21" title="21"><span class="co">#   - Later vars can be a function of earlier ones.</span></a>
-<a class="sourceLine" id="cb167-22" title="22"><span class="co">#   - See our examples below, it&apos;s simpler than it sounds!</span></a>
-<a class="sourceLine" id="cb167-23" title="23">replicate_design &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb167-24" title="24"><span class="st">  </span></a>
-<a class="sourceLine" id="cb167-25" title="25"><span class="st">  </span><span class="cf">function</span>(<span class="dt">R =</span> <span class="dv">200</span>, ...) {</a>
-<a class="sourceLine" id="cb167-26" title="26">    </a>
-<a class="sourceLine" id="cb167-27" title="27">    <span class="co"># Function: produce one draw of the simulated dataset/design</span></a>
-<a class="sourceLine" id="cb167-28" title="28">    design &lt;-<span class="st"> </span><span class="cf">function</span>() {</a>
-<a class="sourceLine" id="cb167-29" title="29">      fabricatr<span class="op">::</span><span class="kw">fabricate</span>(</a>
-<a class="sourceLine" id="cb167-30" title="30">        ...</a>
-<a class="sourceLine" id="cb167-31" title="31">        ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-32" title="32"><span class="st">        </span>list</a>
-<a class="sourceLine" id="cb167-33" title="33">      }    </a>
-<a class="sourceLine" id="cb167-34" title="34">    </a>
-<a class="sourceLine" id="cb167-35" title="35">    <span class="co"># Use replicate() to replicate that design R times</span></a>
-<a class="sourceLine" id="cb167-36" title="36">    rep &lt;-<span class="st"> </span><span class="kw">replicate</span>(</a>
-<a class="sourceLine" id="cb167-37" title="37">      <span class="dt">n =</span> R,</a>
-<a class="sourceLine" id="cb167-38" title="38">      <span class="dt">expr =</span> <span class="kw">design</span>()</a>
-<a class="sourceLine" id="cb167-39" title="39">      )</a>
-<a class="sourceLine" id="cb167-40" title="40">    </a>
-<a class="sourceLine" id="cb167-41" title="41">    <span class="co"># Output will be a list of dataframes.</span></a>
-<a class="sourceLine" id="cb167-42" title="42">    <span class="co"># For each, add a variable indicating which sim# it is</span></a>
-<a class="sourceLine" id="cb167-43" title="43">    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(rep)) {</a>
-<a class="sourceLine" id="cb167-44" title="44">      rep[[i]] &lt;-<span class="st"> </span>rep[[i]] <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-45" title="45"><span class="st">        </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb167-46" title="46">          <span class="dt">sim =</span> i</a>
-<a class="sourceLine" id="cb167-47" title="47">        )</a>
-<a class="sourceLine" id="cb167-48" title="48">      }</a>
-<a class="sourceLine" id="cb167-49" title="49">    </a>
-<a class="sourceLine" id="cb167-50" title="50">    <span class="kw">return</span>(rep)</a>
-<a class="sourceLine" id="cb167-51" title="51">    </a>
-<a class="sourceLine" id="cb167-52" title="52">  }</a>
-<a class="sourceLine" id="cb167-53" title="53"></a>
-<a class="sourceLine" id="cb167-54" title="54"><span class="co">##### ESTIMATE results using those replicated dfs #####</span></a>
-<a class="sourceLine" id="cb167-55" title="55"></a>
-<a class="sourceLine" id="cb167-56" title="56"><span class="co"># Inputs:</span></a>
-<a class="sourceLine" id="cb167-57" title="57"><span class="co"># - (1) Estimation formula (y ~ x1 + x2 + ...)</span></a>
-<a class="sourceLine" id="cb167-58" title="58"><span class="co"># - (2) Variables(s) we want to be powered to estimate the effects of</span></a>
-<a class="sourceLine" id="cb167-59" title="59"><span class="co">#     - Generally just the treatment var(s)</span></a>
-<a class="sourceLine" id="cb167-60" title="60"><span class="co"># - (3) Data the estimator should be applied to (list of dfs)</span></a>
-<a class="sourceLine" id="cb167-61" title="61"><span class="co"># - (4) The estimator (the default is OLS with HC2 errors)</span></a>
-<a class="sourceLine" id="cb167-62" title="62">estimate &lt;-<span class="st"> </span><span class="cf">function</span>(</a>
-<a class="sourceLine" id="cb167-63" title="63">  formula,</a>
-<a class="sourceLine" id="cb167-64" title="64">  vars,</a>
-<a class="sourceLine" id="cb167-65" title="65">  <span class="dt">data =</span> <span class="ot">NULL</span>,</a>
-<a class="sourceLine" id="cb167-66" title="66">  <span class="dt">estimator =</span> estimatr<span class="op">::</span>lm_robust</a>
-<a class="sourceLine" id="cb167-67" title="67">  ) {</a>
-<a class="sourceLine" id="cb167-68" title="68"></a>
-<a class="sourceLine" id="cb167-69" title="69">  <span class="co"># Pass the list of dfs to map().</span></a>
-<a class="sourceLine" id="cb167-70" title="70">  <span class="co"># map() applies the procedure specified below to each df in the list.</span></a>
-<a class="sourceLine" id="cb167-71" title="71">  data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-72" title="72"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-73" title="73"><span class="st">    </span>purrr<span class="op">::</span><span class="kw">map</span>(</a>
-<a class="sourceLine" id="cb167-74" title="74">      </a>
-<a class="sourceLine" id="cb167-75" title="75">      <span class="co"># For each dataframe in the list, apply the specified estimator,</span></a>
-<a class="sourceLine" id="cb167-76" title="76">      <span class="co"># using the specified formula.</span></a>
-<a class="sourceLine" id="cb167-77" title="77">      <span class="op">~</span><span class="st"> </span><span class="kw">estimator</span>(</a>
-<a class="sourceLine" id="cb167-78" title="78">          formula,</a>
-<a class="sourceLine" id="cb167-79" title="79">          <span class="dt">data =</span> .</a>
-<a class="sourceLine" id="cb167-80" title="80">          ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-81" title="81"><span class="st">        </span></a>
-<a class="sourceLine" id="cb167-82" title="82"><span class="st">        </span><span class="co"># tidy up the results and specify the rows of estimates to keep</span></a>
-<a class="sourceLine" id="cb167-83" title="83"><span class="st">        </span>estimatr<span class="op">::</span><span class="kw">tidy</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-84" title="84"><span class="st">          </span>dplyr<span class="op">::</span><span class="kw">filter</span>(</a>
-<a class="sourceLine" id="cb167-85" title="85">            .data<span class="op">$</span>term <span class="op">%in%</span><span class="st"> </span>vars</a>
-<a class="sourceLine" id="cb167-86" title="86">            ) </a>
-<a class="sourceLine" id="cb167-87" title="87">      </a>
-<a class="sourceLine" id="cb167-88" title="88">      ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-89" title="89"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-90" title="90"><span class="st">    </span><span class="co"># Append the results from each sim replicate into a single dataframe</span></a>
-<a class="sourceLine" id="cb167-91" title="91"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-92" title="92"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-93" title="93"><span class="st">    </span><span class="co"># Add some more useful labels</span></a>
-<a class="sourceLine" id="cb167-94" title="94"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb167-95" title="95">      <span class="dt">sim =</span> <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(data), <span class="dt">each =</span> <span class="kw">n</span>() <span class="op">/</span><span class="st"> </span><span class="kw">length</span>(data)),</a>
-<a class="sourceLine" id="cb167-96" title="96">      <span class="dt">term =</span> <span class="kw">factor</span>(.data<span class="op">$</span>term, <span class="dt">levels =</span> vars)</a>
-<a class="sourceLine" id="cb167-97" title="97">      )</a>
-<a class="sourceLine" id="cb167-98" title="98">  </a>
-<a class="sourceLine" id="cb167-99" title="99">}</a>
-<a class="sourceLine" id="cb167-100" title="100"></a>
-<a class="sourceLine" id="cb167-101" title="101"><span class="co">##### EVALUATE power of the design #####</span></a>
-<a class="sourceLine" id="cb167-102" title="102"></a>
-<a class="sourceLine" id="cb167-103" title="103"><span class="co"># Inputs:</span></a>
-<a class="sourceLine" id="cb167-104" title="104"><span class="co"># - (1) Results produced by estimate() above</span></a>
-<a class="sourceLine" id="cb167-105" title="105"><span class="co"># - (2) Hypothetical effects we want power estimates for</span></a>
-<a class="sourceLine" id="cb167-106" title="106"><span class="co"># - (3) Desired alpha (significance) level</span></a>
-<a class="sourceLine" id="cb167-107" title="107">evaluate_power &lt;-<span class="st"> </span><span class="cf">function</span>(data, delta, <span class="dt">level =</span> <span class="fl">0.05</span>) {</a>
-<a class="sourceLine" id="cb167-108" title="108">  </a>
-<a class="sourceLine" id="cb167-109" title="109">  <span class="co"># Make sure delta (may be scalar or vector) was specified</span></a>
-<a class="sourceLine" id="cb167-110" title="110">  <span class="cf">if</span> (<span class="kw">missing</span>(delta)) {</a>
-<a class="sourceLine" id="cb167-111" title="111">    <span class="kw">stop</span>(<span class="st">&quot;Specify &apos;delta&apos; to proceed.&quot;</span>)</a>
-<a class="sourceLine" id="cb167-112" title="112">  }</a>
-<a class="sourceLine" id="cb167-113" title="113">  </a>
-<a class="sourceLine" id="cb167-114" title="114">  <span class="co"># Apply the following (i.e., after %do%) to each delta separately,</span></a>
-<a class="sourceLine" id="cb167-115" title="115">  <span class="co"># appending the results with bind_rows at the end.</span></a>
-<a class="sourceLine" id="cb167-116" title="116">  foreach<span class="op">::</span><span class="kw">foreach</span>(</a>
-<a class="sourceLine" id="cb167-117" title="117">    <span class="dt">i =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(delta),</a>
-<a class="sourceLine" id="cb167-118" title="118">    <span class="dt">.combine =</span> <span class="st">&quot;bind_rows&quot;</span></a>
-<a class="sourceLine" id="cb167-119" title="119">    ) <span class="op">%do%</span><span class="st"> </span>{</a>
-<a class="sourceLine" id="cb167-120" title="120">      </a>
-<a class="sourceLine" id="cb167-121" title="121">      <span class="co"># Start with the df of estimates</span></a>
-<a class="sourceLine" id="cb167-122" title="122">      data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-123" title="123"><span class="st">        </span></a>
-<a class="sourceLine" id="cb167-124" title="124"><span class="st">        </span><span class="co"># Create variables storing the relevant delta and new test stat</span></a>
-<a class="sourceLine" id="cb167-125" title="125"><span class="st">        </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb167-126" title="126">          <span class="dt">delta =</span> delta[i],</a>
-<a class="sourceLine" id="cb167-127" title="127">          <span class="dt">new_statistic =</span> (.data<span class="op">$</span>estimate <span class="op">+</span><span class="st"> </span>.data<span class="op">$</span>delta) <span class="op">/</span><span class="st"> </span>.data<span class="op">$</span>std.error</a>
-<a class="sourceLine" id="cb167-128" title="128">          ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-129" title="129"><span class="st">        </span></a>
-<a class="sourceLine" id="cb167-130" title="130"><span class="st">        </span><span class="co"># Similar to group_by, result here is list of dfs for each term</span></a>
-<a class="sourceLine" id="cb167-131" title="131"><span class="st">        </span>dplyr<span class="op">::</span><span class="kw">group_split</span>(.data<span class="op">$</span>term) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-132" title="132"><span class="st">        </span></a>
-<a class="sourceLine" id="cb167-133" title="133"><span class="st">        </span><span class="co"># Separately for the df for each term, get p for each replicate</span></a>
-<a class="sourceLine" id="cb167-134" title="134"><span class="st">        </span>purrr<span class="op">::</span><span class="kw">map</span>(</a>
-<a class="sourceLine" id="cb167-135" title="135">          <span class="op">~</span><span class="st"> </span>{</a>
-<a class="sourceLine" id="cb167-136" title="136">            tibble<span class="op">::</span><span class="kw">tibble</span>(</a>
-<a class="sourceLine" id="cb167-137" title="137">              <span class="dt">term =</span> .<span class="op">$</span>term,</a>
-<a class="sourceLine" id="cb167-138" title="138">              <span class="dt">delta =</span> .<span class="op">$</span>delta,</a>
-<a class="sourceLine" id="cb167-139" title="139">              <span class="dt">p.value =</span> <span class="kw">foreach</span>(</a>
-<a class="sourceLine" id="cb167-140" title="140">                <span class="dt">j =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(.<span class="op">$</span>new_statistic),</a>
-<a class="sourceLine" id="cb167-141" title="141">                <span class="dt">.combine =</span> <span class="st">&quot;c&quot;</span></a>
-<a class="sourceLine" id="cb167-142" title="142">                ) <span class="op">%do%</span><span class="st"> </span><span class="kw">mean</span>(<span class="kw">abs</span>(.<span class="op">$</span>statistic) <span class="op">&gt;=</span><span class="st"> </span><span class="kw">abs</span>(.<span class="op">$</span>new_statistic[j]))</a>
-<a class="sourceLine" id="cb167-143" title="143">              )</a>
-<a class="sourceLine" id="cb167-144" title="144">            }</a>
-<a class="sourceLine" id="cb167-145" title="145">          )</a>
-<a class="sourceLine" id="cb167-146" title="146">      } <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-147" title="147"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-148" title="148"><span class="st">    </span><span class="co"># Organize by term and delta</span></a>
-<a class="sourceLine" id="cb167-149" title="149"><span class="st">    </span><span class="kw">group_by</span>(.data<span class="op">$</span>term, .data<span class="op">$</span>delta) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-150" title="150"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-151" title="151"><span class="st">    </span><span class="co"># Average over repliacates to get power for each term/delta combination</span></a>
-<a class="sourceLine" id="cb167-152" title="152"><span class="st">    </span><span class="kw">summarize</span>(</a>
-<a class="sourceLine" id="cb167-153" title="153">      <span class="dt">power =</span> <span class="kw">mean</span>(.data<span class="op">$</span>p.value <span class="op">&lt;=</span><span class="st"> </span>level),</a>
-<a class="sourceLine" id="cb167-154" title="154">      <span class="dt">.groups =</span> <span class="st">&quot;drop&quot;</span></a>
-<a class="sourceLine" id="cb167-155" title="155">      )</a>
-<a class="sourceLine" id="cb167-156" title="156">  </a>
-<a class="sourceLine" id="cb167-157" title="157">}</a>
-<a class="sourceLine" id="cb167-158" title="158"></a>
-<a class="sourceLine" id="cb167-159" title="159"><span class="co">##### EVALUATE the min. detectable effect #####</span></a>
-<a class="sourceLine" id="cb167-160" title="160"><span class="co"># Helps summarize the results of evaluate_power() above,</span></a>
-<a class="sourceLine" id="cb167-161" title="161"><span class="co"># basically a wrapper for evaluate_power()</span></a>
-<a class="sourceLine" id="cb167-162" title="162"></a>
-<a class="sourceLine" id="cb167-163" title="163"><span class="co"># Inputs:</span></a>
-<a class="sourceLine" id="cb167-164" title="164"><span class="co"># - (1) Results produced by estimate() above</span></a>
-<a class="sourceLine" id="cb167-165" title="165"><span class="co"># - (2) Range of hypothetical effects we want to consider (delta above)</span></a>
-<a class="sourceLine" id="cb167-166" title="166"><span class="co"># - (3) How fine-grained do we want changes in delta to be?</span></a>
-<a class="sourceLine" id="cb167-167" title="167"><span class="co"># - (4) Alpha (significance) level</span></a>
-<a class="sourceLine" id="cb167-168" title="168"><span class="co"># - (5) Minimum power we want to accept</span></a>
-<a class="sourceLine" id="cb167-169" title="169">evaluate_mde &lt;-<span class="st"> </span><span class="cf">function</span>(</a>
-<a class="sourceLine" id="cb167-170" title="170">  data, </a>
-<a class="sourceLine" id="cb167-171" title="171">  <span class="dt">delta_range =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</a>
-<a class="sourceLine" id="cb167-172" title="172">  <span class="dt">how_granular =</span> <span class="fl">0.01</span>,</a>
-<a class="sourceLine" id="cb167-173" title="173">  <span class="dt">level =</span> <span class="fl">0.05</span>,</a>
-<a class="sourceLine" id="cb167-174" title="174">  <span class="dt">min_power =</span> <span class="fl">0.8</span></a>
-<a class="sourceLine" id="cb167-175" title="175">  ) {</a>
-<a class="sourceLine" id="cb167-176" title="176">  </a>
-<a class="sourceLine" id="cb167-177" title="177">  <span class="co"># Use the function designed above to get power estimates</span></a>
-<a class="sourceLine" id="cb167-178" title="178">  eval &lt;-<span class="st"> </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb167-179" title="179">    <span class="dt">data =</span> data, </a>
-<a class="sourceLine" id="cb167-180" title="180">    <span class="dt">delta =</span> <span class="kw">seq</span>(delta_range[<span class="dv">1</span>], delta_range[<span class="dv">2</span>], how_granular),</a>
-<a class="sourceLine" id="cb167-181" title="181">    <span class="dt">level =</span> level</a>
-<a class="sourceLine" id="cb167-182" title="182">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-183" title="183"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-184" title="184"><span class="st">    </span><span class="co"># Organize data by term</span></a>
-<a class="sourceLine" id="cb167-185" title="185"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(</a>
-<a class="sourceLine" id="cb167-186" title="186">      .data<span class="op">$</span>term</a>
-<a class="sourceLine" id="cb167-187" title="187">      ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-188" title="188"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-189" title="189"><span class="st">    </span><span class="co"># Get the MDE at our desired power level for each term</span></a>
-<a class="sourceLine" id="cb167-190" title="190"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(</a>
-<a class="sourceLine" id="cb167-191" title="191">      <span class="dt">MDE =</span> <span class="kw">min</span>(.data<span class="op">$</span>delta[.data<span class="op">$</span>power <span class="op">&gt;=</span><span class="st"> </span>min_power]),</a>
-<a class="sourceLine" id="cb167-192" title="192">      <span class="dt">.groups =</span> <span class="st">&quot;drop&quot;</span></a>
-<a class="sourceLine" id="cb167-193" title="193">      )</a>
-<a class="sourceLine" id="cb167-194" title="194">  </a>
-<a class="sourceLine" id="cb167-195" title="195">  <span class="kw">return</span>(eval)</a>
-<a class="sourceLine" id="cb167-196" title="196">  </a>
-<a class="sourceLine" id="cb167-197" title="197">}</a>
-<a class="sourceLine" id="cb167-198" title="198"></a>
-<a class="sourceLine" id="cb167-199" title="199"><span class="co">##### EVALUATE Bias #####</span></a>
-<a class="sourceLine" id="cb167-200" title="200"><span class="co"># Helps summarize the results of estimate() above.</span></a>
-<a class="sourceLine" id="cb167-201" title="201"><span class="co"># Pass results of estimate() to this function.</span></a>
-<a class="sourceLine" id="cb167-202" title="202"></a>
-<a class="sourceLine" id="cb167-203" title="203"><span class="co"># Inputs:</span></a>
-<a class="sourceLine" id="cb167-204" title="204"><span class="co"># - (1) Data produced by estimate() above</span></a>
-<a class="sourceLine" id="cb167-205" title="205"><span class="co"># - (2) True ATE</span></a>
-<a class="sourceLine" id="cb167-206" title="206">evaluate_bias &lt;-<span class="st"> </span><span class="cf">function</span>(</a>
-<a class="sourceLine" id="cb167-207" title="207">  data, </a>
-<a class="sourceLine" id="cb167-208" title="208">  <span class="dt">ATE =</span> <span class="dv">0</span></a>
-<a class="sourceLine" id="cb167-209" title="209">  ) {</a>
-<a class="sourceLine" id="cb167-210" title="210">  </a>
-<a class="sourceLine" id="cb167-211" title="211">  <span class="co"># Start with the estimates for each replicated dataset</span></a>
-<a class="sourceLine" id="cb167-212" title="212">  smry &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-213" title="213"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-214" title="214"><span class="st">    </span><span class="co"># Add a variable representing the true ATE</span></a>
-<a class="sourceLine" id="cb167-215" title="215"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb167-216" title="216">      <span class="dt">ATE =</span> <span class="kw">rep</span>(ATE, <span class="dt">len =</span> <span class="kw">n</span>())</a>
-<a class="sourceLine" id="cb167-217" title="217">      ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-218" title="218"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-219" title="219"><span class="st">    </span><span class="co"># Organize estimates by term</span></a>
-<a class="sourceLine" id="cb167-220" title="220"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">group_by</span>(</a>
-<a class="sourceLine" id="cb167-221" title="221">      .data<span class="op">$</span>term</a>
-<a class="sourceLine" id="cb167-222" title="222">      ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb167-223" title="223"><span class="st">    </span></a>
-<a class="sourceLine" id="cb167-224" title="224"><span class="st">    </span><span class="co"># Summarize across replicates, within each term</span></a>
-<a class="sourceLine" id="cb167-225" title="225"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">summarize</span>(</a>
-<a class="sourceLine" id="cb167-226" title="226">      <span class="st">&quot;True ATE&quot;</span> =<span class="st"> </span><span class="kw">unique</span>(.data<span class="op">$</span>ATE),</a>
-<a class="sourceLine" id="cb167-227" title="227">      <span class="st">&quot;Mean Estimate&quot;</span> =<span class="st"> </span><span class="kw">mean</span>(.data<span class="op">$</span>estimate),</a>
-<a class="sourceLine" id="cb167-228" title="228">      <span class="dt">Bias =</span> <span class="kw">mean</span>(.data<span class="op">$</span>estimate <span class="op">-</span><span class="st"> </span>.data<span class="op">$</span>ATE),</a>
-<a class="sourceLine" id="cb167-229" title="229">      <span class="dt">MSE =</span> <span class="kw">mean</span>((.data<span class="op">$</span>estimate <span class="op">-</span><span class="st"> </span>.data<span class="op">$</span>ATE)<span class="op">^</span><span class="dv">2</span>),</a>
-<a class="sourceLine" id="cb167-230" title="230">      <span class="dt">Coverage =</span> <span class="kw">mean</span>(</a>
-<a class="sourceLine" id="cb167-231" title="231">        .data<span class="op">$</span>conf.low <span class="op">&lt;=</span><span class="st"> </span>.data<span class="op">$</span>ATE <span class="op">&amp;</span><span class="st"> </span>.data<span class="op">$</span>conf.high <span class="op">&gt;=</span><span class="st"> </span>.data<span class="op">$</span>ATE</a>
-<a class="sourceLine" id="cb167-232" title="232">        ),</a>
-<a class="sourceLine" id="cb167-233" title="233">      <span class="st">&quot;SD of Estimates&quot;</span> =<span class="st"> </span><span class="kw">sd</span>(.data<span class="op">$</span>estimate),</a>
-<a class="sourceLine" id="cb167-234" title="234">      <span class="st">&quot;Mean SE&quot;</span> =<span class="st"> </span><span class="kw">mean</span>(.data<span class="op">$</span>std.error),</a>
-<a class="sourceLine" id="cb167-235" title="235">      <span class="dt">Power =</span> <span class="kw">mean</span>(.data<span class="op">$</span>p.value <span class="op">&lt;=</span><span class="st"> </span><span class="fl">0.05</span>),</a>
-<a class="sourceLine" id="cb167-236" title="236">      <span class="dt">.groups =</span> <span class="st">&quot;drop&quot;</span></a>
-<a class="sourceLine" id="cb167-237" title="237">    )</a>
-<a class="sourceLine" id="cb167-238" title="238">  </a>
-<a class="sourceLine" id="cb167-239" title="239">  <span class="kw">return</span>(smry)</a>
-<a class="sourceLine" id="cb167-240" title="240">  </a>
-<a class="sourceLine" id="cb167-241" title="241">}</a></code></pre></div>
+simulation-based (i.e., computational) approach, which we illustrate in the code chunk below. Notice that our example below relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility for simulating more complicated designs (particularly designs we cannot specify as easily within the <code>DeclareDesign</code> framework).</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R1&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata1&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide1&apos;)">
+Hide
+</button>
+<div id="ch6R1" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## OES Power Simulation Toolkit (R):
+## 
+## replicate_design(...) ---: Generate replicates of a simulated dataset
+## estimate(...) -----------: Estimate the null test-stat for treatment(s).
+## evaluate_power(...) -----: Evaluate power to detect non-zero effects.
+## evaluate_mde(...) -------: Find MDE, searching over range of effect sizes.
+## evaluate_bias(...) ------: Compute bias and other diagnostics.
+
+## Required packages
+require(magrittr)
+require(fabricatr)
+require(foreach)
+
+##### REPLICATE a hypothetical design R times #####
+
+# Inputs:
+# - (1) number of replicates desired
+# - (2) additional arguments that are passed to fabricate() (see the ...).
+#   - Generally, each argument is a separate variable to generate.
+#   - Later vars can be a function of earlier ones.
+#   - See our examples below, this is often simpler than it sounds!
+#   - A built-in simulated treatment effect is not generally needed.
+replicate_design &lt;- 
+  
+  function(R = 200, ...) {
+    
+    # Function: produce one draw of the simulated dataset/design
+    design &lt;- function() {
+      fabricatr::fabricate(
+        ...
+        ) %&gt;%
+        list
+      }    
+    
+    # Use replicate() to replicate that design R times
+    rep &lt;- replicate(
+      n = R,
+      expr = design()
+      )
+    
+    # Output will be a list of dataframes.
+    # For each, add a variable indicating which sim# it is
+    for(i in 1:length(rep)) {
+      rep[[i]] &lt;- rep[[i]] %&gt;%
+        dplyr::mutate(
+          sim = i
+        )
+      }
+    
+    return(rep)
+    
+  }
+
+##### ESTIMATE results using those replicated dfs #####
+
+# Inputs:
+# - (1) Estimation formula (y ~ x1 + x2 + ...)
+# - (2) Variables(s) we want to be powered to estimate the effects of
+#     - Generally just the treatment var(s)
+# - (3) Data the estimator should be applied to (list of dfs)
+# - (4) The estimator (the default is OLS with HC2 errors)
+estimate &lt;- function(
+  formula,
+  vars,
+  data = NULL,
+  estimator = estimatr::lm_robust
+  ) {
+
+  # Pass the list of dfs to map().
+  # map() applies the procedure specified below to each df in the list.
+  data %&gt;%
+    
+    purrr::map(
+      
+      # For each dataframe in the list, apply the specified estimator,
+      # using the specified formula.
+      ~ estimator(
+          formula,
+          data = .
+          ) %&gt;%
+        
+        # tidy up the results and specify the rows of estimates to keep
+        estimatr::tidy() %&gt;%
+          dplyr::filter(
+            .data$term %in% vars
+            ) 
+      
+      ) %&gt;%
+    
+    # Append the results from each sim replicate into a single dataframe
+    dplyr::bind_rows() %&gt;%
+    
+    # Add some more useful labels
+    dplyr::mutate(
+      sim = rep(1:length(data), each = n() / length(data)),
+      term = factor(.data$term, levels = vars)
+      )
+  
+}
+
+##### EVALUATE power of the design #####
+
+# Inputs:
+# - (1) Results produced by estimate() above
+# - (2) Hypothetical effects we want power estimates for
+# - (3) Desired alpha (significance) level
+evaluate_power &lt;- function(data, delta, level = 0.05) {
+  
+  # Make sure delta (may be scalar or vector) was specified
+  if (missing(delta)) {
+    stop(&quot;Specify &apos;delta&apos; to proceed.&quot;)
+  }
+  
+  # Apply the following (i.e., after %do%) to each delta separately,
+  # appending the results with bind_rows at the end.
+  foreach::foreach(
+    i = 1:length(delta),
+    .combine = &quot;bind_rows&quot;
+    ) %do% {
+      
+      # Start with the df of estimates
+      data %&gt;%
+        
+        # Create variables storing the relevant delta and new test stat
+        dplyr::mutate(
+          delta = delta[i],
+          new_statistic = (.data$estimate + .data$delta) / .data$std.error
+          ) %&gt;%
+        
+        # Similar to group_by, result here is list of dfs for each term
+        dplyr::group_split(.data$term) %&gt;%
+        
+        # Separately for the df for each term, get p for each replicate
+        purrr::map(
+          ~ {
+            tibble::tibble(
+              term = .$term,
+              delta = .$delta,
+              p.value = foreach(
+                j = 1:length(.$new_statistic),
+                .combine = &quot;c&quot;
+                ) %do% mean(abs(.$statistic) &gt;= abs(.$new_statistic[j]))
+              )
+            }
+          )
+      } %&gt;%
+    
+    # Organize by term and delta
+    group_by(.data$term, .data$delta) %&gt;%
+    
+    # Average over repliacates to get power for each term/delta combination
+    summarize(
+      power = mean(.data$p.value &lt;= level),
+      .groups = &quot;drop&quot;
+      )
+  
+}
+
+##### EVALUATE the min. detectable effect #####
+# Helps summarize the results of evaluate_power() above,
+# basically a wrapper for evaluate_power()
+
+# Inputs:
+# - (1) Results produced by estimate() above
+# - (2) Range of hypothetical effects we want to consider (delta above)
+# - (3) How fine-grained do we want changes in delta to be?
+# - (4) Alpha (significance) level
+# - (5) Minimum power we want to accept
+evaluate_mde &lt;- function(
+  data, 
+  delta_range = c(0, 1),
+  how_granular = 0.01,
+  level = 0.05,
+  min_power = 0.8
+  ) {
+  
+  # Use the function designed above to get power estimates
+  eval &lt;- evaluate_power(
+    data = data, 
+    delta = seq(delta_range[1], delta_range[2], how_granular),
+    level = level
+    ) %&gt;%
+    
+    # Organize data by term
+    dplyr::group_by(
+      .data$term
+      ) %&gt;%
+    
+    # Get the MDE at our desired power level for each term
+    dplyr::summarize(
+      MDE = min(.data$delta[.data$power &gt;= min_power]),
+      .groups = &quot;drop&quot;
+      )
+  
+  return(eval)
+  
+}
+
+##### EVALUATE Bias #####
+# Helps summarize the results of estimate() above.
+# Pass results of estimate() to this function.
+
+# Inputs:
+# - (1) Data produced by estimate() above
+# - (2) True parameter value (generally true ATE)
+evaluate_bias &lt;- function(
+  data, 
+  ATE = 0
+  ) {
+  
+  # Start with the estimates for each replicated dataset
+  smry &lt;- data %&gt;%
+    
+    # Add a variable representing the true ATE
+    dplyr::mutate(
+      ATE = rep(ATE, len = n())
+      ) %&gt;%
+    
+    # Organize estimates by term
+    dplyr::group_by(
+      .data$term
+      ) %&gt;%
+    
+    # Summarize across replicates, within each term
+    dplyr::summarize(
+      &quot;True ATE&quot; = unique(.data$ATE),
+      &quot;Mean Estimate&quot; = mean(.data$estimate),
+      Bias = mean(.data$estimate - .data$ATE),
+      MSE = mean((.data$estimate - .data$ATE)^2),
+      Coverage = mean(
+        .data$conf.low &lt;= .data$ATE &amp; .data$conf.high &gt;= .data$ATE
+        ),
+      &quot;SD of Estimates&quot; = sd(.data$estimate),
+      &quot;Mean SE&quot; = mean(.data$std.error),
+      .groups = &quot;drop&quot;
+    )
+  
+  return(smry)
+  
+}</code></pre>
+</div>
+<div id="ch6Stata1" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** OES Power Simulation Toolkit (Stata):
+** 
+** draw_from_design ---: Generate a simulated dataset (NOT RUN DIRECTLY)
+** single_estimator ---: Draw data once and estimate results (NOT RUN DIRECTLY)
+** replicate ----------: Repeat (generate -&gt; estimate) many times
+** evaluate_power -----: Evaluate power to detect non-zero effects.
+** evaluate_mde -------: Find MDE, searching over range of effect sizes.
+** evaluate_bias ------: Compute bias and other diagnostics.
+
+***** DRAW FROM a hypothetical design *****
+
+** Note: Must be modified by user
+* Required set-up:
+* - (1) Write code within this program to generate one draw of a simulated dataset.
+*   - See our examples below, this is often simpler than it sounds!
+*   - A built-in simulated treatment effect is not generally needed.
+capture program drop draw_from_design
+program define draw_from_design, nclass
+
+    * Clear existing data
+    clear
+    
+    ** Replace the rest of the code inside this program with your own code
+    
+    * Sample size of 1000 observations
+    set obs 1000
+    
+    * Generate simulated outcome
+    gen y = rnormal(0, 1)
+    
+    * Generate simulated treatment (complete random assignment)
+    qui count
+    local ntreat = r(N)/2
+    complete_ra x, m(`ntreat&apos;)
+
+end
+
+**** ESTIMATE results for a single simulated dataset ****
+
+** Note: Must be modified by user
+* Required set-up:
+* - (1) Define the data generationprogram above.
+* - (2) Write out the test you want to run in this program (using the simulated data).
+capture program drop single_estimator
+program define single_estimator, rclass
+
+    * Check that design program exists
+    quietly capture draw_from_design
+    if _rc != 0 {
+        di as error &quot;Error: define data generation program (draw_from_design) first&quot;
+        exit
+    }
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    reg y x, vce(hc2)
+
+end
+
+**** REPEAT (generation -&gt; estimation) many times ****
+
+** Note: Modification by user NOT NEEDED (just copy into your .do file)
+* Required set-up:
+* - (1) Define both programs above (data generation and a single_estimator)
+* Inputs on use:
+* - (1) Number of replicates (default = 200)
+capture program drop replicate
+program define replicate, rclass
+
+    syntax[, reps(integer 200) ]
+
+    * Check that design program exists
+    quietly capture draw_from_design
+    if _rc != 0 {
+        di as error &quot;Error: define data generation program (draw_from_design) first&quot;
+        exit
+    }
+    
+    * Check that single_estimator program exists
+    quietly capture single_estimator
+    if _rc != 0 {
+        di as error &quot;Error: define estimation program (single_estimator) first&quot;
+        exit
+    }
+
+    * Save coefficients and SEs from each draw to memory.
+    simulate ///
+    _b _se, ///
+    reps(`reps&apos;) nodots: ///
+    single_estimator
+    
+    * Simulation indicator
+    gen sim = _n
+    
+    * Modify var names of coefficients/SEs slightly
+    foreach var of varlist _b* _se* {
+        qui rename `var&apos; `=substr(&quot;`var&apos;&quot;, 2, .)&apos;
+    }   
+
+    * Reshape to a format that makes the desired power calculation easier.
+    qui reshape long b_ se_, i(sim) j(term) string
+        
+end
+
+**** EVALUATE power of the design ****
+
+** Note: Modification by user NOT NEEDED (just copy into your .do file)
+* Required setup:
+* - (1) Define all programs above
+* - (2) Run replicate to get simulated coef/SE estimates in memory.
+* Inputs on use:
+* - (1) Hypothetical effects we want power estimates for (min, steps, and max)
+*   - (Default: from 0 to 1 in steps of 0.01)
+* - (2) Desired alpha (significance) level (default = 0.05)
+capture program drop evaluate_power
+program define evaluate_power, nclass
+
+    syntax[, ///
+    delta_min(real 0) ///
+    delta_steps(real 0.01) ///
+    delta_max(real 1) ///
+    alpha(real 0.05) ]
+    
+    * Data to return to after each iteration
+    tempfile restore_dat
+    qui save `restore_dat&apos;, replace
+    
+    * Loop over specified effect sizes
+    local i = 0
+    forvalues n = `delta_min&apos;(`delta_steps&apos;)`delta_max&apos; {
+        
+        qui use `restore_dat&apos;, clear
+        local ++i
+        
+        * Real and simulated statistics for each a given effect size
+        gen delta = `n&apos;
+        gen real_t = b_/se_
+        gen sim_t = (b_ + delta)/se_
+        
+        * Generate a p-value for each value of sim_t
+        qui gen sim_p = .
+        qui count
+        forvalues v = 1/`r(N)&apos; { // Loop over observations
+            qui gen greaterequal = abs(real_t) &gt;= abs(sim_t[`v&apos;])
+            qui sum greaterequal if term == term[`v&apos;], meanonly
+            qui replace sim_p = r(mean) if _n == `v&apos;
+            qui drop greaterequal
+        }
+        
+        * Use these to get power for the given delta
+        qui gen reject = sim_p &lt;= `alpha&apos;
+        bysort term: egen power = mean(reject)
+        collapse (mean) power, by(term delta)
+        label var power &quot;&quot;
+        
+        * Save, and advance to the next delta
+        if `i&apos; == 1 {
+            qui tempfile running_dat
+            qui save `running_dat&apos;, replace
+        }
+        
+        else {
+            append using `running_dat&apos;
+            qui save `running_dat&apos;, replace
+        }
+
+    }
+    
+    * Open the result, replacing the data in memory
+    qui use `running_dat&apos;, clear
+
+end
+
+**** EVALUATE the min. detectable effect ****
+
+** Note: Modification by user NOT NEEDED (just copy into your .do file)
+* Required setup:
+* - (1) Define programs above
+* - (2) Run replicate and evaluate_power
+* Inputs on use:
+* - (1) Minimum power desired
+capture program drop evaluate_mde
+program define evaluate_mde, nclass
+
+    syntax[, min_power(real 0.8)]
+    
+    quietly {
+        bysort term (power): gen above_min = power &gt;= `min_power&apos;
+        drop if above_min == 0
+        bysort term (delta): gen min = _n == 1
+        drop if min == 0
+        drop min above_min
+    }
+
+end
+
+**** EVALUATE Bias for a particular term ****
+
+** Note: Modification by user NOT NEEDED (just copy into your .do file)
+* Required setup:
+* - (1) Define programs above
+* - (2) Run replicate
+* Inputs on use:
+* - (1) The name of the term to provide diagnosics for
+* - (2) True parameter value (generally true ATE)
+capture program drop evaluate_bias
+program define evaluate_bias, nclass
+
+    syntax, true_value(real) term(string) [restore_data]
+    
+    * Save data to return to in temporary file
+    * (program includes option to turn this off)
+    if &quot;`restore_data&apos;&quot; != &quot;&quot; {
+        tempfile restore
+        qui save `restore_data&apos;, replace
+    }
+
+    * Subset to only the term in question
+    qui keep if term == &quot;`term&apos;&quot;
+    
+    * True parameter as variable
+    qui gen true_value = `true_value&apos;
+
+    * Prepare variables to summarizetrue
+    qui gen bias = b_ - true_value
+    qui gen MSE = (b_ - true_value)^2
+    qui gen conflow = b_ - (1.96 * se_) // normal approximation
+    qui gen confhigh = b_ + (1.96 * se_) // normal approximation
+    qui gen coverage = true_value &gt;= conflow &amp; true_value &lt;= confhigh
+    
+    collapse ///
+    (first) True = true_value ///
+    (mean) Mean_Estimate = b_ Bias = bias MSE Coverage = coverage Mean_SE = se_ ///
+    (sd) SD_Estimate = b_, ///
+    by(term)
+
+    list
+    
+    * Return to data?
+    if &quot;`restore_data&apos;&quot; != &quot;&quot; {
+        qui use `restore_data&apos;, clear
+    }
+    
+end</code></pre>
+</div>
+<div id="ch6Hide1" class="tabcontent">
+
+</div>
+</div>
 <p>Results are shown in the subsequent figure. Though the computational estimates are slightly different, they comport quite well with the analytic estimates.</p>
-<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1"><span class="co">## Parameters used for both sets of calculations</span></a>
-<a class="sourceLine" id="cb168-2" title="2">n &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="co"># Sample size</span></a>
-<a class="sourceLine" id="cb168-3" title="3">d &lt;-<span class="st"> </span><span class="fl">0.2</span> <span class="co"># Effect size to consider</span></a>
-<a class="sourceLine" id="cb168-4" title="4"></a>
-<a class="sourceLine" id="cb168-5" title="5"><span class="co">## Analytical power estimates</span></a>
-<a class="sourceLine" id="cb168-6" title="6">power_data &lt;-</a>
-<a class="sourceLine" id="cb168-7" title="7"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-8" title="8"><span class="st">  </span><span class="kw">tibble</span>(</a>
-<a class="sourceLine" id="cb168-9" title="9">    <span class="dt">d =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dt">len =</span> <span class="dv">200</span>),</a>
-<a class="sourceLine" id="cb168-10" title="10">    <span class="dt">power =</span> <span class="kw">power.t.test</span>(<span class="dt">n =</span> n <span class="op">/</span><span class="st"> </span><span class="dv">2</span>, <span class="dt">delta =</span> d)<span class="op">$</span>power</a>
-<a class="sourceLine" id="cb168-11" title="11">    )</a>
-<a class="sourceLine" id="cb168-12" title="12"></a>
-<a class="sourceLine" id="cb168-13" title="13"><span class="co">## Save initial plot; add simulation results below</span></a>
-<a class="sourceLine" id="cb168-14" title="14">g &lt;-<span class="st"> </span><span class="kw">ggplot</span>(power_data) <span class="op">+</span></a>
-<a class="sourceLine" id="cb168-15" title="15"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-16" title="16"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(d, power, <span class="dt">linetype =</span> <span class="st">&quot;power.t.test()&quot;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb168-17" title="17"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-18" title="18"><span class="st">  </span><span class="kw">labs</span>(</a>
-<a class="sourceLine" id="cb168-19" title="19">    <span class="dt">x =</span> <span class="kw">expression</span>(delta),</a>
-<a class="sourceLine" id="cb168-20" title="20">    <span class="dt">y =</span> <span class="st">&quot;Power&quot;</span>,</a>
-<a class="sourceLine" id="cb168-21" title="21">    <span class="dt">title =</span> <span class="st">&quot;Power for Simple Difference in Means Test&quot;</span></a>
-<a class="sourceLine" id="cb168-22" title="22">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb168-23" title="23"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-24" title="24"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
-<a class="sourceLine" id="cb168-25" title="25">    <span class="dt">n.breaks =</span> <span class="dv">6</span></a>
-<a class="sourceLine" id="cb168-26" title="26">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb168-27" title="27"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-28" title="28"><span class="st">  </span><span class="kw">geom_hline</span>(</a>
-<a class="sourceLine" id="cb168-29" title="29">    <span class="dt">yintercept =</span> <span class="fl">0.8</span>,</a>
-<a class="sourceLine" id="cb168-30" title="30">    <span class="dt">col =</span> <span class="st">&quot;grey25&quot;</span>,</a>
-<a class="sourceLine" id="cb168-31" title="31">    <span class="dt">alpha =</span> <span class="dv">08</span></a>
-<a class="sourceLine" id="cb168-32" title="32">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb168-33" title="33"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-34" title="34"><span class="st">  </span>ggridges<span class="op">::</span><span class="kw">theme_ridges</span>(</a>
-<a class="sourceLine" id="cb168-35" title="35">    <span class="dt">center_axis_labels =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb168-36" title="36">    <span class="dt">font_size =</span> <span class="dv">10</span></a>
-<a class="sourceLine" id="cb168-37" title="37">    ) </a>
-<a class="sourceLine" id="cb168-38" title="38"></a>
-<a class="sourceLine" id="cb168-39" title="39"><span class="co">## Comutational power estimates, using the functions above</span></a>
-<a class="sourceLine" id="cb168-40" title="40">sim_power_data &lt;-</a>
-<a class="sourceLine" id="cb168-41" title="41"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-42" title="42"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
-<a class="sourceLine" id="cb168-43" title="43">    <span class="dt">N =</span> n,</a>
-<a class="sourceLine" id="cb168-44" title="44">    <span class="dt">y =</span> <span class="kw">rnorm</span>(N),</a>
-<a class="sourceLine" id="cb168-45" title="45">    <span class="dt">x =</span> randomizr<span class="op">::</span><span class="kw">complete_ra</span>(</a>
-<a class="sourceLine" id="cb168-46" title="46">      N, <span class="dt">m =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">2</span></a>
-<a class="sourceLine" id="cb168-47" title="47">      )</a>
-<a class="sourceLine" id="cb168-48" title="48">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb168-49" title="49"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-50" title="50"><span class="st">  </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb168-51" title="51">    <span class="dt">form =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">vars =</span> <span class="st">&quot;x&quot;</span></a>
-<a class="sourceLine" id="cb168-52" title="52">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb168-53" title="53"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-54" title="54"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb168-55" title="55">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dt">len =</span> <span class="dv">200</span>)</a>
-<a class="sourceLine" id="cb168-56" title="56">    )</a>
-<a class="sourceLine" id="cb168-57" title="57"></a>
-<a class="sourceLine" id="cb168-58" title="58"><span class="co">## Add results from the simulation to the plot and compare</span></a>
-<a class="sourceLine" id="cb168-59" title="59">g <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb168-60" title="60"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-61" title="61"><span class="st">  </span><span class="kw">geom_line</span>(</a>
-<a class="sourceLine" id="cb168-62" title="62">    <span class="dt">data =</span> sim_power_data,</a>
-<a class="sourceLine" id="cb168-63" title="63">    <span class="kw">aes</span>(delta, power, <span class="dt">linetype =</span> <span class="st">&quot;simulation&quot;</span>),</a>
-<a class="sourceLine" id="cb168-64" title="64">    <span class="dt">color =</span> <span class="st">&quot;grey25&quot;</span></a>
-<a class="sourceLine" id="cb168-65" title="65">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb168-66" title="66"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-67" title="67"><span class="st">  </span><span class="kw">labs</span>(</a>
-<a class="sourceLine" id="cb168-68" title="68">    <span class="dt">linetype =</span> <span class="st">&quot;Method:&quot;</span></a>
-<a class="sourceLine" id="cb168-69" title="69">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb168-70" title="70"><span class="st">  </span></a>
-<a class="sourceLine" id="cb168-71" title="71"><span class="st">  </span><span class="kw">theme</span>(</a>
-<a class="sourceLine" id="cb168-72" title="72">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
-<a class="sourceLine" id="cb168-73" title="73">    ) </a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R2&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata2&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide2&apos;)">
+Hide
+</button>
+<div id="ch6R2" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Parameters used for both sets of calculations
+n &lt;- 1000 # Sample size
+d &lt;- 0.2 # Effect size to consider
+
+## Analytical power estimates
+power_data &lt;-
+  
+  tibble(
+    d = seq(0, 0.5, len = 200),
+    power = power.t.test(n = n / 2, delta = d)$power
+    )
+
+## Save initial plot; add simulation results below
+g &lt;- ggplot(power_data) +
+  
+  geom_line(aes(d, power, linetype = &quot;power.t.test()&quot;)) +
+  
+  labs(
+    x = expression(delta),
+    y = &quot;Power&quot;,
+    title = &quot;Power for Simple Difference in Means Test&quot;
+    ) +
+  
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  geom_hline(
+    yintercept = 0.8,
+    col = &quot;grey25&quot;,
+    alpha = 08
+    ) +
+  
+  ggridges::theme_ridges(
+    center_axis_labels = TRUE,
+    font_size = 10
+    ) 
+
+## Comutational power estimates, using the functions above
+sim_power_data &lt;-
+  
+  replicate_design(
+    N = n,
+    y = rnorm(N),
+    x = randomizr::complete_ra(
+      N, m = N / 2
+      )
+    ) %&gt;%
+  
+  estimate(
+    form = y ~ x, vars = &quot;x&quot;
+    ) %&gt;%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## Add results from the simulation to the plot and compare
+g + 
+  
+  geom_line(
+    data = sim_power_data,
+    aes(delta, power, linetype = &quot;simulation&quot;),
+    color = &quot;grey25&quot;
+    ) +
+  
+  labs(
+    linetype = &quot;Method:&quot;
+    ) +
+  
+  theme(
+    legend.position = &quot;bottom&quot;
+    ) </code></pre>
+</div>
+<div id="ch6Stata2" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Analytical power estimates
+* View power estimates for a range of effect sizes as a table
+power twomeans 0, n(1000) diff(0.005(0.005)0.505)
+* Or view as a graph instead
+power twomeans 0, n(1000) diff(0.005(0.005)0.505) graph
+* It&apos;s also possible to get the estimates as data in memory
+* and write your own plotting code (e.g.: using twoway).
+clear
+svmat r(pss_table), names(col)
+list in 1/5 // Illustration: power estimates are data in memory
+keep diff power
+rename diff delta
+tempfile analytical
+save `analytical&apos;, replace
+
+** Computational power estimates, using the programs as defined above
+replicate, reps(200) // Replicate data generation and estimation 200 times
+evaluate_power, delta_min(0.005) delta_max(0.500) delta_steps(0.005) // Consider a range of effect sizes
+
+** Merge computational with analytic estimates
+rename power power_comp
+keep if term == &quot;x&quot;
+merge 1:1 delta using `analytical&apos;
+keep if _merge == 3
+drop _merge
+
+** Manual line plot
+label var power &quot;Analytical&quot;
+label var power_comp &quot;Computational&quot;
+twoway ///
+(line power delta) ///
+(line power_comp delta), ///
+legend(pos(6) rows(1)) ///
+xtitle(&quot;Effect size&quot;) ytitle(&quot;Power&quot;) ///
+yline(0.8) title(&quot;Power for Simple Difference in Means Test&quot;)</code></pre>
+</div>
+<div id="ch6Hide2" class="tabcontent">
+
+</div>
+</div>
 <p><img src="OES_SOP_files/figure-html/powersimvsanalytic-1.png" width=".9\textwidth"></p>
-<p>As mentioned above, we produced those computational estimates using some pre-written functions that are currently housed in OES&#x2019;s GitHub code library. These functions are also laid out and explained step-by-step in comments in a code chunk above.</p>
-<p>These tools are designed around a simple workflow, and they should help remove some of the programming that may otherwise be a barrier to project teams calculating power computationally. The workflow proceeds as follows:</p>
+<p>As mentioned above, we produced those computational estimates using some pre-written functions that are housed in OES&#x2019;s GitHub code library. These functions are also laid out and explained step-by-step in comments in a code chunk above.</p>
+<p>These tools are designed around a simple workflow, and they should help remove some of the programming that may otherwise be a barrier to project teams calculating power computationally. The workflow proceeds as follows (we&#x2019;ll focus on explaining the R code here in text):</p>
 <ol style="list-style-type: decimal">
 <li>Replicate</li>
 <li>Estimate<br>
@@ -958,42 +1306,111 @@ simulation-based (i.e., computational) approach, which we illustrate in the code
 <p>The next step, <strong>Estimate</strong>, entails estimating effects for select treatments within each sample replicate. We can use those estimates to produce a distribution of test statistics for each effect size of interest.</p>
 <p>Finally, the last step, <strong>Evaluate</strong>, entails using those test statistics to evaluate our power to detect a range of different effect sizes.</p>
 <p>This workflow is supported by three functions: <code>replicate_design()</code>,
-<code>estimate()</code>, and <code>evaluate_power()</code>. Here&#x2019;s the simulation code used to generate Figure 1, in more detail:</p>
-<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb169-1" title="1"><span class="co">## 1. Replicate:</span></a>
-<a class="sourceLine" id="cb169-2" title="2"></a>
-<a class="sourceLine" id="cb169-3" title="3"><span class="co"># Output is a list of dfs</span></a>
-<a class="sourceLine" id="cb169-4" title="4">rep &lt;-<span class="st"> </span><span class="kw">replicate_design</span>(</a>
-<a class="sourceLine" id="cb169-5" title="5">  <span class="dt">R =</span> <span class="dv">200</span>,   <span class="co"># Number of sample replicates</span></a>
-<a class="sourceLine" id="cb169-6" title="6">  <span class="dt">N =</span> <span class="dv">1000</span>,  <span class="co"># Sample size of each replicate</span></a>
-<a class="sourceLine" id="cb169-7" title="7">  <span class="dt">y =</span> <span class="kw">rnorm</span>(N), <span class="co"># Normally distributed response</span></a>
-<a class="sourceLine" id="cb169-8" title="8">  <span class="dt">x =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.5</span>) <span class="co"># Binary treatment indicator</span></a>
-<a class="sourceLine" id="cb169-9" title="9">  ) </a>
-<a class="sourceLine" id="cb169-10" title="10"></a>
-<a class="sourceLine" id="cb169-11" title="11"><span class="co">## 2. Estimate:</span></a>
-<a class="sourceLine" id="cb169-12" title="12"></a>
-<a class="sourceLine" id="cb169-13" title="13"><span class="co"># Output is a dataframe of estimates from each sample replicate</span></a>
-<a class="sourceLine" id="cb169-14" title="14">est &lt;-<span class="st"> </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb169-15" title="15">  y <span class="op">~</span><span class="st"> </span>x, <span class="co"># Regression formula</span></a>
-<a class="sourceLine" id="cb169-16" title="16">  <span class="dt">vars =</span> <span class="st">&quot;x&quot;</span>, <span class="co"># Treatment variable(s)</span></a>
-<a class="sourceLine" id="cb169-17" title="17">  <span class="dt">data =</span> rep <span class="co"># Sample replicates</span></a>
-<a class="sourceLine" id="cb169-18" title="18">  ) </a>
-<a class="sourceLine" id="cb169-19" title="19"></a>
-<a class="sourceLine" id="cb169-20" title="20"><span class="co">## 3. Evaluate:</span></a>
-<a class="sourceLine" id="cb169-21" title="21"></a>
-<a class="sourceLine" id="cb169-22" title="22"><span class="co"># Output is a list of dfs</span></a>
-<a class="sourceLine" id="cb169-23" title="23">pwr_eval_sim &lt;-<span class="st"> </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb169-24" title="24">  <span class="dt">data =</span> est, <span class="co"># Estimates, from estimate() above</span></a>
-<a class="sourceLine" id="cb169-25" title="25">  <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dt">len =</span> <span class="dv">200</span>) <span class="co"># Effect sizes to consider</span></a>
-<a class="sourceLine" id="cb169-26" title="26">  )   </a></code></pre></div>
-<p>The final product, <code>pwr_eval_sim</code> above, reports the power for each of the user-specified effect sizes (<code>delta</code>) and (<code>vars</code>) model terms specified when calling <code>estimate()</code>. The output can be used to plot power curves or to compute minimum detectable effects.</p>
-<p>These functions help make the process of performing computational power analysis for OES projects easier, while still providing ample room for flexibility in both design and estimation strategy. For example, <code>replicate_design()</code> is a wrapper for <code>fabricate()</code> in the <a href="https://declaredesign.org/r/fabricatr/">fabricatr</a> package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters. By default, estimates are returned using <code>lm_robust()</code> from the <a href="https://declaredesign.org/r/estimatr/">estimatr</a> package, but alternative estimators can be specified. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:</p>
-<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" title="1"><span class="co">## Define logit estimator function</span></a>
-<a class="sourceLine" id="cb170-2" title="2">logit &lt;-<span class="st"> </span><span class="cf">function</span>(...){ <span class="kw">glm</span>(..., <span class="dt">family =</span> binomial)}</a>
-<a class="sourceLine" id="cb170-3" title="3"></a>
-<a class="sourceLine" id="cb170-4" title="4"><span class="co">## Pass this to the estimate() function above</span></a>
-<a class="sourceLine" id="cb170-5" title="5">est &lt;-<span class="st"> </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb170-6" title="6">  y <span class="op">~</span><span class="st"> </span>x <span class="op">+</span><span class="st"> </span>z1 <span class="op">+</span><span class="st"> </span>z2, <span class="dt">data =</span> rep, <span class="dt">estimator =</span> logit</a>
-<a class="sourceLine" id="cb170-7" title="7">  ) </a></code></pre></div>
+<code>estimate()</code>, and <code>evaluate_power()</code>. Here&#x2019;s the simulation code used to generate Figure 1 in R in more detail (alongside a similar illustration of the Stata version of our power simulation toolkit):</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R3&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata3&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide3&apos;)">
+Hide
+</button>
+<div id="ch6R3" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## 1. Replicate:
+
+# Output is a list of dfs
+rep &lt;- replicate_design(
+  R = 200,   # Number of sample replicates
+  N = 1000,  # Sample size of each replicate
+  y = rnorm(N), # Normally distributed response
+  x = rbinom(N, 1, 0.5) # Binary treatment indicator
+  ) 
+
+## 2. Estimate:
+
+# Output is a dataframe of estimates from each sample replicate
+est &lt;- estimate(
+  y ~ x, # Regression formula
+  vars = &quot;x&quot;, # Treatment variable(s)
+  data = rep # Sample replicates
+  ) 
+
+## 3. Evaluate:
+
+# Output is a list of dfs
+pwr_eval_sim &lt;- evaluate_power(
+  data = est, # Estimates, from estimate() above
+  delta = seq(0, 0.5, len = 200) # Effect sizes to consider
+  )   </code></pre>
+</div>
+<div id="ch6Stata3" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** 0. Setup
+
+* 0a: Simulate (update program below as needed)
+* Output is a dataset in memory
+capture program drop draw_from_design
+program define draw_from_design, nclass
+
+    * Clear existing data
+    clear
+
+    * Sample size of 1000 observations
+    set obs 1000
+    
+    * Generate simulated outcome
+    gen y = rnormal(0, 1)
+    
+    * Generate simulated treatment (complete random assignment)
+    qui count
+    local ntreat = r(N)/2
+    complete_ra x, m(`ntreat&apos;)
+
+end
+
+* 0b: Analysis strategy (update program below as needed)
+* Output is a dataset in memory and stored estimates
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    reg y x, vce(hc2)
+
+end
+
+** 1/2. Replicate/Estimate:
+
+* Output is a dataset of coefficients and SEs from each simulation.
+replicate, reps(200) // Number of replications
+
+** 3. Evaluate 
+
+* Output is a set of power estimates in memory, one for each delta
+evaluate_power, ///
+delta_min(0.005) /// Smallest delta to consider
+delta_max(0.500) /// Largest delta to consider
+delta_steps(0.005) // Increments to apply</code></pre>
+</div>
+<div id="ch6Hide3" class="tabcontent">
+
+</div>
+</div>
+<p>The final product&#x2014;<code>pwr_eval_sim</code> above in the R code&#x2014;reports the power for each of the user-specified effect sizes (<code>delta</code>) and (<code>vars</code>) model terms specified when calling <code>estimate()</code>. The output can be used to plot power curves or to compute minimum detectable effects.</p>
+<p>These functions help make the process of performing computational power analysis for OES projects easier, while still providing ample room for flexibility in both design and estimation strategy. For example, <code>replicate_design()</code> in the R code is a wrapper for <code>fabricate()</code> in the <a href="https://declaredesign.org/r/fabricatr/">fabricatr</a> package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters.</p>
+<p>By default, estimates in R are returned using <code>lm_robust()</code> from the <a href="https://declaredesign.org/r/estimatr/">estimatr</a> package, but alternative estimators can be specified. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:</p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb181-1" title="1"><span class="co">## Define logit estimator function</span></a>
+<a class="sourceLine" id="cb181-2" title="2">logit &lt;-<span class="st"> </span><span class="cf">function</span>(...){ <span class="kw">glm</span>(..., <span class="dt">family =</span> binomial)}</a>
+<a class="sourceLine" id="cb181-3" title="3"></a>
+<a class="sourceLine" id="cb181-4" title="4"><span class="co">## Pass this to the estimate() function above</span></a>
+<a class="sourceLine" id="cb181-5" title="5">est &lt;-<span class="st"> </span><span class="kw">estimate</span>(</a>
+<a class="sourceLine" id="cb181-6" title="6">  y <span class="op">~</span><span class="st"> </span>x <span class="op">+</span><span class="st"> </span>z1 <span class="op">+</span><span class="st"> </span>z2, <span class="dt">data =</span> rep, <span class="dt">estimator =</span> logit</a>
+<a class="sourceLine" id="cb181-7" title="7">  ) </a></code></pre></div>
 <p>Other tools for power simulation exist as well. For instance, throughout this SOP, we have used <a href="https://declaredesign.org/r/declaredesign/articles/DeclareDesign_101.html">DeclareDesign</a> to simulate hypothetical research designs and compare their performance. And there is no shortage of further simulation
 examples that can be found online for more specialized use-cases.</p>
 </div>
@@ -1021,69 +1438,165 @@ effect of two treatments on a binary outcome with a baseline of 0.25. Each
 treatment is assigned to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">M = 500</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">500</span></span></span></span> individuals at random, resulting in four
 roughly equal sized groups of observations after randomization: (1) a control group, (2) those assigned to treatment 1 but not treatment 2, (3) those assigned to treatment 2 but not treatment 1, and (4) those assigned to both treatment 1 and 2.</p>
 <p>We can easily calculate power to detect the main effect of each treatment as follows:</p>
-<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb171-1" title="1">two_by_two &lt;-</a>
-<a class="sourceLine" id="cb171-2" title="2"></a>
-<a class="sourceLine" id="cb171-3" title="3"><span class="st">  </span><span class="co">## Basic elements of each simulated sample replicate</span></a>
-<a class="sourceLine" id="cb171-4" title="4"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
-<a class="sourceLine" id="cb171-5" title="5">    <span class="dt">N =</span> <span class="dv">1000</span>,</a>
-<a class="sourceLine" id="cb171-6" title="6">    <span class="dt">y =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.25</span>),</a>
-<a class="sourceLine" id="cb171-7" title="7">    <span class="dt">x1 =</span> <span class="kw">complete_ra</span>(N, <span class="dt">m =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">2</span>), </a>
-<a class="sourceLine" id="cb171-8" title="8">    <span class="dt">x2 =</span> <span class="kw">complete_ra</span>(N, <span class="dt">m =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb171-9" title="9">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb171-10" title="10"><span class="st">  </span></a>
-<a class="sourceLine" id="cb171-11" title="11"><span class="st">  </span><span class="co">## Estimate main and interaction effects</span></a>
-<a class="sourceLine" id="cb171-12" title="12"><span class="st">  </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb171-13" title="13">    <span class="dt">form =</span> y <span class="op">~</span><span class="st"> </span>x1 <span class="op">+</span><span class="st"> </span>x2 <span class="op">+</span><span class="st"> </span>x1<span class="op">:</span>x2,</a>
-<a class="sourceLine" id="cb171-14" title="14">    <span class="dt">vars =</span> <span class="kw">c</span>(<span class="st">&quot;x1&quot;</span>, <span class="st">&quot;x2&quot;</span>, <span class="st">&quot;x1:x2&quot;</span>)</a>
-<a class="sourceLine" id="cb171-15" title="15">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb171-16" title="16"><span class="st">  </span></a>
-<a class="sourceLine" id="cb171-17" title="17"><span class="st">  </span><span class="co">## Evaluate power</span></a>
-<a class="sourceLine" id="cb171-18" title="18"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb171-19" title="19">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="dt">len =</span> <span class="dv">200</span>)</a>
-<a class="sourceLine" id="cb171-20" title="20">    )</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R4&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata4&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide4&apos;)">
+Hide
+</button>
+<div id="ch6R4" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>two_by_two &lt;-
+
+  ## Basic elements of each simulated sample replicate
+  replicate_design(
+    N = 1000,
+    y = rbinom(N, 1, 0.25),
+    x1 = complete_ra(N, m = N / 2), 
+    x2 = complete_ra(N, m = N / 2)
+    ) %&gt;%
+  
+  ## Estimate main and interaction effects
+  estimate(
+    form = y ~ x1 + x2 + x1:x2,
+    vars = c(&quot;x1&quot;, &quot;x2&quot;, &quot;x1:x2&quot;)
+    ) %&gt;%
+  
+  ## Evaluate power
+  evaluate_power(
+    delta = seq(0, 0.25, len = 200)
+    )</code></pre>
+</div>
+<div id="ch6Stata4" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Basic elements of each simulated sample replicate
+* Redefine data generation
+capture program drop draw_from_design
+program define draw_from_design, nclass
+
+    * Clear existing data
+    clear
+
+    * Sample size of 1000 observations
+    set obs 1000
+    
+    * Generate simulated outcome
+    gen y = rbinomial(1, 0.25)
+    
+    * Generate simulated treatments
+    qui count
+    local ntreat = r(N)/2
+    complete_ra x, m(`ntreat&apos;)
+    complete_ra x2, m(`ntreat&apos;)
+
+end
+
+** Estimate main and interaction effects
+* Redefine estimation
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    * (note: the program currently does not correctly handle factor notation)
+    gen x_int = x*x2
+    reg y x x2 x_int, vce(hc2)
+
+end
+
+** Replicate estimates
+replicate, reps(200)
+
+** Evaluate power
+evaluate_power, delta_min(0) delta_max(0.25) delta_steps(0.002)</code></pre>
+</div>
+<div id="ch6Hide4" class="tabcontent">
+
+</div>
+</div>
 <p>Using the output reported in the object <code>two_by_two</code>, we can plot the power curves for each of the main effects and the interaction effect, as shown
 in Figure 2.</p>
-<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb172-1" title="1"><span class="kw">ggplot</span>(two_by_two) <span class="op">+</span></a>
-<a class="sourceLine" id="cb172-2" title="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb172-3" title="3"><span class="st">  </span><span class="co">## Add a line representing power for each effect/term</span></a>
-<a class="sourceLine" id="cb172-4" title="4"><span class="st">  </span><span class="kw">geom_line</span>(</a>
-<a class="sourceLine" id="cb172-5" title="5">    <span class="kw">aes</span>(delta, power, <span class="dt">linetype =</span> term)</a>
-<a class="sourceLine" id="cb172-6" title="6">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb172-7" title="7"><span class="st">  </span></a>
-<a class="sourceLine" id="cb172-8" title="8"><span class="st">  </span><span class="co">## Choose linetypes that are easy to distinguish</span></a>
-<a class="sourceLine" id="cb172-9" title="9"><span class="st">  </span><span class="kw">scale_linetype_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>, <span class="st">&quot;dotted&quot;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb172-10" title="10"><span class="st">  </span></a>
-<a class="sourceLine" id="cb172-11" title="11"><span class="st">  </span><span class="co">## Horizontal line for 80% power</span></a>
-<a class="sourceLine" id="cb172-12" title="12"><span class="st">  </span><span class="kw">geom_hline</span>(</a>
-<a class="sourceLine" id="cb172-13" title="13">    <span class="dt">yintercept =</span> <span class="fl">0.8</span>,</a>
-<a class="sourceLine" id="cb172-14" title="14">    <span class="dt">color =</span> <span class="st">&quot;grey25&quot;</span>,</a>
-<a class="sourceLine" id="cb172-15" title="15">    <span class="dt">alpha =</span> <span class="fl">0.8</span></a>
-<a class="sourceLine" id="cb172-16" title="16">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb172-17" title="17"><span class="st">  </span></a>
-<a class="sourceLine" id="cb172-18" title="18"><span class="st">  </span><span class="co">## y-axis scale</span></a>
-<a class="sourceLine" id="cb172-19" title="19"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
-<a class="sourceLine" id="cb172-20" title="20">    <span class="dt">n.breaks =</span> <span class="dv">6</span></a>
-<a class="sourceLine" id="cb172-21" title="21">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb172-22" title="22"><span class="st">  </span></a>
-<a class="sourceLine" id="cb172-23" title="23"><span class="st">  </span><span class="co">## Adding labels</span></a>
-<a class="sourceLine" id="cb172-24" title="24"><span class="st">  </span><span class="kw">labs</span>(</a>
-<a class="sourceLine" id="cb172-25" title="25">    <span class="dt">x =</span> <span class="kw">expression</span>(delta),</a>
-<a class="sourceLine" id="cb172-26" title="26">    <span class="dt">y =</span> <span class="st">&quot;Power&quot;</span>,</a>
-<a class="sourceLine" id="cb172-27" title="27">    <span class="dt">title =</span> <span class="st">&quot;Power for a 2x2 Design&quot;</span>,</a>
-<a class="sourceLine" id="cb172-28" title="28">    <span class="dt">linetype =</span> <span class="st">&quot;Effect for...&quot;</span></a>
-<a class="sourceLine" id="cb172-29" title="29">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb172-30" title="30"><span class="st">  </span></a>
-<a class="sourceLine" id="cb172-31" title="31"><span class="st">  </span><span class="co">## Update some visual settings with the ridges theme</span></a>
-<a class="sourceLine" id="cb172-32" title="32"><span class="st">  </span>ggridges<span class="op">::</span><span class="kw">theme_ridges</span>(</a>
-<a class="sourceLine" id="cb172-33" title="33">    <span class="dt">font_size =</span> <span class="dv">10</span>,</a>
-<a class="sourceLine" id="cb172-34" title="34">    <span class="dt">center_axis_labels =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb172-35" title="35">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb172-36" title="36"><span class="st">  </span></a>
-<a class="sourceLine" id="cb172-37" title="37"><span class="st">  </span><span class="co">## Other settings (here: just legend location)</span></a>
-<a class="sourceLine" id="cb172-38" title="38"><span class="st">  </span><span class="kw">theme</span>(</a>
-<a class="sourceLine" id="cb172-39" title="39">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
-<a class="sourceLine" id="cb172-40" title="40">    ) </a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-27-1.png" width=".9\textwidth"></p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R5&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata5&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide5&apos;)">
+Hide
+</button>
+<div id="ch6R5" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>ggplot(two_by_two) +
+  
+  ## Add a line representing power for each effect/term
+  geom_line(
+    aes(delta, power, linetype = term)
+    ) +
+  
+  ## Choose linetypes that are easy to distinguish
+  scale_linetype_manual(values = c(&quot;solid&quot;, &quot;longdash&quot;, &quot;dotted&quot;)) +
+  
+  ## Horizontal line for 80% power
+  geom_hline(
+    yintercept = 0.8,
+    color = &quot;grey25&quot;,
+    alpha = 0.8
+    ) +
+  
+  ## y-axis scale
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  ## Adding labels
+  labs(
+    x = expression(delta),
+    y = &quot;Power&quot;,
+    title = &quot;Power for a 2x2 Design&quot;,
+    linetype = &quot;Effect for...&quot;
+    ) +
+  
+  ## Update some visual settings with the ridges theme
+  ggridges::theme_ridges(
+    font_size = 10,
+    center_axis_labels = TRUE
+    ) +
+  
+  ## Other settings (here: just legend location)
+  theme(
+    legend.position = &quot;bottom&quot;
+    )</code></pre>
+</div>
+<div id="ch6Stata5" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Reshape to apply plotting code similar to above
+reshape wide power, i(delta) j(term) string
+
+** Line plot
+label var powerx &quot;x1&quot;
+label var powerx2 &quot;x2&quot;
+label var powerx_int &quot;x1 * x2&quot;
+twoway ///
+(line powerx delta, lcolor(black) lpattern(solid)) /// x line
+(line powerx2 delta, lcolor(black) lpattern(dash)) /// x2 line
+(line powerx_int delta, lcolor(black) lpattern(dot)), /// interaction line
+legend(pos(6) rows(1)) ///
+xtitle(&quot;Effect size&quot;) ytitle(&quot;Power&quot;) ///
+yline(0.8) title(&quot;Power for a 2x2 Design&quot;)</code></pre>
+</div>
+<div id="ch6Hide5" class="tabcontent">
+
+</div>
+</div>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-162-1.png" width=".9\textwidth"></p>
 <p>Of course, in this simple example, we could still have relied on some reasonable analytical assumptions to arrive at these estimates (see a helpful discussion <a href="https://statmodeling.stat.columbia.edu/2018/03/15/need-16-times-sample-size-estimate-interaction-estimate-main-effect/">here</a>). But running a simulation saves us the trouble.</p>
 </div>
 <div id="covariate-adjustment-with-the-lin-estimator" class="section level3">
@@ -1099,197 +1612,360 @@ continuous outcome. Our design calls for randomly assigning only <span class="ka
 individuals to receive the intervention &#x2014; perhaps because it is expensive to implement &#x2014; and the rest to control.</p>
 <p>In addition to having data on the outcome and on treatment assignment, let&#x2019;s say that we also anticipate obtaining a dataset of covariates for our 1,000 observations. This data contains two variables that are prognostic of the outcome <em>and the treatment effect</em>. We&#x2019;ll call these <code>z1</code> and <code>z2</code>. The first is a continuous measure and the latter is a binary indicator. Our design calls for adjusting for these covariates to improve the precision of our estimated treatment effect. We can simulate such a design to illustrate the possible benefits of covariate adjustment in terms of improved statistical power.</p>
 <p>We begin by replicating the data-generating process:</p>
-<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb173-1" title="1">rep_data &lt;-</a>
-<a class="sourceLine" id="cb173-2" title="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb173-3" title="3"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
-<a class="sourceLine" id="cb173-4" title="4">    <span class="dt">N =</span> <span class="dv">1000</span>,</a>
-<a class="sourceLine" id="cb173-5" title="5">    <span class="dt">z1 =</span> <span class="kw">rnorm</span>(N, <span class="dt">sd =</span> <span class="dv">3</span>),   <span class="co"># Continuous covariate</span></a>
-<a class="sourceLine" id="cb173-6" title="6">    <span class="dt">z2 =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.25</span>), <span class="co"># Binary covariate</span></a>
-<a class="sourceLine" id="cb173-7" title="7">    <span class="dt">cz1 =</span> z1 <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(z1),     <span class="co"># Mean centered versions of the covariates</span></a>
-<a class="sourceLine" id="cb173-8" title="8">    <span class="dt">cz2 =</span> z2 <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(z2),</a>
-<a class="sourceLine" id="cb173-9" title="9">    <span class="dt">x =</span> <span class="kw">complete_ra</span>(N, <span class="dt">m =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">10</span>), <span class="co"># Randomly assign 10% to treatment</span></a>
-<a class="sourceLine" id="cb173-10" title="10">    <span class="dt">y =</span> ((z1 <span class="op">+</span><span class="st"> </span>z2) <span class="op">*</span><span class="st"> </span>x) <span class="op">+</span><span class="st"> </span>(<span class="fl">0.8</span> <span class="op">*</span><span class="st"> </span>z1) <span class="op">-</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">*</span><span class="st"> </span>z2) <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N) <span class="co"># Simulate Y</span></a>
-<a class="sourceLine" id="cb173-11" title="11">    )</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R6&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata6&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide6&apos;)">
+Hide
+</button>
+<div id="ch6R6" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>rep_data &lt;-
+  
+  replicate_design(
+    N = 1000,
+    z1 = rnorm(N, sd = 3),   # Continuous covariate
+    z2 = rbinom(N, 1, 0.25), # Binary covariate
+    cz1 = z1 - mean(z1),     # Mean center z1
+    cz2 = z2 - mean(z2), # Mean center z2
+    x = complete_ra(N, m = N * 0.1), # Randomly assign 10% to treatment
+    y = (z1 + z2) * x + (0.8 * z1) - (1 * z2) + rnorm(N) # Simulate Y
+    )</code></pre>
+</div>
+<div id="ch6Stata6" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Basic elements of each simulated sample replicate
+* Redefine data generation
+capture program drop draw_from_design
+program define draw_from_design, nclass
+
+    * Clear existing data
+    clear
+
+    * Sample size of 1000 observations
+    set obs 1000
+    
+    * Continuous covariate
+    gen z1 = rnormal(0, 3)
+    
+    * Binary covariate
+    gen z2 = rbinomial(1, 0.25)
+    
+    * Mean centered versions
+    qui sum z1
+    gen cz1 = z1 - r(mean)
+    qui sum z2
+    gen cz2 = z2 - r(mean)
+    
+    * Generate simulated treatment (10%)
+    complete_ra x, prob(0.1)
+    
+    * Simulate y
+    gen y = ((z1 + z2) * x) + (0.8 * z1) - (1 * z2) + rnormal()
+
+end</code></pre>
+</div>
+<div id="ch6Hide6" class="tabcontent">
+
+</div>
+</div>
 <p>We then estimate and evaluate. For comparison, power is computed (1) with
 covariate adjustment via the Lin estimator, (2) without covariate adjustment, and (3) with standard linear, additive covariate adjustment:</p>
-<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb174-1" title="1"><span class="co">## With the Lin Estimator</span></a>
-<a class="sourceLine" id="cb174-2" title="2">lin_adjust &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb174-3" title="3"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-4" title="4"><span class="st">  </span>rep_data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb174-5" title="5"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-6" title="6"><span class="st">  </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb174-7" title="7">    <span class="dt">form =</span> y <span class="op">~</span><span class="st"> </span>x <span class="op">+</span><span class="st"> </span>z1 <span class="op">+</span><span class="st"> </span>z2 <span class="op">+</span><span class="st"> </span>x<span class="op">:</span>cz1 <span class="op">+</span><span class="st"> </span>x<span class="op">:</span>cz2,</a>
-<a class="sourceLine" id="cb174-8" title="8">    <span class="dt">vars =</span> <span class="st">&quot;x&quot;</span></a>
-<a class="sourceLine" id="cb174-9" title="9">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb174-10" title="10"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-11" title="11"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb174-12" title="12">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dt">len =</span> <span class="dv">200</span>)</a>
-<a class="sourceLine" id="cb174-13" title="13">    )</a>
-<a class="sourceLine" id="cb174-14" title="14"></a>
-<a class="sourceLine" id="cb174-15" title="15"><span class="co">## With no covariate adjustment</span></a>
-<a class="sourceLine" id="cb174-16" title="16">no_adjust &lt;-</a>
-<a class="sourceLine" id="cb174-17" title="17"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-18" title="18"><span class="st">  </span>rep_data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb174-19" title="19"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-20" title="20"><span class="st">  </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb174-21" title="21">    <span class="dt">form =</span> y <span class="op">~</span><span class="st"> </span>x,</a>
-<a class="sourceLine" id="cb174-22" title="22">    <span class="dt">vars =</span> <span class="st">&quot;x&quot;</span></a>
-<a class="sourceLine" id="cb174-23" title="23">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb174-24" title="24"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-25" title="25"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb174-26" title="26">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dt">len =</span> <span class="dv">200</span>)</a>
-<a class="sourceLine" id="cb174-27" title="27">    )</a>
-<a class="sourceLine" id="cb174-28" title="28"></a>
-<a class="sourceLine" id="cb174-29" title="29"><span class="co">## With linear, additive covariate adjustment</span></a>
-<a class="sourceLine" id="cb174-30" title="30">standard_adjust &lt;-</a>
-<a class="sourceLine" id="cb174-31" title="31"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-32" title="32"><span class="st">  </span>rep_data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb174-33" title="33"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-34" title="34"><span class="st">  </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb174-35" title="35">    <span class="dt">form =</span> y <span class="op">~</span><span class="st"> </span>x <span class="op">+</span><span class="st"> </span>z1 <span class="op">+</span><span class="st"> </span>z2,</a>
-<a class="sourceLine" id="cb174-36" title="36">    <span class="dt">vars =</span> <span class="st">&quot;x&quot;</span></a>
-<a class="sourceLine" id="cb174-37" title="37">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb174-38" title="38"><span class="st">  </span></a>
-<a class="sourceLine" id="cb174-39" title="39"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb174-40" title="40">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dt">len =</span> <span class="dv">200</span>)</a>
-<a class="sourceLine" id="cb174-41" title="41">    )</a></code></pre></div>
-<p>We can now compare results under these alternative empirical strategies. Figure 3 shows the power curves for each approach. The Lin estimator provides substantial improvements in power over both no covariate adjustment and linear additive adjustment.<a href="references.html#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a> And it only took a few lines of code to get this result!</p>
-<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb175-1" title="1"><span class="co">## Combine the results, and apply similar plotting code to above</span></a>
-<a class="sourceLine" id="cb175-2" title="2"><span class="kw">bind_rows</span>(</a>
-<a class="sourceLine" id="cb175-3" title="3">  lin_adjust <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Method =</span> <span class="st">&quot;Lin&quot;</span>),</a>
-<a class="sourceLine" id="cb175-4" title="4">  no_adjust <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Method =</span> <span class="st">&quot;No Covariates&quot;</span>),</a>
-<a class="sourceLine" id="cb175-5" title="5">  standard_adjust <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">Method =</span> <span class="st">&quot;Additive&quot;</span>)</a>
-<a class="sourceLine" id="cb175-6" title="6">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb175-7" title="7"><span class="st">  </span></a>
-<a class="sourceLine" id="cb175-8" title="8"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb175-9" title="9"><span class="st">  </span></a>
-<a class="sourceLine" id="cb175-10" title="10"><span class="st">  </span><span class="kw">geom_line</span>(</a>
-<a class="sourceLine" id="cb175-11" title="11">    <span class="kw">aes</span>(delta, power, <span class="dt">linetype =</span> Method)</a>
-<a class="sourceLine" id="cb175-12" title="12">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb175-13" title="13"><span class="st">  </span></a>
-<a class="sourceLine" id="cb175-14" title="14"><span class="st">  </span><span class="kw">scale_linetype_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>, <span class="st">&quot;dotted&quot;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb175-15" title="15"><span class="st">  </span></a>
-<a class="sourceLine" id="cb175-16" title="16"><span class="st">  </span><span class="kw">geom_hline</span>(</a>
-<a class="sourceLine" id="cb175-17" title="17">    <span class="dt">yintercept =</span> <span class="fl">0.8</span>,</a>
-<a class="sourceLine" id="cb175-18" title="18">    <span class="dt">color =</span> <span class="st">&quot;grey25&quot;</span>,</a>
-<a class="sourceLine" id="cb175-19" title="19">    <span class="dt">alpha =</span> <span class="fl">0.8</span></a>
-<a class="sourceLine" id="cb175-20" title="20">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb175-21" title="21"><span class="st">  </span></a>
-<a class="sourceLine" id="cb175-22" title="22"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
-<a class="sourceLine" id="cb175-23" title="23">    <span class="dt">n.breaks =</span> <span class="dv">6</span></a>
-<a class="sourceLine" id="cb175-24" title="24">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb175-25" title="25"><span class="st">  </span></a>
-<a class="sourceLine" id="cb175-26" title="26"><span class="st">  </span><span class="kw">labs</span>(</a>
-<a class="sourceLine" id="cb175-27" title="27">    <span class="dt">x =</span> <span class="kw">expression</span>(delta),</a>
-<a class="sourceLine" id="cb175-28" title="28">    <span class="dt">y =</span> <span class="st">&quot;Power&quot;</span>,</a>
-<a class="sourceLine" id="cb175-29" title="29">    <span class="dt">title =</span> <span class="st">&quot;Power with Lin Adjustment&quot;</span>,</a>
-<a class="sourceLine" id="cb175-30" title="30">    <span class="dt">linetype =</span> <span class="st">&quot;Method:&quot;</span></a>
-<a class="sourceLine" id="cb175-31" title="31">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb175-32" title="32"><span class="st">  </span></a>
-<a class="sourceLine" id="cb175-33" title="33"><span class="st">  </span>ggridges<span class="op">::</span><span class="kw">theme_ridges</span>(</a>
-<a class="sourceLine" id="cb175-34" title="34">    <span class="dt">font_size =</span> <span class="dv">10</span>,</a>
-<a class="sourceLine" id="cb175-35" title="35">    <span class="dt">center_axis_labels =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb175-36" title="36">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb175-37" title="37"><span class="st">  </span></a>
-<a class="sourceLine" id="cb175-38" title="38"><span class="st">  </span><span class="kw">theme</span>(</a>
-<a class="sourceLine" id="cb175-39" title="39">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
-<a class="sourceLine" id="cb175-40" title="40">    ) </a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-30-1.png" width=".9\textwidth"></p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R7&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata7&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide7&apos;)">
+Hide
+</button>
+<div id="ch6R7" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## With the Lin Estimator
+lin_adjust &lt;- 
+  
+  rep_data %&gt;%
+  
+  estimate(
+    form = y ~ x + z1 + z2 + x:cz1 + x:cz2,
+    vars = &quot;x&quot;
+    ) %&gt;%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## With no covariate adjustment
+no_adjust &lt;-
+  
+  rep_data %&gt;%
+  
+  estimate(
+    form = y ~ x,
+    vars = &quot;x&quot;
+    ) %&gt;%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## With linear, additive covariate adjustment
+standard_adjust &lt;-
+  
+  rep_data %&gt;%
+  
+  estimate(
+    form = y ~ x + z1 + z2,
+    vars = &quot;x&quot;
+    ) %&gt;%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )</code></pre>
+</div>
+<div id="ch6Stata7" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** With the lin estimator
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    * (As noted above, this code isn&apos;t currently written for factor notation)
+    gen x_cz2 = x * cz2
+    gen x_cz1 = x * cz1
+    reg y x x_cz2 x_cz1 cz1 cz2, vce(hc2)
+
+end
+
+* Replicate and save
+replicate, reps(200)
+evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
+keep if term == &quot;x&quot;
+rename power power_lin
+tempfile lin
+save `lin&apos;, replace
+
+** With no covariate adjustment
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    reg y x, vce(hc2)
+
+end
+
+* Replicate and save
+replicate, reps(200)
+evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
+keep if term == &quot;x&quot;
+rename power power_no
+tempfile no
+save `no&apos;, replace
+
+** With linear, additive covariate adjustment
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    reg y x cz1 cz2, vce(hc2)
+
+end
+
+* Replicate and merge
+replicate, reps(200)
+evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
+keep if term == &quot;x&quot;
+merge 1:1 delta using `lin&apos;
+drop _merge
+merge 1:1 delta using `no&apos;</code></pre>
+</div>
+<div id="ch6Hide7" class="tabcontent">
+
+</div>
+</div>
+<p>We can now compare results under these alternative empirical strategies. Figure 3 shows the power curves for each approach. The Lin estimator provides substantial improvements in power over both no covariate adjustment and linear additive adjustment.<a href="references.html#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a> And it only took a few lines of code to get this result!</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R8&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata8&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide8&apos;)">
+Hide
+</button>
+<div id="ch6R8" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Combine the results, and apply similar plotting code to above
+bind_rows(
+  lin_adjust %&gt;% mutate(Method = &quot;Lin&quot;),
+  no_adjust %&gt;% mutate(Method = &quot;No Covariates&quot;),
+  standard_adjust %&gt;% mutate(Method = &quot;Additive&quot;)
+  ) %&gt;%
+  
+  ggplot() +
+  
+  geom_line(
+    aes(delta, power, linetype = Method)
+    ) +
+  
+  scale_linetype_manual(values = c(&quot;solid&quot;, &quot;longdash&quot;, &quot;dotted&quot;)) +
+  
+  geom_hline(
+    yintercept = 0.8,
+    color = &quot;grey25&quot;,
+    alpha = 0.8
+    ) +
+  
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  labs(
+    x = expression(delta),
+    y = &quot;Power&quot;,
+    title = &quot;Power with Lin Adjustment&quot;,
+    linetype = &quot;Method:&quot;
+    ) +
+  
+  ggridges::theme_ridges(
+    font_size = 10,
+    center_axis_labels = TRUE
+    ) +
+  
+  theme(
+    legend.position = &quot;bottom&quot;
+    ) </code></pre>
+</div>
+<div id="ch6Stata8" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Apply similar plotting code to above
+label var power &quot;Additive&quot;
+label var power_no &quot;No covariates&quot;
+label var power_lin &quot;Lin&quot;
+twoway ///
+(line power delta, lcolor(black) lpattern(solid)) ///
+(line power_lin delta, lcolor(black) lpattern(dash)) ///
+(line power_no delta, lcolor(black) lpattern(dot)), ///
+legend(pos(6) rows(1)) ///
+xtitle(&quot;Effect size&quot;) ytitle(&quot;Power&quot;) ///
+title(&quot;Power with Lin adjustment&quot;) yline(0.8)</code></pre>
+</div>
+<div id="ch6Hide8" class="tabcontent">
+
+</div>
+</div>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-171-1.png" width=".9\textwidth"></p>
 </div>
 <div id="incorporating-declaredesign-into-oes-power-tools" class="section level3">
 <h3><span class="header-section-number">6.4.3</span> Incorporating DeclareDesign into OES Power Tools</h3>
-<p>We can also use <code>DeclareDesign</code> within this <strong>Replicate</strong>, <strong>Estimate</strong>, <strong>Evaluate</strong> framework. This involves using <code>DeclareDesign</code> to draw estimates, and then feeding the results into the OES <code>evaluate_power()</code> function. We compare the <code>DeclareDesign</code> approach to the OES <code>Replicate</code> and <code>Estimate</code> steps below.</p>
+<p>In R, we can also use <code>DeclareDesign</code> within this <strong>Replicate</strong>, <strong>Estimate</strong>, <strong>Evaluate</strong> framework. This involves using <code>DeclareDesign</code> to draw estimates, and then feeding the results into the OES <code>evaluate_power()</code> function. We compare the <code>DeclareDesign</code> approach to the OES <code>Replicate</code> and <code>Estimate</code> steps below.</p>
 <p>First, we simulate a simple design with the OES tools introduced above:</p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb176-1" title="1">eval &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb176-2" title="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb176-3" title="3"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
-<a class="sourceLine" id="cb176-4" title="4">    <span class="dt">R =</span> <span class="dv">1000</span>,</a>
-<a class="sourceLine" id="cb176-5" title="5">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
-<a class="sourceLine" id="cb176-6" title="6">    <span class="dt">Y =</span> <span class="kw">rnorm</span>(N),</a>
-<a class="sourceLine" id="cb176-7" title="7">    <span class="dt">Z =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.5</span>)</a>
-<a class="sourceLine" id="cb176-8" title="8">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb176-9" title="9"><span class="st">  </span></a>
-<a class="sourceLine" id="cb176-10" title="10"><span class="st">  </span><span class="kw">estimate</span>(</a>
-<a class="sourceLine" id="cb176-11" title="11">    <span class="dt">form =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">vars =</span> <span class="st">&quot;Z&quot;</span></a>
-<a class="sourceLine" id="cb176-12" title="12">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb176-13" title="13"><span class="st">  </span></a>
-<a class="sourceLine" id="cb176-14" title="14"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb176-15" title="15">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb176-16" title="16">    )</a></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb192-1" title="1">eval &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb192-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-3" title="3"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
+<a class="sourceLine" id="cb192-4" title="4">    <span class="dt">R =</span> <span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb192-5" title="5">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
+<a class="sourceLine" id="cb192-6" title="6">    <span class="dt">Y =</span> <span class="kw">rnorm</span>(N),</a>
+<a class="sourceLine" id="cb192-7" title="7">    <span class="dt">Z =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.5</span>)</a>
+<a class="sourceLine" id="cb192-8" title="8">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb192-9" title="9"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-10" title="10"><span class="st">  </span><span class="kw">estimate</span>(</a>
+<a class="sourceLine" id="cb192-11" title="11">    <span class="dt">form =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">vars =</span> <span class="st">&quot;Z&quot;</span></a>
+<a class="sourceLine" id="cb192-12" title="12">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb192-13" title="13"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-14" title="14"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
+<a class="sourceLine" id="cb192-15" title="15">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb192-16" title="16">    )</a></code></pre></div>
 <p>Then, we do the same with <code>DeclareDesign</code>, declaring a population, potential outcomes, assignments, a target quantity of interest, and an estimator:</p>
-<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb177-1" title="1">design &lt;-</a>
-<a class="sourceLine" id="cb177-2" title="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb177-3" title="3"><span class="st">  </span><span class="kw">declare_population</span>(</a>
-<a class="sourceLine" id="cb177-4" title="4">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
-<a class="sourceLine" id="cb177-5" title="5">    <span class="dt">U =</span> <span class="kw">rnorm</span>(N),</a>
-<a class="sourceLine" id="cb177-6" title="6">    <span class="kw">potential_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>U)</a>
-<a class="sourceLine" id="cb177-7" title="7">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb177-8" title="8"><span class="st">  </span></a>
-<a class="sourceLine" id="cb177-9" title="9"><span class="st">  </span><span class="kw">declare_assignment</span>(<span class="dt">Z =</span> <span class="kw">simple_ra</span>(N, <span class="dt">prob =</span> <span class="fl">0.5</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb177-10" title="10"><span class="st">  </span></a>
-<a class="sourceLine" id="cb177-11" title="11"><span class="st">  </span><span class="kw">declare_inquiry</span>(<span class="dt">ATE =</span> <span class="kw">mean</span>(Y_Z_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Y_Z_<span class="dv">0</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb177-12" title="12"><span class="st">  </span></a>
-<a class="sourceLine" id="cb177-13" title="13"><span class="st">  </span><span class="kw">declare_measurement</span>(<span class="dt">Y =</span> <span class="kw">reveal_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>Z)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb177-14" title="14"><span class="st">  </span></a>
-<a class="sourceLine" id="cb177-15" title="15"><span class="st">  </span><span class="kw">declare_estimator</span>(</a>
-<a class="sourceLine" id="cb177-16" title="16">    Y <span class="op">~</span><span class="st"> </span>Z,</a>
-<a class="sourceLine" id="cb177-17" title="17">    <span class="dt">inquiry =</span> <span class="st">&quot;ATE&quot;</span>,</a>
-<a class="sourceLine" id="cb177-18" title="18">    <span class="dt">.method =</span> lm_robust</a>
-<a class="sourceLine" id="cb177-19" title="19">    )</a></code></pre></div>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" title="1">design &lt;-</a>
+<a class="sourceLine" id="cb193-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-3" title="3"><span class="st">  </span><span class="kw">declare_population</span>(</a>
+<a class="sourceLine" id="cb193-4" title="4">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
+<a class="sourceLine" id="cb193-5" title="5">    <span class="dt">U =</span> <span class="kw">rnorm</span>(N),</a>
+<a class="sourceLine" id="cb193-6" title="6">    <span class="kw">potential_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>U)</a>
+<a class="sourceLine" id="cb193-7" title="7">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-8" title="8"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-9" title="9"><span class="st">  </span><span class="kw">declare_assignment</span>(<span class="dt">Z =</span> <span class="kw">simple_ra</span>(N, <span class="dt">prob =</span> <span class="fl">0.5</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-10" title="10"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-11" title="11"><span class="st">  </span><span class="kw">declare_inquiry</span>(<span class="dt">ATE =</span> <span class="kw">mean</span>(Y_Z_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Y_Z_<span class="dv">0</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-12" title="12"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-13" title="13"><span class="st">  </span><span class="kw">declare_measurement</span>(<span class="dt">Y =</span> <span class="kw">reveal_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>Z)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-14" title="14"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-15" title="15"><span class="st">  </span><span class="kw">declare_estimator</span>(</a>
+<a class="sourceLine" id="cb193-16" title="16">    Y <span class="op">~</span><span class="st"> </span>Z,</a>
+<a class="sourceLine" id="cb193-17" title="17">    <span class="dt">inquiry =</span> <span class="st">&quot;ATE&quot;</span>,</a>
+<a class="sourceLine" id="cb193-18" title="18">    <span class="dt">.method =</span> lm_robust</a>
+<a class="sourceLine" id="cb193-19" title="19">    )</a></code></pre></div>
 <p>We then use draws from this design within the OES tools:</p>
-<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb178-1" title="1">dd_eval &lt;-</a>
-<a class="sourceLine" id="cb178-2" title="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb178-3" title="3"><span class="st">  </span><span class="kw">replicate</span>(</a>
-<a class="sourceLine" id="cb178-4" title="4">    <span class="dt">n =</span> <span class="dv">1000</span>,</a>
-<a class="sourceLine" id="cb178-5" title="5">    <span class="dt">expr =</span> <span class="kw">draw_estimates</span>(design) <span class="op">%&gt;%</span><span class="st"> </span>list</a>
-<a class="sourceLine" id="cb178-6" title="6">    ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb178-7" title="7"><span class="st">  </span></a>
-<a class="sourceLine" id="cb178-8" title="8"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb178-9" title="9"><span class="st">  </span></a>
-<a class="sourceLine" id="cb178-10" title="10"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
-<a class="sourceLine" id="cb178-11" title="11">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb178-12" title="12">    )</a></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb194-1" title="1">dd_eval &lt;-</a>
+<a class="sourceLine" id="cb194-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb194-3" title="3"><span class="st">  </span><span class="kw">replicate</span>(</a>
+<a class="sourceLine" id="cb194-4" title="4">    <span class="dt">n =</span> <span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb194-5" title="5">    <span class="dt">expr =</span> <span class="kw">draw_estimates</span>(design) <span class="op">%&gt;%</span><span class="st"> </span>list</a>
+<a class="sourceLine" id="cb194-6" title="6">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb194-7" title="7"><span class="st">  </span></a>
+<a class="sourceLine" id="cb194-8" title="8"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb194-9" title="9"><span class="st">  </span></a>
+<a class="sourceLine" id="cb194-10" title="10"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
+<a class="sourceLine" id="cb194-11" title="11">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb194-12" title="12">    )</a></code></pre></div>
 <p>We show the similarity between the two approaches to generating the simulated
 data in the figure below:</p>
-<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb179-1" title="1"><span class="kw">bind_rows</span>(</a>
-<a class="sourceLine" id="cb179-2" title="2">  eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;OES Power Tools&quot;</span>),</a>
-<a class="sourceLine" id="cb179-3" title="3">  dd_eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;DeclareDesign&quot;</span>)</a>
-<a class="sourceLine" id="cb179-4" title="4">  ) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb179-5" title="5"><span class="st">  </span></a>
-<a class="sourceLine" id="cb179-6" title="6"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb179-7" title="7"><span class="st">  </span></a>
-<a class="sourceLine" id="cb179-8" title="8"><span class="st">  </span><span class="kw">geom_line</span>(</a>
-<a class="sourceLine" id="cb179-9" title="9">    <span class="kw">aes</span>(delta, power, <span class="dt">linetype =</span> method)</a>
-<a class="sourceLine" id="cb179-10" title="10">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb179-11" title="11"><span class="st">  </span></a>
-<a class="sourceLine" id="cb179-12" title="12"><span class="st">  </span><span class="kw">scale_linetype_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb179-13" title="13"><span class="st">  </span></a>
-<a class="sourceLine" id="cb179-14" title="14"><span class="st">  </span><span class="kw">labs</span>(</a>
-<a class="sourceLine" id="cb179-15" title="15">    <span class="dt">x =</span> <span class="kw">expression</span>(delta),</a>
-<a class="sourceLine" id="cb179-16" title="16">    <span class="dt">y =</span> <span class="st">&quot;Power&quot;</span>,</a>
-<a class="sourceLine" id="cb179-17" title="17">    <span class="dt">linetype =</span> <span class="ot">NULL</span></a>
-<a class="sourceLine" id="cb179-18" title="18">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb179-19" title="19"><span class="st">  </span></a>
-<a class="sourceLine" id="cb179-20" title="20"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
-<a class="sourceLine" id="cb179-21" title="21">    <span class="dt">n.breaks =</span> <span class="dv">6</span></a>
-<a class="sourceLine" id="cb179-22" title="22">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb179-23" title="23"><span class="st">  </span></a>
-<a class="sourceLine" id="cb179-24" title="24"><span class="st">  </span><span class="kw">geom_hline</span>(</a>
-<a class="sourceLine" id="cb179-25" title="25">    <span class="dt">yintercept =</span> <span class="fl">0.8</span>,</a>
-<a class="sourceLine" id="cb179-26" title="26">    <span class="dt">col =</span> <span class="st">&quot;grey25&quot;</span>,</a>
-<a class="sourceLine" id="cb179-27" title="27">    <span class="dt">size =</span> <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb179-28" title="28">    <span class="dt">alpha =</span> <span class="fl">0.8</span></a>
-<a class="sourceLine" id="cb179-29" title="29">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb179-30" title="30"><span class="st">  </span></a>
-<a class="sourceLine" id="cb179-31" title="31"><span class="st">  </span>ggridges<span class="op">::</span><span class="kw">theme_ridges</span>(</a>
-<a class="sourceLine" id="cb179-32" title="32">    <span class="dt">center_axis_labels =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb179-33" title="33">    <span class="dt">font_size =</span> <span class="dv">10</span></a>
-<a class="sourceLine" id="cb179-34" title="34">    ) <span class="op">+</span></a>
-<a class="sourceLine" id="cb179-35" title="35"><span class="st">  </span></a>
-<a class="sourceLine" id="cb179-36" title="36"><span class="st">  </span><span class="kw">theme</span>(</a>
-<a class="sourceLine" id="cb179-37" title="37">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
-<a class="sourceLine" id="cb179-38" title="38">    )</a></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-34-1.png" width=".9\textwidth"></p>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb195-1" title="1"><span class="kw">bind_rows</span>(</a>
+<a class="sourceLine" id="cb195-2" title="2">  eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;OES Power Tools&quot;</span>),</a>
+<a class="sourceLine" id="cb195-3" title="3">  dd_eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;DeclareDesign&quot;</span>)</a>
+<a class="sourceLine" id="cb195-4" title="4">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb195-5" title="5"><span class="st">  </span></a>
+<a class="sourceLine" id="cb195-6" title="6"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb195-7" title="7"><span class="st">  </span></a>
+<a class="sourceLine" id="cb195-8" title="8"><span class="st">  </span><span class="kw">geom_line</span>(</a>
+<a class="sourceLine" id="cb195-9" title="9">    <span class="kw">aes</span>(delta, power, <span class="dt">linetype =</span> method)</a>
+<a class="sourceLine" id="cb195-10" title="10">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb195-11" title="11"><span class="st">  </span></a>
+<a class="sourceLine" id="cb195-12" title="12"><span class="st">  </span><span class="kw">scale_linetype_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb195-13" title="13"><span class="st">  </span></a>
+<a class="sourceLine" id="cb195-14" title="14"><span class="st">  </span><span class="kw">labs</span>(</a>
+<a class="sourceLine" id="cb195-15" title="15">    <span class="dt">x =</span> <span class="kw">expression</span>(delta),</a>
+<a class="sourceLine" id="cb195-16" title="16">    <span class="dt">y =</span> <span class="st">&quot;Power&quot;</span>,</a>
+<a class="sourceLine" id="cb195-17" title="17">    <span class="dt">linetype =</span> <span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb195-18" title="18">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb195-19" title="19"><span class="st">  </span></a>
+<a class="sourceLine" id="cb195-20" title="20"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb195-21" title="21">    <span class="dt">n.breaks =</span> <span class="dv">6</span></a>
+<a class="sourceLine" id="cb195-22" title="22">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb195-23" title="23"><span class="st">  </span></a>
+<a class="sourceLine" id="cb195-24" title="24"><span class="st">  </span><span class="kw">geom_hline</span>(</a>
+<a class="sourceLine" id="cb195-25" title="25">    <span class="dt">yintercept =</span> <span class="fl">0.8</span>,</a>
+<a class="sourceLine" id="cb195-26" title="26">    <span class="dt">col =</span> <span class="st">&quot;grey25&quot;</span>,</a>
+<a class="sourceLine" id="cb195-27" title="27">    <span class="dt">size =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb195-28" title="28">    <span class="dt">alpha =</span> <span class="fl">0.8</span></a>
+<a class="sourceLine" id="cb195-29" title="29">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb195-30" title="30"><span class="st">  </span></a>
+<a class="sourceLine" id="cb195-31" title="31"><span class="st">  </span>ggridges<span class="op">::</span><span class="kw">theme_ridges</span>(</a>
+<a class="sourceLine" id="cb195-32" title="32">    <span class="dt">center_axis_labels =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb195-33" title="33">    <span class="dt">font_size =</span> <span class="dv">10</span></a>
+<a class="sourceLine" id="cb195-34" title="34">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb195-35" title="35"><span class="st">  </span></a>
+<a class="sourceLine" id="cb195-36" title="36"><span class="st">  </span><span class="kw">theme</span>(</a>
+<a class="sourceLine" id="cb195-37" title="37">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
+<a class="sourceLine" id="cb195-38" title="38">    )</a></code></pre></div>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-175-1.png" width=".9\textwidth"></p>
 
 </div>
 </div>

@@ -27,7 +27,51 @@ as approaches based on theoretical probability models, or "asymptotic theory," w
 Imagine we have a simple randomized experiment where the relationship between
 outcomes and treatment is shown in Figure \@ref(fig:boxplot1) (we illustrate the first 6 rows in the table below). Notice that, in this simulated experiment, the treatment changes the variability of the outcome in the treated group --- this is a common pattern when the control group is a status quo policy.
 
-```{r makedat1}
+<!-- Adds copy code button -->
+```{r klippy, echo=FALSE, include=TRUE}
+klippy::klippy(all_precode = T, position = c("top", "right"))
+```
+
+<!-- Used (and iteratively updated) in the {oes_code_tab} snippets below. -->
+<!-- set chapter number and reset count -->
+```{r, include = F, echo = F}
+# cnum is modified automatically to iteratively count chunks
+# when using the oes_code_tab markdown snippet. each use of
+# the snippet adds a value of 1.
+ch <- 3
+cnum <- 0
+```
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R1')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata1')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide1')">Hide</button>
+::: {#ch3R1 .tabcontent} 
+<br />
+```{r, eval = F, highlight = F}
+## Read in data for the fake experiment.
+dat1 <- read.csv("dat1.csv")
+
+## Table of the first few observations.
+knitr::kable(head(dat1[, c(1, 23:27)]))
+```
+:::
+::: {#ch3Stata1 .tabcontent} 
+<br />
+```{stata, eval = F, highlight = F}
+** Read in data for the fake experiment.
+import delimited using "dat1.csv", clear
+rename v1 x
+
+** Table of the first few observations.
+list x y0 y1 z y id in 1/6, sep(6)
+```
+::: 
+::: {#ch3Hide1 .tabcontent}
+::: 
+:::
+
+```{r, eval = T, echo = F}
 ## Read in data for the fake experiment.
 dat1 <- read.csv("dat1.csv")
 
@@ -35,7 +79,34 @@ dat1 <- read.csv("dat1.csv")
 knitr::kable(head(dat1[, c(1, 23:27)]))
 ```
 
-```{r boxplot1, fig.cap="Simulated Experimental Outcomes"}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R2')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata2')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide2')">Hide</button>
+::: {#ch3R2 .tabcontent} 
+<br />
+```{r, eval = F, highlight = F}
+## y0 and y1 are the true underlying potential outcomes.
+with(dat1, {boxplot(list(y0,y1), names=c("Control","Treatment"), ylab="Outcomes")
+stripchart(list(y0,y1), add=TRUE, vertical=TRUE)
+stripchart(list(mean(y0), mean(y1)), add=TRUE, vertical=TRUE, pch=19, cex=2)})
+```
+:::
+::: {#ch3Stata2 .tabcontent} 
+<br />
+```{stata, eval = F, highlight = F}
+** y0 and y1 are the true underlying potential outcomes.
+label var y0 "Control"
+label var y1 "Treatment"
+* ssc install stripplot
+stripplot y0 y1, box vertical iqr whiskers(recast(rcap)) ytitle("Outcomes") variablelabels
+```
+::: 
+::: {#ch3Hide2 .tabcontent}
+::: 
+:::
+
+```{r boxplot1, fig.cap="Simulated Experimental Outcomes", echo = F}
 ## y0 and y1 are the true underlying potential outcomes.
 with(dat1, {boxplot(list(y0,y1), names=c("Control","Treatment"), ylab="Outcomes")
 stripchart(list(y0,y1), add=TRUE, vertical=TRUE)
@@ -44,19 +115,68 @@ stripchart(list(mean(y0), mean(y1)), add=TRUE, vertical=TRUE, pch=19, cex=2)})
 
 In this simulated data, we know the true average treatment effect (ATE) because we know both of the underlying true potential outcomes. The control potential outcome, $y_{i|Z_i=0}$, is written in the code as `y0`, meaning "the response person $i$ would provide if he/she were in the status quo or control group". The treatment potential outcome,  $y_{i|Z_i = 1}$, is written in the code as `y1`, meaing "the response person $i$ would provide if he/she were in the new policy or treatment group." We use $Z_i$ to refer to the experimental arm. In this case $Z_i=0$ for people in the status quo group and $Z_i=1$ for people in the new policy group. (You can click to SHOW the code.)
 
-```{r trueATE}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R3')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata3')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide3')">Hide</button>
+::: {#ch3R3 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+trueATE <- with(dat1, mean(y1) - mean(y0))
+trueATE
+```
+:::
+::: {#ch3Stata3 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+qui tabstat y0 y1, stat(mean) save
+global trueATE = r(StatTotal)[1,2] - r(StatTotal)[1,1]
+```
+::: 
+::: {#ch3Hide3 .tabcontent}
+::: 
+:::
+
+```{r trueATE, eval = T, echo = F}
 trueATE <- with(dat1, mean(y1) - mean(y0))
 trueATE
 ```
 
 Now, we have one *realized* experiment (defined by randomly assigning half of the people to treatment and half to control). We know that the observed difference of means of the outcome, $Y$, between treated and control groups is an unbiased estimator of the true ATE (by virtue of random assignment to treatment). We can calculate this in a few ways: we can just calculate the difference of means, *or* we can take advantage of the fact that an ordinary least squares linear regression produces the same estimate when we have a binary treatment on the right hand side.
 
-```{r estATE, echo=TRUE}
-## Y is the observed outcome, Z is the observed treatment.
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R4')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata4')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide4')">Hide</button>
+::: {#ch3R4 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
 estATE1 <- with(dat1, mean(Y[Z==1]) - mean(Y[Z==0]))
 estATE2 <- lm(Y~Z, data=dat1)$coef[["Z"]]
 c(estimatedATEv1=estATE1, estimatedATEv2=estATE2)
 stopifnot(all.equal(estATE1, estATE2))
+```
+:::
+::: {#ch3Stata4 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+qui ttest y, by(z)
+global estATE1 = round(r(mu_2) - r(mu_1), 0.001)
+qui reg y z
+global estATE2 = round(r(table)[1,1], 0.001)
+di "estimatedATEv1=$estATE1 estimatedATEv2=$estATE2"
+assert $estATE1 == $estATE2
+```
+::: 
+::: {#ch3Hide4 .tabcontent}
+::: 
+:::
+
+```{r estATE, echo = F, eval = T}
+## Y is the observed outcome, Z is the observed treatment.
+estATE1 <- with(dat1, mean(Y[Z==1]) - mean(Y[Z==0]))
+estATE2 <- lm(Y~Z, data=dat1)$coef[["Z"]]
+c(estimatedATEv1=estATE1, estimatedATEv2=estATE2)
 ```
 
 This design-based perspective leads us to think differently about how to calculate standard errors (and thus $p$-values and confidence intervals), relative to a more common perspective based on asymptotic theory and sampling from a larger (potentially infinite) population.
@@ -65,7 +185,83 @@ This design-based perspective leads us to think differently about how to calcula
 
 How much would an estimate of the average treatment effect vary as we repeat an experiment on the same group of people multiple times (randomly re-assigning treatment each time)? The **standard error** of an estimate of the average treatment effect is one answer to this question. Below, we simulate a simple, individual-level experiment to develop intuition about what the standard error is.^[See https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/ for a demonstration that the difference-in-means between the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.]
 
-```{r simsesetup, cache = T}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R5')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata5')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide5')">Hide</button>
+::: {#ch3R5 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## A function to re-assign treatment and recalculate the difference of means.
+## Treatment was assigned without blocking or other structure, so we
+## just permute or shuffle the existing treatment assignment vector.
+simEstAte <- function(Z,y1,y0){
+	Znew <- sample(Z)
+	Y <- Znew * y1 + (1-Znew) * y0
+	estate <- mean(Y[Znew == 1]) - mean(Y[Znew == 0])
+	return(estate)
+}
+
+## Set up and perform the simulation
+sims <- 10000
+set.seed(12345)
+simpleResults <- with(dat1,replicate(sims,simEstAte(Z = Z,y1 = y1,y0 = y0)))
+seEstATEsim <- sd(simpleResults)
+
+## The standard error of this estimate of the ATE (via simulation)
+seEstATEsim
+```
+:::
+::: {#ch3Stata5 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** A program to re-assign treatment and recalculate the difference of means.
+** Treatment was assigned without blocking or other structure, so we
+** just permute or shuffle the existing treatment assignment vector.
+capture program drop simEstAte
+program define simEstAte, rclass sortpreserve
+
+	version 18.0
+	syntax varlist(min=1 max=1), ///
+	  control_outcome(varname) treat_outcome(varname)
+	
+	qui sum `varlist' // Get # treated units
+	local numtreat = r(sum)
+	
+	tempvar rand // Randomly sort (temporary var)
+	qui gen `rand' = runiform()
+	sort `rand'
+	
+	tempvar Znew // New treatment
+	qui gen `Znew' = 0
+	qui replace `Znew' = 1 in 1/`numtreat'
+	
+	tempvar Ynew // New revealed outcome
+	qui gen `Ynew' = (`Znew' * `treat_outcome') + ((1 - `Znew') * `control_outcome')
+	
+	qui ttest `Ynew', by(`Znew')
+	return scalar estate = r(mu_2) - r(mu_1)
+	
+end
+
+** Set up and perform the simulation
+global sims 10000
+set seed 12345
+preserve
+	qui simulate estate = r(estate), reps($sims): simEstAte z, control_outcome(y0) treat_outcome(y1)
+	qui sum estate
+	global seEstATEsim = r(sd)
+restore
+
+** The standard error of this estimate of the ATE (via simulation)
+di "$seEstATEsim"
+```
+::: 
+::: {#ch3Hide5 .tabcontent}
+::: 
+:::
+
+```{r simsesetup, cache = T, echo = F, eval = T}
 ## A function to re-assign treatment and recalculate the difference of means.
 ## Treatment was assigned without blocking or other structure, so we
 ## just permute or shuffle the existing treatment assignment vector.
@@ -103,7 +299,53 @@ Among other things, this exercise helps illustrate that the "standard deviation 
 #varestATE <- ((N-nt)/(N-1)) * (vart/(N-nt)) + ((N-nc)/(N-1)) * (varc/nc) + (2/(N-1)) * covtc
 ```
 
-```{r calctruese}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R6')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata6')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide6')">Hide</button>
+::: {#ch3R6 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## True SE (Dunning Chap 6, Gerber and Green Chap 3, or Freedman, Pisani and Purves A-32).
+## Requires knowing the true covariance between potential outcomes.
+N <- nrow(dat1)
+V <- var(cbind(dat1$y0,dat1$y1))
+varc <- V[1,1]
+vart <- V[2,2]
+covtc <- V[1,2]
+nt <- sum(dat1$Z)
+nc <- N-nt
+
+## Gerber and Green, p.57, equation (3.4)
+varestATE <- (((varc * nt) / nc) + ((vart * nc) / nt) + (2 * covtc)) / (N - 1)
+seEstATETrue <- sqrt(varestATE)
+```
+:::
+::: {#ch3Stata6 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** True SE (Dunning Chap 6, Gerber and Green Chap 3, or Freedman, Pisani and Purves A-32).
+** Requires knowing the true covariance between potential outcomes.
+qui count
+local N = r(N)
+qui cor y0 y1, cov
+local varc = r(C)[1,1]
+local vart = r(C)[2,2]
+local covtc = r(C)[1,2]
+qui sum z
+local nt = r(sum)
+local nc = `N' - `nt'
+
+** Gerber and Green, p.57, equation (3.4)
+local varestATE = (((`varc' * `nt') / `nc') + ((`vart' * `nc') / `nt') + (2 * `covtc')) / (`N' - 1)
+global seEstATETrue = sqrt(`varestATE')
+```
+::: 
+::: {#ch3Hide6 .tabcontent}
+::: 
+:::
+
+```{r calctruese, echo = F, eval = T}
 ## True SE (Dunning Chap 6, Gerber and Green Chap 3, or Freedman, Pisani and Purves A-32).
 ## Requires knowing the true covariance between potential outcomes.
 N <- nrow(dat1)
@@ -121,7 +363,37 @@ seEstATETrue <- sqrt(varestATE)
 
 Then, we'll calculate the feasible standard error represented in the expression above.
 
-```{r feasibleSE}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R7')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata7')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide7')">Hide</button>
+::: {#ch3R7 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Feasible SE
+varYc <- with(dat1,var(Y[Z == 0]))
+varYt <- with(dat1,var(Y[Z == 1]))
+fvarestATE <- (N/(N-1)) * ( (varYt/nt) + (varYc/nc) )
+estSEEstATE <- sqrt(fvarestATE)
+```
+:::
+::: {#ch3Stata7 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Feasible SE
+qui sum y if z == 0
+local varYc = r(sd) * r(sd)
+qui sum y if z == 1
+local varYt = r(sd) * r(sd)
+local fvarestATE = (`N'/(`N'-1)) * ( (`varYt'/`nt') + (`varYc'/`nc') )
+global estSEEstATE = sqrt(`fvarestATE')
+```
+::: 
+::: {#ch3Hide7 .tabcontent}
+::: 
+:::
+
+```{r feasibleSE, echo = F, eval = T}
 ## Feasible SE
 varYc <- with(dat1,var(Y[Z == 0]))
 varYt <- with(dat1,var(Y[Z == 1]))
@@ -131,7 +403,32 @@ estSEEstATE <- sqrt(fvarestATE)
 
 Note that this feasible SE *is not* the standard error OLS provides by default, if you were to use a standard OLS regression to calculate a difference-in-means. We'll calculate the OLS SE as well, and include it in our comparison for illustration.
 
-```{r olsSE}
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R8')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata8')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide8')">Hide</button>
+::: {#ch3R8 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## OLS SE
+lm1 <- lm(Y~Z, data=dat1)
+iidSE <-  sqrt(diag(vcov(lm1)))[["Z"]]
+```
+:::
+::: {#ch3Stata8 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** OLS SE
+qui reg y z
+global iidSE = _se[z] // Or: sqrt(e(V)["z","z"])
+```
+::: 
+::: {#ch3Hide8 .tabcontent}
+::: 
+:::
+
+```{r olsSE, echo = F, eval = T}
 ## OLS SE
 lm1 <- lm(Y~Z, data=dat1)
 iidSE <-  sqrt(diag(vcov(lm1)))[["Z"]]
@@ -139,7 +436,30 @@ iidSE <-  sqrt(diag(vcov(lm1)))[["Z"]]
 
 Lastly, we'll calculate the HC2 standard error, which [@lin_agnostic_2013] shows to be a randomization-justified SE for OLS. From our design-based perspective, we prefer this method of estimating the standard error. Like the feasible SE above, it should be conservative relative to the true SE. 
 
-```{r NeymanSE}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R9')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata9')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide9')">Hide</button>
+::: {#ch3R9 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Neyman SE (HC2)
+NeymanSE <- sqrt(diag(vcovHC(lm1, type = "HC2")))[["Z"]]
+```
+:::
+::: {#ch3Stata9 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Neyman SE (HC2)
+qui reg y z, vce(hc2)
+global NeymanSE = _se[z] // Or: sqrt(e(V)["z","z"])
+```
+::: 
+::: {#ch3Hide9 .tabcontent}
+::: 
+:::
+
+```{r NeymanSE, echo = F, eval = T}
 ## Neyman SE (HC2)
 NeymanSE <- sqrt(diag(vcovHC(lm1, type = "HC2")))[["Z"]]
 ```
@@ -148,7 +468,39 @@ These SE estimates in hand, let's review differences between the true standard e
 
 What we call Neyman SE here (the HC2 OLS SE) is supposed to be conservative relative to the true SE (at least as large or larger on average). We show this to be the case in our example. The Neyman SE is, by design, similar to the feasible SE, and both are larger than the true SE. We also illustrate the accuracy of our SE simulation procedure above as a way of thinking intuitively about what the standard error represents (though such a simulation is generally not possible with real data). Finally, recall that our design involves different outcome variances between the treated group and the control group. We would therefore expect what we are calling the "OLD iid" SE to be biased on average (though not necessarily guaranteed to be overly conservative or liberal in all cases). Here, it actually underestimates the truth only slightly. But in other circumstances it may perform worse.
 
-```{r compareSEs2}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R10')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata10')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide10')">Hide</button>
+::: {#ch3R10 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+compareSEs <- c(simSE = seEstATEsim,
+  feasibleSE = estSEEstATE,
+  trueSE = seEstATETrue,
+  olsIIDSE = iidSE,
+  NeymanDesignSE = NeymanSE)
+sort(compareSEs)
+```
+:::
+::: {#ch3Stata10 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+matrix compareSEs = J(1, 5, .)
+matrix compareSEs[1, 1] = $seEstATEsim
+matrix compareSEs[1, 2] = $estSEEstATE
+matrix compareSEs[1, 3] = $seEstATETrue
+matrix compareSEs[1, 4] = $iidSE
+matrix compareSEs[1, 5] = $NeymanSE
+matrix colnames compareSEs = "simSE" "feasibleSE" "trueSE" "olsIIDSE" "NeymanDesignSE"
+matrix list compareSEs
+```
+::: 
+::: {#ch3Hide10 .tabcontent}
+::: 
+:::
+
+```{r compareSEs2, echo = F, eval = T}
 compareSEs <- c(simSE = seEstATEsim,
   feasibleSE = estSEEstATE,
   trueSE = seEstATETrue,
@@ -159,7 +511,91 @@ sort(compareSEs)
 
 To provide a more reliable comparison of these SE estimation methods, the first code chunk below defines a function to calculate an average treatment effect, the OLS iid SE, and the OLS HC2 (Neyman) SE. The second code chunk below uses this function to calculate several of those SEs for 10000 simulated datasets, averaging across them to provide a better illustration of their relative performance. As expected, OLS *underestimates* the true SE, while the Neyman (HC2) SE is conservative. The risk of underestimating the SE is that it could lead us to be overconfident when interpreting statistical findings.
 
-```{r defsefn, cache = T}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R11')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata11')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide11')">Hide</button>
+::: {#ch3R11 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Define a function to calculate several SEs, given potential outcomes and treatment
+sePerfFn <- function(Z,y1,y0){
+	Znew <- sample(Z)
+	Ynew <- Znew * y1 + (1-Znew) * y0
+	lm1 <- lm(Ynew~Znew)
+	iidSE <-  sqrt(diag(vcov(lm1)))[["Znew"]]
+	NeymanSE <- sqrt(diag(vcovHC(lm1,type = "HC2")))[["Znew"]]
+	return(c(estATE=coef(lm1)[["Znew"]],
+		 estSEiid=iidSE,
+		 estSENeyman=NeymanSE))
+}
+
+## Perform a simulation using this function
+set.seed(12345)
+sePerformance <- with(dat1, replicate(sims, sePerfFn(Z = Z, y1 = y1, y0 = y0)))
+ExpectedSEs <- apply(sePerformance[c("estSEiid", "estSENeyman"),], 1, mean)
+c(ExpectedSEs, trueSE=seEstATETrue, simSE=sd(sePerformance["estATE",]))
+```
+:::
+::: {#ch3Stata11 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Define a function to calculate several SEs, given potential outcomes and treatment
+capture program drop sePerfFn
+program define sePerfFn, rclass sortpreserve
+
+	version 18.0
+	syntax varlist(min=1 max=1), control_outcome(varname) treat_outcome(varname)
+	
+	qui sum `varlist' // As in the program above
+	local numtreat = r(sum)
+	tempvar rand
+	qui gen `rand' = runiform()
+	sort `rand'
+	tempvar Znew
+	qui gen `Znew' = 0
+	qui replace `Znew' = 1 in 1/`numtreat'
+	tempvar Ynew
+	qui gen `Ynew' = (`Znew' * `treat_outcome') + ((1 - `Znew') * `control_outcome')
+	
+	qui reg `Ynew' `Znew' // Regression now instead of ttest
+	local iidSE = _se[`Znew']
+	qui reg `Ynew' `Znew', vce(hc2)
+	local NeymanSE = _se[`Znew']
+	
+	return scalar iidSE = `iidSE' // Prepare output
+	return scalar NeymanSE = `NeymanSE'
+	return scalar estATE = _b[`Znew']
+
+end
+
+** Perform a simulation using this function
+set seed 12345
+
+preserve
+	qui simulate ///
+	iidSE = r(iidSE) NeymanSE = r(NeymanSE) estATE = r(estATE), ///
+	reps($sims): ///
+	sePerfFn z, control_outcome(y0) treat_outcome(y1)
+	qui sum estATE
+	global simSE = r(sd)
+	qui sum iidSE
+	global estSEiid = r(mean)
+	qui sum NeymanSE
+	global estSENeyman = r(mean)
+restore
+
+di "Expected IID SE: $estSEiid"
+di "Expected Neyman SE: $estSENeyman"
+di "SIM SE: $simSE"
+di "True SE: $seEstATETrue"
+```
+::: 
+::: {#ch3Hide11 .tabcontent}
+::: 
+:::
+
+```{r defsefn, cache = T, echo = F, eval = T}
 ## Define a function to calculate several SEs, given potential outcomes and treatment
 sePerfFn <- function(Z,y1,y0){
 	Znew <- sample(Z)
@@ -183,18 +619,79 @@ c(ExpectedSEs, trueSE=seEstATETrue, simSE=sd(sePerformance["estATE",]))
 
 When we have a two arm trial (and a relatively large sample size), we can estimate the ATE, calculate design-based standard errors, and then use them to create large-sample justified confidence intervals through either of the following approaches:
 
-```{r estAndSEs}
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R12')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata12')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide12')">Hide</button>
+::: {#ch3R12 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
 ## The difference_in_means function comes from the estimatr package.
 estAndSE1 <- difference_in_means(Y ~ Z, data = dat1)
 
 ## Note that coeftest and coefci come from the lmtest package
+# (narrower intervals due to a different d.o.f.)
 est2 <- lm(Y ~ Z, data = dat1)
 estAndSE2 <- coeftest(est2, vcov.=vcovHC(est2, type = "HC2"))
-estAndCI2<- coefci(est2, vcov.=vcovHC(est2, type = "HC2"), parm = "Z")
+estAndCI2 <- coefci(est2, vcov.=vcovHC(est2, type = "HC2"), parm = "Z")
 
-estAndSE1
-estAndSE2["Z", , drop=FALSE]
-estAndCI2
+## Organize output
+out <- rbind( unlist(estAndSE1[c(1,2,6:8)]),  c(estAndSE2[2,-3], estAndCI2) )
+out <- apply(out, 2, round, 3)
+colnames(out) <- c("Est", "SE", "pvalue", "CI lower", "CI upper")
+row.names(out) <- c("Approach 1 (diff. means)", "Approach 2 (OLS)")
+out
+```
+:::
+::: {#ch3Stata12 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Organize output
+matrix compareCIs = J(2, 5, .)
+matrix rownames compareCIs = "Approach 1 (diff. means)" "Approach 2 (OLS)"
+matrix colnames compareCIs = "Est" "SE" "pvalue" "CI lower" "CI upper"
+
+** A difference in means test assuming unequal variances
+** (equivalent to the design-based estimator, as discussed above)
+ttest y, by(z) unequal
+local diffmeans = r(mu_2) - r(mu_1)
+matrix compareCIs[1,1] = round(`diffmeans', 0.001)
+matrix compareCIs[1,2] = round(r(se), 0.001)
+matrix compareCIs[1,3] = round(r(p), 0.001)
+matrix compareCIs[1,4] = round(`diffmeans' - (invttail(r(df_t), 0.025) * r(se)), 0.001)
+matrix compareCIs[1,5] = round(`diffmeans' + (invttail(r(df_t), 0.025) * r(se)), 0.001)
+
+** A regression-based approach (narrower intervals due to a different d.o.f)
+reg y z, vce(hc2) // See: "matrix list r(table)"
+matrix compareCIs[2,1] = round(r(table)[1, 1], 0.001)
+matrix compareCIs[2,2] = round(r(table)[2, 1], 0.001)
+matrix compareCIs[2,3] = round(r(table)[4, 1], 0.001)
+matrix compareCIs[2,4] = round(r(table)[5, 1], 0.001)
+matrix compareCIs[2,5] = round(r(table)[6, 1], 0.001)
+
+matrix list compareCIs
+```
+::: 
+::: {#ch3Hide12 .tabcontent}
+::: 
+:::
+
+```{r estAndSEs, eval = T, echo = F}
+## The difference_in_means function comes from the estimatr package.
+estAndSE1 <- difference_in_means(Y ~ Z, data = dat1)
+
+## Note that coeftest and coefci come from the lmtest package
+# (narrower intervals due to a different d.o.f.)
+est2 <- lm(Y ~ Z, data = dat1)
+estAndSE2 <- coeftest(est2, vcov.=vcovHC(est2, type = "HC2"))
+estAndCI2 <- coefci(est2, vcov.=vcovHC(est2, type = "HC2"), parm = "Z")
+
+## Organize output
+out <- rbind( unlist(estAndSE1[c(1,2,6:8)]),  c(estAndSE2[2,-3], estAndCI2) )
+out <- apply(out, 2, round, 3)
+colnames(out) <- c("Est", "SE", "pvalue", "CI lower", "CI upper")
+row.names(out) <- c("Approach 1 (diff. means)", "Approach 2 (OLS)")
+out
 ```
 
 ## Summary: What does a design based approach mean for policy evaluation?

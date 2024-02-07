@@ -1411,6 +1411,25 @@
       ],
       "Hash": "5705835b03d2678cbfa51e9845bd4032"
     },
+    "klippy": {
+      "Package": "klippy",
+      "Version": "0.0.0.9500",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "klippy",
+      "RemoteUsername": "rlesur",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "378c247fbbc76ec662f6c1ed1103121b87091be4",
+      "Requirements": [
+        "R",
+        "assertthat",
+        "grDevices",
+        "htmltools",
+        "stringi"
+      ],
+      "Hash": "569f652cf3ddd04d9ad7a0e54983202b"
+    },
     "knitr": {
       "Package": "knitr",
       "Version": "1.33",

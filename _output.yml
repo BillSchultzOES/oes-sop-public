@@ -1,8 +1,8 @@
 bookdown::gitbook:
-  css: style.css
+  css: ./style.css
   pandoc_args: [ "--csl", "chicago-author-date.csl" ]
   includes:
-    in_header: header.html
+    in_header: ./header.html
   config:
     toc:
       collapse: section

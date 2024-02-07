@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
 
 
-<meta name="date" content="2023-11-01">
+<meta name="date" content="2024-02-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -47,6 +47,10 @@
 
 
 
+<script src="libs/clipboard/clipboard.min.js"></script>
+<link href="libs/primer-tooltips/build.css" rel="stylesheet">
+<link href="libs/klippy/css/klippy.min.css" rel="stylesheet">
+<script src="libs/klippy/js/klippy.min.js"></script>
 <script src="libs/kePrint/kePrint.js"></script>
 <link href="libs/lightable/lightable.css" rel="stylesheet">
 
@@ -344,7 +348,7 @@ window.initializeCodeFolding = function(show) {
   var currentIndex = 1;
 
   // select all R code blocks
-  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.cpp, pre.sql, pre.stan, pre.stata, pre.python, pre.bash');
   rCodeBlocks.each(function() {
 
     // create a collapsable div to wrap the code in
@@ -395,6 +399,21 @@ window.initializeCodeFolding = function(show) {
 $(document).ready(function () {
   window.initializeCodeFolding("show" === "hide");
 });
+</script>
+<script>
+function unrolltab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
 </script>
 
 
@@ -482,7 +501,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#purposes-of-this-document"><i class="fa fa-check"></i>Purposes of this document</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#nature-and-limitations-of-this-document"><i class="fa fa-check"></i>Nature and limitations of this document</a><ul>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-focus-on-randomized-field-experiments."><i class="fa fa-check"></i>We (mostly) focus on randomized field experiments.</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-present-examples-using-r"><i class="fa fa-check"></i>We present examples using R</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-present-examples-using-r"><i class="fa fa-check"></i>We (mostly) present examples using R</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-document"><i class="fa fa-check"></i>Structure of the document</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#help-us-improve-our-work"><i class="fa fa-check"></i>Help us improve our work!</a></li>
@@ -595,11 +614,45 @@ as approaches based on theoretical probability models, or &#x201C;asymptotic the
 <h2><span class="header-section-number">3.1</span> An example using simulated data</h2>
 <p>Imagine we have a simple randomized experiment where the relationship between
 outcomes and treatment is shown in Figure <a href="design-based-principles-of-statistical-inference.html#fig:boxplot1">3.1</a> (we illustrate the first 6 rows in the table below). Notice that, in this simulated experiment, the treatment changes the variability of the outcome in the treated group &#x2014; this is a common pattern when the control group is a status quo policy.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co">## Read in data for the fake experiment.</span></a>
-<a class="sourceLine" id="cb2-2" title="2">dat1 &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;dat1.csv&quot;</span>)</a>
-<a class="sourceLine" id="cb2-3" title="3"></a>
-<a class="sourceLine" id="cb2-4" title="4"><span class="co">## Table of the first few observations.</span></a>
-<a class="sourceLine" id="cb2-5" title="5">knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(dat1[, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">23</span><span class="op">:</span><span class="dv">27</span>)]))</a></code></pre></div>
+<!-- Adds copy code button -->
+<script>
+  addClassKlippyToPreCode();
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<!-- Used (and iteratively updated) in the {oes_code_tab} snippets below. -->
+<!-- set chapter number and reset count -->
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R1&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata1&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide1&apos;)">
+Hide
+</button>
+<div id="ch3R1" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Read in data for the fake experiment.
+dat1 &lt;- read.csv(&quot;dat1.csv&quot;)
+
+## Table of the first few observations.
+knitr::kable(head(dat1[, c(1, 23:27)]))</code></pre>
+</div>
+<div id="ch3Stata1" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Read in data for the fake experiment.
+import delimited using &quot;dat1.csv&quot;, clear
+rename v1 x
+
+** Table of the first few observations.
+list x y0 y1 z y id in 1/6, sep(6)</code></pre>
+</div>
+<div id="ch3Hide1" class="tabcontent">
+
+</div>
+</div>
 <table>
 <thead>
 <tr>
@@ -746,10 +799,35 @@ id
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co">## y0 and y1 are the true underlying potential outcomes.</span></a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="kw">with</span>(dat1, {<span class="kw">boxplot</span>(<span class="kw">list</span>(y0,y1), <span class="dt">names=</span><span class="kw">c</span>(<span class="st">&quot;Control&quot;</span>,<span class="st">&quot;Treatment&quot;</span>), <span class="dt">ylab=</span><span class="st">&quot;Outcomes&quot;</span>)</a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="kw">stripchart</span>(<span class="kw">list</span>(y0,y1), <span class="dt">add=</span><span class="ot">TRUE</span>, <span class="dt">vertical=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="kw">stripchart</span>(<span class="kw">list</span>(<span class="kw">mean</span>(y0), <span class="kw">mean</span>(y1)), <span class="dt">add=</span><span class="ot">TRUE</span>, <span class="dt">vertical=</span><span class="ot">TRUE</span>, <span class="dt">pch=</span><span class="dv">19</span>, <span class="dt">cex=</span><span class="dv">2</span>)})</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R2&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata2&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide2&apos;)">
+Hide
+</button>
+<div id="ch3R2" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## y0 and y1 are the true underlying potential outcomes.
+with(dat1, {boxplot(list(y0,y1), names=c(&quot;Control&quot;,&quot;Treatment&quot;), ylab=&quot;Outcomes&quot;)
+stripchart(list(y0,y1), add=TRUE, vertical=TRUE)
+stripchart(list(mean(y0), mean(y1)), add=TRUE, vertical=TRUE, pch=19, cex=2)})</code></pre>
+</div>
+<div id="ch3Stata2" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** y0 and y1 are the true underlying potential outcomes.
+label var y0 &quot;Control&quot;
+label var y1 &quot;Treatment&quot;
+* ssc install stripplot
+stripplot y0 y1, box vertical iqr whiskers(recast(rcap)) ytitle(&quot;Outcomes&quot;) variablelabels</code></pre>
+</div>
+<div id="ch3Hide2" class="tabcontent">
+
+</div>
+</div>
 <div class="figure"><span id="fig:boxplot1"></span>
 <img src="OES_SOP_files/figure-html/boxplot1-1.png" alt="Simulated Experimental Outcomes" width=".9\textwidth">
 <p class="caption">
@@ -757,39 +835,146 @@ Figure 3.1: Simulated Experimental Outcomes
 </p>
 </div>
 <p>In this simulated data, we know the true average treatment effect (ATE) because we know both of the underlying true potential outcomes. The control potential outcome, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi mathvariant="normal">&#x2223;</mi><msub><mi>Z</mi><mi>i</mi></msub><mo>=</mo><mn>0</mn></mrow></msub></mrow><annotation encoding="application/x-tex">y_{i|Z_i=0}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7858em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mord mtight">&#x2223;</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3281em;"><span style="top:-2.357em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mrel mtight">=</span><span class="mord mtight">0</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span>, is written in the code as <code>y0</code>, meaning &#x201C;the response person <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> would provide if he/she were in the status quo or control group&#x201D;. The treatment potential outcome, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi mathvariant="normal">&#x2223;</mi><msub><mi>Z</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">y_{i|Z_i = 1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7858em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mord mtight">&#x2223;</span><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3281em;"><span style="top:-2.357em;margin-left:-0.0715em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span></span></span></span>, is written in the code as <code>y1</code>, meaing &#x201C;the response person <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> would provide if he/she were in the new policy or treatment group.&#x201D; We use <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">Z_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> to refer to the experimental arm. In this case <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mi>i</mi></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">Z_i=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> for people in the status quo group and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mi>i</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">Z_i=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> for people in the new policy group. (You can click to SHOW the code.)</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">trueATE &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">mean</span>(y1) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(y0))</a>
-<a class="sourceLine" id="cb4-2" title="2">trueATE</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R3&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata3&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide3&apos;)">
+Hide
+</button>
+<div id="ch3R3" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>trueATE &lt;- with(dat1, mean(y1) - mean(y0))
+trueATE</code></pre>
+</div>
+<div id="ch3Stata3" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>qui tabstat y0 y1, stat(mean) save
+global trueATE = r(StatTotal)[1,2] - r(StatTotal)[1,1]</code></pre>
+</div>
+<div id="ch3Hide3" class="tabcontent">
+
+</div>
+</div>
 <pre><code>[1] 5.453</code></pre>
 <p>Now, we have one <em>realized</em> experiment (defined by randomly assigning half of the people to treatment and half to control). We know that the observed difference of means of the outcome, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi></mrow><annotation encoding="application/x-tex">Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span></span></span></span>, between treated and control groups is an unbiased estimator of the true ATE (by virtue of random assignment to treatment). We can calculate this in a few ways: we can just calculate the difference of means, <em>or</em> we can take advantage of the fact that an ordinary least squares linear regression produces the same estimate when we have a binary treatment on the right hand side.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co">## Y is the observed outcome, Z is the observed treatment.</span></a>
-<a class="sourceLine" id="cb6-2" title="2">estATE1 &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">mean</span>(Y[Z<span class="op">==</span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(Y[Z<span class="op">==</span><span class="dv">0</span>]))</a>
-<a class="sourceLine" id="cb6-3" title="3">estATE2 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y<span class="op">~</span>Z, <span class="dt">data=</span>dat1)<span class="op">$</span>coef[[<span class="st">&quot;Z&quot;</span>]]</a>
-<a class="sourceLine" id="cb6-4" title="4"><span class="kw">c</span>(<span class="dt">estimatedATEv1=</span>estATE1, <span class="dt">estimatedATEv2=</span>estATE2)</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R4&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata4&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide4&apos;)">
+Hide
+</button>
+<div id="ch3R4" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>estATE1 &lt;- with(dat1, mean(Y[Z==1]) - mean(Y[Z==0]))
+estATE2 &lt;- lm(Y~Z, data=dat1)$coef[[&quot;Z&quot;]]
+c(estimatedATEv1=estATE1, estimatedATEv2=estATE2)
+stopifnot(all.equal(estATE1, estATE2))</code></pre>
+</div>
+<div id="ch3Stata4" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>qui ttest y, by(z)
+global estATE1 = round(r(mu_2) - r(mu_1), 0.001)
+qui reg y z
+global estATE2 = round(r(table)[1,1], 0.001)
+di &quot;estimatedATEv1=$estATE1 estimatedATEv2=$estATE2&quot;
+assert $estATE1 == $estATE2</code></pre>
+</div>
+<div id="ch3Hide4" class="tabcontent">
+
+</div>
+</div>
 <pre><code>estimatedATEv1 estimatedATEv2 
          4.637          4.637 </code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">stopifnot</span>(<span class="kw">all.equal</span>(estATE1, estATE2))</a></code></pre></div>
 <p>This design-based perspective leads us to think differently about how to calculate standard errors (and thus <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-values and confidence intervals), relative to a more common perspective based on asymptotic theory and sampling from a larger (potentially infinite) population.</p>
 <div id="how-do-we-calculate-randomization-based-standard-errors" class="section level3">
 <h3><span class="header-section-number">3.1.1</span> How do we calculate randomization-based standard errors?</h3>
 <p>How much would an estimate of the average treatment effect vary as we repeat an experiment on the same group of people multiple times (randomly re-assigning treatment each time)? The <strong>standard error</strong> of an estimate of the average treatment effect is one answer to this question. Below, we simulate a simple, individual-level experiment to develop intuition about what the standard error is.<a href="references.html#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co">## A function to re-assign treatment and recalculate the difference of means.</span></a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="co">## Treatment was assigned without blocking or other structure, so we</span></a>
-<a class="sourceLine" id="cb9-3" title="3"><span class="co">## just permute or shuffle the existing treatment assignment vector.</span></a>
-<a class="sourceLine" id="cb9-4" title="4">simEstAte &lt;-<span class="st"> </span><span class="cf">function</span>(Z,y1,y0){</a>
-<a class="sourceLine" id="cb9-5" title="5">    Znew &lt;-<span class="st"> </span><span class="kw">sample</span>(Z)</a>
-<a class="sourceLine" id="cb9-6" title="6">    Y &lt;-<span class="st"> </span>Znew <span class="op">*</span><span class="st"> </span>y1 <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">-</span>Znew) <span class="op">*</span><span class="st"> </span>y0</a>
-<a class="sourceLine" id="cb9-7" title="7">    estate &lt;-<span class="st"> </span><span class="kw">mean</span>(Y[Znew <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(Y[Znew <span class="op">==</span><span class="st"> </span><span class="dv">0</span>])</a>
-<a class="sourceLine" id="cb9-8" title="8">    <span class="kw">return</span>(estate)</a>
-<a class="sourceLine" id="cb9-9" title="9">}</a>
-<a class="sourceLine" id="cb9-10" title="10"></a>
-<a class="sourceLine" id="cb9-11" title="11"><span class="co">## Set up and perform the simulation</span></a>
-<a class="sourceLine" id="cb9-12" title="12">sims &lt;-<span class="st"> </span><span class="dv">10000</span></a>
-<a class="sourceLine" id="cb9-13" title="13"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
-<a class="sourceLine" id="cb9-14" title="14">simpleResults &lt;-<span class="st"> </span><span class="kw">with</span>(dat1,<span class="kw">replicate</span>(sims,<span class="kw">simEstAte</span>(<span class="dt">Z =</span> Z,<span class="dt">y1 =</span> y1,<span class="dt">y0 =</span> y0)))</a>
-<a class="sourceLine" id="cb9-15" title="15">seEstATEsim &lt;-<span class="st"> </span><span class="kw">sd</span>(simpleResults)</a>
-<a class="sourceLine" id="cb9-16" title="16"></a>
-<a class="sourceLine" id="cb9-17" title="17"><span class="co">## The standard error of this estimate of the ATE (via simulation)</span></a>
-<a class="sourceLine" id="cb9-18" title="18">seEstATEsim</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R5&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata5&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide5&apos;)">
+Hide
+</button>
+<div id="ch3R5" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## A function to re-assign treatment and recalculate the difference of means.
+## Treatment was assigned without blocking or other structure, so we
+## just permute or shuffle the existing treatment assignment vector.
+simEstAte &lt;- function(Z,y1,y0){
+    Znew &lt;- sample(Z)
+    Y &lt;- Znew * y1 + (1-Znew) * y0
+    estate &lt;- mean(Y[Znew == 1]) - mean(Y[Znew == 0])
+    return(estate)
+}
+
+## Set up and perform the simulation
+sims &lt;- 10000
+set.seed(12345)
+simpleResults &lt;- with(dat1,replicate(sims,simEstAte(Z = Z,y1 = y1,y0 = y0)))
+seEstATEsim &lt;- sd(simpleResults)
+
+## The standard error of this estimate of the ATE (via simulation)
+seEstATEsim</code></pre>
+</div>
+<div id="ch3Stata5" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** A program to re-assign treatment and recalculate the difference of means.
+** Treatment was assigned without blocking or other structure, so we
+** just permute or shuffle the existing treatment assignment vector.
+capture program drop simEstAte
+program define simEstAte, rclass sortpreserve
+
+    version 18.0
+    syntax varlist(min=1 max=1), ///
+      control_outcome(varname) treat_outcome(varname)
+    
+    qui sum `varlist&apos; // Get # treated units
+    local numtreat = r(sum)
+    
+    tempvar rand // Randomly sort (temporary var)
+    qui gen `rand&apos; = runiform()
+    sort `rand&apos;
+    
+    tempvar Znew // New treatment
+    qui gen `Znew&apos; = 0
+    qui replace `Znew&apos; = 1 in 1/`numtreat&apos;
+    
+    tempvar Ynew // New revealed outcome
+    qui gen `Ynew&apos; = (`Znew&apos; * `treat_outcome&apos;) + ((1 - `Znew&apos;) * `control_outcome&apos;)
+    
+    qui ttest `Ynew&apos;, by(`Znew&apos;)
+    return scalar estate = r(mu_2) - r(mu_1)
+    
+end
+
+** Set up and perform the simulation
+global sims 10000
+set seed 12345
+preserve
+    qui simulate estate = r(estate), reps($sims): simEstAte z, control_outcome(y0) treat_outcome(y1)
+    qui sum estate
+    global seEstATEsim = r(sd)
+restore
+
+** The standard error of this estimate of the ATE (via simulation)
+di &quot;$seEstATEsim&quot;</code></pre>
+</div>
+<div id="ch3Hide5" class="tabcontent">
+
+</div>
+</div>
 <pre><code>[1] 0.9256</code></pre>
 <p>Although this preceding standard error is intuitive (the standard deviation of the distribution arising from repeating the experiment), more statistics-savvy readers will recognize closed-form standard error estimators like the following.<a href="references.html#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> If we write <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span></span></span></span> as the set of all <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> treated units and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span> as the set of all <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>&#x2212;</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">n-m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> non-treated units, we then have:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mover accent="true"><mrow><mi mathvariant="normal">V</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow><mo stretchy="true">^</mo></mover><mo stretchy="false">(</mo><mi>T</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><msup><mi>s</mi><mn>2</mn></msup><mo stretchy="false">(</mo><msub><mi>Y</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>i</mi><mo>&#x2208;</mo><mi>T</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mi>m</mi></mfrac><mo>+</mo><mfrac><mrow><msup><mi>s</mi><mn>2</mn></msup><mo stretchy="false">(</mo><msub><mi>Y</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>i</mi><mo>&#x2208;</mo><mi>C</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>&#x2212;</mo><mi>m</mi><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\widehat{\mathrm{Var}}(T) = \frac{s^2(Y_{i,i \in T})}{m} + \frac{s^2(Y_{i,i \in C})}{(n-m)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1733em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9233em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathrm">Var</span></span></span><span class="svg-align" style="top:-3.6833em;"><span class="pstrut" style="height:3em;"></span><span style="height:0.24em;"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="0.24em" viewbox="0 0 1062 239" preserveaspectratio="none"><path d="M529 0h5l519 115c5 1 9 5 9 10 0 1-1 2-1 3l-4 22
@@ -797,84 +982,333 @@ c-1 5-5 9-11 9h-2L532 67 19 159h-2c-5 0-9-4-11-9l-5-22c-1-6 2-12 8-13z"/></svg><
 <p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>s</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">s^2(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span> is the sample variance such that <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>s</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mi>n</mi><mo>&#x2212;</mo><mn>1</mn><mo stretchy="false">)</mo><mo stretchy="false">)</mo><msubsup><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>&#x2212;</mo><mover accent="true"><mi>x</mi><mo>&#x2C9;</mo></mover><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">s^2(x) = (1/(n-1))\sum^n_{i = 1}(x_i-\bar{x})^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1/</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.104em;vertical-align:-0.2997em;"></span><span class="mord">1</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">&#x2211;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8043em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">x</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2222em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>.</p>
 <p>Let&#x2019;s compare the results of that simulation above to the standard error this expression produces, along with the <em>true</em> standard error. We can calculate the true standard error of the ATE in this example because we know the actual covariance between potential outcomes (normally we cannot observe this). You can think of the expression above as a <em>feasible</em> standard error, a modified version that is estimable in real datasets and designed to be <em>at least as large</em> as the true standard error on average (i.e., it is designed to be &#x201C;conservative&#x201D;). Although we don&#x2019;t formally write it out here, you can see a method of estimating the true standard error in our code.</p>
 <p>Among other things, this exercise helps illustrate that the &#x201C;standard deviation of the estimated ATE after repeating the experiment&#x201D; is the same as expressions like the one above which textbooks are more likely to teach. We&#x2019;ll calculate the true SE next.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="co">## True SE (Dunning Chap 6, Gerber and Green Chap 3, or Freedman, Pisani and Purves A-32).</span></a>
-<a class="sourceLine" id="cb11-2" title="2"><span class="co">## Requires knowing the true covariance between potential outcomes.</span></a>
-<a class="sourceLine" id="cb11-3" title="3">N &lt;-<span class="st"> </span><span class="kw">nrow</span>(dat1)</a>
-<a class="sourceLine" id="cb11-4" title="4">V &lt;-<span class="st"> </span><span class="kw">var</span>(<span class="kw">cbind</span>(dat1<span class="op">$</span>y0,dat1<span class="op">$</span>y1))</a>
-<a class="sourceLine" id="cb11-5" title="5">varc &lt;-<span class="st"> </span>V[<span class="dv">1</span>,<span class="dv">1</span>]</a>
-<a class="sourceLine" id="cb11-6" title="6">vart &lt;-<span class="st"> </span>V[<span class="dv">2</span>,<span class="dv">2</span>]</a>
-<a class="sourceLine" id="cb11-7" title="7">covtc &lt;-<span class="st"> </span>V[<span class="dv">1</span>,<span class="dv">2</span>]</a>
-<a class="sourceLine" id="cb11-8" title="8">nt &lt;-<span class="st"> </span><span class="kw">sum</span>(dat1<span class="op">$</span>Z)</a>
-<a class="sourceLine" id="cb11-9" title="9">nc &lt;-<span class="st"> </span>N<span class="op">-</span>nt</a>
-<a class="sourceLine" id="cb11-10" title="10"></a>
-<a class="sourceLine" id="cb11-11" title="11"><span class="co">## Gerber and Green, p.57, equation (3.4)</span></a>
-<a class="sourceLine" id="cb11-12" title="12">varestATE &lt;-<span class="st"> </span>(((varc <span class="op">*</span><span class="st"> </span>nt) <span class="op">/</span><span class="st"> </span>nc) <span class="op">+</span><span class="st"> </span>((vart <span class="op">*</span><span class="st"> </span>nc) <span class="op">/</span><span class="st"> </span>nt) <span class="op">+</span><span class="st"> </span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>covtc)) <span class="op">/</span><span class="st"> </span>(N <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb11-13" title="13">seEstATETrue &lt;-<span class="st"> </span><span class="kw">sqrt</span>(varestATE)</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R6&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata6&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide6&apos;)">
+Hide
+</button>
+<div id="ch3R6" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## True SE (Dunning Chap 6, Gerber and Green Chap 3, or Freedman, Pisani and Purves A-32).
+## Requires knowing the true covariance between potential outcomes.
+N &lt;- nrow(dat1)
+V &lt;- var(cbind(dat1$y0,dat1$y1))
+varc &lt;- V[1,1]
+vart &lt;- V[2,2]
+covtc &lt;- V[1,2]
+nt &lt;- sum(dat1$Z)
+nc &lt;- N-nt
+
+## Gerber and Green, p.57, equation (3.4)
+varestATE &lt;- (((varc * nt) / nc) + ((vart * nc) / nt) + (2 * covtc)) / (N - 1)
+seEstATETrue &lt;- sqrt(varestATE)</code></pre>
+</div>
+<div id="ch3Stata6" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** True SE (Dunning Chap 6, Gerber and Green Chap 3, or Freedman, Pisani and Purves A-32).
+** Requires knowing the true covariance between potential outcomes.
+qui count
+local N = r(N)
+qui cor y0 y1, cov
+local varc = r(C)[1,1]
+local vart = r(C)[2,2]
+local covtc = r(C)[1,2]
+qui sum z
+local nt = r(sum)
+local nc = `N&apos; - `nt&apos;
+
+** Gerber and Green, p.57, equation (3.4)
+local varestATE = (((`varc&apos; * `nt&apos;) / `nc&apos;) + ((`vart&apos; * `nc&apos;) / `nt&apos;) + (2 * `covtc&apos;)) / (`N&apos; - 1)
+global seEstATETrue = sqrt(`varestATE&apos;)</code></pre>
+</div>
+<div id="ch3Hide6" class="tabcontent">
+
+</div>
+</div>
 <p>Then, we&#x2019;ll calculate the feasible standard error represented in the expression above.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="co">## Feasible SE</span></a>
-<a class="sourceLine" id="cb12-2" title="2">varYc &lt;-<span class="st"> </span><span class="kw">with</span>(dat1,<span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">0</span>]))</a>
-<a class="sourceLine" id="cb12-3" title="3">varYt &lt;-<span class="st"> </span><span class="kw">with</span>(dat1,<span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]))</a>
-<a class="sourceLine" id="cb12-4" title="4">fvarestATE &lt;-<span class="st"> </span>(N<span class="op">/</span>(N<span class="dv">-1</span>)) <span class="op">*</span><span class="st"> </span>( (varYt<span class="op">/</span>nt) <span class="op">+</span><span class="st"> </span>(varYc<span class="op">/</span>nc) )</a>
-<a class="sourceLine" id="cb12-5" title="5">estSEEstATE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(fvarestATE)</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R7&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata7&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide7&apos;)">
+Hide
+</button>
+<div id="ch3R7" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Feasible SE
+varYc &lt;- with(dat1,var(Y[Z == 0]))
+varYt &lt;- with(dat1,var(Y[Z == 1]))
+fvarestATE &lt;- (N/(N-1)) * ( (varYt/nt) + (varYc/nc) )
+estSEEstATE &lt;- sqrt(fvarestATE)</code></pre>
+</div>
+<div id="ch3Stata7" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Feasible SE
+qui sum y if z == 0
+local varYc = r(sd) * r(sd)
+qui sum y if z == 1
+local varYt = r(sd) * r(sd)
+local fvarestATE = (`N&apos;/(`N&apos;-1)) * ( (`varYt&apos;/`nt&apos;) + (`varYc&apos;/`nc&apos;) )
+global estSEEstATE = sqrt(`fvarestATE&apos;)</code></pre>
+</div>
+<div id="ch3Hide7" class="tabcontent">
+
+</div>
+</div>
 <p>Note that this feasible SE <em>is not</em> the standard error OLS provides by default, if you were to use a standard OLS regression to calculate a difference-in-means. We&#x2019;ll calculate the OLS SE as well, and include it in our comparison for illustration.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="co">## OLS SE</span></a>
-<a class="sourceLine" id="cb13-2" title="2">lm1 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y<span class="op">~</span>Z, <span class="dt">data=</span>dat1)</a>
-<a class="sourceLine" id="cb13-3" title="3">iidSE &lt;-<span class="st">  </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcov</span>(lm1)))[[<span class="st">&quot;Z&quot;</span>]]</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R8&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata8&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide8&apos;)">
+Hide
+</button>
+<div id="ch3R8" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## OLS SE
+lm1 &lt;- lm(Y~Z, data=dat1)
+iidSE &lt;-  sqrt(diag(vcov(lm1)))[[&quot;Z&quot;]]</code></pre>
+</div>
+<div id="ch3Stata8" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** OLS SE
+qui reg y z
+global iidSE = _se[z] // Or: sqrt(e(V)[&quot;z&quot;,&quot;z&quot;])</code></pre>
+</div>
+<div id="ch3Hide8" class="tabcontent">
+
+</div>
+</div>
 <p>Lastly, we&#x2019;ll calculate the HC2 standard error, which <span class="citation">(Lin <a href="#ref-lin_agnostic_2013">2013</a>)</span> shows to be a randomization-justified SE for OLS. From our design-based perspective, we prefer this method of estimating the standard error. Like the feasible SE above, it should be conservative relative to the true SE.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="co">## Neyman SE (HC2)</span></a>
-<a class="sourceLine" id="cb14-2" title="2">NeymanSE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcovHC</span>(lm1, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>)))[[<span class="st">&quot;Z&quot;</span>]]</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R9&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata9&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide9&apos;)">
+Hide
+</button>
+<div id="ch3R9" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Neyman SE (HC2)
+NeymanSE &lt;- sqrt(diag(vcovHC(lm1, type = &quot;HC2&quot;)))[[&quot;Z&quot;]]</code></pre>
+</div>
+<div id="ch3Stata9" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Neyman SE (HC2)
+qui reg y z, vce(hc2)
+global NeymanSE = _se[z] // Or: sqrt(e(V)[&quot;z&quot;,&quot;z&quot;])</code></pre>
+</div>
+<div id="ch3Hide9" class="tabcontent">
+
+</div>
+</div>
 <p>These SE estimates in hand, let&#x2019;s review differences between the true standard error, the feasible standard error, the HC2 SE, the standard error arising from direct repetition of the experiment, and the OLS standard error.</p>
 <p>What we call Neyman SE here (the HC2 OLS SE) is supposed to be conservative relative to the true SE (at least as large or larger on average). We show this to be the case in our example. The Neyman SE is, by design, similar to the feasible SE, and both are larger than the true SE. We also illustrate the accuracy of our SE simulation procedure above as a way of thinking intuitively about what the standard error represents (though such a simulation is generally not possible with real data). Finally, recall that our design involves different outcome variances between the treated group and the control group. We would therefore expect what we are calling the &#x201C;OLD iid&#x201D; SE to be biased on average (though not necessarily guaranteed to be overly conservative or liberal in all cases). Here, it actually underestimates the truth only slightly. But in other circumstances it may perform worse.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">compareSEs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">simSE =</span> seEstATEsim,</a>
-<a class="sourceLine" id="cb15-2" title="2">  <span class="dt">feasibleSE =</span> estSEEstATE,</a>
-<a class="sourceLine" id="cb15-3" title="3">  <span class="dt">trueSE =</span> seEstATETrue,</a>
-<a class="sourceLine" id="cb15-4" title="4">  <span class="dt">olsIIDSE =</span> iidSE,</a>
-<a class="sourceLine" id="cb15-5" title="5">  <span class="dt">NeymanDesignSE =</span> NeymanSE)</a>
-<a class="sourceLine" id="cb15-6" title="6"><span class="kw">sort</span>(compareSEs)</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R10&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata10&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide10&apos;)">
+Hide
+</button>
+<div id="ch3R10" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>compareSEs &lt;- c(simSE = seEstATEsim,
+  feasibleSE = estSEEstATE,
+  trueSE = seEstATETrue,
+  olsIIDSE = iidSE,
+  NeymanDesignSE = NeymanSE)
+sort(compareSEs)</code></pre>
+</div>
+<div id="ch3Stata10" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>matrix compareSEs = J(1, 5, .)
+matrix compareSEs[1, 1] = $seEstATEsim
+matrix compareSEs[1, 2] = $estSEEstATE
+matrix compareSEs[1, 3] = $seEstATETrue
+matrix compareSEs[1, 4] = $iidSE
+matrix compareSEs[1, 5] = $NeymanSE
+matrix colnames compareSEs = &quot;simSE&quot; &quot;feasibleSE&quot; &quot;trueSE&quot; &quot;olsIIDSE&quot; &quot;NeymanDesignSE&quot;
+matrix list compareSEs</code></pre>
+</div>
+<div id="ch3Hide10" class="tabcontent">
+
+</div>
+</div>
 <pre><code>      olsIIDSE         trueSE          simSE NeymanDesignSE     feasibleSE 
         0.8930         0.9189         0.9256         1.0387         1.0439 </code></pre>
 <p>To provide a more reliable comparison of these SE estimation methods, the first code chunk below defines a function to calculate an average treatment effect, the OLS iid SE, and the OLS HC2 (Neyman) SE. The second code chunk below uses this function to calculate several of those SEs for 10000 simulated datasets, averaging across them to provide a better illustration of their relative performance. As expected, OLS <em>underestimates</em> the true SE, while the Neyman (HC2) SE is conservative. The risk of underestimating the SE is that it could lead us to be overconfident when interpreting statistical findings.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="co">## Define a function to calculate several SEs, given potential outcomes and treatment</span></a>
-<a class="sourceLine" id="cb17-2" title="2">sePerfFn &lt;-<span class="st"> </span><span class="cf">function</span>(Z,y1,y0){</a>
-<a class="sourceLine" id="cb17-3" title="3">    Znew &lt;-<span class="st"> </span><span class="kw">sample</span>(Z)</a>
-<a class="sourceLine" id="cb17-4" title="4">    Ynew &lt;-<span class="st"> </span>Znew <span class="op">*</span><span class="st"> </span>y1 <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">-</span>Znew) <span class="op">*</span><span class="st"> </span>y0</a>
-<a class="sourceLine" id="cb17-5" title="5">    lm1 &lt;-<span class="st"> </span><span class="kw">lm</span>(Ynew<span class="op">~</span>Znew)</a>
-<a class="sourceLine" id="cb17-6" title="6">    iidSE &lt;-<span class="st">  </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcov</span>(lm1)))[[<span class="st">&quot;Znew&quot;</span>]]</a>
-<a class="sourceLine" id="cb17-7" title="7">    NeymanSE &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(<span class="kw">vcovHC</span>(lm1,<span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>)))[[<span class="st">&quot;Znew&quot;</span>]]</a>
-<a class="sourceLine" id="cb17-8" title="8">    <span class="kw">return</span>(<span class="kw">c</span>(<span class="dt">estATE=</span><span class="kw">coef</span>(lm1)[[<span class="st">&quot;Znew&quot;</span>]],</a>
-<a class="sourceLine" id="cb17-9" title="9">         <span class="dt">estSEiid=</span>iidSE,</a>
-<a class="sourceLine" id="cb17-10" title="10">         <span class="dt">estSENeyman=</span>NeymanSE))</a>
-<a class="sourceLine" id="cb17-11" title="11">}</a>
-<a class="sourceLine" id="cb17-12" title="12"></a>
-<a class="sourceLine" id="cb17-13" title="13"><span class="co">## Perform a simulation using this function</span></a>
-<a class="sourceLine" id="cb17-14" title="14"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
-<a class="sourceLine" id="cb17-15" title="15">sePerformance &lt;-<span class="st"> </span><span class="kw">with</span>(dat1, <span class="kw">replicate</span>(sims, <span class="kw">sePerfFn</span>(<span class="dt">Z =</span> Z, <span class="dt">y1 =</span> y1, <span class="dt">y0 =</span> y0)))</a>
-<a class="sourceLine" id="cb17-16" title="16">ExpectedSEs &lt;-<span class="st"> </span><span class="kw">apply</span>(sePerformance[<span class="kw">c</span>(<span class="st">&quot;estSEiid&quot;</span>, <span class="st">&quot;estSENeyman&quot;</span>),], <span class="dv">1</span>, mean)</a>
-<a class="sourceLine" id="cb17-17" title="17"><span class="kw">c</span>(ExpectedSEs, <span class="dt">trueSE=</span>seEstATETrue, <span class="dt">simSE=</span><span class="kw">sd</span>(sePerformance[<span class="st">&quot;estATE&quot;</span>,]))</a></code></pre></div>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R11&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata11&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide11&apos;)">
+Hide
+</button>
+<div id="ch3R11" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Define a function to calculate several SEs, given potential outcomes and treatment
+sePerfFn &lt;- function(Z,y1,y0){
+    Znew &lt;- sample(Z)
+    Ynew &lt;- Znew * y1 + (1-Znew) * y0
+    lm1 &lt;- lm(Ynew~Znew)
+    iidSE &lt;-  sqrt(diag(vcov(lm1)))[[&quot;Znew&quot;]]
+    NeymanSE &lt;- sqrt(diag(vcovHC(lm1,type = &quot;HC2&quot;)))[[&quot;Znew&quot;]]
+    return(c(estATE=coef(lm1)[[&quot;Znew&quot;]],
+         estSEiid=iidSE,
+         estSENeyman=NeymanSE))
+}
+
+## Perform a simulation using this function
+set.seed(12345)
+sePerformance &lt;- with(dat1, replicate(sims, sePerfFn(Z = Z, y1 = y1, y0 = y0)))
+ExpectedSEs &lt;- apply(sePerformance[c(&quot;estSEiid&quot;, &quot;estSENeyman&quot;),], 1, mean)
+c(ExpectedSEs, trueSE=seEstATETrue, simSE=sd(sePerformance[&quot;estATE&quot;,]))</code></pre>
+</div>
+<div id="ch3Stata11" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Define a function to calculate several SEs, given potential outcomes and treatment
+capture program drop sePerfFn
+program define sePerfFn, rclass sortpreserve
+
+    version 18.0
+    syntax varlist(min=1 max=1), control_outcome(varname) treat_outcome(varname)
+    
+    qui sum `varlist&apos; // As in the program above
+    local numtreat = r(sum)
+    tempvar rand
+    qui gen `rand&apos; = runiform()
+    sort `rand&apos;
+    tempvar Znew
+    qui gen `Znew&apos; = 0
+    qui replace `Znew&apos; = 1 in 1/`numtreat&apos;
+    tempvar Ynew
+    qui gen `Ynew&apos; = (`Znew&apos; * `treat_outcome&apos;) + ((1 - `Znew&apos;) * `control_outcome&apos;)
+    
+    qui reg `Ynew&apos; `Znew&apos; // Regression now instead of ttest
+    local iidSE = _se[`Znew&apos;]
+    qui reg `Ynew&apos; `Znew&apos;, vce(hc2)
+    local NeymanSE = _se[`Znew&apos;]
+    
+    return scalar iidSE = `iidSE&apos; // Prepare output
+    return scalar NeymanSE = `NeymanSE&apos;
+    return scalar estATE = _b[`Znew&apos;]
+
+end
+
+** Perform a simulation using this function
+set seed 12345
+
+preserve
+    qui simulate ///
+    iidSE = r(iidSE) NeymanSE = r(NeymanSE) estATE = r(estATE), ///
+    reps($sims): ///
+    sePerfFn z, control_outcome(y0) treat_outcome(y1)
+    qui sum estATE
+    global simSE = r(sd)
+    qui sum iidSE
+    global estSEiid = r(mean)
+    qui sum NeymanSE
+    global estSENeyman = r(mean)
+restore
+
+di &quot;Expected IID SE: $estSEiid&quot;
+di &quot;Expected Neyman SE: $estSENeyman&quot;
+di &quot;SIM SE: $simSE&quot;
+di &quot;True SE: $seEstATETrue&quot;</code></pre>
+</div>
+<div id="ch3Hide11" class="tabcontent">
+
+</div>
+</div>
 <pre><code>   estSEiid estSENeyman      trueSE       simSE 
      0.8511      0.9574      0.9189      0.9256 </code></pre>
 </div>
 <div id="how-do-we-calculate-randomization-based-confidence-intervals" class="section level3">
 <h3><span class="header-section-number">3.1.2</span> How do we calculate randomization-based confidence intervals?</h3>
 <p>When we have a two arm trial (and a relatively large sample size), we can estimate the ATE, calculate design-based standard errors, and then use them to create large-sample justified confidence intervals through either of the following approaches:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="co">## The difference_in_means function comes from the estimatr package.</span></a>
-<a class="sourceLine" id="cb19-2" title="2">estAndSE1 &lt;-<span class="st"> </span><span class="kw">difference_in_means</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat1)</a>
-<a class="sourceLine" id="cb19-3" title="3"></a>
-<a class="sourceLine" id="cb19-4" title="4"><span class="co">## Note that coeftest and coefci come from the lmtest package</span></a>
-<a class="sourceLine" id="cb19-5" title="5">est2 &lt;-<span class="st"> </span><span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat1)</a>
-<a class="sourceLine" id="cb19-6" title="6">estAndSE2 &lt;-<span class="st"> </span><span class="kw">coeftest</span>(est2, <span class="dt">vcov.=</span><span class="kw">vcovHC</span>(est2, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>))</a>
-<a class="sourceLine" id="cb19-7" title="7">estAndCI2&lt;-<span class="st"> </span><span class="kw">coefci</span>(est2, <span class="dt">vcov.=</span><span class="kw">vcovHC</span>(est2, <span class="dt">type =</span> <span class="st">&quot;HC2&quot;</span>), <span class="dt">parm =</span> <span class="st">&quot;Z&quot;</span>)</a>
-<a class="sourceLine" id="cb19-8" title="8"></a>
-<a class="sourceLine" id="cb19-9" title="9">estAndSE1</a></code></pre></div>
-<pre><code>Design:  Standard 
-  Estimate Std. Error t value  Pr(&gt;|t|) CI Lower CI Upper    DF
-Z    4.637      1.039   4.465 8.792e-05    2.524     6.75 33.12</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1">estAndSE2[<span class="st">&quot;Z&quot;</span>, , drop=<span class="ot">FALSE</span>]</a></code></pre></div>
-<pre><code>  Estimate Std. Error t value  Pr(&gt;|t|)
-Z    4.637      1.039   4.465 2.147e-05</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">estAndCI2</a></code></pre></div>
-<pre><code>  2.5 % 97.5 %
-Z 2.576  6.699</code></pre>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3R12&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Stata12&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch3Hide12&apos;)">
+Hide
+</button>
+<div id="ch3R12" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## The difference_in_means function comes from the estimatr package.
+estAndSE1 &lt;- difference_in_means(Y ~ Z, data = dat1)
+
+## Note that coeftest and coefci come from the lmtest package
+# (narrower intervals due to a different d.o.f.)
+est2 &lt;- lm(Y ~ Z, data = dat1)
+estAndSE2 &lt;- coeftest(est2, vcov.=vcovHC(est2, type = &quot;HC2&quot;))
+estAndCI2 &lt;- coefci(est2, vcov.=vcovHC(est2, type = &quot;HC2&quot;), parm = &quot;Z&quot;)
+
+## Organize output
+out &lt;- rbind( unlist(estAndSE1[c(1,2,6:8)]),  c(estAndSE2[2,-3], estAndCI2) )
+out &lt;- apply(out, 2, round, 3)
+colnames(out) &lt;- c(&quot;Est&quot;, &quot;SE&quot;, &quot;pvalue&quot;, &quot;CI lower&quot;, &quot;CI upper&quot;)
+row.names(out) &lt;- c(&quot;Approach 1 (diff. means)&quot;, &quot;Approach 2 (OLS)&quot;)
+out</code></pre>
+</div>
+<div id="ch3Stata12" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Organize output
+matrix compareCIs = J(2, 5, .)
+matrix rownames compareCIs = &quot;Approach 1 (diff. means)&quot; &quot;Approach 2 (OLS)&quot;
+matrix colnames compareCIs = &quot;Est&quot; &quot;SE&quot; &quot;pvalue&quot; &quot;CI lower&quot; &quot;CI upper&quot;
+
+** A difference in means test assuming unequal variances
+** (equivalent to the design-based estimator, as discussed above)
+ttest y, by(z) unequal
+local diffmeans = r(mu_2) - r(mu_1)
+matrix compareCIs[1,1] = round(`diffmeans&apos;, 0.001)
+matrix compareCIs[1,2] = round(r(se), 0.001)
+matrix compareCIs[1,3] = round(r(p), 0.001)
+matrix compareCIs[1,4] = round(`diffmeans&apos; - (invttail(r(df_t), 0.025) * r(se)), 0.001)
+matrix compareCIs[1,5] = round(`diffmeans&apos; + (invttail(r(df_t), 0.025) * r(se)), 0.001)
+
+** A regression-based approach (narrower intervals due to a different d.o.f)
+reg y z, vce(hc2) // See: &quot;matrix list r(table)&quot;
+matrix compareCIs[2,1] = round(r(table)[1, 1], 0.001)
+matrix compareCIs[2,2] = round(r(table)[2, 1], 0.001)
+matrix compareCIs[2,3] = round(r(table)[4, 1], 0.001)
+matrix compareCIs[2,4] = round(r(table)[5, 1], 0.001)
+matrix compareCIs[2,5] = round(r(table)[6, 1], 0.001)
+
+matrix list compareCIs</code></pre>
+</div>
+<div id="ch3Hide12" class="tabcontent">
+
+</div>
+</div>
+<pre><code>                           Est    SE pvalue CI lower CI upper
+Approach 1 (diff. means) 4.637 1.039      0    2.524    6.750
+Approach 2 (OLS)         4.637 1.039      0    2.576    6.699</code></pre>
 </div>
 </div>
 <div id="summary-what-does-a-design-based-approach-mean-for-policy-evaluation" class="section level2">
