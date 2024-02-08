@@ -34,5 +34,3 @@ Imports:
   katex,
   V8,
   knitr
-Remotes:
-  rstudio/bookdown
