@@ -6,9 +6,9 @@ To control package versions used in the SOP, we're relying on [renv](https://rst
 
 Briefly, `renv` maintains a curated set packages local to this R project (in the "renv" folder of this repository). The file "renv.lock" (the "lock file") in this repository contains a snapshot of the packages that should be used to compile the SOP, along with the version we want of each. You'll need to use `renv` to install the right packages and build the SOP on your machine, or add any new packages for use in one of the chapters. But this doesn't make updating the SOP much more complicated.
 
-After cloning the most recent version of this repository onto your machine, opening the R project should prompt `renv` to automatically install itself. Once installed, if it doesn't load automatically (you'll see a message in the console), run `renv::load()`. After this, run `renv::restore` while the R project is open to automatically prepare the right set of packages/versions in the project directory on your machine, based on the instructions from the lock file. If you run into a message saying `renv` isn't activated yet when trying to restore from the lock file, make sure youv'e run `renv::activate` and `renv::load` first.
+After cloning the most recent version of this repository onto your machine, opening the R project should prompt `renv` to automatically install itself. Once installed, if it doesn't load automatically (you'll see a message in the console), run `renv::load()`. After this, run `renv::restore` while the R project is open to automatically prepare the right set of packages/versions in the project directory on your machine, based on the instructions from the lock file. If you run into a message saying `renv` isn't activated yet when trying to restore from the lock file, make sure youv'e run `renv::activate()` and `renv::load()` first.
 
-Once you've opened the R project and loaded `renv`, you can install packages as normal, and they'll be installed in the project directory rather than your machine's main R package directory. After you complete the install, add this package to the list in "index.Rmd" and run `renv::snapshot()` to update the lock file. Make sure you commit the new lock file to Github alonside your other changes (also be sure to commit ".Rprofile," "renv/settings.json," and "renv/activate.R"). Committing the entire repository when you want to update Github with your changes will accomplish this.
+Once you've opened the R project and loaded `renv`, you can install packages as normal, and they'll be installed in the project directory rather than your machine's main R package directory. After you complete the install, be sure to (1) add this package to the list in "index.Rmd", (2) add it to the list in the `DESCRIPTION` file in the root folder of the repository, and (3) run `renv::snapshot()` to update the lock file. Make sure you commit the new lock file and DESCRIPTION file to Github alonside your other changes (along with ".Rprofile," "renv/settings.json," and "renv/activate.R"). Committing the entire repository will accomplish this, and Github Desktop makes this easy to manage as well.
 
 # Important package versions
 
@@ -30,6 +30,8 @@ Our current use of `renv` should take care of all of these version control issue
 # Adding or removing chapters
 
 To add or remove chapters, once the `.rmd` file for that chapter is finished, open "_bookdown.yml"" and add its name to the list (or take it's name out of the list). Be sure to update the numbers at the beginning of chapter names accordingly. To help keep things clear, please only assign numbers to the names of *live* chapters. Also, be sure to keep the glossary, appendix, and references at the end of this list.
+
+Work-in-progress chapters are currently in the "In Progress or Old Chapters" folder. Move these to the main repository folder once you want to make them live.
 
 # How can I update content?
 
@@ -114,14 +116,8 @@ And then hit `shift+tab` when your cursor is to the right of `}`. Then copy in R
 
 # Building the book
 
-In theory, there is more than one way to compile this book to .html, .pdf, and .epub. But right now, the first option works, while the second option runs into errors that prevent compling. This may be an artifact of our need to rely on older versions of certain packages. This may be worth addressing once content is smoothed out and we have the new first online.
-
-- (**Working**) Open the sop.Rproj file in RStudio. There should be a "Build" tab in the same pane as the "Environment" tab. Under "Build Book" in this tab, click on `bookdown::gitbook`, which is the format we currently have displayed online as well.
-
-- (**Currently not working**) You can use `render_book()` as described [here](https://bookdown.org/yihui/bookdown/build-the-book.html)
-
-- RStudio also has some [add-ins](https://bookdown.org/yihui/bookdown/rstudio-ide.html) that make bookdown easier to use
+Open the sop.Rproj file in RStudio. There should be a "Build" tab in the same pane as the "Environment" tab. Under "Build Book" in this tab, click on `bookdown::gitbook`, which is the format we're currently using.
 
 # Stata code examples
 
-The "Stata code" folder in this repository contains .do files you can use to actually run the Stata code in different chapters (with all the necessary input data saved as .csv files). It may be useful to provide similar R scripts for each chapter in the future. Available for Fellows who are interested in running the Stata code themselves.
+The "Stata code" folder in this repository contains .do files you can use to run the Stata code in different chapters (with all the necessary input data saved as .csv files here so that this folder is self contained).

@@ -5,6 +5,6 @@ language:
     chapter_name: "Chapter "
 delete_merged_file: true
 edit: https://github.com/gsa-oes/sop/edit/master/Book/%s
-output_dir: "_book"
+output_dir: "docs" # was _book, changed for github pages
 clean: ["sop.bbl"]
 rmd_files: ["index.Rmd", "01-causalinference.Rmd", "02-basics.Rmd", "03-randomizationinference.Rmd", "04-randomizeddesigns.Rmd", "05-analysischoices.Rmd", "06-poweranalysis.Rmd", "97-glossary.Rmd", "98-appendix.Rmd", "99-references.Rmd"]

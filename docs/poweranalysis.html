@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</title>
+  <meta name="description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  <meta name="generator" content="bookdown &lt;!--bookdown:version--&gt; and GitBook 2.6.7">
+
+  <meta property="og:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.">
+  <meta property="og:type" content="book">
+  
+  
+  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  <meta name="github-repo" content="gsa-oes/sop">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.">
+  
+  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  
+
+<meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
+
+
+<meta name="date" content="2024-02-08">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="analysis-choices.html">
+<link rel="next" href="glossary-of-terms.html">
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet">
+
+
+
+
+
+
+
+<script src="libs/clipboard/clipboard.min.js"></script>
+<link href="libs/primer-tooltips/build.css" rel="stylesheet">
+<link href="libs/klippy/css/klippy.min.css" rel="stylesheet">
+<script src="libs/klippy/js/klippy.min.js"></script>
+<script src="libs/kePrint/kePrint.js"></script>
+<link href="libs/lightable/lightable.css" rel="stylesheet">
+
+<script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.cpp, pre.sql, pre.stan, pre.stata, pre.python, pre.bash');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+<script>
+function unrolltab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" data-external="1"></head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The OES SOP</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Overview</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#purposes-of-this-document"><i class="fa fa-check"></i>Purposes of this document</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#nature-and-limitations-of-this-document"><i class="fa fa-check"></i>Nature and limitations of this document</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-focus-on-randomized-field-experiments."><i class="fa fa-check"></i>We (mostly) focus on randomized field experiments.</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-present-examples-using-r"><i class="fa fa-check"></i>We (mostly) present examples using R</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-document"><i class="fa fa-check"></i>Structure of the document</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#help-us-improve-our-work"><i class="fa fa-check"></i>Help us improve our work!</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#about-this-document"><i class="fa fa-check"></i>About this document</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="statistical-and-causal-inference-for-policy-change.html"><a href="statistical-and-causal-inference-for-policy-change.html"><i class="fa fa-check"></i><b>1</b> Statistical and causal inference for policy change</a></li>
+<li class="chapter" data-level="2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html"><i class="fa fa-check"></i><b>2</b> Basics of Experimental Design and Analysis</a><ul>
+<li class="chapter" data-level="2.1" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise"><i class="fa fa-check"></i><b>2.1</b> Statistical power: Designing Studies that effectively distinguish signal from noise</a></li>
+<li class="chapter" data-level="2.2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#error-rates-of-tests"><i class="fa fa-check"></i><b>2.2</b> Error Rates of Tests</a></li>
+<li class="chapter" data-level="2.3" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#bias-in-estimators"><i class="fa fa-check"></i><b>2.3</b> Bias in Estimators</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html"><i class="fa fa-check"></i><b>3</b> Design-Based Principles of Statistical Inference</a><ul>
+<li class="chapter" data-level="3.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> How do we calculate randomization-based standard errors?</a></li>
+<li class="chapter" data-level="3.1.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#how-do-we-calculate-randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> How do we calculate randomization-based confidence intervals?</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="randomization-and-design.html"><a href="randomization-and-design.html"><i class="fa fa-check"></i><b>4</b> Randomization and Design</a><ul>
+<li class="chapter" data-level="4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#coin-flipping-randomization-versus-urn-drawing-randomization"><i class="fa fa-check"></i><b>4.1</b> Coin flipping randomization versus urn-drawing randomization</a></li>
+<li class="chapter" data-level="4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#urn-drawing-or-complete-randomization-into-2-or-more-groups"><i class="fa fa-check"></i><b>4.2</b> Urn-drawing or complete randomization into 2 or more groups</a></li>
+<li class="chapter" data-level="4.3" data-path="randomization-and-design.html"><a href="randomization-and-design.html#factorial-designs"><i class="fa fa-check"></i><b>4.3</b> Factorial Designs</a></li>
+<li class="chapter" data-level="4.4" data-path="randomization-and-design.html"><a href="randomization-and-design.html#block-random-assignment"><i class="fa fa-check"></i><b>4.4</b> Block Random Assignment</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#using-only-a-few-covariates-to-create-blocks"><i class="fa fa-check"></i><b>4.4.1</b> Using only a few covariates to create blocks</a></li>
+<li class="chapter" data-level="4.4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#multivariate-blocking-using-many-covariates"><i class="fa fa-check"></i><b>4.4.2</b> Multivariate blocking using many covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="randomization-and-design.html"><a href="randomization-and-design.html#cluster-random-assignment"><i class="fa fa-check"></i><b>4.5</b> Cluster random assignment</a></li>
+<li class="chapter" data-level="4.6" data-path="randomization-and-design.html"><a href="randomization-and-design.html#other-designs"><i class="fa fa-check"></i><b>4.6</b> Other designs</a></li>
+<li class="chapter" data-level="4.7" data-path="randomization-and-design.html"><a href="randomization-and-design.html#assessing-randomization-balance-testing"><i class="fa fa-check"></i><b>4.7</b> Assessing randomization (balance testing)</a><ul>
+<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
+<li class="chapter" data-level="4.7.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#minimizing-the-chances-of-failed-randomization"><i class="fa fa-check"></i><b>4.7.2</b> Minimizing the chances of &#x201C;failed&#x201D; randomization</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="analysis-choices.html"><a href="analysis-choices.html"><i class="fa fa-check"></i><b>5</b> Analysis Choices</a><ul>
+<li class="chapter" data-level="5.1" data-path="analysis-choices.html"><a href="analysis-choices.html#completely-or-urn-draw-randomized-trials"><i class="fa fa-check"></i><b>5.1</b> Completely or Urn-Draw Randomized Trials</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="analysis-choices.html"><a href="analysis-choices.html#two-arms"><i class="fa fa-check"></i><b>5.1.1</b> Two arms</a></li>
+<li class="chapter" data-level="5.1.2" data-path="analysis-choices.html"><a href="analysis-choices.html#multiple-arms"><i class="fa fa-check"></i><b>5.1.2</b> Multiple arms</a></li>
+<li class="chapter" data-level="5.1.3" data-path="analysis-choices.html"><a href="analysis-choices.html#multiple-outcomes"><i class="fa fa-check"></i><b>5.1.3</b> Multiple Outcomes</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="analysis-choices.html"><a href="analysis-choices.html#covariance-adjustment-the-use-of-background-information-to-increase-precision"><i class="fa fa-check"></i><b>5.2</b> Covariance adjustment (the use of background information to increase precision)</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="analysis-choices.html"><a href="analysis-choices.html#intuition-about-bias-in-the-least-squares-estimator-of-the-ate-with-covariates"><i class="fa fa-check"></i><b>5.2.1</b> Intuition about bias in the least squares estimator of the ATE with covariates</a></li>
+<li class="chapter" data-level="5.2.2" data-path="analysis-choices.html"><a href="analysis-choices.html#illustrating-the-lin-approach-to-covariance-adjustment"><i class="fa fa-check"></i><b>5.2.2</b> Illustrating the Lin Approach to Covariance Adjustment</a></li>
+<li class="chapter" data-level="5.2.3" data-path="analysis-choices.html"><a href="analysis-choices.html#the-rosenbaum-approach-to-covariance-adjustment"><i class="fa fa-check"></i><b>5.2.3</b> The Rosenbaum Approach to Covariance Adjustment</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="analysis-choices.html"><a href="analysis-choices.html#how-to-choose-covariates-for-covariance-adjustment"><i class="fa fa-check"></i><b>5.3</b> How to choose covariates for covariance adjustment?</a></li>
+<li class="chapter" data-level="5.4" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandanalysis"><i class="fa fa-check"></i><b>5.4</b> Block-randomized trials</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="analysis-choices.html"><a href="analysis-choices.html#testing-binary-outcomes-under-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables"><i class="fa fa-check"></i><b>5.4.1</b> Testing binary outcomes under block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables</a></li>
+<li class="chapter" data-level="5.4.2" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandate"><i class="fa fa-check"></i><b>5.4.2</b> Estimating an overall average treatment effect</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="analysis-choices.html"><a href="analysis-choices.html#clusterrandanalysis"><i class="fa fa-check"></i><b>5.5</b> Cluster-randomized trials</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="analysis-choices.html"><a href="analysis-choices.html#bias-when-cluster-size-is-correlated-with-potential-outcomes"><i class="fa fa-check"></i><b>5.5.1</b> Bias when cluster size is correlated with potential outcomes</a></li>
+<li class="chapter" data-level="5.5.2" data-path="analysis-choices.html"><a href="analysis-choices.html#incorrect-false-positive-rates-from-tests-and-confidence-intervals"><i class="fa fa-check"></i><b>5.5.2</b> Incorrect false positive rates from tests and confidence intervals</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="poweranalysis.html"><a href="poweranalysis.html"><i class="fa fa-check"></i><b>6</b> Power Analysis</a><ul>
+<li class="chapter" data-level="6.1" data-path="poweranalysis.html"><a href="poweranalysis.html#an-example-of-the-off-the-shelf-approach"><i class="fa fa-check"></i><b>6.1</b> An example of the off-the-shelf approach</a></li>
+<li class="chapter" data-level="6.2" data-path="poweranalysis.html"><a href="poweranalysis.html#an-example-of-the-simulation-approach"><i class="fa fa-check"></i><b>6.2</b> An example of the simulation approach</a></li>
+<li class="chapter" data-level="6.3" data-path="poweranalysis.html"><a href="poweranalysis.html#when-to-use-which-approach"><i class="fa fa-check"></i><b>6.3</b> When to use which approach</a></li>
+<li class="chapter" data-level="6.4" data-path="poweranalysis.html"><a href="poweranalysis.html#additional-examples-of-the-simulation-approach"><i class="fa fa-check"></i><b>6.4</b> Additional examples of the simulation approach</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="poweranalysis.html"><a href="poweranalysis.html#a-two-by-two-design-with-interaction"><i class="fa fa-check"></i><b>6.4.1</b> A two-by-two design with interaction</a></li>
+<li class="chapter" data-level="6.4.2" data-path="poweranalysis.html"><a href="poweranalysis.html#covariate-adjustment-with-the-lin-estimator"><i class="fa fa-check"></i><b>6.4.2</b> Covariate adjustment with the Lin estimator</a></li>
+<li class="chapter" data-level="6.4.3" data-path="poweranalysis.html"><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools"><i class="fa fa-check"></i><b>6.4.3</b> Incorporating DeclareDesign into OES Power Tools</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="glossary-of-terms.html"><a href="glossary-of-terms.html"><i class="fa fa-check"></i><b>7</b> <span>Glossary of Terms</span></a></li>
+<li class="chapter" data-level="8" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>8</b> <span>Appendix</span></a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="poweranalysis" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Power Analysis</h1>
+<p>In this chapter, we provide examples of how we assess statistical power for different experimental research designs. We often prefer to use simulation to assess the power of different research designs because we rarely have designs that fit easily into the assumptions made by analytic tools.</p>
+<p>By &#x201C;analytic tools,&#x201D; we refer to methods of calculating power (or a minimum required sample size, etc.) based on mathematical derivations under particular assumptions. For instance, in an <em>i.i.d.</em> two-arm design with random assignment of half the sample, no covariates, a roughly normally distributed outcome, and equal variance in each treatment group, it&#x2019;s possible show that we would have 80% power to estimate a difference in means of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">&#x394;</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">&#x394;</span></span></span></span> if we collect data on approximately <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.6</mn><mi>&#x3C3;</mi><mi mathvariant="normal">/</mi><mi mathvariant="normal">&#x394;</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">n = (5.6 \sigma /\Delta)^{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">5.6</span><span class="mord mathnormal" style="margin-right:0.03588em;">&#x3C3;</span><span class="mord">/&#x394;</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span> observations, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3C3;</mi></mrow><annotation encoding="application/x-tex">\sigma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">&#x3C3;</span></span></span></span> is the overall standard deviation of the outcome.<a href="references.html#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a> But we frequently consider situations where such derivations are not readily available.</p>
+<!-- I'm not sure this introductory example is useful, in that it doesn't show what we claimed to want (that analytical and simulation yield the same results in a simple example; I cut this text [Bill] in my recent edit) due to the skewed nature of this outcome. For the purposes of this walkthrough, I think skew is a complication we want to put aside? And also, both designs have power of basically 100% with this example data, so the description in the text is no longer accurate. So let's just jump to the more detailed examples of each approach below? -->
+<!-- Imagine that we thought a study would have an effect of about 1 standard deviation -- this is more or less the effect difference in the example data we've been using. How much statistical power would we have with a sample size of only 40 observations? -->
+<!-- Now that the setup is complete, we can assess the statistical power of our -->
+<!-- proposed design with $N=100$ and an effect of roughly 1 SD. The output below -->
+<!-- shows the statistical power as well as the false positive rate (called -->
+<!-- "Coverage" below), as well as the difference between the mean difference we -->
+<!-- calculate and the true average treatment effect (called "Bias" below). -->
+<!-- Initially, this analytic approach suggests more power than the simulation based approach -- a difference that arises from our fairly skewed outcome. -->
+<!-- For ways to compare different sample sizes, effect sizes, etc. see [more -->
+<!-- information from the DeclareDesign -->
+<!-- package](https://declaredesign.org/blog/2018-10-02-power-strategies.html). -->
+<div id="an-example-of-the-off-the-shelf-approach" class="section level2">
+<h2><span class="header-section-number">6.1</span> An example of the off-the-shelf approach</h2>
+<p>To demonstrate how analytical power analysis works in principle, consider the R function <code>power.t.test()</code>. This can be used for power calculations in designs where a two-sample t-test is an appropriate estimation strategy (with no adjustment for blocking, clustering, or covariates).</p>
+<p>When using this function, there are three parameters that we&#x2019;re most concerned
+with, two of which must be specified by the user. The third is then calculated and returned by the function. These are:</p>
+<ul>
+<li><code>n</code> = sample size, or number of observations <em>per treatment group</em></li>
+<li><code>delta</code> = the target effect size, or a minimum detectable effect (MDE)</li>
+<li><code>power</code> = the probability of detecting an effect if in fact there is a true effect of size <code>delta</code></li>
+</ul>
+<p>Note that there is also the parameter <code>sd</code>, representing the standard deviation of the outcome. This is set to 1 by default unless <code>power.t.test()</code> is instructed otherwise.</p>
+<p>Say, for example, you want to know the MDE for a two-arm study with 1,000
+participants, of which half are assigned to treatment. Using <code>power.t.test()</code> you would specify:</p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb166-1" title="1"><span class="kw">power.t.test</span>(</a>
+<a class="sourceLine" id="cb166-2" title="2">  <span class="dt">n =</span> <span class="dv">500</span>, <span class="co"># The number of observations per treatment arm</span></a>
+<a class="sourceLine" id="cb166-3" title="3">  <span class="dt">power =</span> <span class="fl">0.8</span> <span class="co"># The traditional power threshold of 80%</span></a>
+<a class="sourceLine" id="cb166-4" title="4">  )</a></code></pre></div>
+<pre><code>
+     Two-sample t test power calculation 
+
+              n = 500
+          delta = 0.1774
+             sd = 1
+      sig.level = 0.05
+          power = 0.8
+    alternative = two.sided
+
+NOTE: n is number in *each* group</code></pre>
+<p>If all we wanted to extract was the MDE, we could instead write:</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">n =</span> <span class="dv">500</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>delta</a></code></pre></div>
+<pre><code>[1] 0.1774</code></pre>
+<p>If we request the sample size instead, we can illustrate that this is applying an expression like the one we mention above: <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.6</mn><mi mathvariant="normal">/</mi><mn>0.1773605</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>&#x2248;</mo><mn>1000</mn></mrow><annotation encoding="application/x-tex">n = (5.6/0.1773605)^{2} \approx 1000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1141em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">5.6/0.1773605</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&#x2248;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1000</span></span></span></span></span></p>
+<p>And now via R code:</p>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" title="1"><span class="kw">power.t.test</span>(<span class="dt">delta =</span> <span class="fl">0.1773605</span>, <span class="dt">power =</span> <span class="fl">0.8</span>)<span class="op">$</span>n <span class="op">*</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
+<pre><code>[1] 1000</code></pre>
+<p>If you need to, you can adjust other parameters, like the standard deviation of the outcome, the level of the test, or whether the test is one-sided rather than two-sided. There are also other functions available for different types of outcomes. For example, if you have a binary response, you can use <code>power.prop.test()</code> to calculate power for a similar kind of simple difference in proportions test.</p>
+<p>An equivalent approach in Stata would be as follows:</p>
+<pre class="stata"><code>power twomeans 0, power(0.8) n(1000) sd(1)
+di r(delta) // See: return list</code></pre>
+<p>Stata users can learn more about available off-the-shelf tools by checking out Stata&#x2019;s
+plethora of <a href="https://www.stata.com/features/power-and-sample-size/">relevant help files</a>. Meanwhile, R users could start by consulting the <code>pwrss</code>&#x2019;s packages <a href="https://cran.r-project.org/web/packages/pwrss/vignettes/examples.html">guide</a>.</p>
+</div>
+<div id="an-example-of-the-simulation-approach" class="section level2">
+<h2><span class="header-section-number">6.2</span> An example of the simulation approach</h2>
+<!-- Adds copy code button -->
+<script>
+  addClassKlippyToPreCode();
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<!-- Used (and iteratively updated) in the {oes_code_tab} snippets below. -->
+<!-- set chapter number and reset count -->
+<p>We can compare the output of <code>power.t.test()</code> to the output from a
+simulation-based (i.e., computational) approach, which we illustrate in the code chunk below. Notice that our example below relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility for simulating more complicated designs (particularly designs we cannot specify as easily within the <code>DeclareDesign</code> framework).</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R1&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata1&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide1&apos;)">
+Hide
+</button>
+<div id="ch6R1" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## OES Power Simulation Toolkit (R):
+## 
+## replicate_design(...) ---: Generate replicates of a simulated dataset
+## estimate(...) -----------: Estimate the null test-stat for treatment(s).
+## evaluate_power(...) -----: Evaluate power to detect non-zero effects.
+## evaluate_mde(...) -------: Find MDE, searching over range of effect sizes.
+## evaluate_bias(...) ------: Compute bias and other diagnostics.
+
+## Required packages
+require(magrittr)
+require(fabricatr)
+require(foreach)
+
+##### REPLICATE a hypothetical design R times #####
+
+# Inputs:
+# - (1) number of replicates desired
+# - (2) additional arguments that are passed to fabricate() (see the ...).
+#   - Generally, each argument is a separate variable to generate.
+#   - Later vars can be a function of earlier ones.
+#   - See our examples below, this is often simpler than it sounds!
+#   - A built-in simulated treatment effect is not generally needed.
+replicate_design &lt;- 
+  
+  function(R = 200, ...) {
+    
+    # Function: produce one draw of the simulated dataset/design
+    design &lt;- function() {
+      fabricatr::fabricate(
+        ...
+        ) %&gt;%
+        list
+      }    
+    
+    # Use replicate() to replicate that design R times
+    rep &lt;- replicate(
+      n = R,
+      expr = design()
+      )
+    
+    # Output will be a list of dataframes.
+    # For each, add a variable indicating which sim# it is
+    for(i in 1:length(rep)) {
+      rep[[i]] &lt;- rep[[i]] %&gt;%
+        dplyr::mutate(
+          sim = i
+        )
+      }
+    
+    return(rep)
+    
+  }
+
+##### ESTIMATE results using those replicated dfs #####
+
+# Inputs:
+# - (1) Estimation formula (y ~ x1 + x2 + ...)
+# - (2) Variables(s) we want to be powered to estimate the effects of
+#     - Generally just the treatment var(s)
+# - (3) Data the estimator should be applied to (list of dfs)
+# - (4) The estimator (the default is OLS with HC2 errors)
+estimate &lt;- function(
+  formula,
+  vars,
+  data = NULL,
+  estimator = estimatr::lm_robust
+  ) {
+
+  # Pass the list of dfs to map().
+  # map() applies the procedure specified below to each df in the list.
+  data %&gt;%
+    
+    purrr::map(
+      
+      # For each dataframe in the list, apply the specified estimator,
+      # using the specified formula.
+      ~ estimator(
+          formula,
+          data = .
+          ) %&gt;%
+        
+        # tidy up the results and specify the rows of estimates to keep
+        estimatr::tidy() %&gt;%
+          dplyr::filter(
+            .data$term %in% vars
+            ) 
+      
+      ) %&gt;%
+    
+    # Append the results from each sim replicate into a single dataframe
+    dplyr::bind_rows() %&gt;%
+    
+    # Add some more useful labels
+    dplyr::mutate(
+      sim = rep(1:length(data), each = n() / length(data)),
+      term = factor(.data$term, levels = vars)
+      )
+  
+}
+
+##### EVALUATE power of the design #####
+
+# Inputs:
+# - (1) Results produced by estimate() above
+# - (2) Hypothetical effects we want power estimates for
+# - (3) Desired alpha (significance) level
+evaluate_power &lt;- function(data, delta, level = 0.05) {
+  
+  # Make sure delta (may be scalar or vector) was specified
+  if (missing(delta)) {
+    stop(&quot;Specify &apos;delta&apos; to proceed.&quot;)
+  }
+  
+  # Apply the following (i.e., after %do%) to each delta separately,
+  # appending the results with bind_rows at the end.
+  foreach::foreach(
+    i = 1:length(delta),
+    .combine = &quot;bind_rows&quot;
+    ) %do% {
+      
+      # Start with the df of estimates
+      data %&gt;%
+        
+        # Create variables storing the relevant delta and new test stat
+        dplyr::mutate(
+          delta = delta[i],
+          new_statistic = (.data$estimate + .data$delta) / .data$std.error
+          ) %&gt;%
+        
+        # Similar to group_by, result here is list of dfs for each term
+        dplyr::group_split(.data$term) %&gt;%
+        
+        # Separately for the df for each term, get p for each replicate
+        purrr::map(
+          ~ {
+            tibble::tibble(
+              term = .$term,
+              delta = .$delta,
+              p.value = foreach(
+                j = 1:length(.$new_statistic),
+                .combine = &quot;c&quot;
+                ) %do% mean(abs(.$statistic) &gt;= abs(.$new_statistic[j]))
+              )
+            }
+          )
+      } %&gt;%
+    
+    # Organize by term and delta
+    group_by(.data$term, .data$delta) %&gt;%
+    
+    # Average over repliacates to get power for each term/delta combination
+    summarize(
+      power = mean(.data$p.value &lt;= level),
+      .groups = &quot;drop&quot;
+      )
+  
+}
+
+##### EVALUATE the min. detectable effect #####
+# Helps summarize the results of evaluate_power() above,
+# basically a wrapper for evaluate_power()
+
+# Inputs:
+# - (1) Results produced by estimate() above
+# - (2) Range of hypothetical effects we want to consider (delta above)
+# - (3) How fine-grained do we want changes in delta to be?
+# - (4) Alpha (significance) level
+# - (5) Minimum power we want to accept
+evaluate_mde &lt;- function(
+  data, 
+  delta_range = c(0, 1),
+  how_granular = 0.01,
+  level = 0.05,
+  min_power = 0.8
+  ) {
+  
+  # Use the function designed above to get power estimates
+  eval &lt;- evaluate_power(
+    data = data, 
+    delta = seq(delta_range[1], delta_range[2], how_granular),
+    level = level
+    ) %&gt;%
+    
+    # Organize data by term
+    dplyr::group_by(
+      .data$term
+      ) %&gt;%
+    
+    # Get the MDE at our desired power level for each term
+    dplyr::summarize(
+      MDE = min(.data$delta[.data$power &gt;= min_power]),
+      .groups = &quot;drop&quot;
+      )
+  
+  return(eval)
+  
+}
+
+##### EVALUATE Bias #####
+# Helps summarize the results of estimate() above.
+# Pass results of estimate() to this function.
+
+# Inputs:
+# - (1) Data produced by estimate() above
+# - (2) True parameter value (generally true ATE)
+evaluate_bias &lt;- function(
+  data, 
+  ATE = 0
+  ) {
+  
+  # Start with the estimates for each replicated dataset
+  smry &lt;- data %&gt;%
+    
+    # Add a variable representing the true ATE
+    dplyr::mutate(
+      ATE = rep(ATE, len = n())
+      ) %&gt;%
+    
+    # Organize estimates by term
+    dplyr::group_by(
+      .data$term
+      ) %&gt;%
+    
+    # Summarize across replicates, within each term
+    dplyr::summarize(
+      &quot;True ATE&quot; = unique(.data$ATE),
+      &quot;Mean Estimate&quot; = mean(.data$estimate),
+      Bias = mean(.data$estimate - .data$ATE),
+      MSE = mean((.data$estimate - .data$ATE)^2),
+      Coverage = mean(
+        .data$conf.low &lt;= .data$ATE &amp; .data$conf.high &gt;= .data$ATE
+        ),
+      &quot;SD of Estimates&quot; = sd(.data$estimate),
+      &quot;Mean SE&quot; = mean(.data$std.error),
+      .groups = &quot;drop&quot;
+    )
+  
+  return(smry)
+  
+}</code></pre>
+</div>
+<div id="ch6Stata1" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** OES Power Simulation Toolkit (Stata):
+** 
+** draw_from_design ---: Generate a simulated dataset (NOT RUN DIRECTLY)
+** single_estimator ---: Draw data once and estimate results (NOT RUN DIRECTLY)
+** replicate ----------: Repeat (generate -&gt; estimate) many times
+** evaluate_power -----: Evaluate power to detect non-zero effects.
+** evaluate_mde -------: Find MDE, searching over range of effect sizes.
+** evaluate_bias ------: Compute bias and other diagnostics.
+
+***** DRAW FROM a hypothetical design *****
+
+** Note: Must be modified by user
+* Required set-up:
+* - (1) Write code within this program to generate one draw of a simulated dataset.
+*   - See our examples below, this is often simpler than it sounds!
+*   - A built-in simulated treatment effect is not generally needed.
+capture program drop draw_from_design
+program define draw_from_design, nclass
+
+    * Clear existing data
+    clear
+    
+    ** Replace the rest of the code inside this program with your own code
+    
+    * Sample size of 1000 observations
+    set obs 1000
+    
+    * Generate simulated outcome
+    gen y = rnormal(0, 1)
+    
+    * Generate simulated treatment (complete random assignment)
+    qui count
+    local ntreat = r(N)/2
+    complete_ra x, m(`ntreat&apos;)
+
+end
+
+**** ESTIMATE results for a single simulated dataset ****
+
+** Note: Must be modified by user
+* Required set-up:
+* - (1) Define the data generationprogram above.
+* - (2) Write out the test you want to run in this program (using the simulated data).
+capture program drop single_estimator
+program define single_estimator, rclass
+
+    * Check that design program exists
+    quietly capture draw_from_design
+    if _rc != 0 {
+        di as error &quot;Error: define data generation program (draw_from_design) first&quot;
+        exit
+    }
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    reg y x, vce(hc2)
+
+end
+
+**** REPEAT (generation -&gt; estimation) many times ****
+
+** Note: Modification by user NOT NEEDED (just copy into your .do file)
+* Required set-up:
+* - (1) Define both programs above (data generation and a single_estimator)
+* Inputs on use:
+* - (1) Number of replicates (default = 200)
+capture program drop replicate
+program define replicate, rclass
+
+    syntax[, reps(integer 200) ]
+
+    * Check that design program exists
+    quietly capture draw_from_design
+    if _rc != 0 {
+        di as error &quot;Error: define data generation program (draw_from_design) first&quot;
+        exit
+    }
+    
+    * Check that single_estimator program exists
+    quietly capture single_estimator
+    if _rc != 0 {
+        di as error &quot;Error: define estimation program (single_estimator) first&quot;
+        exit
+    }
+
+    * Save coefficients and SEs from each draw to memory.
+    simulate ///
+    _b _se, ///
+    reps(`reps&apos;) nodots: ///
+    single_estimator
+    
+    * Simulation indicator
+    gen sim = _n
+    
+    * Modify var names of coefficients/SEs slightly
+    foreach var of varlist _b* _se* {
+        qui rename `var&apos; `=substr(&quot;`var&apos;&quot;, 2, .)&apos;
+    }   
+
+    * Reshape to a format that makes the desired power calculation easier.
+    qui reshape long b_ se_, i(sim) j(term) string
+        
+end
+
+**** EVALUATE power of the design ****
+
+** Note: Modification by user NOT NEEDED (just copy into your .do file)
+* Required setup:
+* - (1) Define all programs above
+* - (2) Run replicate to get simulated coef/SE estimates in memory.
+* Inputs on use:
+* - (1) Hypothetical effects we want power estimates for (min, steps, and max)
+*   - (Default: from 0 to 1 in steps of 0.01)
+* - (2) Desired alpha (significance) level (default = 0.05)
+capture program drop evaluate_power
+program define evaluate_power, nclass
+
+    syntax[, ///
+    delta_min(real 0) ///
+    delta_steps(real 0.01) ///
+    delta_max(real 1) ///
+    alpha(real 0.05) ]
+    
+    * Data to return to after each iteration
+    tempfile restore_dat
+    qui save `restore_dat&apos;, replace
+    
+    * Loop over specified effect sizes
+    local i = 0
+    forvalues n = `delta_min&apos;(`delta_steps&apos;)`delta_max&apos; {
+        
+        qui use `restore_dat&apos;, clear
+        local ++i
+        
+        * Real and simulated statistics for each a given effect size
+        gen delta = `n&apos;
+        gen real_t = b_/se_
+        gen sim_t = (b_ + delta)/se_
+        
+        * Generate a p-value for each value of sim_t
+        qui gen sim_p = .
+        qui count
+        forvalues v = 1/`r(N)&apos; { // Loop over observations
+            qui gen greaterequal = abs(real_t) &gt;= abs(sim_t[`v&apos;])
+            qui sum greaterequal if term == term[`v&apos;], meanonly
+            qui replace sim_p = r(mean) if _n == `v&apos;
+            qui drop greaterequal
+        }
+        
+        * Use these to get power for the given delta
+        qui gen reject = sim_p &lt;= `alpha&apos;
+        bysort term: egen power = mean(reject)
+        collapse (mean) power, by(term delta)
+        label var power &quot;&quot;
+        
+        * Save, and advance to the next delta
+        if `i&apos; == 1 {
+            qui tempfile running_dat
+            qui save `running_dat&apos;, replace
+        }
+        
+        else {
+            append using `running_dat&apos;
+            qui save `running_dat&apos;, replace
+        }
+
+    }
+    
+    * Open the result, replacing the data in memory
+    qui use `running_dat&apos;, clear
+
+end
+
+**** EVALUATE the min. detectable effect ****
+
+** Note: Modification by user NOT NEEDED (just copy into your .do file)
+* Required setup:
+* - (1) Define programs above
+* - (2) Run replicate and evaluate_power
+* Inputs on use:
+* - (1) Minimum power desired
+capture program drop evaluate_mde
+program define evaluate_mde, nclass
+
+    syntax[, min_power(real 0.8)]
+    
+    quietly {
+        bysort term (power): gen above_min = power &gt;= `min_power&apos;
+        drop if above_min == 0
+        bysort term (delta): gen min = _n == 1
+        drop if min == 0
+        drop min above_min
+    }
+
+end
+
+**** EVALUATE Bias for a particular term ****
+
+** Note: Modification by user NOT NEEDED (just copy into your .do file)
+* Required setup:
+* - (1) Define programs above
+* - (2) Run replicate
+* Inputs on use:
+* - (1) The name of the term to provide diagnosics for
+* - (2) True parameter value (generally true ATE)
+capture program drop evaluate_bias
+program define evaluate_bias, nclass
+
+    syntax, true_value(real) term(string) [restore_data]
+    
+    * Save data to return to in temporary file
+    * (program includes option to turn this off)
+    if &quot;`restore_data&apos;&quot; != &quot;&quot; {
+        tempfile restore
+        qui save `restore_data&apos;, replace
+    }
+
+    * Subset to only the term in question
+    qui keep if term == &quot;`term&apos;&quot;
+    
+    * True parameter as variable
+    qui gen true_value = `true_value&apos;
+
+    * Prepare variables to summarizetrue
+    qui gen bias = b_ - true_value
+    qui gen MSE = (b_ - true_value)^2
+    qui gen conflow = b_ - (1.96 * se_) // normal approximation
+    qui gen confhigh = b_ + (1.96 * se_) // normal approximation
+    qui gen coverage = true_value &gt;= conflow &amp; true_value &lt;= confhigh
+    
+    collapse ///
+    (first) True = true_value ///
+    (mean) Mean_Estimate = b_ Bias = bias MSE Coverage = coverage Mean_SE = se_ ///
+    (sd) SD_Estimate = b_, ///
+    by(term)
+
+    list
+    
+    * Return to data?
+    if &quot;`restore_data&apos;&quot; != &quot;&quot; {
+        qui use `restore_data&apos;, clear
+    }
+    
+end</code></pre>
+</div>
+<div id="ch6Hide1" class="tabcontent">
+
+</div>
+</div>
+<p>Results are shown in the subsequent figure. Though the computational estimates are slightly different, they comport quite well with the analytic estimates.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R2&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata2&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide2&apos;)">
+Hide
+</button>
+<div id="ch6R2" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Parameters used for both sets of calculations
+n &lt;- 1000 # Sample size
+d &lt;- 0.2 # Effect size to consider
+
+## Analytical power estimates
+power_data &lt;-
+  
+  tibble(
+    d = seq(0, 0.5, len = 200),
+    power = power.t.test(n = n / 2, delta = d)$power
+    )
+
+## Save initial plot; add simulation results below
+g &lt;- ggplot(power_data) +
+  
+  geom_line(aes(d, power, linetype = &quot;power.t.test()&quot;)) +
+  
+  labs(
+    x = expression(delta),
+    y = &quot;Power&quot;,
+    title = &quot;Power for Simple Difference in Means Test&quot;
+    ) +
+  
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  geom_hline(
+    yintercept = 0.8,
+    col = &quot;grey25&quot;,
+    alpha = 08
+    ) +
+  
+  ggridges::theme_ridges(
+    center_axis_labels = TRUE,
+    font_size = 10
+    ) 
+
+## Comutational power estimates, using the functions above
+sim_power_data &lt;-
+  
+  replicate_design(
+    N = n,
+    y = rnorm(N),
+    x = randomizr::complete_ra(
+      N, m = N / 2
+      )
+    ) %&gt;%
+  
+  estimate(
+    form = y ~ x, vars = &quot;x&quot;
+    ) %&gt;%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## Add results from the simulation to the plot and compare
+g + 
+  
+  geom_line(
+    data = sim_power_data,
+    aes(delta, power, linetype = &quot;simulation&quot;),
+    color = &quot;grey25&quot;
+    ) +
+  
+  labs(
+    linetype = &quot;Method:&quot;
+    ) +
+  
+  theme(
+    legend.position = &quot;bottom&quot;
+    ) </code></pre>
+</div>
+<div id="ch6Stata2" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Analytical power estimates
+* View power estimates for a range of effect sizes as a table
+power twomeans 0, n(1000) diff(0.005(0.005)0.505)
+* Or view as a graph instead
+power twomeans 0, n(1000) diff(0.005(0.005)0.505) graph
+* It&apos;s also possible to get the estimates as data in memory
+* and write your own plotting code (e.g.: using twoway).
+clear
+svmat r(pss_table), names(col)
+list in 1/5 // Illustration: power estimates are data in memory
+keep diff power
+rename diff delta
+tempfile analytical
+save `analytical&apos;, replace
+
+** Computational power estimates, using the programs as defined above
+replicate, reps(200) // Replicate data generation and estimation 200 times
+evaluate_power, delta_min(0.005) delta_max(0.500) delta_steps(0.005) // Consider a range of effect sizes
+
+** Merge computational with analytic estimates
+rename power power_comp
+keep if term == &quot;x&quot;
+merge 1:1 delta using `analytical&apos;
+keep if _merge == 3
+drop _merge
+
+** Manual line plot
+label var power &quot;Analytical&quot;
+label var power_comp &quot;Computational&quot;
+twoway ///
+(line power delta) ///
+(line power_comp delta), ///
+legend(pos(6) rows(1)) ///
+xtitle(&quot;Effect size&quot;) ytitle(&quot;Power&quot;) ///
+yline(0.8) title(&quot;Power for Simple Difference in Means Test&quot;)</code></pre>
+</div>
+<div id="ch6Hide2" class="tabcontent">
+
+</div>
+</div>
+<p><img src="OES_SOP_files/figure-html/powersimvsanalytic-1.png" width=".9\textwidth"></p>
+<p>As mentioned above, we produced those computational estimates using some pre-written functions that are housed in OES&#x2019;s GitHub code library. These functions are also laid out and explained step-by-step in comments in a code chunk above.</p>
+<p>These tools are designed around a simple workflow, and they should help remove some of the programming that may otherwise be a barrier to project teams calculating power computationally. The workflow proceeds as follows (we&#x2019;ll focus on explaining the R code here in text):</p>
+<ol style="list-style-type: decimal">
+<li>Replicate</li>
+<li>Estimate<br>
+</li>
+<li>Evaluate</li>
+</ol>
+<p>The first step, <strong>Replicate</strong>, entails specifying an example data-generation process (which may include only an outcome variable and treatment assignment) and simulating it multiple times to create a series of randomly generated datasets. Each individual dataset produced is a <em>sample replicate</em>.</p>
+<p>The next step, <strong>Estimate</strong>, entails estimating effects for select treatments within each sample replicate. We can use those estimates to produce a distribution of test statistics for each effect size of interest.</p>
+<p>Finally, the last step, <strong>Evaluate</strong>, entails using those test statistics to evaluate our power to detect a range of different effect sizes.</p>
+<p>This workflow is supported by three functions: <code>replicate_design()</code>,
+<code>estimate()</code>, and <code>evaluate_power()</code>. Here&#x2019;s the simulation code used to generate Figure 1 in R in more detail (alongside a similar illustration of the Stata version of our power simulation toolkit):</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R3&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata3&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide3&apos;)">
+Hide
+</button>
+<div id="ch6R3" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## 1. Replicate:
+
+# Output is a list of dfs
+rep &lt;- replicate_design(
+  R = 200,   # Number of sample replicates
+  N = 1000,  # Sample size of each replicate
+  y = rnorm(N), # Normally distributed response
+  x = rbinom(N, 1, 0.5) # Binary treatment indicator
+  ) 
+
+## 2. Estimate:
+
+# Output is a dataframe of estimates from each sample replicate
+est &lt;- estimate(
+  y ~ x, # Regression formula
+  vars = &quot;x&quot;, # Treatment variable(s)
+  data = rep # Sample replicates
+  ) 
+
+## 3. Evaluate:
+
+# Output is a list of dfs
+pwr_eval_sim &lt;- evaluate_power(
+  data = est, # Estimates, from estimate() above
+  delta = seq(0, 0.5, len = 200) # Effect sizes to consider
+  )   </code></pre>
+</div>
+<div id="ch6Stata3" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** 0. Setup
+
+* 0a: Simulate (update program below as needed)
+* Output is a dataset in memory
+capture program drop draw_from_design
+program define draw_from_design, nclass
+
+    * Clear existing data
+    clear
+
+    * Sample size of 1000 observations
+    set obs 1000
+    
+    * Generate simulated outcome
+    gen y = rnormal(0, 1)
+    
+    * Generate simulated treatment (complete random assignment)
+    qui count
+    local ntreat = r(N)/2
+    complete_ra x, m(`ntreat&apos;)
+
+end
+
+* 0b: Analysis strategy (update program below as needed)
+* Output is a dataset in memory and stored estimates
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    reg y x, vce(hc2)
+
+end
+
+** 1/2. Replicate/Estimate:
+
+* Output is a dataset of coefficients and SEs from each simulation.
+replicate, reps(200) // Number of replications
+
+** 3. Evaluate 
+
+* Output is a set of power estimates in memory, one for each delta
+evaluate_power, ///
+delta_min(0.005) /// Smallest delta to consider
+delta_max(0.500) /// Largest delta to consider
+delta_steps(0.005) // Increments to apply</code></pre>
+</div>
+<div id="ch6Hide3" class="tabcontent">
+
+</div>
+</div>
+<p>The final product&#x2014;<code>pwr_eval_sim</code> above in the R code&#x2014;reports the power for each of the user-specified effect sizes (<code>delta</code>) and (<code>vars</code>) model terms specified when calling <code>estimate()</code>. The output can be used to plot power curves or to compute minimum detectable effects.</p>
+<p>These functions help make the process of performing computational power analysis for OES projects easier, while still providing ample room for flexibility in both design and estimation strategy. For example, <code>replicate_design()</code> in the R code is a wrapper for <code>fabricate()</code> in the <a href="https://declaredesign.org/r/fabricatr/">fabricatr</a> package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters.</p>
+<p>By default, estimates in R are returned using <code>lm_robust()</code> from the <a href="https://declaredesign.org/r/estimatr/">estimatr</a> package, but alternative estimators can be specified. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:</p>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb179-1" title="1"><span class="co">## Define logit estimator function</span></a>
+<a class="sourceLine" id="cb179-2" title="2">logit &lt;-<span class="st"> </span><span class="cf">function</span>(...){ <span class="kw">glm</span>(..., <span class="dt">family =</span> binomial)}</a>
+<a class="sourceLine" id="cb179-3" title="3"></a>
+<a class="sourceLine" id="cb179-4" title="4"><span class="co">## Pass this to the estimate() function above</span></a>
+<a class="sourceLine" id="cb179-5" title="5">est &lt;-<span class="st"> </span><span class="kw">estimate</span>(</a>
+<a class="sourceLine" id="cb179-6" title="6">  y <span class="op">~</span><span class="st"> </span>x <span class="op">+</span><span class="st"> </span>z1 <span class="op">+</span><span class="st"> </span>z2, <span class="dt">data =</span> rep, <span class="dt">estimator =</span> logit</a>
+<a class="sourceLine" id="cb179-7" title="7">  ) </a></code></pre></div>
+<p>Other tools for power simulation exist as well. For instance, throughout this SOP, we have used <a href="https://declaredesign.org/r/declaredesign/articles/DeclareDesign_101.html">DeclareDesign</a> to simulate hypothetical research designs and compare their performance. And there is no shortage of further simulation
+examples that can be found online for more specialized use-cases.</p>
+</div>
+<div id="when-to-use-which-approach" class="section level2">
+<h2><span class="header-section-number">6.3</span> When to use which approach</h2>
+<p>For a simple difference in means test, the programming required for an analytical power analysis is much much less involved. When is computational power analysis worth the extra time investment?</p>
+<p>To start, in cases where we&#x2019;re interested in the power to detect a simple difference in means, or a difference in proportions for binary responses, it is probably sufficient to use <code>power.t.test()</code> (for means) or <code>power.prop.test()</code> (for proportions).</p>
+<p>However, OES projects often involve design features or analytic strategies that are difficult to account for using off-the-shelf tools. For example, we often include covariates in our statistical models to enhance the precision of our treatment effect estimates. If the gain in precision is small, then it might not be important to account for this in power calculations in the design phase of the project. But if we expect a substantial gain in precision due to including covariates, then we probably want to account for estimating power. The natural way to do this is by simulation, including the covariates in the &#x201C;replicate&#x201D; and &#x201C;estimate&#x201D; steps above. Accounting for covariates is especially useful if we can use real historical or pre-treatment data that represent the correlations we expect to see between covariates and outcomes in our later analysis of the trial data.</p>
+<p>More complex design features or analytic strategies may make investing in the
+simulation approach even more worthwhile, or downright necessary. Examples
+include heterogeneity in treatment effects, a multi-arm or factorial design, or block randomization with differing probabilities of treatment between blocks &#x2013; none of which is usually easily accounted for with off-the-shelf tools. In the next section, we provide some additional examples of simulations for more complex designs or analytic strategies.</p>
+</div>
+<div id="additional-examples-of-the-simulation-approach" class="section level2">
+<h2><span class="header-section-number">6.4</span> Additional examples of the simulation approach</h2>
+<p>Here we provide two examples of research designs where simulation is well worth the extra effort. Attendant R code is included to illustrate how we could use the functions above in these cases.</p>
+<div id="a-two-by-two-design-with-interaction" class="section level3">
+<h3><span class="header-section-number">6.4.1</span> A two-by-two design with interaction</h3>
+<p>One instance where computational power analysis may be worth the investment is
+in assessing power for a two-by-two factorial design with an interaction. In
+such a design, the goal is to assess not only the power to detect main effects
+(the average effect of each individual treatment), but also power to detect a
+non-zero interaction effect between the treatments.</p>
+<p>Say we have a design with 1,000 observations and we would like to know the
+effect of two treatments on a binary outcome with a baseline of 0.25. Each
+treatment is assigned to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">M = 500</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">500</span></span></span></span> individuals at random, resulting in four
+roughly equal sized groups of observations after randomization: (1) a control group, (2) those assigned to treatment 1 but not treatment 2, (3) those assigned to treatment 2 but not treatment 1, and (4) those assigned to both treatment 1 and 2.</p>
+<p>We can easily calculate power to detect the main effect of each treatment as follows:</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R4&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata4&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide4&apos;)">
+Hide
+</button>
+<div id="ch6R4" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>two_by_two &lt;-
+
+  ## Basic elements of each simulated sample replicate
+  replicate_design(
+    N = 1000,
+    y = rbinom(N, 1, 0.25),
+    x1 = complete_ra(N, m = N / 2), 
+    x2 = complete_ra(N, m = N / 2)
+    ) %&gt;%
+  
+  ## Estimate main and interaction effects
+  estimate(
+    form = y ~ x1 + x2 + x1:x2,
+    vars = c(&quot;x1&quot;, &quot;x2&quot;, &quot;x1:x2&quot;)
+    ) %&gt;%
+  
+  ## Evaluate power
+  evaluate_power(
+    delta = seq(0, 0.25, len = 200)
+    )</code></pre>
+</div>
+<div id="ch6Stata4" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Basic elements of each simulated sample replicate
+* Redefine data generation
+capture program drop draw_from_design
+program define draw_from_design, nclass
+
+    * Clear existing data
+    clear
+
+    * Sample size of 1000 observations
+    set obs 1000
+    
+    * Generate simulated outcome
+    gen y = rbinomial(1, 0.25)
+    
+    * Generate simulated treatments
+    qui count
+    local ntreat = r(N)/2
+    complete_ra x, m(`ntreat&apos;)
+    complete_ra x2, m(`ntreat&apos;)
+
+end
+
+** Estimate main and interaction effects
+* Redefine estimation
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    * (note: the program currently does not correctly handle factor notation)
+    gen x_int = x*x2
+    reg y x x2 x_int, vce(hc2)
+
+end
+
+** Replicate estimates
+replicate, reps(200)
+
+** Evaluate power
+evaluate_power, delta_min(0) delta_max(0.25) delta_steps(0.002)</code></pre>
+</div>
+<div id="ch6Hide4" class="tabcontent">
+
+</div>
+</div>
+<p>Using the output reported in the object <code>two_by_two</code>, we can plot the power curves for each of the main effects and the interaction effect, as shown
+in Figure 2.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R5&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata5&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide5&apos;)">
+Hide
+</button>
+<div id="ch6R5" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>ggplot(two_by_two) +
+  
+  ## Add a line representing power for each effect/term
+  geom_line(
+    aes(delta, power, linetype = term)
+    ) +
+  
+  ## Choose linetypes that are easy to distinguish
+  scale_linetype_manual(values = c(&quot;solid&quot;, &quot;longdash&quot;, &quot;dotted&quot;)) +
+  
+  ## Horizontal line for 80% power
+  geom_hline(
+    yintercept = 0.8,
+    color = &quot;grey25&quot;,
+    alpha = 0.8
+    ) +
+  
+  ## y-axis scale
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  ## Adding labels
+  labs(
+    x = expression(delta),
+    y = &quot;Power&quot;,
+    title = &quot;Power for a 2x2 Design&quot;,
+    linetype = &quot;Effect for...&quot;
+    ) +
+  
+  ## Update some visual settings with the ridges theme
+  ggridges::theme_ridges(
+    font_size = 10,
+    center_axis_labels = TRUE
+    ) +
+  
+  ## Other settings (here: just legend location)
+  theme(
+    legend.position = &quot;bottom&quot;
+    )</code></pre>
+</div>
+<div id="ch6Stata5" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Reshape to apply plotting code similar to above
+reshape wide power, i(delta) j(term) string
+
+** Line plot
+label var powerx &quot;x1&quot;
+label var powerx2 &quot;x2&quot;
+label var powerx_int &quot;x1 * x2&quot;
+twoway ///
+(line powerx delta, lcolor(black) lpattern(solid)) /// x line
+(line powerx2 delta, lcolor(black) lpattern(dash)) /// x2 line
+(line powerx_int delta, lcolor(black) lpattern(dot)), /// interaction line
+legend(pos(6) rows(1)) ///
+xtitle(&quot;Effect size&quot;) ytitle(&quot;Power&quot;) ///
+yline(0.8) title(&quot;Power for a 2x2 Design&quot;)</code></pre>
+</div>
+<div id="ch6Hide5" class="tabcontent">
+
+</div>
+</div>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-160-1.png" width=".9\textwidth"></p>
+<p>Of course, in this simple example, we could still have relied on some reasonable analytical assumptions to arrive at these estimates (see a helpful discussion <a href="https://statmodeling.stat.columbia.edu/2018/03/15/need-16-times-sample-size-estimate-interaction-estimate-main-effect/">here</a>). But running a simulation saves us the trouble.</p>
+</div>
+<div id="covariate-adjustment-with-the-lin-estimator" class="section level3">
+<h3><span class="header-section-number">6.4.2</span> Covariate adjustment with the Lin estimator</h3>
+<p>Another scenario where computational power analysis is worth the investment is if a design calls for covariate adjustment. This is common in OES projects, and, in many instances, the <span class="citation">Lin (<a href="#ref-lin_agnostic_2013">2013</a>)</span> saturated regression estimator is the solution we choose.</p>
+<p>Devising an off-the-shelf method to calculate power for such a study is
+possible, but would likely require investing time doing background research to
+ensure its accuracy. Alternatively, we could simply replicate, estimate, and
+evaluate such a design computationally. The results will be roughly just as accurate, without regarding a review of the methods literature.</p>
+<p>Suppose we have a sample of 1,000 observations and a continuous outcome
+variable. We wish to assess the effect of some policy intervention on this
+continuous outcome. Our design calls for randomly assigning only <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">M = 100</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">100</span></span></span></span>
+individuals to receive the intervention &#x2014; perhaps because it is expensive to implement &#x2014; and the rest to control.</p>
+<p>In addition to having data on the outcome and on treatment assignment, let&#x2019;s say that we also anticipate obtaining a dataset of covariates for our 1,000 observations. This data contains two variables that are prognostic of the outcome <em>and the treatment effect</em>. We&#x2019;ll call these <code>z1</code> and <code>z2</code>. The first is a continuous measure and the latter is a binary indicator. Our design calls for adjusting for these covariates to improve the precision of our estimated treatment effect. We can simulate such a design to illustrate the possible benefits of covariate adjustment in terms of improved statistical power.</p>
+<p>We begin by replicating the data-generating process:</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R6&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata6&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide6&apos;)">
+Hide
+</button>
+<div id="ch6R6" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>rep_data &lt;-
+  
+  replicate_design(
+    N = 1000,
+    z1 = rnorm(N, sd = 3),   # Continuous covariate
+    z2 = rbinom(N, 1, 0.25), # Binary covariate
+    cz1 = z1 - mean(z1),     # Mean center z1
+    cz2 = z2 - mean(z2), # Mean center z2
+    x = complete_ra(N, m = N * 0.1), # Randomly assign 10% to treatment
+    y = (z1 + z2) * x + (0.8 * z1) - (1 * z2) + rnorm(N) # Simulate Y
+    )</code></pre>
+</div>
+<div id="ch6Stata6" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Basic elements of each simulated sample replicate
+* Redefine data generation
+capture program drop draw_from_design
+program define draw_from_design, nclass
+
+    * Clear existing data
+    clear
+
+    * Sample size of 1000 observations
+    set obs 1000
+    
+    * Continuous covariate
+    gen z1 = rnormal(0, 3)
+    
+    * Binary covariate
+    gen z2 = rbinomial(1, 0.25)
+    
+    * Mean centered versions
+    qui sum z1
+    gen cz1 = z1 - r(mean)
+    qui sum z2
+    gen cz2 = z2 - r(mean)
+    
+    * Generate simulated treatment (10%)
+    complete_ra x, prob(0.1)
+    
+    * Simulate y
+    gen y = ((z1 + z2) * x) + (0.8 * z1) - (1 * z2) + rnormal()
+
+end</code></pre>
+</div>
+<div id="ch6Hide6" class="tabcontent">
+
+</div>
+</div>
+<p>We then estimate and evaluate. For comparison, power is computed (1) with
+covariate adjustment via the Lin estimator, (2) without covariate adjustment, and (3) with standard linear, additive covariate adjustment:</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R7&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata7&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide7&apos;)">
+Hide
+</button>
+<div id="ch6R7" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## With the Lin Estimator
+lin_adjust &lt;- 
+  
+  rep_data %&gt;%
+  
+  estimate(
+    form = y ~ x + z1 + z2 + x:cz1 + x:cz2,
+    vars = &quot;x&quot;
+    ) %&gt;%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## With no covariate adjustment
+no_adjust &lt;-
+  
+  rep_data %&gt;%
+  
+  estimate(
+    form = y ~ x,
+    vars = &quot;x&quot;
+    ) %&gt;%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )
+
+## With linear, additive covariate adjustment
+standard_adjust &lt;-
+  
+  rep_data %&gt;%
+  
+  estimate(
+    form = y ~ x + z1 + z2,
+    vars = &quot;x&quot;
+    ) %&gt;%
+  
+  evaluate_power(
+    delta = seq(0, 0.5, len = 200)
+    )</code></pre>
+</div>
+<div id="ch6Stata7" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** With the lin estimator
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    * (As noted above, this code isn&apos;t currently written for factor notation)
+    gen x_cz2 = x * cz2
+    gen x_cz1 = x * cz1
+    reg y x x_cz2 x_cz1 cz1 cz2, vce(hc2)
+
+end
+
+* Replicate and save
+replicate, reps(200)
+evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
+keep if term == &quot;x&quot;
+rename power power_lin
+tempfile lin
+save `lin&apos;, replace
+
+** With no covariate adjustment
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    reg y x, vce(hc2)
+
+end
+
+* Replicate and save
+replicate, reps(200)
+evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
+keep if term == &quot;x&quot;
+rename power power_no
+tempfile no
+save `no&apos;, replace
+
+** With linear, additive covariate adjustment
+capture program drop single_estimator
+program define single_estimator, rclass
+    
+    * Call the design program
+    draw_from_design
+    
+    * Write out the desired estimation strategy
+    reg y x cz1 cz2, vce(hc2)
+
+end
+
+* Replicate and merge
+replicate, reps(200)
+evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
+keep if term == &quot;x&quot;
+merge 1:1 delta using `lin&apos;
+drop _merge
+merge 1:1 delta using `no&apos;</code></pre>
+</div>
+<div id="ch6Hide7" class="tabcontent">
+
+</div>
+</div>
+<p>We can now compare results under these alternative empirical strategies. Figure 3 shows the power curves for each approach. The Lin estimator provides substantial improvements in power over both no covariate adjustment and linear additive adjustment.<a href="references.html#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a> And it only took a few lines of code to get this result!</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6R8&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Stata8&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch6Hide8&apos;)">
+Hide
+</button>
+<div id="ch6R8" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Combine the results, and apply similar plotting code to above
+bind_rows(
+  lin_adjust %&gt;% mutate(Method = &quot;Lin&quot;),
+  no_adjust %&gt;% mutate(Method = &quot;No Covariates&quot;),
+  standard_adjust %&gt;% mutate(Method = &quot;Additive&quot;)
+  ) %&gt;%
+  
+  ggplot() +
+  
+  geom_line(
+    aes(delta, power, linetype = Method)
+    ) +
+  
+  scale_linetype_manual(values = c(&quot;solid&quot;, &quot;longdash&quot;, &quot;dotted&quot;)) +
+  
+  geom_hline(
+    yintercept = 0.8,
+    color = &quot;grey25&quot;,
+    alpha = 0.8
+    ) +
+  
+  scale_y_continuous(
+    n.breaks = 6
+    ) +
+  
+  labs(
+    x = expression(delta),
+    y = &quot;Power&quot;,
+    title = &quot;Power with Lin Adjustment&quot;,
+    linetype = &quot;Method:&quot;
+    ) +
+  
+  ggridges::theme_ridges(
+    font_size = 10,
+    center_axis_labels = TRUE
+    ) +
+  
+  theme(
+    legend.position = &quot;bottom&quot;
+    ) </code></pre>
+</div>
+<div id="ch6Stata8" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Apply similar plotting code to above
+label var power &quot;Additive&quot;
+label var power_no &quot;No covariates&quot;
+label var power_lin &quot;Lin&quot;
+twoway ///
+(line power delta, lcolor(black) lpattern(solid)) ///
+(line power_lin delta, lcolor(black) lpattern(dash)) ///
+(line power_no delta, lcolor(black) lpattern(dot)), ///
+legend(pos(6) rows(1)) ///
+xtitle(&quot;Effect size&quot;) ytitle(&quot;Power&quot;) ///
+title(&quot;Power with Lin adjustment&quot;) yline(0.8)</code></pre>
+</div>
+<div id="ch6Hide8" class="tabcontent">
+
+</div>
+</div>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-169-1.png" width=".9\textwidth"></p>
+</div>
+<div id="incorporating-declaredesign-into-oes-power-tools" class="section level3">
+<h3><span class="header-section-number">6.4.3</span> Incorporating DeclareDesign into OES Power Tools</h3>
+<p>In R, we can also use <code>DeclareDesign</code> within this <strong>Replicate</strong>, <strong>Estimate</strong>, <strong>Evaluate</strong> framework. This involves using <code>DeclareDesign</code> to draw estimates, and then feeding the results into the OES <code>evaluate_power()</code> function. We compare the <code>DeclareDesign</code> approach to the OES <code>Replicate</code> and <code>Estimate</code> steps below.</p>
+<p>First, we simulate a simple design with the OES tools introduced above:</p>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb190-1" title="1">eval &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb190-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb190-3" title="3"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
+<a class="sourceLine" id="cb190-4" title="4">    <span class="dt">R =</span> <span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb190-5" title="5">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
+<a class="sourceLine" id="cb190-6" title="6">    <span class="dt">Y =</span> <span class="kw">rnorm</span>(N),</a>
+<a class="sourceLine" id="cb190-7" title="7">    <span class="dt">Z =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.5</span>)</a>
+<a class="sourceLine" id="cb190-8" title="8">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb190-9" title="9"><span class="st">  </span></a>
+<a class="sourceLine" id="cb190-10" title="10"><span class="st">  </span><span class="kw">estimate</span>(</a>
+<a class="sourceLine" id="cb190-11" title="11">    <span class="dt">form =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">vars =</span> <span class="st">&quot;Z&quot;</span></a>
+<a class="sourceLine" id="cb190-12" title="12">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb190-13" title="13"><span class="st">  </span></a>
+<a class="sourceLine" id="cb190-14" title="14"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
+<a class="sourceLine" id="cb190-15" title="15">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb190-16" title="16">    )</a></code></pre></div>
+<p>Then, we do the same with <code>DeclareDesign</code>, declaring a population, potential outcomes, assignments, a target quantity of interest, and an estimator:</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb191-1" title="1">design &lt;-</a>
+<a class="sourceLine" id="cb191-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-3" title="3"><span class="st">  </span><span class="kw">declare_population</span>(</a>
+<a class="sourceLine" id="cb191-4" title="4">    <span class="dt">N =</span> <span class="dv">100</span>,</a>
+<a class="sourceLine" id="cb191-5" title="5">    <span class="dt">U =</span> <span class="kw">rnorm</span>(N),</a>
+<a class="sourceLine" id="cb191-6" title="6">    <span class="kw">potential_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>U)</a>
+<a class="sourceLine" id="cb191-7" title="7">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb191-8" title="8"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-9" title="9"><span class="st">  </span><span class="kw">declare_assignment</span>(<span class="dt">Z =</span> <span class="kw">simple_ra</span>(N, <span class="dt">prob =</span> <span class="fl">0.5</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb191-10" title="10"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-11" title="11"><span class="st">  </span><span class="kw">declare_inquiry</span>(<span class="dt">ATE =</span> <span class="kw">mean</span>(Y_Z_<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>Y_Z_<span class="dv">0</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb191-12" title="12"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-13" title="13"><span class="st">  </span><span class="kw">declare_measurement</span>(<span class="dt">Y =</span> <span class="kw">reveal_outcomes</span>(Y <span class="op">~</span><span class="st"> </span>Z)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb191-14" title="14"><span class="st">  </span></a>
+<a class="sourceLine" id="cb191-15" title="15"><span class="st">  </span><span class="kw">declare_estimator</span>(</a>
+<a class="sourceLine" id="cb191-16" title="16">    Y <span class="op">~</span><span class="st"> </span>Z,</a>
+<a class="sourceLine" id="cb191-17" title="17">    <span class="dt">inquiry =</span> <span class="st">&quot;ATE&quot;</span>,</a>
+<a class="sourceLine" id="cb191-18" title="18">    <span class="dt">.method =</span> lm_robust</a>
+<a class="sourceLine" id="cb191-19" title="19">    )</a></code></pre></div>
+<p>We then use draws from this design within the OES tools:</p>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb192-1" title="1">dd_eval &lt;-</a>
+<a class="sourceLine" id="cb192-2" title="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-3" title="3"><span class="st">  </span><span class="kw">replicate</span>(</a>
+<a class="sourceLine" id="cb192-4" title="4">    <span class="dt">n =</span> <span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb192-5" title="5">    <span class="dt">expr =</span> <span class="kw">draw_estimates</span>(design) <span class="op">%&gt;%</span><span class="st"> </span>list</a>
+<a class="sourceLine" id="cb192-6" title="6">    ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb192-7" title="7"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-8" title="8"><span class="st">  </span><span class="kw">bind_rows</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb192-9" title="9"><span class="st">  </span></a>
+<a class="sourceLine" id="cb192-10" title="10"><span class="st">  </span><span class="kw">evaluate_power</span>(</a>
+<a class="sourceLine" id="cb192-11" title="11">    <span class="dt">delta =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="dt">len =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb192-12" title="12">    )</a></code></pre></div>
+<p>We show the similarity between the two approaches to generating the simulated
+data in the figure below:</p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" title="1"><span class="kw">bind_rows</span>(</a>
+<a class="sourceLine" id="cb193-2" title="2">  eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;OES Power Tools&quot;</span>),</a>
+<a class="sourceLine" id="cb193-3" title="3">  dd_eval <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">method =</span> <span class="st">&quot;DeclareDesign&quot;</span>)</a>
+<a class="sourceLine" id="cb193-4" title="4">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb193-5" title="5"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-6" title="6"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-7" title="7"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-8" title="8"><span class="st">  </span><span class="kw">geom_line</span>(</a>
+<a class="sourceLine" id="cb193-9" title="9">    <span class="kw">aes</span>(delta, power, <span class="dt">linetype =</span> method)</a>
+<a class="sourceLine" id="cb193-10" title="10">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-11" title="11"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-12" title="12"><span class="st">  </span><span class="kw">scale_linetype_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-13" title="13"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-14" title="14"><span class="st">  </span><span class="kw">labs</span>(</a>
+<a class="sourceLine" id="cb193-15" title="15">    <span class="dt">x =</span> <span class="kw">expression</span>(delta),</a>
+<a class="sourceLine" id="cb193-16" title="16">    <span class="dt">y =</span> <span class="st">&quot;Power&quot;</span>,</a>
+<a class="sourceLine" id="cb193-17" title="17">    <span class="dt">linetype =</span> <span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb193-18" title="18">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-19" title="19"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-20" title="20"><span class="st">  </span><span class="kw">scale_y_continuous</span>(</a>
+<a class="sourceLine" id="cb193-21" title="21">    <span class="dt">n.breaks =</span> <span class="dv">6</span></a>
+<a class="sourceLine" id="cb193-22" title="22">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-23" title="23"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-24" title="24"><span class="st">  </span><span class="kw">geom_hline</span>(</a>
+<a class="sourceLine" id="cb193-25" title="25">    <span class="dt">yintercept =</span> <span class="fl">0.8</span>,</a>
+<a class="sourceLine" id="cb193-26" title="26">    <span class="dt">col =</span> <span class="st">&quot;grey25&quot;</span>,</a>
+<a class="sourceLine" id="cb193-27" title="27">    <span class="dt">size =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb193-28" title="28">    <span class="dt">alpha =</span> <span class="fl">0.8</span></a>
+<a class="sourceLine" id="cb193-29" title="29">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-30" title="30"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-31" title="31"><span class="st">  </span>ggridges<span class="op">::</span><span class="kw">theme_ridges</span>(</a>
+<a class="sourceLine" id="cb193-32" title="32">    <span class="dt">center_axis_labels =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb193-33" title="33">    <span class="dt">font_size =</span> <span class="dv">10</span></a>
+<a class="sourceLine" id="cb193-34" title="34">    ) <span class="op">+</span></a>
+<a class="sourceLine" id="cb193-35" title="35"><span class="st">  </span></a>
+<a class="sourceLine" id="cb193-36" title="36"><span class="st">  </span><span class="kw">theme</span>(</a>
+<a class="sourceLine" id="cb193-37" title="37">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
+<a class="sourceLine" id="cb193-38" title="38">    )</a></code></pre></div>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-173-1.png" width=".9\textwidth"></p>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-lin_agnostic_2013">
+<p>Lin, Winston. 2013. &#x201C;Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman&#x2019;s Critique.&#x201D; <em>The Annals of Applied Statistics</em> 7 (1): 295&#x2013;318.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="analysis-choices.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="glossary-of-terms.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/gsa-oes/sop/edit/master/Book/06-poweranalysis.Rmd",
+"text": "Edit"
+},
+"download": ["OES_SOP.pdf", "OES_SOP.epub"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

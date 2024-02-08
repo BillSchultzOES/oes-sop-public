@@ -14,6 +14,7 @@ Imports:
   DeclareDesign,
   randomizr,
   estimatr,
+  fabricatr,
   lmtest,
   sandwich,
   coin,
@@ -33,4 +34,6 @@ Imports:
   nbpMatching,
   katex,
   V8,
-  knitr
+  knitr,
+  foreach,
+  klippy
