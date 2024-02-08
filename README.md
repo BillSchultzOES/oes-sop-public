@@ -41,7 +41,7 @@ Work-in-progress chapters are currently in the "In Progress or Old Chapters" fol
 
 * If you want to update the content of a particular chapter, open one of the numbered .Rmd files (e.g.: "01-causalinference.Rmd", "02-basics.Rmd", etc.). You can see a list of live chapters in "_bookdown.yml".
 
-  + To comment-out text OUTSIDE of a code chunk, highlight it press `cntrl+shift+c`
+  + To comment-out text OUTSIDE of a code chunk, highlight it and press `cntrl+shift+c`
   
   + To hide a code chunk from the SOP, set the following options: `echo = F, eval = F`
   

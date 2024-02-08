@@ -706,9 +706,11 @@ Second, multiple tests will often be correlated, and corrections for multiple te
 
 That issue in mind, our default recommendations for multi-arm trials are as follows:
 
- - First, decide on a focal, **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. Such a test would likely have more statistical power that a test that evaluates each arm separately, and would also have a correctly controlled false positive rate. This would then serve as the primary confirmatory finding we report.
+ - First, decide on a focal, **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. Such a test would likely have more statistical power than a test that evaluates each arm separately, and would also have a correctly controlled false positive rate. This would then serve as the primary confirmatory finding we report.
 
- - Next, we perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for overall conclusions on their own. *Or*, perform a series of additional confirmatory comparisons that adjusts for the collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] Other options to consider are using the Tukey HSD procedure for pairwise comparisons, or testing the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
+ - Next, we perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for overall conclusions on their own.
+ 
+ - Alternatively, we might perform confirmatory comparisons that adjust for the collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] Other options we consider are using the Tukey HSD procedure for pairwise comparisons, or testing the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
 
 #### Adjusting p-values and confidence intervals for multiple comparisons
 
@@ -919,9 +921,9 @@ When we have background or baseline information about experimental units, we
 can use this to increase the precision with which we estimate our treatment
 effects (i.e., increase the statistical power of our tests). We prefer to use this information during the design phase to create block randomized designs. But we may only have access to such background information after the study has been fielded, and so we will pre-specify use of this information to increase our statistical power.
 
-We sometimes avoid the practice of adjusting for covariates (or fixed effect dummies) in a linear and additive fashion. This estimator of the average treatment effect can be subject to small-sample bias and may be --- counterintuitively --- *less* efficient [@freedman2008rae].^[@lin_agnostic_2013 notes that the latter problem appears *asymptotically* when a 2-arm design is sufficiently imbalanced (many more observations in one arm), or when a covariate has a stronger relationship with a unit's treatment effect than with it's expected outcome. This problem may also appear *asymptotically* in a 3+ arm design, regardless of balance.] In contrast, an approach to covariate adjustment that we call the "Lin estimator" performs better [@lin_agnostic_2013]. To be clear, the bias/precision-loss attributable to linear covariance adjustment estimator may often be quite small, especially when sample sizes are large. Yet, because it is frequently costless to use the Lin estimator in sufficiently large samples, this is our default recommendation (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, a number of our projects encounter situations where linear, additive covariate adjustment is preferred.^[For instance, as the number of parameters to be estimated becomes large relative to a study's sample size, we may judge that the loss of degrees of freedom due to Lin adjustment in a particular case is not worth it's potential benefits.]
+We sometimes avoid the practice of adjusting for covariates (or fixed effect dummies) in a linear and additive fashion. This estimator of the average treatment effect can be subject to small-sample bias and may be --- counterintuitively --- *less* efficient [@freedman2008rae].^[See our discussion below for more context.] In contrast, an approach to covariate adjustment that we call the "Lin estimator" performs better [@lin_agnostic_2013]. To be clear, the bias/precision-loss attributable to linear covariance adjustment estimator may often be quite small, especially when sample sizes are large. Yet, because it is frequently costless to use the Lin estimator in sufficiently large samples, this is our default recommendation (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, a number of our projects encounter situations where linear, additive covariate adjustment is preferred.^[For instance, as the number of parameters to be estimated becomes large relative to a study's sample size, we may judge that the loss of degrees of freedom due to Lin adjustment in a particular case is not worth it's potential benefits.]
 
-### Intuition about bias in the least squares estimator of the ATE with covariates
+### Possible bias in the least squares ATE estimator with covariates
 
 When we estimate the average treatment effect using least squares we tend to say that we "regress" some outcome for each unit $i$, $Y_i$, on (often binary) treatment assignment, $Z_i$, where $Z_i=1$ if a unit is assigned to treatment and 0 if assigned to control. And we write a linear model relating $Z$ and $Y$ as below, where $\beta_1$ represents the difference in means of $Y$ between units with $Z=1$ and $Z=0$:
 
@@ -955,7 +957,7 @@ $$ \hat{\beta}_1 = \frac{\var(X)\cov(Z,Y) - \cov(X,Z)\cov(X,Y)}{\var(Z)\var(X) -
 In very large experiments $\cov(X,Z) \approx 0$ because $Z$ is randomly
 assigned and is thus independent of background variables like $X$. However in any given finite sized experiment $\cov(X,Z) \ne 0$, so this does not reduce to an unbiased estimator as it does in the bivariate case. Thus, @freedman2008rae showed that there is a small amount of bias in using the equation above to estimate the average treatment effect.
 
-To engage with this problem, and an asymptotic inefficiency issue associated with linear covariance adjustment, @lin_agnostic_2013 suggested using the following least squares approach --- regressing the outcome on binary treatment assignment $Z_i$ and its interaction with mean-centered covariates:
+To address this small-sample bias, and to address the asymptotic inefficiency issue with linear covariance adjustment noted by @freedman2008rae, @lin_agnostic_2013 suggests the following least squares approach --- regressing the outcome on binary treatment assignment $Z_i$ and its interaction with mean-centered covariates:^[@lin_agnostic_2013 notes that the asymptotic inefficiency problem appears when a 2-arm design is sufficiently imbalanced (many more observations in one arm) or when a covariate has a stronger relationship with a unit's treatment effect than with it's expected outcome. This inefficiency may also appear in a 3+ arm design, regardless of balance.]
 
 $$
 \begin{equation}
@@ -963,7 +965,9 @@ Y_i = \beta_0 + \beta_1 Z_i + \beta_2 ( X_i - \bar{X} ) + \beta_3 Z_i (X_i - \ba
 \end{equation}
 $$
 
-When implementing this covariance adjustment strategy, remember that every covariate, *including binary indicators used to estimate fixed effects or to control for categorical covariates*, should be mean-centered and interacted with treatment. For instance, imagine a design with two treatment arms (treatment vs control) and three covariates. Linear adjustment for these covariates would involve fitting an OLS regression with *four* slope coefficients (one for the treatment group, and one for each covariate). @lin_agnostic_2013 adjustment for these covariates would instead involve fitting a regression with *seven* slope coefficients (one for the treatment group, one for each mean-centered covariate, and one for each interaction of treatment with a mean-centered covariate).^[The covariates outside the treatment interactions do not actually need to be mean-centered, but the version of each covariate in the interaction term does. E.g., in Equation 4, $\beta_2 (X_i - \bar{X})$ could be replaced by $\beta_2 X_i$, but $Z_i (X_i - \bar{X})$ must be kept as-is. It is often easier to simply only use mean-centered covariates in Lin adjustment here to avoid confusion.]
+When implementing this covariance adjustment strategy, remember that every covariate, *including binary indicators used to estimate fixed effects or to control for categorical covariates*, should be mean-centered and interacted with treatment.
+
+For instance, imagine a design with two treatment arms (treatment vs control) and three covariates. Linear adjustment for these covariates would involve fitting an OLS regression with *four* slope coefficients (one for the treatment group, and one for each covariate). @lin_agnostic_2013 adjustment for these covariates would instead involve fitting a regression with *seven* slope coefficients (one for the treatment group, one for each mean-centered covariate, and one for each interaction of treatment with a mean-centered covariate).^[The covariates outside the treatment interactions do not actually need to be mean-centered, but the version of each covariate in the interaction term does. E.g., in Equation 4, $\beta_2 (X_i - \bar{X})$ could be replaced by $\beta_2 X_i$, but $Z_i (X_i - \bar{X})$ must be kept as-is. It is often easier to simply only use mean-centered covariates in Lin adjustment here to avoid confusion.]
 
 See the [Green-Lin-Coppock SOP](https://alexandercoppock.com/Green-Lab-SOP/Green_Lab_SOP.html#using-covariates-in-analysis) for more examples of this approach to covariance adjustment.
 
@@ -1462,8 +1466,7 @@ diagcols <- c(3,5,6,7,8,9,10,11)
 kable(reshape_diagnosis(thediagnosisCovAdj1)[,diagcols] )
 ```
 
-The experiment with $N=100$ shows much smaller bias than the small experiment
-above. Since all estimators allow us to detect the 1 SD effect (Power=1), we can look to the RMSE (Root Mean Squared Error) column to learn about the precision of these estimators. Again, the unadjusted approach has low bias, but it now has the largest standard error. While the Lin approach with a mixture of correct and incorrect covariates has low bias, it shows slightly worse precision than one that gets the choice of covariates correct.
+The experiment with $N=100$ shows much smaller bias than the small experiment above. Since all estimators allow us to detect the 1 SD effect (Power=1), we can look to the RMSE (Root Mean Squared Error) column to learn about the precision of these estimators. Again, the unadjusted approach has low bias, but it now has the largest standard error. While the Lin approach with a mixture of correct and incorrect covariates has low bias, it shows slightly worse precision than one that gets the choice of covariates correct.
 
 ```{r diagnostCovAdj2, echo = F, eval = T}
 kable(reshape_diagnosis(thediagnosisCovAdj2)[,diagcols] )
@@ -1500,7 +1503,7 @@ Our team does not often run into such an extreme version of this problem because
 
 ### The Rosenbaum Approach to Covariance Adjustment
 
-When we have many covariates, sometimes Lin adjustment prevents us from calculating appropriate standard errors and/or can lead to overfitting. @rosenbaum:2002a showed an approach in which the outcomes are regressed on covariates, ignoring treatment assignment, and then the residuals from that first regression are used as the outcome in a second regression to estimate an average treatment effect. Again, we evaluate this approach through simulation.
+When we have many covariates, Lin adjustment may not be appropriate if the number of parameters to estimate becomes too large relative to a study's sample size. @rosenbaum:2002a suggests an alternative approach in which the outcomes are regressed on covariates, ignoring treatment assignment, and then the residuals from that first regression are used as the outcome in a second regression to estimate an average treatment effect. Again, we evaluate this approach through simulation.
 
 First, code we use to generate Rosenbaum (2002) estimators:
 
@@ -3804,24 +3807,9 @@ estC5 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=horvitz_thom
 estC6 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
 .method=lm_robust, weights = nb, clusters=cluster, se_type="CR2", label="C6: OLS with Cluster Size Weights, CR2 SE")
 
-## Define custom estimator that recalculates variance weights
-varweightest <- function(data) {
-  temp <- data
-  icc <- ICCest(x=clusterF,y=Y,data=temp)
-  temp$varweight <- 1/(iccres$vara + (iccres$varw/temp$nb))
-  mod <- lm_robust(Y~Zcluster+nb, weights=varweight, clusters=cluster, se_type="CR2", data=temp)
-  data.frame(
-    estimate = mod$coefficients["Zcluster"],
-    p.value = mod$p.value["Zcluster"],
-    conf.low = mod$conf.low["Zcluster"],
-    conf.high = mod$conf.high["Zcluster"]
-    )
-}
-
 ## Linear regression, CR2 errors, control for cluster size, variance weights
-estC7 <- declare_estimator(handler = label_estimator(varweightest), label="C7: OLS with Cluster Control and Var. Weights, CR2 RCSE")
-# estC7 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
-# .method=lm_robust, weights=varweight, clusters=cluster, se_type="CR2", label="C7: OLS Clusters with Weights, CR2 RCSE")
+estC7 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
+.method=lm_robust, weights=varweight, clusters=cluster, se_type="CR2", label="C7: OLS Clusters with Weights, CR2 RCSE")
 
 ## Linear regression, CR2 errors, control for cluster size
 estC8 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand, .method=lm_robust, clusters=cluster, se_type="CR2",
@@ -3999,7 +3987,7 @@ matrix list diagnosands
 ::: 
 :::
 
-```{r defineestimatorsCluster, results="hide", echo = F, eval = T, cache=T}
+```{r defineestimatorsCluster, results="hide", echo = F, eval = T}
 ## Define estimators that can be repeated in the simulation below
 
 ## No adjustment for clustering
@@ -4024,24 +4012,9 @@ estC5 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=horvitz_thom
 estC6 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
 .method=lm_robust, weights = nb, clusters=cluster, se_type="CR2", label="C6: OLS with Cluster Size Weights, CR2 SE")
 
-## Define custom estimator that recalculates variance weights
-varweightest <- function(data) {
-  temp <- data
-  icc <- ICCest(x=clusterF,y=Y,data=temp)
-  temp$varweight <- 1/(iccres$vara + (iccres$varw/temp$nb))
-  mod <- lm_robust(Y~Zcluster+nb, weights=varweight, clusters=cluster, se_type="CR2", data=temp)
-  data.frame(
-    estimate = mod$coefficients["Zcluster"],
-    p.value = mod$p.value["Zcluster"],
-    conf.low = mod$conf.low["Zcluster"],
-    conf.high = mod$conf.high["Zcluster"]
-    )
-}
-
 ## Linear regression, CR2 errors, control for cluster size, variance weights
-estC7 <- declare_estimator(handler = label_estimator(varweightest), label="C7: OLS with Cluster Control and Var. Weights, CR2 RCSE")
-# estC7 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
-# .method=lm_robust, weights=varweight, clusters=cluster, se_type="CR2", label="C7: OLS Clusters with Weights, CR2 RCSE")
+estC7 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
+.method=lm_robust, weights=varweight, clusters=cluster, se_type="CR2", label="C7: OLS Clusters with Weights, CR2 RCSE")
 
 ## Linear regression, CR2 errors, control for cluster size
 estC8 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand, .method=lm_robust, clusters=cluster, se_type="CR2",
