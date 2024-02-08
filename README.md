@@ -118,6 +118,10 @@ And then hit `shift+tab` when your cursor is to the right of `}`. Then copy in R
 
 Open the sop.Rproj file in RStudio. There should be a "Build" tab in the same pane as the "Environment" tab. Under "Build Book" in this tab, click on `bookdown::gitbook`, which is the format we're currently using.
 
+# Making the book available online
+
+This book is hosted online via Github Pages, specifically displaying the version of the book compiled in the "docs" folder (see [the instructions here](https://bookdown.org/yihui/bookdown/github.html)).
+
 # Stata code examples
 
 The "Stata code" folder in this repository contains .do files you can use to run the Stata code in different chapters (with all the necessary input data saved as .csv files here so that this folder is self contained).
