@@ -49,6 +49,8 @@ Work-in-progress chapters are currently in the "In Progress or Old Chapters" fol
   
 * If you want to update how the tabbed code chunks look, open "style.css". This requires working with CSS, though.
 
+* If you want to add references, include them in "sop.bib" (already listed in the header of "index.Rmd"). You can then add parenthetical references like this: [@neyman_application_1923]. Or, you can add in-text references like this: @neyman_application_1923.
+
 # More detail on code chunks
 
 To include the "copy-to-clipboard" button in a new chapter (using the `klippy` package), include the following in an R code chunk near the beginning. This is already in all existing chapters.
