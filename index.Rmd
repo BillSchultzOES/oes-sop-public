@@ -181,9 +181,9 @@ the General Services Administration](https://oes.gsa.gov/) (the OES), tends to d
 
 ## Purposes of this document {-}
 
-*First*, this document educates new team members about the decisions past team members have made regarding the design and analysis of the studies fielded so far. It also serves as a place to record decisions for [our
+*First*, this document educates new team members about the decisions past team members have made regarding the design and analysis of past studies. It also serves as a place to record decisions for [our
 own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011), and helps us harness the power that arises from our disciplinary diversity. That
-is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them in R.
+is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them.
 
 *Second*, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. It should help guide our future experimental design and analysis. However, any given project may encounter reasons to make different decisions than those we describe here. This SOP should be thought of as more of a coordination device than a set of firm requirements.
 
@@ -198,13 +198,13 @@ is, current and past team members have made decisions about how to approach stat
 This document focuses on design and analysis of randomized field experiments.
 Although we include some discussion about non-randomized studies, often known
 as observational studies, until now, our team has focused primarily on
-randomized field experiments. We plan to include more discussion of observational studies over time.
+randomized field experiments. We plan to include more discussion of observational studies as we pursue more of these kinds of studies.
 
 ### We (mostly) present examples using R {-}
 
 As public servants and social and behavioral scientists, we use the [R](http://r-project.org) statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R). 
 
-Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task or something similar could be accomplished in Stata. However, this is for illustrative purposes, and all reported results and all figures are generated based only on the R code.
+Of course, many members of our team also use Stata, SAS, SPSS, and Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task (or something similar) could be accomplished in Stata. However, all reported results and all figures are generated based only on the R code.
 
 ### Structure of the document {-}
 
@@ -218,7 +218,7 @@ Throughout the document, we will be including links to the [Glossary](#glossary)
 
 ## Help us improve our work! {-}
 
-Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of [Issues](https://github.com/gsa-oes/sop/issues) or [pull requests](https://help.github.com/articles/creating-a-pull-request/) on Github. There is also a suggestion form available to OES team members.
+Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our [Google Form (for OES team members)](https://forms.gle/TqxZB1H6KvGrVPQf6), or [Issues](https://github.com/gsa-oes/sop/issues) or [pull requests](https://help.github.com/articles/creating-a-pull-request/) on Github.
 
 <!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
 

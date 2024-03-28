@@ -1,7 +1,7 @@
 # Statistical and causal inference for policy change
 
 Most of the rest of this document dives into the details of our statistical decision making. It assumes that the reader has heard of hypothesis tests and
-statistical estimators. Here, we explain in very broad terms how tests
+statistical estimators. Here, we instead explain in very broad terms how tests
 and estimators are useful for helping the US federal government improve public policy.
 
 "Evidence-based public policy" can refer to *both* "evidence-as-insight" (the use of previous scientific literature as input to the design of new policies) and "evidence-as-evaluation" (the careful design of studies to learn about how and whether a new policy worked) [@bowers2019better]. Our team aims to help government agencies **design** new policies and **learn** about how those new ideas work. *This document focuses on the learning part of our work.*
