@@ -670,7 +670,7 @@ To review, block-randomized assignment and analysis can help reduce both estimat
 
 However, there are also some practical disadvantages to consider. Block-randomized assignment can make treatment administration more complicated, both in terms of practical implementation by our partners and the need to determine how we should properly analyze our data to account for varying treatment assignment probabilities across blocks. Also, when a project needs to be rolled out on a short timeline, designing a more complex blocking scheme might not be realistic.
 
-For these reasons, project teams may reasonably conclude that the benefits of blocking are not always worth its downsides. Often, adjusting for prognostic (i.e., correlated with $Y$) covariates during the analysis stage provides sufficient improvements in precision.
+For these reasons, project teams may reasonably conclude that the benefits of blocking are not always worth the extra effort it entails. Often, adjusting for prognostic (i.e., correlated with $Y$) covariates during the analysis stage provides sufficient improvements in precision, especially in cases where we expect a design to already be reasonably powered under simple or complete random assignment, and where we do not expect subgroup analyses (particularly for rare subgroups) to be a key component of an evaluation. But it is worth noting that, in smaller samples without block-randomized assignment, there may be a greater risk of unintentionally increasing variance by, e.g., adjusting for non-prognostic covariates [@miratrix2013adjusting].
 
 ## Cluster random assignment
 

@@ -534,8 +534,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#urn-drawing-or-complete-randomization-into-2-or-more-groups"><i class="fa fa-check"></i><b>4.2</b> Urn-drawing or complete randomization into 2 or more groups</a></li>
 <li class="chapter" data-level="4.3" data-path="randomization-and-design.html"><a href="randomization-and-design.html#factorial-designs"><i class="fa fa-check"></i><b>4.3</b> Factorial Designs</a></li>
 <li class="chapter" data-level="4.4" data-path="randomization-and-design.html"><a href="randomization-and-design.html#block-random-assignment"><i class="fa fa-check"></i><b>4.4</b> Block Random Assignment</a><ul>
-<li class="chapter" data-level="4.4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#using-only-a-few-covariates-to-create-blocks"><i class="fa fa-check"></i><b>4.4.1</b> Using only a few covariates to create blocks</a></li>
-<li class="chapter" data-level="4.4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#multivariate-blocking-using-many-covariates"><i class="fa fa-check"></i><b>4.4.2</b> Multivariate blocking using many covariates</a></li>
+<li class="chapter" data-level="4.4.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#the-benefits-of-blocking"><i class="fa fa-check"></i><b>4.4.1</b> The benefits of blocking</a></li>
+<li class="chapter" data-level="4.4.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#using-only-a-few-covariates-to-create-blocks"><i class="fa fa-check"></i><b>4.4.2</b> Using only a few covariates to create blocks</a></li>
+<li class="chapter" data-level="4.4.3" data-path="randomization-and-design.html"><a href="randomization-and-design.html#multivariate-blocking-using-many-covariates"><i class="fa fa-check"></i><b>4.4.3</b> Multivariate blocking using many covariates</a></li>
+<li class="chapter" data-level="4.4.4" data-path="randomization-and-design.html"><a href="randomization-and-design.html#disadvantages-to-consider"><i class="fa fa-check"></i><b>4.4.4</b> Disadvantages to consider</a></li>
 </ul></li>
 <li class="chapter" data-level="4.5" data-path="randomization-and-design.html"><a href="randomization-and-design.html#cluster-random-assignment"><i class="fa fa-check"></i><b>4.5</b> Cluster random assignment</a></li>
 <li class="chapter" data-level="4.6" data-path="randomization-and-design.html"><a href="randomization-and-design.html#other-designs"><i class="fa fa-check"></i><b>4.6</b> Other designs</a></li>
@@ -829,6 +831,8 @@ size requirements will be much larger than if we were satisfied with learning ab
 </div>
 <div id="block-random-assignment" class="section level2">
 <h2><span class="header-section-number">4.4</span> Block Random Assignment</h2>
+<div id="the-benefits-of-blocking" class="section level3">
+<h3><span class="header-section-number">4.4.1</span> The benefits of blocking</h3>
 <p>Statistical power depends not only on the size of the experiment and the strength of the treatment effect, but also on the amount of &#x201C;noise,&#x201D; or non-treatment-related variability, in outcomes. Block-randomized designs can help reduce this noise while simultaneously minimizing estimation error&#x2014;the amount that our particular experiment&#x2019;s estimate differs from the truth.</p>
 <p>In a <strong>block-randomized</strong>, or stratified, design, we randomly assign units to the policy intervention <em>within</em> pre-specified groups.<a href="references.html#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a></p>
 <p>Suppose we are evaluating whether dedicated navigators can increase the percentage of students living in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. In a real study we can never know the outcome in all buildings both with and without navigators (the &#x201C;fundamental problem of causal inference&#x201D; from the last chapter). But if we could, we might have the data below:</p>
@@ -1359,8 +1363,9 @@ blockID    C  T
 order to increase the statistical power of our experiments. We also often find
 it useful in cases where different administrative units are implementing the
 treatment, or when we expect different groups of people to have different reactions to the treatment.</p>
+</div>
 <div id="using-only-a-few-covariates-to-create-blocks" class="section level3">
-<h3><span class="header-section-number">4.4.1</span> Using only a few covariates to create blocks</h3>
+<h3><span class="header-section-number">4.4.2</span> Using only a few covariates to create blocks</h3>
 <p>If we have background information on a few covariates, we can create blocks by hand through a process like the one demonstrated here:</p>
 <div class="tab">
 <button class="tablinks" onclick="unrolltab(event, &apos;ch4R7&apos;)">
@@ -1442,7 +1447,7 @@ blockV2           C  T
   1.(2.1,6.82]    8  8</code></pre>
 </div>
 <div id="multivariate-blocking-using-many-covariates" class="section level3">
-<h3><span class="header-section-number">4.4.2</span> Multivariate blocking using many covariates</h3>
+<h3><span class="header-section-number">4.4.3</span> Multivariate blocking using many covariates</h3>
 <p>If instead we have many background variables, we can increase precision by thinking about the problem of blocking as one of matching, or creating sets of
 units which are as similar as possible overall, across the entire set of covariates <span class="citation">(Moore <a href="#ref-moore2012multivariate">2012</a>; Moore and Schnakenberg <a href="#ref-moore2016bT063">2016</a>)</span>. Here we show two approaches using R.</p>
 <p>Creating pairs:</p>
@@ -1530,6 +1535,12 @@ blocksV4 C T &lt;NA&gt;
 13 12            0.834     1              6
 14 13            0.671     0             10
 15 NA            0         1              1</code></pre>
+</div>
+<div id="disadvantages-to-consider" class="section level3">
+<h3><span class="header-section-number">4.4.4</span> Disadvantages to consider</h3>
+<p>To review, block-randomized assignment and analysis can help reduce both estimation error and non-treatment-related variability in our data. It may also be useful for ensuring equal distribution of treatment arms within less common subgroups in our sample, which can be especially important for preserving our statistical power when estimating heterogenous treatment effects.</p>
+<p>However, there are also some practical disadvantages to consider. Block-randomized assignment can make treatment administration more complicated, both in terms of practical implementation by our partners and the need to determine how we should properly analyze our data to account for varying treatment assignment probabilities across blocks. Also, when a project needs to be rolled out on a short timeline, designing a more complex blocking scheme might not be realistic.</p>
+<p>For these reasons, project teams may reasonably conclude that the benefits of blocking are not always worth the extra effort it entails. Often, adjusting for prognostic (i.e., correlated with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi></mrow><annotation encoding="application/x-tex">Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span></span></span></span>) covariates during the analysis stage provides sufficient improvements in precision, especially in cases where we expect a design to already be reasonably powered under simple or complete random assignment, and where we do not expect subgroup analyses (particularly for rare subgroups) to be a key component of an evaluation. But it is worth noting that, in smaller samples without block-randomized assignment, there may be a greater risk of unintentionally increasing variance by, e.g., adjusting for non-prognostic covariates <span class="citation">(Miratrix, Sekhon, and Yu <a href="#ref-miratrix2013adjusting">2013</a>)</span>.</p>
 </div>
 </div>
 <div id="cluster-random-assignment" class="section level2">
@@ -1679,6 +1690,9 @@ xbalance zblockV2 blockV2 cov1 cov2 </code></pre>
 </div>
 <div id="ref-moore2016bT063">
 <p>Moore, Ryan T., and Keith Schnakenberg. 2016. <em>BlockTools: Blocking, Assignment, and Diagnosing Interference in Randomized Experiments</em>. <a href="http://www.ryantmoore.org/html/software.blockTools.html">http://www.ryantmoore.org/html/software.blockTools.html</a>.</p>
+</div>
+<div id="ref-miratrix2013adjusting">
+<p>Miratrix, Luke W, Jasjeet S Sekhon, and Bin Yu. 2013. &#x201C;Adjusting Treatment Effect Estimates by Post-Stratification in Randomized Experiments.&#x201D; <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 75 (2): 369&#x2013;96.</p>
 </div>
 <div id="ref-imai2008misunderstandings">
 <p>Imai, Kosuke, Gary King, and Elizabeth A Stuart. 2008. &#x201C;Misunderstandings Between Experimentalists and Observationalists About Causal Inference.&#x201D; <em>Journal of the Royal Statistical Society Series A: Statistics in Society</em> 171 (2): 481&#x2013;502.</p>
