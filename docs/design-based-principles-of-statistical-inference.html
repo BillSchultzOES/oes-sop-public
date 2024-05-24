@@ -425,13 +425,6 @@ gtag("js", new Date());
 gtag("config", "G-V94NLBS86Q");
 </script>
 <script>gtag("event", "view_item");<script>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":
-new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
-"https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,"script","dataLayer","GTM-T9T8BQX4");</script>
-<!-- End Google Tag Manager -->
 
 
 <style type="text/css">
@@ -498,8 +491,8 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
-<link rel="stylesheet" href="style.css" type="text/css">
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" data-external="1"></head>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
 
 <body>
 
@@ -550,8 +543,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.5" data-path="randomization-and-design.html"><a href="randomization-and-design.html#cluster-random-assignment"><i class="fa fa-check"></i><b>4.5</b> Cluster random assignment</a></li>
 <li class="chapter" data-level="4.6" data-path="randomization-and-design.html"><a href="randomization-and-design.html#other-designs"><i class="fa fa-check"></i><b>4.6</b> Other designs</a></li>
 <li class="chapter" data-level="4.7" data-path="randomization-and-design.html"><a href="randomization-and-design.html#assessing-randomization-balance-testing"><i class="fa fa-check"></i><b>4.7</b> Assessing randomization (balance testing)</a><ul>
-<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
-<li class="chapter" data-level="4.7.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#minimizing-the-chances-of-failed-randomization"><i class="fa fa-check"></i><b>4.7.2</b> Minimizing the chances of &#x201C;failed&#x201D; randomization</a></li>
+<li class="chapter" data-level="4.7.1" data-path="randomization-and-design.html"><a href="randomization-and-design.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.7.1</b> What to do with “failed” randomization assessments?</a></li>
+<li class="chapter" data-level="4.7.2" data-path="randomization-and-design.html"><a href="randomization-and-design.html#minimizing-the-chances-of-failed-randomization"><i class="fa fa-check"></i><b>4.7.2</b> Minimizing the chances of “failed” randomization</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="analysis-choices.html"><a href="analysis-choices.html"><i class="fa fa-check"></i><b>5</b> Analysis Choices</a><ul>
@@ -611,25 +604,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="design-based-principles-of-statistical-inference" class="section level1">
 <h1><span class="header-section-number">Chapter 3</span> Design-Based Principles of Statistical Inference</h1>
 <p>Most policy evaluations using administrative data or surveys report the results of their studies using <em>estimators</em> and <em>hypothesis tests</em>.</p>
-<p><strong>Estimators</strong>: Although we can never know the true causal effect of a new policy on our beneficiaries, we can provide a best guess (&#x201C;The average amount saved for retirement by people in the treatment group was $1000 more than the average amount in the control group: our estimate of the average treatment effect is $1000&#x201D;).</p>
-<p><strong>Hypothesis tests</strong>: We can also provide a test evaluating the plausibility of a particular hunch or hypothesis. Commonly, these tests evaluate the plausibility of the null hypothesis of no effect (&#x201C;We can reject the null hypothesis at the 5% significance level with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mi mathvariant="normal">.</mi><mn>02</mn></mrow><annotation encoding="application/x-tex">p=.02</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">.02</span></span></span></span>&#x201D;). Confidence intervals can be used to summarize hypothesis tests, so we think of them as tests rather than estimators.</p>
+<p><strong>Estimators</strong>: Although we can never know the true causal effect of a new policy on our beneficiaries, we can provide a best guess (“The average amount saved for retirement by people in the treatment group was $1000 more than the average amount in the control group: our estimate of the average treatment effect is $1000”).</p>
+<p><strong>Hypothesis tests</strong>: We can also provide a test evaluating the plausibility of a particular hunch or hypothesis. Commonly, these tests evaluate the plausibility of the null hypothesis of no effect (“We can reject the null hypothesis at the 5% significance level with <span class="math inline">p=.02</span>”). Confidence intervals can be used to summarize hypothesis tests, so we think of them as tests rather than estimators.</p>
 <p>When we are asked <em>why</em> we used some method for calculating an
-average treatment effect, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value, or confidence interval, our team has
+average treatment effect, <span class="math inline">p</span>-value, or confidence interval, our team has
 tended to say that our statistical analyses depend on the <strong>design</strong> of our
 studies. When applied to randomized experiments, this principle can be written
 simply as: <strong>analyze as you randomize.</strong> We provide an example of this
 principle in practice <a href="design-based-principles-of-statistical-inference.html#randinfex">below</a>. This idea, often known as
-&#x201C;randomization based&#x201D; or &#x201C;design based&#x201D; inference, was proposed by two of the
-founders of modern statistics. Jerzy Neyman&#x2019;s 1923 paper showed how to use
-randomization to learn about what we would currently call &#x201C;average treatment
-effects&#x201D; <span class="citation">(Neyman <a href="#ref-neyman_application_1923">1923</a>)</span>, and Ronald A. Fisher&#x2019;s 1935 book showed
+“randomization based” or “design based” inference, was proposed by two of the
+founders of modern statistics. Jerzy Neyman’s 1923 paper showed how to use
+randomization to learn about what we would currently call “average treatment
+effects” <span class="citation">(Neyman <a href="#ref-neyman_application_1923">1923</a>)</span>, and Ronald A. Fisher’s 1935 book showed
 how to use randomization to test hypotheses about what we would currently call
-&#x201C;treatment effects&#x201D; <span class="citation">(Fisher <a href="#ref-fisher_design_1935">1935</a>)</span>.</p>
-<p>We often favor design based justifications because we know exactly how a study was designed &#x2014; after all, we and our agency collaborators tend to be the ones deciding on the sample size, the experimental arms, and the outcome data to be extracted from administrative databases. But there are other ways to justify statistical procedures, and we don&#x2019;t exclude any reasonable approach in our work. In particular, an approach based on the idea of sampling from a larger (possibly infinite) population is standard in many applied research fields.<a href="references.html#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> In practice, we frequently rely on statistical methods developed under this justification as well.</p>
+“treatment effects” <span class="citation">(Fisher <a href="#ref-fisher_design_1935">1935</a>)</span>.</p>
+<p>We often favor design based justifications because we know exactly how a study was designed — after all, we and our agency collaborators tend to be the ones deciding on the sample size, the experimental arms, and the outcome data to be extracted from administrative databases. But there are other ways to justify statistical procedures, and we don’t exclude any reasonable approach in our work. In particular, an approach based on the idea of sampling from a larger (possibly infinite) population is standard in many applied research fields.<a href="references.html#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> In practice, we frequently rely on statistical methods developed under this justification as well.</p>
 <div id="randinfex" class="section level2">
 <h2><span class="header-section-number">3.1</span> An example using simulated data</h2>
 <p>Imagine we have a simple randomized experiment where the relationship between
-outcomes and treatment is shown in Figure <a href="design-based-principles-of-statistical-inference.html#fig:boxplot1">3.1</a> (we illustrate the first 6 rows in the table below). Notice that, in this simulated experiment, the treatment changes the variability of the outcome in the treated group &#x2014; this is a common pattern when the control group is a status quo policy.</p>
+outcomes and treatment is shown in Figure <a href="design-based-principles-of-statistical-inference.html#fig:boxplot1">3.1</a> (we illustrate the first 6 rows in the table below). Notice that, in this simulated experiment, the treatment changes the variability of the outcome in the treated group — this is a common pattern when the control group is a status quo policy.</p>
 <!-- Adds copy code button -->
 <script>
   addClassKlippyToPreCode();
@@ -1326,14 +1319,14 @@ matrix list compareCIs</code></pre>
 Approach 1 (diff. means) 4.637 1.039      0    2.524    6.750
 Approach 2 (OLS)         4.637 1.039      0    2.576    6.699</code></pre>
 </div>
-</div>
+
 <div id="summary-what-does-a-design-based-approach-mean-for-policy-evaluation" class="section level2">
 <h2><span class="header-section-number">3.2</span> Summary: What does a design based approach mean for policy evaluation?</h2>
 <p>Let&#x2019;s review some important terms. Hypothesis tests produce <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-values telling us how much information we have against a null hypothesis. Estimators produce guesses about the size of some causal effect like the average treatment effect (i.e., &#x201C;estimates&#x201D;). Standard errors summarize how our estimates might vary from experiment to experiment by random chance, though we can only observe one experiment in practice. Confidence intervals tell us which ranges of null hypotheses are more versus less consistent with our data.</p>
 <p>In the frequentist approach to probability, the properties of both <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-values and standard errors arise from some process of repetition. Statistics textbooks often encourage us to imagine that this process of repetition involves repeated sampling from a larger (potentially infinite) population. But most OES work involves a pool of people who do not represent a well-defined population, nor do we tend to have a strong probability model of how these people entered our sample. Instead, we have a known process of random assignment to an experimental intervention. This often makes a randomization-based approach to inference natural for our work, and helps our work be easiest to explain and interepret for our policy partners.</p>
 
 </div>
-</div>
+
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-neyman_application_1923">
@@ -1346,15 +1339,15 @@ Approach 2 (OLS)         4.637 1.039      0    2.576    6.699</code></pre>
 <p>Lin, Winston. 2013. &#x201C;Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman&#x2019;s Critique.&#x201D; <em>The Annals of Applied Statistics</em> 7 (1): 295&#x2013;318.</p>
 </div>
 </div>
-            </section>
+            
 
-          </div>
-        </div>
-      </div>
+          
+        
+      
 <a href="basics-of-experimental-design-and-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="randomization-and-design.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
-    </div>
-  </div>
+    
+  
 <script src="libs/gitbook/js/app.min.js"></script>
 <script src="libs/gitbook/js/lunr.js"></script>
 <script src="libs/gitbook/js/plugin-search.js"></script>
@@ -1406,6 +1399,6 @@ gitbook.start({
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
-</body>
 
-</html>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" data-external="1"></head></html>
