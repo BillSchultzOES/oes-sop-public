@@ -1,6 +1,6 @@
 ---
 title: OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.
-author: Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz
+author: Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 site: bookdown::bookdown_site
 knit: bookdown::render_book
@@ -136,7 +136,17 @@ function unrolltab(evt, tabName) {
   evt.currentTarget.className += " active";
 }
 </script>',
-sep = "\n")
+'<!-- Google tag (gtag.js) -->',
+'<script async src="https://www.googletagmanager.com/gtag/js?id=G-V94NLBS86Q"></script>',
+'<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+
+gtag("config", "G-V94NLBS86Q");
+</script>',
+sep = "\n"
+)
 
 readr::write_lines(htmlhead, path = "header.html")
 ```

@@ -22,10 +22,10 @@
   <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
   
 
-<meta name="author" content="Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz">
+<meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-02-09">
+<meta name="date" content="2024-05-24">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -415,6 +415,15 @@ function unrolltab(evt, tabName) {
   evt.currentTarget.className += " active";
 }
 </script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V94NLBS86Q"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+
+gtag("config", "G-V94NLBS86Q");
+</script>
 
 
 <style type="text/css">
@@ -509,9 +518,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="1" data-path="statistical-and-causal-inference-for-policy-change.html"><a href="statistical-and-causal-inference-for-policy-change.html"><i class="fa fa-check"></i><b>1</b> Statistical and causal inference for policy change</a></li>
 <li class="chapter" data-level="2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html"><i class="fa fa-check"></i><b>2</b> Basics of Experimental Design and Analysis</a><ul>
-<li class="chapter" data-level="2.1" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise"><i class="fa fa-check"></i><b>2.1</b> Statistical power: Designing Studies that effectively distinguish signal from noise</a></li>
-<li class="chapter" data-level="2.2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#error-rates-of-tests"><i class="fa fa-check"></i><b>2.2</b> Error Rates of Tests</a></li>
-<li class="chapter" data-level="2.3" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#bias-in-estimators"><i class="fa fa-check"></i><b>2.3</b> Bias in Estimators</a></li>
+<li class="chapter" data-level="2.1" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#statistical-power-designing-studies-that-effectively-distinguish-signal-from-noise"><i class="fa fa-check"></i><b>2.1</b> (1) Statistical power: Designing Studies that effectively distinguish signal from noise</a></li>
+<li class="chapter" data-level="2.2" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#error-rates-of-tests"><i class="fa fa-check"></i><b>2.2</b> (2) Error Rates of Tests</a></li>
+<li class="chapter" data-level="2.3" data-path="basics-of-experimental-design-and-analysis.html"><a href="basics-of-experimental-design-and-analysis.html#bias-in-estimators"><i class="fa fa-check"></i><b>2.3</b> (3) Bias in Estimators</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html"><i class="fa fa-check"></i><b>3</b> Design-Based Principles of Statistical Inference</a><ul>
 <li class="chapter" data-level="3.1" data-path="design-based-principles-of-statistical-inference.html"><a href="design-based-principles-of-statistical-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
@@ -591,8 +600,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.</h1>
-<h4 class="author"><em>Jake Bowers, Ryan T. Moore, Lula Chen, Paul Testa, Nate Higgins, Oliver McClellan, Miles Williams, Tyler Simko, Bill Schultz</em></h4>
-<h4 class="date"><em>February 09, 2024</em></h4>
+<h4 class="author"><em>Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz</em></h4>
+<h4 class="date"><em>May 24, 2024</em></h4>
 </div>
 <div id="overview" class="section level1 unnumbered">
 <h1>Overview</h1>
@@ -600,9 +609,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 the General Services Administration</a> (the OES), tends to do statistical analysis. It also explains why we do what we do.<a href="references.html#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> The research integrity processes OES follows are already documented on our <a href="https://oes.gsa.gov/methods/">Evaluation Resources Web Page</a>. For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.</p>
 <div id="purposes-of-this-document" class="section level2 unnumbered">
 <h2>Purposes of this document</h2>
-<p><em>First</em>, this document educates new team members about the decisions past team members have made regarding the design and analysis of the studies fielded so far. It also serves as a place to record decisions for <a href="http://dx.doi.org/10.4067/S0718-090X2016000300011">our
+<p><em>First</em>, this document educates new team members about the decisions past team members have made regarding the design and analysis of past studies. It also serves as a place to record decisions for <a href="http://dx.doi.org/10.4067/S0718-090X2016000300011">our
 own future selves</a>, and helps us harness the power that arises from our disciplinary diversity. That
-is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them in R.</p>
+is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them.</p>
 <p><em>Second</em>, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. It should help guide our future experimental design and analysis. However, any given project may encounter reasons to make different decisions than those we describe here. This SOP should be thought of as more of a coordination device than a set of firm requirements.</p>
 <p><em>Third</em>, on a related note, this document should help us write better analysis plans and speed our practice of re-analysis. (Our team insists on a blind re-analysis of every study as a quality control for our results before they are reported to our agency partners.)</p>
 <p><em>Fourth</em>, and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government&#x2019;s own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.</p>
@@ -614,12 +623,12 @@ is, current and past team members have made decisions about how to approach stat
 <p>This document focuses on design and analysis of randomized field experiments.
 Although we include some discussion about non-randomized studies, often known
 as observational studies, until now, our team has focused primarily on
-randomized field experiments. We plan to include more discussion of observational studies over time.</p>
+randomized field experiments. We plan to include more discussion of observational studies as we pursue more of these kinds of studies.</p>
 </div>
 <div id="we-mostly-present-examples-using-r" class="section level3 unnumbered">
 <h3>We (mostly) present examples using R</h3>
 <p>As public servants and social and behavioral scientists, we use the <a href="http://r-project.org">R</a> statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R).</p>
-<p>Of course, many members of our team also use Stata, SAS, SPSS, Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task or something similar could be accomplished in Stata. However, this is for illustrative purposes, and all reported results and all figures are generated based only on the R code.</p>
+<p>Of course, many members of our team also use Stata, SAS, SPSS, and Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task (or something similar) could be accomplished in Stata. However, all reported results and all figures are generated based only on the R code.</p>
 </div>
 <div id="structure-of-the-document" class="section level3 unnumbered">
 <h3>Structure of the document</h3>
@@ -634,7 +643,7 @@ randomized field experiments. We plan to include more discussion of observationa
 </div>
 <div id="help-us-improve-our-work" class="section level2 unnumbered">
 <h2>Help us improve our work!</h2>
-<p>Since we hope to improve our analytic workflow with every project, this document should be seen as provisional &#x2014; as a record and a guide for our continuous learning and improvement. We invite comments in the form of <a href="https://github.com/gsa-oes/sop/issues">Issues</a> or <a href="https://help.github.com/articles/creating-a-pull-request/">pull requests</a> on Github. There is also a suggestion form available to OES team members.</p>
+<p>Since we hope to improve our analytic workflow with every project, this document should be seen as provisional &#x2014; as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our <a href="https://forms.gle/TqxZB1H6KvGrVPQf6">Google Form (for OES team members)</a>, or <a href="https://github.com/gsa-oes/sop/issues">Issues</a> or <a href="https://help.github.com/articles/creating-a-pull-request/">pull requests</a> on Github.</p>
 <!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
 </div>
 <div id="about-this-document" class="section level2 unnumbered">
