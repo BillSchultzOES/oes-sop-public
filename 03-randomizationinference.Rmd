@@ -2,19 +2,19 @@
 
 Most policy evaluations using administrative data or surveys report the results of their studies using **estimators** and **hypothesis tests**. We briefly define each for clarity.
 
-*Estimators*: Although we can never know the true causal effect of a new policy on our beneficiaries (see Chapter 1), we can provide a best guess. E.g.: "The average amount saved for retirement by people in the treatment group was \$1000 more than the average amount in the control group: our estimate of the average treatment effect is \$1000."
+* *Estimators*: Although we can never know the true causal effect of a new policy on our beneficiaries (see Chapter 1), we can provide a best guess. E.g.: "The average amount saved for retirement by people in the treatment group was \$1000 more than the average amount in the control group: our estimate of the average treatment effect is \$1000."
 
-*Hypothesis tests*: We can also test the plausibility of a particular hunch or hypothesis. Commonly, these tests focus on plausibility of the null hypothesis of no effect. E.g.: "We can reject the null hypothesis of no effect at a $5\%$ significance level given an estimated p-value of $2\%$." Confidence intervals can be used to summarize hypothesis tests, so we think of them as tests rather than estimators.
+* *Hypothesis tests*: We can also test the plausibility of a particular hunch or hypothesis. Commonly, these tests focus on plausibility of the null hypothesis of no effect. E.g.: "We can reject the null hypothesis of no effect at a $5\%$ significance level given an estimated p-value of $2\%$." Confidence intervals can be used to summarize hypothesis tests, so we think of them as tests rather than estimators.
 
 When we are asked *why* we used some method for calculating an
 average treatment effect, $p$-value, or confidence interval, we often say that our statistical analysis choices are based on the *design* of our
 studies. When applied to randomized experiments, this principle can be written
-simply as: *analyze as you randomize.* We provide an example of this
-principle in practice [below](#randinfex).
+simply as: "analyze as you randomize." We provide an example of this
+principle in practice below.
 
-This idea, often known as randomization based or **design based inference**, was proposed by two of the founders of modern statistics. Jerzy Neyman's 1923 paper showed how to use randomization to learn about what we would currently call "average treatment effects" [@neyman_application_1923], and Ronald A.  Fisher's 1935 book showed how to use randomization to test hypotheses about what we would currently call "treatment effects" [@fisher_design_1935]. We favor design based justifications in many situations because we know exactly how a study was designed --- after all, we and our agency collaborators chose the sample size, experimental arms, and outcome data.
+This idea, often known as randomization based or **design based inference**, was proposed by two of the founders of modern statistics. Jerzy Neyman's 1923 paper showed how to use randomization to learn about what we would currently call "average treatment effects" [@neyman_application_1923], and Ronald A.  Fisher's 1935 book showed how to use randomization to test hypotheses about what we would currently call "treatment effects" [@fisher_design_1935]. We favor design based justifications in many situations because we know exactly how a study was designed---after all, we and our agency collaborators chose the sample size, experimental arms, and outcome data.
 
-Of course, there are other ways to justify statistical procedures, and we don't exclude any reasonable approach in our work. In particular, an approach based on the idea of sampling from a larger (possibly infinite) population is standard in many applied research fields. This approach relies on theoretical models of an estimator's behavior---i.e., "asymptotic theory"---as sample size increases indefinitely. In practice, we often rely on statistical methods developed under this justification as well. Note that some common statistical procedures, like the calculation of HC2 standard errors discussed below, can be justified under either design based or sampling based statistical inference.
+Of course, there are other ways to justify statistical procedures, and we don't exclude any reasonable approach in our work. In particular, an approach based on the idea of sampling from a larger (possibly infinite) population is standard in many applied research fields. This approach relies on theoretical models of an estimator's behavior---i.e., "asymptotic theory"---as sample size increases indefinitely. We sometimes rely on statistical methods developed under this justification as well. And keep in mind that some common procedures, like the calculation of HC2 standard errors below, can be justified under either design based or sampling based statistical inference.
 
 ## An example using simulated data {#randinfex}
 
@@ -276,7 +276,7 @@ seEstATEsim <- sd(simpleResults)
 seEstATEsim
 ```
 
-Of course, we do not need to rely on simulation to define a standard error estimator. @gerber_field_2012 and @dunning_natural_2012 provide easy-to-read explanations for the following design based expression for the "feasible" (see below) standard error of a simple average treatment effect estimator. If we write $T$ as the set of all $m$ treated units and $C$ as the set of all $n-m$ non-treated units, we then have:
+While this is useful for illustration, we do not need to rely on simulation to develop a design-based standard error estimator. @gerber_field_2012 and @dunning_natural_2012 walk through the following expression for a "feasible" (see below) design based standard error of a simple average treatment effect estimator (e.g., a difference in means based on randomly assigned treatment). If we write $T$ as the set of all $m$ treated units and $C$ as the set of all $n-m$ non-treated units, we then have:
 
 $$
 \widehat{\var}(T) = \frac{s^2(Y_{i,i \in T})}{m} + \frac{s^2(Y_{i,i \in C})}{(n-m)}
@@ -284,9 +284,11 @@ $$
 
 where $s^2(x)$ is the sample variance such that $s^2(x) = (1/(n-1))\sum^n_{i = 1}(x_i-\bar{x})^2$.
 
-We'll compare the results of the simulation above to the standard error this expression produces. We'll also comapre both with the *true* standard error. We can calculate the true standard error of the ATE for this example data because we know the actual covariance between potential outcomes, having generated them ourselves. However, we can't observe this with real data. You can think of the expression above as a **feasible standard error**: a modified version that is estimable in real datasets and designed to be *at least as large* as the true standard error on average (i.e., it is intentionally conservative). Although we don't write it out, you can see an expression for the true standard error in our code.
+Since this expression is something we can calculate with a real sample, it's called a **feasible standard error**. In contrast, we cannot calculate the *true* design based standard error with a real sample, since it depends on knowing the covariance between each unit's potential outcomes (which is unobservable in real data). However, we can calculate this for our example, since we generated these data ourselves. Though we don't write it out here, you can see an expression for the true standard error in our code.
 
-First, let's calculate the true SE. We already have the simulated SE from the code above.
+The feasible SE is designed to be *at least as large* as the true standard error on average; i.e., it is intentionally conservative. To illustrate these different calculation methods, we can compare the results of the simulation above to the feasible standard error. We can also compare both to the true standard error.
+
+We already have the simulated SE from the code above. Next, let's calculate the true SE. 
 
 ```{r oldcode, echo = F, include = F}
 # This was used previously to get the true SE, but may be wrong?
@@ -395,7 +397,7 @@ fvarestATE <- (N/(N-1)) * ( (varYt/nt) + (varYc/nc) )
 estSEEstATE <- sqrt(fvarestATE)
 ```
 
-Importantly, the design based feasible SE *is not* the standard error OLS regression provides by default. Among other things, default OLS SES are calculated under an *iid* errors assumption ("identically and independently distributed"). The feasible SE, in contrast, relaxes the "identically" part. Let's include the OLS SE as well for comparison.
+Importantly, the feasible SE *is not* the standard error OLS regression provides by default. Among other things, default OLS SES are calculated under an *iid* errors assumption ("identically and independently distributed"). The feasible SE relaxes the "identically" part. Let's record the OLS SE as well.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R8')">R code</button>
@@ -427,9 +429,9 @@ lm1 <- lm(Y~Z, data=dat1)
 iidSE <-  sqrt(diag(vcov(lm1)))[["Z"]]
 ```
 
-Lastly, we'll calculate another alternative called the *HC2 standard error*, which [@lin_agnostic_2013] shows to be a randomization or design based SE for OLS in particular (i.e., a design based alternative to the feasible SE that can be calcuated for treatment effects estimated using OLS). Like the feasible SE, HC2 errors should be conservative relative to the true SE (at least as large or larger). Below, we refer to this as the Neyman SE.
+Finally, we'll calculate one more alternative called the *HC2 standard error*, which [@lin_agnostic_2013] shows to be a design based SE for OLS regression (i.e., an alternative to the feasible SE that can be calcuated for treatment effects estimated using OLS). Like the feasible SE, HC2 errors should be conservative relative to the true SE.
 
-Note that under a sampling based inference perspective, this SE estimator can instead by justified as a method of relaxing the assumption of "identically" distributed errors across observations. In other words, it is robust to a problem called "heteroscedasticity," or "heteroscedasticity-consistent," hence the HC in its name.
+Note that under sampling based inference, this SE estimator can instead be justified as a way of relaxing the assumption of "identically" distributed errors across. In other words, it is robust to a problem called "heteroscedasticity," or "heteroscedasticity-consistent," hence the HC in its name.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R9')">R code</button>
@@ -438,16 +440,16 @@ Note that under a sampling based inference perspective, this SE estimator can in
 ::: {#ch3R9 .tabcontent} 
 <br />
 ```{r, highlight = F, eval = F}
-## Neyman SE (HC2)
-NeymanSE <- sqrt(diag(vcovHC(lm1, type = "HC2")))[["Z"]]
+## HC2
+HC2SE <- sqrt(diag(vcovHC(lm1, type = "HC2")))[["Z"]]
 ```
 :::
 ::: {#ch3Stata9 .tabcontent} 
 <br />
 ```{stata, highlight = F, eval = F}
-** Neyman SE (HC2)
+** HC2
 qui reg y z, vce(hc2)
-global NeymanSE = _se[z] // Or: sqrt(e(V)["z","z"])
+global HC2SE = _se[z] // Or: sqrt(e(V)["z","z"])
 ```
 ::: 
 ::: {#ch3Hide9 .tabcontent}
@@ -455,13 +457,13 @@ global NeymanSE = _se[z] // Or: sqrt(e(V)["z","z"])
 :::
 
 ```{r NeymanSE, echo = F, eval = T}
-## Neyman SE (HC2)
-NeymanSE <- sqrt(diag(vcovHC(lm1, type = "HC2")))[["Z"]]
+## HC2
+HC2SE <- sqrt(diag(vcovHC(lm1, type = "HC2")))[["Z"]]
 ```
 
-These SE estimates in hand, let's review differences between the true standard error, the feasible standard error, the HC2 (Neyman) standard error, the standard error arising from direct repetition of the experiment, and the OLS standard error.
+All those SE estimates in hand, let's review differences between the true standard error, the feasible standard error, the HC2 (Neyman) standard error, the standard error arising from direct repetition of the experiment, and the OLS standard error.
 
-The Neyman SE (the HC2 OLS SE) is intended to be conservative relative to the true SE (at least as large or larger on average). We show this to be the case in our example. The Neyman SE is similar to the feasible SE outlined above, and both are larger than the true SE. We also illustrate the accuracy of our SE simulation as a way of thinking more intuitively about what the standard error represents. Lastly, recall that our design involves different outcome variances for the treated group and the control group. We would therefore expect what we are calling the "OLD iid" SE to be biased on average (different variances across treatment groups means that errors are not "identically" distributed). However, the fact that it is biased on average does not necessarily guarantee that it will be overly conservative or liberal in all cases.
+The HC2 OLS SE is intended to be conservative relative to the true SE (at least as large or larger on average). We show this to be the case in our example. HC2 is similar to the feasible SE outlined above, and both are larger than the true SE. We also illustrate the accuracy of our SE simulation as a way of thinking more intuitively about what the standard error represents. Lastly, recall that our design involves different outcome variances for the treated group and the control group. We would therefore expect what we are calling the OLS SE to be inaccurate (different variances across treatment groups means that errors are not "identically" distributed). However, the fact that it is inaccurate on average does not necessarily guarantee that it will be overly conservative or liberal in all cases.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R10')">R code</button>
@@ -474,7 +476,7 @@ compareSEs <- c(simSE = seEstATEsim,
   feasibleSE = estSEEstATE,
   trueSE = seEstATETrue,
   olsIIDSE = iidSE,
-  NeymanDesignSE = NeymanSE)
+  HC2SE = HC2SE)
 sort(compareSEs)
 ```
 :::
@@ -486,8 +488,8 @@ matrix compareSEs[1, 1] = $seEstATEsim
 matrix compareSEs[1, 2] = $estSEEstATE
 matrix compareSEs[1, 3] = $seEstATETrue
 matrix compareSEs[1, 4] = $iidSE
-matrix compareSEs[1, 5] = $NeymanSE
-matrix colnames compareSEs = "simSE" "feasibleSE" "trueSE" "olsIIDSE" "NeymanDesignSE"
+matrix compareSEs[1, 5] = $HC2SE
+matrix colnames compareSEs = "simSE" "feasibleSE" "trueSE" "olsIIDSE" "HC2SE"
 matrix list compareSEs
 ```
 ::: 
@@ -500,11 +502,11 @@ compareSEs <- c(simSE = seEstATEsim,
   feasibleSE = estSEEstATE,
   trueSE = seEstATETrue,
   olsIIDSE = iidSE,
-  NeymanDesignSE = NeymanSE)
+  HC2SE = HC2SE)
 sort(compareSEs)
 ```
 
-To provide a more reliable comparison of these SE estimation methods, the first code chunk below defines a function to calculate an average treatment effect, the OLS iid SE, and the OLS HC2 (Neyman) SE. The second code chunk below uses this function to calculate several of those SEs for 10000 simulated datasets, averaging across them to provide a better illustration of their relative performance. As expected, OLS *underestimates* the true SE, while the Neyman (HC2) SE is conservative. The risk of underestimating the SE is that it could lead us to be overconfident when interpreting statistical findings.
+To provide a more reliable comparison of these SE estimation methods, the first code chunk below defines a function to calculate an average treatment effect, the OLS iid SE, and the OLS HC2 SE. The second code chunk below uses this function to calculate several of those SEs for 10000 simulated datasets, averaging across them to provide a better illustration of their relative performance. As expected, the OLS iid SE *underestimates* the true SE, while the HC2 SE is conservative. The risk of underestimating the SE is that it could lead us to be overconfident when interpreting statistical findings.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R11')">R code</button>
