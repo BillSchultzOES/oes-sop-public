@@ -1,5 +1,5 @@
 ---
-title: OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments.
+title: OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments
 author: Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 site: bookdown::bookdown_site
@@ -190,7 +190,7 @@ the General Services Administration](https://oes.gsa.gov/) (the OES), tends to d
 
 ## Purposes of this document {-}
 
-*First*, this document educates new team members about the decisions past team members have made regarding the design and analysis of past studies. It also serves as a place to record decisions for [our
+*First*, this document educates new team members about the decisions past team members have made regarding research design and analysis. It also serves as a place to record decisions for [our
 own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011), and helps us harness the power that arises from our disciplinary diversity. That
 is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them.
 
@@ -207,13 +207,13 @@ is, current and past team members have made decisions about how to approach stat
 This document focuses on design and analysis of randomized field experiments.
 Although we include some discussion about non-randomized studies, often known
 as observational studies, until now, our team has focused primarily on
-randomized field experiments. We plan to include more discussion of observational studies as we pursue more of these kinds of studies.
+randomized field experiments. We plan to include more discussion of observational studies as we pursue more in the future.
 
 ### We (mostly) present examples using R {-}
 
-As public servants and social and behavioral scientists, we use the [R](http://r-project.org) statistical analysis language for this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the standard for advanced methodological work in the statistical sciences as applied to the social and behavioral sciences (the latest new statistical techniques for social and behavioral scientists tend to be developed in R). 
+We use the [R](http://r-project.org) statistical analysis language in this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the locus of development for many of the latest new statistical techniques for social and behavioral scientists. 
 
-Of course, many members of our team also use Stata, SAS, SPSS, and Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task (or something similar) could be accomplished in Stata. However, all reported results and all figures are generated based only on the R code.
+Of course, members of our team also use other software like Stata, SAS, SPSS, and Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task, or something similar, could be accomplished in Stata. However, all reported results and all figures are generated based only on the R code.
 
 ### Structure of the document {-}
 
