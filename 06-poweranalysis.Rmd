@@ -12,7 +12,7 @@ trueates <- mean(dat1$y1s) - mean(dat1$y0s)
 trueate <- mean(dat1$y1) - mean(dat1$y0)
 ```
 
-# Power Analysis {#poweranalysis}
+# Power analysis {#poweranalysis}
 
 In this chapter, we provide examples of how we assess statistical power for different experimental research designs. We often prefer to use simulation to assess the power of different research designs because we rarely have designs that fit easily into the assumptions made by analytic tools.
 

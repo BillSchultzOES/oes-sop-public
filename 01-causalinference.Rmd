@@ -1,4 +1,4 @@
-# Using Tests to Inform Policy
+# Using tests to inform policy
 
 Most of the rest of this document dives into our statistical decision making. It assumes that the reader has heard of hypothesis tests and statistical estimators. Here, we first explain in broad terms how tests
 and estimators are useful for helping the US federal government improve public policy.

@@ -1,4 +1,4 @@
-# Design Based Statistical Inference
+# Design based inference
 
 Most policy evaluations using administrative data or surveys report the results of their studies using **estimators** and **hypothesis tests**. We briefly define each for clarity.
 

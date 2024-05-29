@@ -5,7 +5,7 @@ dat1$rankY <- rank(dat1$Y)
 ndat1 <- nrow(dat1)
 ```
 
-# Analysis Choices
+# Analysis choices
 
 <!-- Adds copy code button -->
 ```{r klippych5, echo=FALSE, include=TRUE}
