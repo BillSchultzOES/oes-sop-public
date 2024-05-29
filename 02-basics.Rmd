@@ -1,7 +1,7 @@
 
-# Fundamental statistical properties
+# Statistical priorities
 
-Here, we briefly define and describe some of the things we prioritize when choosing statistical procedures. Briefly, we want to create research designs that provide a reasonably precise estimate of a policy intervention's impacts. We also want to use statistical tests that will rarely mislead us---i.e., will rarely give a false positive result---and we want to estimate policy impacts without bias (i.e., without systematically over-estimating or under-estimating). These properties depend on both the initial design of the study and the choices we make when calculating results.
+Here, we briefly define and describe some of the things we prioritize when choosing statistical procedures or designing evaluations. Briefly, we want to observe a reasonably precise estimate of a policy intervention's impacts (i.e., a small margin of error). We also want to use statistical tests that will rarely mislead us---i.e., will rarely give a false positive result---and we want to estimate policy impacts without bias (i.e., without systematically over-estimating or under-estimating). These properties depend on both the initial design of the study and the choices we make when calculating results.
 
 ## Statistical Power
 

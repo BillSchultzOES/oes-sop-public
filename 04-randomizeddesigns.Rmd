@@ -2,7 +2,7 @@
 if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1.csv')) }
 ```
 
-# Randomization and Design
+# Randomization Choices
 
 After working together with our agency partners to translate insights from the social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).^[We develop the recommendations themselves following [processes](https://oes.gsa.gov/methods/) described in more detail on our website.] In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.
 
