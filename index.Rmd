@@ -215,23 +215,23 @@ We use the [R](http://r-project.org) statistical analysis language in this docum
 
 Of course, members of our team also use other software like Stata, SAS, SPSS, and Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task, or something similar, could be accomplished in Stata. However, all reported results and all figures are generated based only on the R code.
 
-### Structure of the document {-}
+## Structure {-}
 
-Each section of this document will include, if applicable:
+This page provides a basic introduction to what the OES SOP hopes to accomplish. The rest of the document can be thought of as consisting of two parts:
 
-1. A description of our approach.
-2. A description of how we implement our approach, including functions in R, key arguments that must be entered into the function, and key outputs from the function.
-3. A general example using simulated data (perhaps including some evaluation of the tool as compared to other possible choices).
+* *For policymakers and agency partners* - Chapters 1-3 provide a higher level overview of how statistical tests can be informative for policy learning, some of our priorities when designing tests, and how we prefer to justify the statistical procedures we use. The goal is to provide more context for how OES make analysis decisions and what we aim to learn from impact evaluations. Chapter 3 goes into more technical detail than Chapters 1 and 2, overlapping with the next part of this document.
 
-Throughout the document, we will be including links to the [Glossary](#glossary) and [Appendix](#appendix), clarifying terms or explaining tools and procedures in more depth. This aspect of the SOP is still under-development, but we plan to add more here moving forward.
+* *For OES team members* - Chapters 3 and onward are intended to serve as a reference for design and analysis decisions that need to be made at stages of our project process. Chapter 3 reviews a randomization based framework for statistical decision-making that motivates many of the recommendations in later chapters. Chapter 4 is for teams making decisions about how to randomly assignment treatment or ensure that randomization occurred as planned. Chapter 5 is for teams making decisions about how to analyze their data. Finally, Chapter 6 is for teams interested in performing *ex ante* power simulations before making design choices.
+
+Throughout the document, we plan to eventually include links to a [Glossary](#glossary) and an [Appendix](#appendix) clarifying terms or explaining tools and procedures in more depth. This aspect of the SOP is still under-development, but we plan to add more here moving forward.
 
 ## Help us improve our work! {-}
 
-Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our [Google Form (for OES team members)](https://forms.gle/TqxZB1H6KvGrVPQf6), or [Issues](https://github.com/gsa-oes/sop/issues) or [pull requests](https://help.github.com/articles/creating-a-pull-request/) on Github.
+Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our [Google Form (only for OES team members)](https://forms.gle/TqxZB1H6KvGrVPQf6), or as [Issues](https://github.com/gsa-oes/sop/issues) or [pull requests](https://help.github.com/articles/creating-a-pull-request/) on Github.
 
 <!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
 
-## About this document {-}
+## Technical details {-}
 
 This book was written in [bookdown](http://bookdown.org/). The complete source is available from [GitHub](https://github.com/gsa-oes/sop). This version of the book was built with `r R.version.string` and the following packages.
 
