@@ -225,7 +225,7 @@ table(Z2armUnequalB=dat1$Z2armUnequalB)
 table(Z4arms=dat1$Z4arms)
 ```
 
-## Factorial Designs
+## Factorial designs
 
 It's possible to test the effects of more than one intervention while losing less statistical power by randomly assigning multiple treatments independently of each other. The simplest design that we use for this purpose is the $2 \times 2$ **factorial** design. For example, in the next table we see that we have assigned `r N/2` observations to each arm of two separate interventions. Since the randomization of `treatment1` is independent of `treatment2`, we can assess the effects of each treatment separately and pay less of a power penalty (unless one of the treatments dramatically increases the variance of the outcome compared to a hypothetical experiment with only one treatment assigned).
 
@@ -274,7 +274,7 @@ Meanwhile, on (2), consider a two-arm factorial design with two Treatments, A an
 
 To deal with those issues, the OES Methods Team recommends estimating treatment effects in factorial experiments using a model that includes an interaction, at least as a robustness check.
 
-## Block Random Assignment
+## Block random assignment
 
 ### The benefits of blocking
 
@@ -545,7 +545,7 @@ order to increase the statistical power of our experiments. We also often find
 it useful in cases where different administrative units are implementing the
 treatment, or when we expect different groups of people to have different reactions to the treatment.
 
-### Using only a few covariates to create blocks
+### Using a few covariates to create blocks
 
 If we have background information on a few covariates, we can create blocks by hand through a process like the one demonstrated here:
 
@@ -616,7 +616,7 @@ dat1$ZblockV2 <- labelTC(block_ra(blocks = dat1$blockV2))
 with(dat1, table(blockV2, ZblockV2, exclude=c()))
 ```
 
-### Multivariate blocking using many covariates
+### Blocking using many covariates
 
 If instead we have many background variables, we can increase precision by thinking about blocking as a problem of "matching," or creating sets of
 units which are as similar as possible across the entire set of covariates [@moore2012multivariate;@moore2016bT063]. Here we show two approaches using R.
@@ -666,7 +666,7 @@ blockingDescEval <- dat1 %>%
 blockingDescEval
 ```
 
-### Disadvantages to consider
+### Disadvantages
 
 Block-randomized assignment and analysis can help reduce both estimation error and non-treatment-related variability in our data. It may also be useful for ensuring equal distribution of treatment arms within less common subgroups in our sample, which can be especially important for preserving our statistical power when estimating heterogenous treatment effects.
 
@@ -728,15 +728,15 @@ designs where we try to isolate certain experimental units (like buildings)
 from each other so that we can focus our learning about the effects of the
 intervention in isolation (rather than the effects when people can communicate with each other about the intervention). There are a variety of more specialized randomization designs that may be appropriate for particular projects, and the options discussed above should not be treated as exhaustive. We may expand on some of these other randomization options here in the future.
 
-## Pseudo-random assignment
+## As-if random assignment
 
-In some circumstances, we might judge that randomly assigning a treatment of interest would be logistically infeasible. There are a variety of methods we have applied in such cases in the past to ensure assignment to treatment is at least idiosyncratic or arbitrary. What is key here is not really that assignment is random, *per se*. Instead, assignment must be conditionally independent of a unit's potential outcomes [@holland:1986a]. Sometimes, there are available methods of assigning treatment non-randomly that we decide are still likely to satisfy this condition. Of course, relying on any pseudo-random assignment procedure makes it especially important to review evidence of appropriate treatment assignment later (see the next section).
+In some circumstances, we might judge that randomly assigning a treatment of interest would be logistically infeasible. There are a variety of methods we have applied in such cases in the past to ensure assignment to treatment is at least idiosyncratic or arbitrary. What is key here is not really that assignment is random, *per se*. Instead, assignment must be conditionally independent of a unit's potential outcomes [@holland:1986a]. Random assignment is simply the best way of guaranteeing this. But sometimes, there are available methods of assigning treatment non-randomly that we decide are likely to satisfy this condition. Of course, relying on any as-if random assignment procedure makes it especially important to review evidence of appropriate treatment administration afterwards (see the next section).
 
-We list a few examples of pseudo-random procedures below, all of which link to Analysis Plans pre-registered on our website. But note that a pseudo-random procedure that satisfies conditional independence in one study will not necessarily satisfy it in another. This needs to be determined on a case-by-case basis. It is usually ideal to layer two arbitrary assignment procedures on top of each other rather than rely on the plausibility of only one.
+We list a few examples of as-if random assignment procedures below, all of which link to Analysis Plans pre-registered on the OES website. But note that an as-if random procedure that satisfies conditional independence in one study will not necessarily satisfy it in another. This needs to be determined on a case-by-case basis. When possible, it is usually better to layer two arbitrary assignment procedures on top of each other rather than rely on the plausibility of only one.
 
 * Grouping people into partitions based on the last two digits of their SSN and then [rotating each partition's treatment assignment monthly](https://oes.gsa.gov/assets/analysis/1902-analysis-plan.pdf)
 
-* Assigning program applicants to different conditions based on the [interaction of their submission time and submission day](https://oes.gsa.gov/assets/analysis/2310-decreasing-SNAP-denial-rates_analysis-plan.pdf) (is the last digit of each even or odd?)
+* Assigning program applicants to different conditions based on the [last digits of their submission time and submission day](https://oes.gsa.gov/assets/analysis/2310-decreasing-SNAP-denial-rates_analysis-plan.pdf) (are both even, both odd, or is it mixed?)
 
 * Assigning callers to different conditions [based on the last four digits of their phone number](https://oes.gsa.gov/assets/analysis/2309-decreasing-abandonment-of-calls-to-988-analysis-plan.pdf)
 

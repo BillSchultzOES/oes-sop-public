@@ -22,9 +22,9 @@ ch <- 5
 cnum <- 0
 ```
 
-We've organized our discussion of analysis tactics in this chapter by a study's design. After all, different study designs often require different analyses. But there are a few general tactics that we use to ensure that we can make transparent, valid, and statistically precise statements about the results of our research. We'll start this chapter by discussing those.
+We've organized our discussion of analysis techniques around a study's randomization design. But there are a few general tactics that we use to ensure that we can make transparent, valid, and statistically precise statements about the results from our evaluations. We'll start this chapter by reviewing those.
 
-First, the nature of the data that we expect to see from a given experiment informs our analysis plans. For example, we may make some choices based on the nature of the outcome --- a binary outcome, a symmetrically distributed continuous outcome, and a heavily skewed continuous outcome each could each call for different analytical approaches.
+First, the nature of the data that we expect to see from a given experiment informs our analysis plans. For example, we may make some choices based on the nature of the outcome---a binary outcome, a symmetrically distributed continuous outcome, and a heavily skewed continuous outcome each could each call for different analytical approaches.
 
 Second, we tend to ask three different questions in each of our studies, and we answer them with different statistical procedures:
 
@@ -32,16 +32,16 @@ Second, we tend to ask three different questions in each of our studies, and we 
  2. What is our best guess about the *size of the effect* of the experiment? (We estimate the average treatment effect of our interventions to answer this question.)
  3. *How precise* is our guess? (We report confidence intervals or standard errors to answer this question.)
 
-Finally, in the [Analysis Plans](https://oes.gsa.gov/methodsdetail/#analysis-plans) that we post online before receiving outcome data for a project, we try to anticipate many common decisions involved in data analysis --- how we will treat missing data, how we will rescale, recode, and combine columns of raw data, etc. We touch on some of these topics in more detail below, and will cover others in a future chapter on **Working with Data**.
+Finally, in the [Analysis Plans](https://oes.gsa.gov/methodsdetail/#analysis-plans) that we post online before receiving outcome data for a project, we try to anticipate many common decisions involved in data analysis---how we will treat missing data, how we will rescale, recode, and combine columns of raw data, etc. We touch on some of these topics in more detail below, and will cover others further in the future.
 
-## Completely or Urn-Draw Randomized Trials
+## Completely randomized trials
 
 ### Two arms
 
 #### Continuous outcomes
 
 In a completely randomized trial where outcomes take on many levels (units
-like times, counts of events, dollars, percentages, etc.) we generally assess the *weak null hypothesis* of no average effects, estimate an average treatment effect, and may also assess the *sharp null hypothesis* of no effect for any unit using some test statistic beside a difference-in-means.^[What we call the "weak null" here corresponds to the null hypothesis this is evaluated by default in many software packages (like R and Stata) when implementing common procedures like a difference-in-means test or a linear regression. Meanwhile, the "sharp null" is more often evaluated when employing permutation-based procedures like those discussed in our earlier chapter on design-based inference.] This last assessment allows us to check on whether our choice to focus on mean differences matters for our substantive interpretation of the results.
+like times, counts of events, dollars, percentages, etc.) we generally assess the **weak null hypothesis** of no average effects and estimate an average treatment effect. We may also assess the **sharp null hypothesis** of no effect for any unit using some test statistic beside a difference-in-means. What we call the weak null corresponds to the null evaluated by default in many software packages (like R and Stata) when implementing procedures like a difference-in-means test or a linear regression. Meanwhile, the sharp null is more often evaluated when employing design-based permutation inference procedures (example below). Note that, particularly in smaller samples, tests of the sharp null may be somewhat better powered [@reichardt1999justifying]. It may also be possible to justify a hypothesis test of the sharp null in situations where justifying other procedures is more difficult [@rubin1986comment].^[As @rubin1986comment discusses, the stable unit treatment value assumption (SUTVA) holds trivially when testing the sharp null via permutation based inference. But this is not the case when estimating average treatment effects or testing the weak null. This is important for thinking through the difficult problem of evaluating impacts of "attributes" rather than manipulable treatments.]
 
 ##### Estimating the average treatment effect and testing the weak null of no average effects
 
@@ -107,15 +107,15 @@ estAndSE1OLS <- lm(Y~Z,data=dat1)
 summary(estAndSE1OLS)$coef
 ```
 
-The standard errors we prefer reflect repeated randomization from a fixed experimental pool. This is known as the HC2 standard error. @lin_agnostic_2013 and @samii_equivalencies_2012 show that the standard error estimator of an unbiased average treatment effect within a "finite-sample" or design-based framework (i.e., the Neyman standard error; see Chapter 3) is equivalent to the HC2 standard error. These SEs are produced by default by the `estimatr` package's function `difference_in_means()` and the `lmtest` package's functions `coeftest()` and `coefci()`. They can also be produced using the `vcovHC()` function from the `sandwich` package.
+The standard errors we prefer, HC2, reflect repeated randomization from a fixed experimental pool. As discussed in Chapter 3, @lin_agnostic_2013 and @samii_equivalencies_2012 show that the standard error estimator of an unbiased average treatment effect within a "finite-sample" or design based framework is equivalent to what is called the HC2 standard error. In R, these SEs are produced by default by the `estimatr` package's function `difference_in_means()` and the `lmtest` package's functions `coeftest()` and `coefci()`. They can also be produced using the `vcovHC()` function from the `sandwich` package. In Stata, when using `regress`, these can be estimated using the `vce(hc2)` option (they are not the default used by the `robust` option). Some other commands offer a similar option; check the help file to see.
 
-Our preference for HC2 errors follows from their design-based justification, but many researchers encounter them as one of several methods of correcting OLS standard errors for *heteroscedasticity*. Essentially, this means that the variance of the regression model's error term is not constant across observations.^[Classical OLS standard errors assume away heteroscedasticity, rendering them potentially inaccurate when heteroscedasticity is present.] When using OLS to analyze data from a two-arm randomized trial, heteroscedasticity might appear because the variance of the outcome is different in the treatment and control groups. This is common in practice.
+Our preference for HC2 errors follows from their design-based justification, but many researchers encounter them as one of several methods of correcting OLS standard errors for *heteroscedasticity*. Essentially, this means that the variance of the regression model's error term is not constant across observations. Classical OLS standard errors assume away heteroscedasticity, rendering them potentially inaccurate when heteroscedasticity is present. When using OLS to analyze data from a two-arm randomized trial, heteroscedasticity might appear because the variance of the outcome is different in the treatment and control groups. This is common.
 
 ##### Testing the sharp null of no effects
 
-We may assess the sharp null of no effects via direct permutation as a check on the assumptions underlying the calculations and statistical inferences above (i.e., "randomization inference"). We tend to use a $t$-statistic as our test statistic here to parallel the above tests. But we could use a rank-based test statistic instead if we were concerned about long-tails (i.e., skew) reducing statistical power.
+We may assess the sharp null of no effects via direct permutation as a check on the assumptions underlying the calculations and statistical inferences above (i.e., "randomization inference"). We tend to use a $t$-statistic as our test statistic here to parallel the above tests. But we could use a rank-based test statistic instead if we were concerned about long-tails (i.e., skew) reducing statistical power, or we could even use the point estimates themselves.
 
-Below, we show how to perform these tests using two different R packages (`coin` and `ri2`), along with several Stata commands (`permute` and `ritest`).  First, the `coin` package [@R-coin] in R and `permute` in Stata:
+Below, we show how to perform these tests using two different R packages and several Stata commands.  First, lets look at the `coin` package [@R-coin] in R and `permute` in Stata:
 
 ```{stata RItest1, eval=FALSE, cache=F,include=F, echo=F}
 ## As of Fall 2023, RItest is only in the randomization-distribution
@@ -230,7 +230,7 @@ test1riR <- conduct_ri(rankY ~ Z, declaration = thedesign1,
 tidy(test1riR)
 ```
 
-It is also relatively common for OES evaluations to encounter situations where these canned approaches may not be appropriate (e.g., the study design employs an uncommon randomization scheme). In such cases, it is useful to be able to program randomization inference manually. We provide simple templates for how this could be done in the code below, focusing on complete random assignment. This yields similar results to the canned functions above.
+It is also relatively common for OES evaluations to encounter situations where these canned approaches aren't useful (e.g., the study design employs an uncommon randomization scheme). It is useful to be able to program randomization inference manually as well. We provide templates for how this could be done in the code below, focusing on complete random assignment. This yields similar results to the canned functions above.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R6')">R code</button>
@@ -339,7 +339,7 @@ restore
 ::: 
 :::
 
-```{r ri_doityrself, eval = T, echo = F}
+```{r ri_doityrself, eval = T, echo = T}
 ## Define a function to re-randomize a single time
 ## and return the desired test statistic.
 ri_draw <- function() {
@@ -379,11 +379,11 @@ ri_p_manual
 
 #### Binary outcomes
 
-We tend to focus on differences in percentage points when we are working with binary outcomes, usually estimated via OLS linear regression. A statement like "the effect was a 5 percentage point increase" has made communication with partners easier than a discussion in terms of log odds or odds ratios. In addition to difficulties in interpretation and communication, we also avoid logistic regression coefficients because of the bias problem noticed by @freedman2008randomization in the case of covariance adjustment or more complicated research designs.
+We tend to focus on differences in percentage points when we are working with binary outcomes, usually estimated via OLS linear regression. A statement like "the effect was a 5 percentage point increase" has made communication with partners easier than a discussion in terms of log odds or odds ratios. In addition to difficulties in interpretation and communication, we also avoid logistic regression coefficients because of a problem noticed by @freedman2008randomization in the case of covariance adjustment or more complicated research designs.
 
 ##### Estimating the average treatment effect and testing the weak null of no average effects
 
-We can estimate effects (and produce standard errors) for differences of proportions using the same process as above. The average treatment effect estimate here represents the difference in the proportions of positive responses (i.e., $Y=1$) between treatment conditions. The standard error is still valid because it is based on the design of the study and not the distribution of the outcomes.
+We can estimate effects and produce standard errors for differences of proportions using the same process as above. The average treatment effect estimate here represents the difference in the proportions of positive responses (i.e., $Y=1$) between treatment conditions. The standard error is still valid because it is calculated using a procedure justified by the study's design.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R7')">R code</button>
@@ -442,21 +442,19 @@ estAndSE2 <- difference_in_means(Ybin~Z,data=dat1)
 estAndSE2
 ```
 
-When we have an experiment that includes a treatment and control group with binary outcomes, and when we are estimating the ATE, the standard error from a difference in proportions test is the same as the Neyman standard error (and therefore the HC2 error). In contrast, the standard error from a regular OLS regression with a binary outcome --- sometimes called a *linear probability model* --- will be at least slightly incorrect due to inherent heteroscecdasticity [@angrist2009mostly].
+When we have an experiment that includes a treatment and control group with binary outcomes, and when we are estimating the ATE, the standard error from a difference in proportions test is similar to the design based feasible standard error for an average treatment effect (and therefore similar to HC2 errors). In contrast, classical OLS standard errors with a binary outcome---sometimes called a *linear probability model*---will be at least slightly incorrect due to inherent heteroscecdasticity [@angrist2009mostly].
 
-To see some logic for this, first consider that difference-in-proportion standard errors are estimated with the following equation:
+To see this equivalence, consider that difference-in-proportion standard errors are estimated with the following equation:
 
 $$\widehat{SE}_{prop} = \sqrt{\frac{p_{1}(1-p_{1})}{n_{1}}+\frac{p_{2}(1-p_{2})}{n_{2}}}$$
 
-$n_1$ is the size of the group assigned treatment, $n_2$ is the size of the group assigned control, $p_1$ is the proportion of "successes" in the group assigned treatment, and $p_2$iss the proportion of "successes" in the group assigned control. Notice that the numerator in the fractions above represents the variance of the proportion in each treatment group.
+where $n_1$ is the size of the group assigned treatment, $n_2$ is the size of the group assigned control, $p_1$ is the proportion of "successes" in the group assigned treatment, and $p_2$iss the proportion of "successes" in the group assigned control. The fractions above represent the variance of the proportion in each group.
 
-Compare this with the Neyman standard error equation [@lin_agnostic_2013]:^[Specifically, the equation for the feasible SE discussed in Chapter 2]
+It's easy to compare this with the feasible standard error equation from chapter 3:
 
-$$\widehat{SE}_{Neyman} = \sqrt{\frac{\var(Y_{t})}{n_1}+\frac{\var(Y_{c})}{n_2}}$$
+$$\widehat{SE}_{feasible} = \sqrt{\frac{\var(Y_{t})}{n_1}+\frac{\var(Y_{c})}{n_2}}$$
 
-$Y_c$ is the vector of observed outcomes under control, and $Y_t$ is the vector of observed outcomes under treatment. This equation indicates that we use the observed variances in each treatment group to estimate the Neyman standard error for a difference in means.
-
-The code below compares the various standard error estimators discussed here.
+$Y_c$ is the vector of observed outcomes under control, and $Y_t$ is the vector of observed outcomes under treatment. This equation indicates that we use the observed variances in each treatment group to estimate the feasible design based standard error for an average treatment effect. The code below compares the various standard error estimators discussed here (we refer to the design based SEs as Neyman SEs).
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R8')">R code</button>
@@ -471,13 +469,13 @@ nc <- sum(1-dat1$Z)
 ## Find SE for difference of proportions.
 p1 <- mean(dat1$Ybin[dat1$Z==1])
 p0 <- mean(dat1$Ybin[dat1$Z==0])
-se1 <- (p1*(1-p1))/nt
-se0 <- (p0*(1-p0))/nc
-se_prop <- round(sqrt(se1 + se0), 4)
+frac1 <- (p1*(1-p1))/nt
+frac0 <- (p0*(1-p0))/nc
+se_prop <- round(sqrt(frac1 + frac0), 4)
 
 ## Find Neyman SE
-varc_s <- var(dat1$Ybin[dat1$Z == 0])
-vart_s <- var(dat1$Ybin[dat1$Z == 1])
+varc_s <- var(dat1$Ybin[dat1$Z==0])
+vart_s <- var(dat1$Ybin[dat1$Z==1])
 se_neyman <- round(sqrt((vart_s/nt) + (varc_s/nc)), 4)
 
 ## Find OLS SE

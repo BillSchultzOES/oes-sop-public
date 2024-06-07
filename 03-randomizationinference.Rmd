@@ -279,7 +279,7 @@ seEstATEsim
 While this is useful for illustration, we do not need to rely on simulation to develop a design-based standard error estimator. @gerber_field_2012 and @dunning_natural_2012 walk through the following expression for a "feasible" (see below) design based standard error of a simple average treatment effect estimator (e.g., a difference in means based on randomly assigned treatment). If we write $T$ as the set of all $m$ treated units and $C$ as the set of all $n-m$ non-treated units, we then have:
 
 $$
-\widehat{\var}(\tau) = \frac{s^2(Y_{i,i \in T})}{m} + \frac{s^2(Y_{i,i \in C})}{(n-m)}
+\widehat{\SE}(\tau) = \sqrt{\frac{s^2(Y_{i,i \in T})}{m} + \frac{s^2(Y_{i,i \in C})}{(n-m)}}
 $$
 
 where $s^2(x)$ is the sample variance such that $s^2(x) = (1/(n-1))\sum^n_{i = 1}(x_i-\bar{x})^2$.
