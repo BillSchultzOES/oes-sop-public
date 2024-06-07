@@ -238,7 +238,7 @@ It is also relatively common for OES evaluations to encounter situations where t
 <button class="tablinks" onclick="unrolltab(event, 'ch5Hide6')">Hide</button>
 ::: {#ch5R6 .tabcontent} 
 <br />
-```{r, eval = T, echo = F}
+```{r, eval = F, echo = T}
 ## Define a function to re-randomize a single time
 ## and return the desired test statistic.
 ri_draw <- function() {
@@ -339,7 +339,7 @@ restore
 ::: 
 :::
 
-```{r ri_doityrself, eval = T, echo = T}
+```{r ri_doityrself, eval = T, echo = F}
 ## Define a function to re-randomize a single time
 ## and return the desired test statistic.
 ri_draw <- function() {
@@ -444,7 +444,7 @@ estAndSE2
 
 When we have an experiment that includes a treatment and control group with binary outcomes, and when we are estimating the ATE, the standard error from a difference in proportions test is similar to the design based feasible standard error for an average treatment effect (and therefore similar to HC2 errors). In contrast, classical OLS standard errors with a binary outcome---sometimes called a *linear probability model*---will be at least slightly incorrect due to inherent heteroscecdasticity [@angrist2009mostly].
 
-To see this equivalence, consider that difference-in-proportion standard errors are estimated with the following equation:
+To see this in more detail, consider that difference-in-proportion standard errors are estimated with the following equation:
 
 $$\widehat{SE}_{prop} = \sqrt{\frac{p_{1}(1-p_{1})}{n_{1}}+\frac{p_{2}(1-p_{2})}{n_{2}}}$$
 
