@@ -137,13 +137,13 @@ function unrolltab(evt, tabName) {
 }
 </script>',
 '<!-- Google tag (gtag.js) -->',
-'<script async src="https://www.googletagmanager.com/gtag/js?id=G-V94NLBS86Q"></script>',
+'<script async src="https://www.googletagmanager.com/gtag/js?id=G-RCGKRS9FGR"></script>',
 '<script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag("js", new Date());
 
-gtag("config", "G-V94NLBS86Q");
+gtag("config", "G-RCGKRS9FGR");
 </script>',
 '<script>gtag("event", "view_item");</script>',
 sep = "\n"
