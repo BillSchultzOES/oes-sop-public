@@ -732,7 +732,7 @@ intervention in isolation (rather than the effects when people can communicate w
 
 In some circumstances, we might judge that randomly assigning a treatment of interest would be logistically infeasible. There are a variety of methods we have applied in such cases in the past to ensure assignment to treatment is at least idiosyncratic or arbitrary. What is key here is not really that assignment is random, *per se*. Instead, assignment must be conditionally independent of a unit's potential outcomes [@holland:1986a]. Random assignment is simply the best way of guaranteeing this. But sometimes, there are available methods of assigning treatment non-randomly that we decide are likely to satisfy this condition. Of course, relying on any as-if random assignment procedure makes it especially important to review evidence of appropriate treatment administration afterwards (see the next section).
 
-We list a few examples of as-if random assignment procedures below, all of which link to Analysis Plans pre-registered on the OES website. But note that an as-if random procedure that satisfies conditional independence in one study will not necessarily satisfy it in another. This needs to be determined on a case-by-case basis. When possible, it is usually better to layer two arbitrary assignment procedures on top of each other rather than rely on the plausibility of only one.
+We list a few examples of as-if random assignment procedures below, all of which link to Analysis Plans pre-registered on the OES website. But note that an as-if random procedure that satisfies conditional independence in one study will not necessarily satisfy it in another. This needs to be determined on a case-by-case basis. When possible, it may be ideal to layer two arbitrary assignment procedures on top of each other rather than rely on the plausibility of only one.
 
 * Grouping people into partitions based on the last two digits of their SSN and then [rotating each partition's treatment assignment monthly](https://oes.gsa.gov/assets/analysis/1902-analysis-plan.pdf)
 
@@ -742,19 +742,740 @@ We list a few examples of as-if random assignment procedures below, all of which
 
 ## Assessing randomization (balance testing)
 
-If we have covariates, we can evaluate the implementation of a random assignment procedure by exploring covariate differences across treatment arms. The goal is to ensure that the results appear consistent with our intended randomization strategy [@imai2008misunderstandings]. In the absence of covariates, we can at least assess whether the number of units assigned to each arm (conditional on other design features, such as blocking or stratification) is consistent with our intended strategy.
+If we have covariates, we can evaluate the implementation of a random assignment procedure by exploring covariate differences across treatment arms.^[If there are no available covariates, we can at least evaluate whether the distribution of treated units appears consistent with our intended strategy.] The goal is to ensure that the distribution of covariates appears consistent with our intended randomization strategy [@imai2008misunderstandings]. Since the intention is to draw conclusions about the realized sample and not to make inferences about some broader population, it is important to think carefully about what we learn from significance tests when assessing balance.
 
-There are a number of ways a researcher might use covariates to provide evidence that randomized assignment was implemented as intended. But it's good to be cautious about methods that rely on statistical significance testing. This is especially true when performing separate significance tests for many covariates, which raises "multiple testing" concerns (see Chapter 5). Briefly, it would be easy to discover one or a few covariates with individual differences-in-means that differ detectably from zero due to random chance (rather than real implementation problems). That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates---roughly 5 in 100.
+### Separate tests for each covariate
 
-Another issue is the relationship between significance test results and sample size. If a sample is too small, meaningful imbalances may still happen to be statistically insignificant. And on the other hand, when working with large samples, truly negligible differences may still happen to be statistically significant. When comparing individual covariates across treatment arms, one strategy for dealing with this is to rely on *equivalence tests*, such as the "Two One-Sided Test" (TOST) procedure [@hartman2018equivalence; @rainey2014arguing].^[This is also useful when interpreting "null effects" for a study's primary outcome measure.] Another strategy is to calculate *statistics that are less sensitive to sample size* like standardized mean differences (e.g., Cohen's $d$ or Hedge's $g$) and variance ratios.^[It's sometimes useful to go further and look at things like Kolmogorov-Smirnov statistics, Q-Q plots, or statistics for various polynomial transformations of continuous covariates.] A common heuristic is that standardized mean differences greater than around 0.1 or 0.2 are more likely to represent a meaningful imbalance. But this is not a hard and fast rule. For either strategy, results need to be judged on a case-by-case basis with a study's policy context and research goals in mind.
+To see the issues significance testing raises here, consider the common practice of performing separate difference-in-means tests for each of many different covariates. *First*, this approach raises "multiple testing" concerns (see Chapter 5). Briefly, it would be easy to discover one or a few covariates with noticeable mean differences due to random chance rather than real implementation problems. That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates---roughly 5 in 100. *Second*, the relationship between sample size and significance is important. If a sample is too small, large imbalances (suggesting problems with treatment administration) may still be statistically insignificant: the balance test is too underpowered to be informative. On the other hand, when working with large samples, negligible mean differences may still be significant, leading to spurious conclusions of imbalance.
 
-That said, there is often still value in judging whether a sample appears sufficiently incompatible with the joint (or "omnibus") null hypothesis of no overall covariate differences between treatment arms. This focus on overall imbalance helps sidestep the multiple testing concerns noted above (but not the sample size concerns). This kind of test is often implemented [in practice](https://blogs.worldbank.org/en/impactevaluations/tools-trade-joint-test-orthogonality-when-testing-balance) by regressing a treatment indicator on a set of covariates and then calculating a p-value based on the model's F-statistic. Failing to find a statistically significant difference in an *omnibus F-test* does not definitively prove that there are no concerning imbalances. But finding a statistically significant difference tells you that a closer look at covariate balance is clearly needed.
+When comparing individual covariates across treatment arms, one strategy for dealing with the large-sample issue is to rely on equivalence tests, such as the "Two One-Sided Test" (TOST) procedure [@hartman2018equivalence; @rainey2014arguing].^[This is also useful when interpreting "null effects" for a study's primary outcome measure.] Another option is to evaluate statistics that are less sensitive to sample size like standardized mean differences (e.g., Cohen's $d$) and variance ratios. Here, it may be useful for transparency to pre-register what would represent evidence of meaningful treatment administration problems.^[It's sometimes helpful to go further and look at things like Kolmogorov-Smirnov statistics, Q-Q plots, or statistics for various polynomial transformations of continuous covariates.] A common heuristic is that values of Cohen's $d$ greater than around 0.2 or 0.25, or variance ratios greater than 2 and less than 0.5, are more likely to represent a meaningful imbalance [@stuart2010matching]. But these are not hard and fast rules.
 
-There are other ways to perform an omnibus balance test as well, such as using a Wald test or a likelihood ratio (LR) test.^[For an LR test, for instance, the *unrestricted* model would regress treatment on the set of covariates, while the *restricted* model would include only an intercept. This approach may be easier to program than the F-test version when estimating balance on some covariates while adjusting for block fixed effects. In that case, both models should include block fixed effects, and the restricted model would simply drop the covariates (but would no longer be "intercept only").] Additionally, see @hansen_covariate_2008 for an additional omnibus test option called the $d^2$ test, and some evidence that omnibus tests relying on randomization-inference maintain appropriate false positive rates better than other methods we discuss here (the $d^2$ test can be performed under either randomization inference or standard asymptotic-theory inference). 
+There are fewer options for dealing with the small-sample issue above, though procedures employing randomization inference may perform relatively better in small samples [@reichardt1999justifying; @hansen_covariate_2008]. Remember that if the sample is too small to perform a well-powered balance test, it may also be too under-powered for treatment effect estimation.
 
-At a minimum, the Methods Team recommends that all OES projects involving random assignment to treatment perform some form of an omnibus test, and then plan to explore individual covariate imbalances further if this test suggests rejecting the joint null of no covariate differences (using, for example, one of the alternatives discussed above). Time-permitting, more thorough balance checks are always valuable. The Methods Team is happy to consult on what kinds of checks might be most appropriate for particular projects.
+### Omnibus tests
 
-We provide an example of an omnibus test below with a binary treatment, a continuous outcome, and 2 covariates. In this case we use the $d^2$ omnibus balance test function `xBalance()` in the package `RItools` [@hansen_covariate_2008; @bowers_ritools_2016]. The overall $p$-value below shows us that this test provides little evidence against the null hypothesis that treatment ($Z$) really was assigned at random---at least in terms of the relationships between treatment assignment and available covariates. You can think of the test statistic here as a summary measure of mean differences across each covariate.
+Instead of performing separate tests for each covariate, a different tactic is to judge whether a sample appears sufficiently incompatible with the joint (or "omnibus") null hypothesis of no average covariate differences between treatment arms. Above all, this helps sidestep the multiple testing concerns noted above. This kind of test is often implemented [in practice](https://blogs.worldbank.org/en/impactevaluations/tools-trade-joint-test-orthogonality-when-testing-balance) by OLS regressing a treatment indicator on a set of covariates and then calculating a p-value based on the model's F-statistic. Failing to find a significant difference in an *omnibus F-test* does not "prove" that there are no imbalances. But finding a statistically significant difference tells you that a closer look at covariate balance is needed.
+
+An omnibus F-statistic can also be calculated using a [Wald test](https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqhow-are-the-likelihood-ratio-wald-and-lagrange-multiplier-score-tests-different-andor-similar/). The idea is to compare an *unrestricted* model regressing treatment on the set of covariates with a *restricted* model including only an intercept. The Wald test then provide evidence on the null hypothesis that the unrestricted model does not fit the data appreciably better. This method is useful when estimating balance across covariates while adjusting for block fixed effects. Here, both models should include block fixed effects, and the restricted model should simply drop the covariates (but is no longer be "intercept-only"). The Wald test more easily accommodates modifications like alternate standard errors (e.g.: HC2) than other alternatives like a likelihood ratio (LR) test.
+
+Both of these procedures are normally applied in a sampling-based statistical inference framework. But design-based inference (see Chapter 3) is likely more appropriate for balance-testing. Failing to reject the null hypothesis in a randomization-based setting---where "random error" comes from permuting treatment assignment---implies that observed imbalances are not sufficiently distinguishable from the distribution of imbalance estimates we'd expect in a well-run experiment. Notice that this is exactly what we hope to learn from balance tests. Additionally, randomization-based omnibus tests may control the Type-I error rate (i.e, avoids spurious conclusions that a sample is imbalanced) in small-to-moderate samples better than an omnibus LR test [@kerwin2024striking; @hansen_covariate_2008]. See @hansen_covariate_2008 for more discussion of this issue and an introduction to an alternative omnibus balance statistic $(d^{2})$.
+
+### Summary
+
+For OES randomized evaluations, it is preferred to perform some form of omnibus balance test, and to write out a brief plan for exploring individual imbalances further if this test rejects the null hypothesis. Time-permitting, more extensive balance checks are always valuable.
+
+It can be important for balance testing procedures to account for any clustering or blocking employed when assigning treatment [@hansen_covariate_2008]. For blocking, this implies calculating balance within blocks (and then potentially aggregating across blocks to yield a single overall estimate). For clustering, this may imply exploring whether a comparison of cluster-level aggregates (rather than a comparison of individual units) provides evidence of treatment administration problems. Or it might imply just accounting for within-cluster independence when performing significance tests.
+
+All of those modifications are straightforward when estimating an omnibus balance statistic using a regression model. But they can also be incorporated into covariate-by-covariate statistics. For instance, in a blocked design, it may be reasonable to calculate separate standardized mean differences within each block (dividing within-block differences by the overall sample-level standard deviation) and then take a weighted average across blocks (where block-level estimates are weighted by their share of the overall sample size).
+
+### Coded examples
+
+We provide R and Stata examples of various procedures discussed above. In all cases, we evaluate balance for two covariates---`cov1` and `cov2`---under one of the randomized designs discussed earlier in this chapter: complete randomization (`Z2armEqual`), clustered randomization (`Zcluster`), or blocked randomization (`ZblockV2`). First, we illustrate methods for calculating standardized mean differences (SMDs; mean difference divided by pooled SD) and variance ratios (VRs) for each covariate under different randomization designs. Although there are canned packages in R (e.g., `cobalt`) and Stata (e.g., `tebalance`) that can perform some of these calculations, we show how to do them manually.
+
+```{r, eval = F, echo = F, include = F}
+# To use in the stata code
+write.csv(dat1, "Stata code/ch4finaldat1.csv", row.names = F)
+```
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R10')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata10')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide10')">Hide</button>
+::: {#ch4R10 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## List covariates to evaluate
+covlist <- c("cov1", "cov2")
+
+## Define convenience function to perform calculations.
+## May be applied to the whole dataset, cluster-level aggregates,
+## or individual blocks. Assumes only 2 arms. See use below.
+bstats_2arm <- function(
+  d = dat1, # data to calculate balance within
+  n = NULL, # total sample size; only use when d is a subset (blocking)
+  tr = "Z2armEqual", # treatment var name
+  y = "cov2", # evaluate balance for what covariate?
+  psd = sd(dat1$cov2) # what sd to use in SMDs?
+  ) {
+  
+  # Check whether a total sample size was specified.
+  # Default is to impute this from d (assume d is not a subset).
+  if (is.null(n)) {
+    n <- nrow(d)
+  }
+  
+  # Get levels of treatment var, always decreasing order
+  lvl <- unique(d[,tr])
+  lvl <- sort(lvl, decreasing = T)
+  
+  # Difference in means
+  dm <- mean(d[d[,tr]==lvl[1],y], na.rm = T) - 
+    mean(d[d[,tr]==lvl[2],y], na.rm = T)
+  
+  # Standardize using provided SD
+  smd <- dm/psd
+  
+  # Variance ratio
+  vr <- var(d[d[,tr]==lvl[1],y], na.rm = T) / 
+    var(d[d[,tr]==lvl[2],y], na.rm = T)
+  
+  # Proportion of total sample in subset
+  # (1 if n was not set)
+  prop <- nrow(d)/n
+  
+  # Prepare output
+  out <- list(
+    diff_means = dm,
+    smd = smd,
+    vr = vr,
+    prop = prop
+    )
+  
+  return(out)
+  
+}
+
+## Iterate through this covariate list, building a table
+btab <- data.frame(var = covlist)
+for (cov in covlist) {
+
+  # approach 1: overall mean differences and SMDs
+  sel <- btab$var == cov
+  pooled <- sd(dat1[,cov])
+  overall <- bstats_2arm(y = cov, psd = pooled)
+  btab$diff[sel] <- overall$diff_means
+  btab$smd[sel] <- overall$smd
+  btab$vratio[sel] <- overall$vr 
+  
+  # approach 2: cluster-level mean differences and SMD.
+  # approach 1 might be applied for clustered designs as well.
+  by_groups <- list(dat1$buildingID, dat1$Zcluster)
+  clust <- aggregate(dat1[,cov], by = by_groups, mean)
+  clust <- bstats_2arm(d = clust, tr = "Group.2", y = "x", psd = pooled)
+  btab$cluster_diff[sel] <- clust$diff_means
+  btab$cluster_smd[sel] <- clust$smd
+  btab$cluster_vratio[sel] <- clust$vr
+  
+  # approach 3: weighted avg of in-block mean differences and SMDs.
+  blocked <- by(
+    data = dat1, 
+    INDICES = dat1$blockV2,
+    FUN = function(x) {
+      bstats_2arm(x, nrow(dat1), "ZblockV2", cov, pooled)
+      },
+    simplify = F
+    )
+  smd_block <- sapply(blocked, function(x) x$smd)
+  dm_block <- sapply(blocked, function(x) x$diff_means)
+  vr_block <- sapply(blocked, function(x) x$vr)
+  prop_block <- sapply(blocked, function(x) x$prop)
+  btab$block_diff[sel] <- weighted.mean(dm_block,prop_block)
+  btab$block_smd[sel] <- weighted.mean(smd_block,prop_block)
+  btab$block_vratio[sel] <- weighted.mean(vr_block,prop_block)
+  
+}
+
+## View output
+btab[, c(1, 3:4, 6:7, 9:10)]
+```
+:::
+::: {#ch4Stata10 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** List covariates to evaluate
+global covlist cov1 cov2
+
+** Define convenience program to perform calculations.
+** May be applied to the whole dataset, cluster-level aggregates,
+** or individual blocks. Assumes only 2 arms. See use below.
+capture program drop bstats_2arm
+program define bstats_2arm, rclass sortpreserve byable(onecall)
+
+	* varname = evaluate balance for what covariate?
+	* tr = treatment var name
+	* n = total sample size; only use when applied to a subset (Blocks)
+	syntax varname [if] [in], tr(varname) ///
+		[ n(string) psd(string) ttestopt(string) ]
+	
+	* Get list of by vars, passed from "by varlist:" or "bysort varlist:"
+	local by "`_byvars'"
+	
+	* Identify the correct sample to use (if/in)
+	marksample touse
+	
+	* Further by var setup.
+	* Confirm something was passed.
+	capture confirm variable `by'
+	
+	* If not, treat all obs as in same group.
+	if _rc != 0 {
+		tempvar group
+		qui gen `group' = 1 if `touse'	
+	}
+	
+	* If something was, set this up as a grouping var.
+	else {		
+		tempvar group
+		qui egen `group' = group(`by') if `touse'		
+	}
+	
+	* In either case, get the levels as a macro.
+	qui levelsof `group' if `touse', local(by_levels)
+	local len : word count `by_levels'
+	
+	* Make rownames, used below
+	local rownames
+	foreach l of local by_levels {
+		local rownames `rownames' "`l'"
+	}
+	
+	* Get n as sample size in memory, if not specified
+	if "`n'"=="" {
+		qui count if `touse'
+		local n = r(N)
+	}
+	
+	* Get psd as pooled sd of varname, if not specified.
+	* Though varname indicated above, still mapped to `varlist'.
+	if "`psd'"=="" {
+		qui sum `varlist' if `touse', d
+		local psd = r(sd)
+	}
+
+	* Loop through those levels, calculating
+	* desired stats and saving in a matrix.
+	matrix stats = J(`len', 5, .)
+	matrix rownames stats = `rownames'
+	matrix colnames stats = "dm" "smd" "vr" "prop" "group_n"
+	local i = 0
+	foreach l of local by_levels {
+		
+		* Update index
+		local ++i
+		
+		* Difference in means (treatment level 2 is greater value)
+		qui ttest `varlist' if `touse' & `group' == `l', by(`tr') `ttestopt'
+		local dm = r(mu_2) - r(mu_1)
+		matrix stats[`i', 1] = `dm'
+		
+		* Standardize using provided SD
+		local smd = `dm'/`psd'
+		matrix stats[`i', 2] = `smd'
+		
+		* Variance ratio
+		qui ttest `varlist' if `touse' & `group' == `l', by(`tr') `ttestopt'
+		local vr = (r(sd_2)^2)/(r(sd_1)^2)
+		matrix stats[`i', 3] = `vr'
+		
+		* Proportion of total sample in subset
+		* (1 if n was not set)
+		qui count if `touse' & `group' == `l'
+		local prop = r(N)/`n'
+		local group_n = r(N)
+		matrix stats[`i', 4] = `prop'
+		matrix stats[`i', 5] = `group_n'
+			
+	}
+	
+	* Prepare output
+	return matrix stats = stats
+
+end
+
+** Iterate through this covariate list, building a table
+local clen : word count $covlist
+matrix btab = J(`clen', 6, .)
+local rownames
+foreach g of global covlist {
+	local rownames `rownames' "`g'"
+}
+matrix rownames btab = `rownames'
+matrix colnames btab = "smd" "vratio" "cluster_smd" "cluster_vratio" "block_smd" "block_vratio"
+local k = 0
+foreach var of varlist $covlist {
+	
+	* approach 1: overall mean differences and SMDs
+	local ++k
+	qui sum `var', d
+	local pooled = r(sd)
+	bstats_2arm `var', tr(z2armequal) psd(`pooled')
+	matrix btab[`k', 1] = r(stats)[1,"smd"]
+	matrix btab[`k', 2] = r(stats)[1,"vr"]
+	
+	* approach 2: cluster-level mean differences and SMD.
+	* approach 1 might be applied for clustered designs as well.
+	preserve
+		qui collapse (mean) cov1 cov2 (first) zcluster, by(buildingid)
+		bstats_2arm `var', tr(zcluster) psd(`pooled') ttestopt("reverse")
+	restore
+	matrix btab[`k', 3] = r(stats)[1,"smd"]
+	matrix btab[`k', 4] = r(stats)[1,"vr"]
+	
+	* approach 3: weighted avg of in-block mean differences and SMDs.
+	preserve
+		bysort blockv2: bstats_2arm `var', tr(zblockv2) psd(`pooled') n(100)
+		qui clear
+		qui svmat r(stats), names(col)
+		qui sum smd [iw=prop]
+		local blocked_smd = r(mean)
+		qui sum vr [iw=prop]
+		local blocked_vr = r(mean)
+	restore
+	matrix btab[`k', 5] = `blocked_smd'
+	matrix btab[`k', 6] = `blocked_vr'
+	
+}
+
+** View output
+matrix list btab
+```
+::: 
+::: {#ch4Hide10 .tabcontent}
+::: 
+:::
+
+```{r cbycbalance, eval = T, echo = F}
+## List covariates to evaluate
+covlist <- c("cov1", "cov2")
+
+## Define convenience function to perform calculations.
+## May be applied to the whole dataset, cluster-level aggregates,
+## or individual blocks. Assumes only 2 arms. See use below.
+bstats_2arm <- function(
+  d = dat1, # data to calculate balance within
+  n = NULL, # total sample size; only use when d is a subset (blocking)
+  tr = "Z2armEqual", # treatment var name
+  y = "cov2", # evaluate balance for what covariate?
+  psd = sd(dat1$cov2) # what sd to use in SMDs?
+  ) {
+  
+  # Check whether a total sample size was specified.
+  # Default is to impute this from d (assume d is not a subset).
+  if (is.null(n)) {
+    n <- nrow(d)
+  }
+  
+  # Get levels of treatment var, always decreasing order
+  lvl <- unique(d[,tr])
+  lvl <- sort(lvl, decreasing = T)
+  
+  # Difference in means
+  dm <- mean(d[d[,tr]==lvl[1],y], na.rm = T) - 
+    mean(d[d[,tr]==lvl[2],y], na.rm = T)
+  
+  # Standardize using provided SD
+  smd <- dm/psd
+  
+  # Variance ratio
+  vr <- var(d[d[,tr]==lvl[1],y], na.rm = T) / 
+    var(d[d[,tr]==lvl[2],y], na.rm = T)
+  
+  # Proportion of total sample in subset
+  # (1 if n was not set)
+  prop <- nrow(d)/n
+  
+  # Prepare output
+  out <- list(
+    diff_means = dm,
+    smd = smd,
+    vr = vr,
+    prop = prop
+    )
+  
+  return(out)
+  
+}
+
+## Iterate through this covariate list, building a table
+btab <- data.frame(var = covlist)
+for (cov in covlist) {
+
+  # approach 1: overall mean differences and SMDs
+  sel <- btab$var == cov
+  pooled <- sd(dat1[,cov])
+  overall <- bstats_2arm(y = cov, psd = pooled)
+  btab$diff[sel] <- overall$diff_means
+  btab$smd[sel] <- overall$smd
+  btab$vratio[sel] <- overall$vr 
+  
+  # approach 2: cluster-level mean differences and SMD.
+  # approach 1 might be applied for clustered designs as well.
+  by_groups <- list(dat1$buildingID, dat1$Zcluster)
+  clust <- aggregate(dat1[,cov], by = by_groups, mean)
+  clust <- bstats_2arm(d = clust, tr = "Group.2", y = "x", psd = pooled)
+  btab$cluster_diff[sel] <- clust$diff_means
+  btab$cluster_smd[sel] <- clust$smd
+  btab$cluster_vratio[sel] <- clust$vr
+  
+  # approach 3: weighted avg of in-block mean differences and SMDs.
+  blocked <- by(
+    data = dat1, 
+    INDICES = dat1$blockV2,
+    FUN = function(x) {
+      bstats_2arm(x, nrow(dat1), "ZblockV2", cov, pooled)
+      },
+    simplify = F
+    )
+  smd_block <- sapply(blocked, function(x) x$smd)
+  dm_block <- sapply(blocked, function(x) x$diff_means)
+  vr_block <- sapply(blocked, function(x) x$vr)
+  prop_block <- sapply(blocked, function(x) x$prop)
+  btab$block_diff[sel] <- weighted.mean(dm_block,prop_block)
+  btab$block_smd[sel] <- weighted.mean(smd_block,prop_block)
+  btab$block_vratio[sel] <- weighted.mean(vr_block,prop_block)
+  
+}
+
+## View SMDs
+btab[, c(1, 3:4, 6:7, 9:10)]
+```
+
+Applying common heuristics that SMDs should be less than about 0.25 while VRs should be between about 0.5 and 2 [@stuart2010matching], the R output for the completely randomized design doesn't show sufficient evidence of imbalance, though the variance ratios come close (and may therefore be worth a closer look). In contrast, in the clustered design (where balance is assessed by comparing cluster-level aggregates), the variance ratios are more obviously concerning. This makes sense given that treatment was assigned at the level of only 10 clusters. Lastly, for the blocked design (where balance is assessed within each block, and then this is aggregated across blocks), recall that blocks were assigned based on first dividing `cov2` into three groups and then determining whether `cov1` was above it's median. Both groupings are relatively coarse, and the sample sizes within some blocks are quite small, leading blocked randomization to also perform more poorly in terms of variance ratios.
+
+Whether it is better to evaluate overall balance in a blocked/clustered design, or whether it is better to adapt the balance test in some way to the randomization design, depends on the study. But remember that evaluating overall balance in these settings can sometimes yield misleading conclusions [@hansen_covariate_2008].
+
+Next, we illustrate methods for performing an omnibus Wald test under each randomization design, with examples of inference based on either standard asymptotic approximations or permutations of treatment assignment (i.e., randomization inference). Again, while there are canned packages to perform tasks like simulating the randomization distribution (see Chapter 5), we perform this manually for illustration.
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch4R11')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Stata11')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch4Hide11')">Hide</button>
+::: {#ch4R11 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Prepare data for this exercise
+dat1_ <- dat1
+dat1_$Z2armEqual <- ifelse(dat1_$Z2armEqual == "T", 1, 0)
+dat1_$Zcluster <- ifelse(dat1_$Zcluster == "T", 1, 0)
+dat1_$ZblockV2 <- ifelse(dat1$ZblockV2 == "T", 1, 0)
+dat1_$blockV2 <- as.factor(dat1_$blockV2)
+
+## Complete RA omnibus balance check
+bmod0 <- lm(Z2armEqual ~ cov1 + cov2, data=dat1_)
+bmod1 <- lm(Z2armEqual ~ 1, data=dat1_)
+wald <- waldtest(bmod0, bmod1, vcov = vcovHC(bmod0, type = "HC2"))
+
+## Repeat using randomization inference
+ri_dist <- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Z2armEqual_ri <- complete_ra(nrow(dat1_))
+    unrestr <- lm(Z2armEqual_ri ~ cov1 + cov2, data=dat1_)
+    restr <- lm(Z2armEqual_ri ~ 1, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
+    }
+  )
+wald$ri_p <- c(NA, mean(abs(wald$F[2]) <= abs(ri_dist)))
+
+## Cluster RA omnibus balance check (error adjust only)
+bmod0b <- lm(Zcluster ~ cov1 + cov2, data=dat1_)
+bmod1b <- lm(Zcluster ~ 1, data=dat1_)
+waldb <- waldtest(bmod0b, bmod1b, vcov = vcovCL(bmod0b, cluster = dat1_$buildingID, type = "HC2"))
+
+## Repeat using randomization inference
+ri_dist <- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Zcluster_ri <- cluster_ra(cluster=dat1_$buildingID)
+    unrestr <- lm(Zcluster_ri ~ cov1 + cov2, data=dat1_)
+    restr <- lm(Zcluster_ri ~ 1, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovCL(unrestr, cluster = dat1_$buildingID, type = "HC2"))$F[2]
+    }
+  )
+waldb$ri_p <- c(NA, mean(abs(waldb$F[2]) <= abs(ri_dist)))
+
+## Cluster RA balance check: Wald test
+by_groups <- list(dat1_$buildingID, dat1_$Zcluster)
+clust <- aggregate(dat1_[,covlist], by = by_groups, mean)
+bmod2 <- lm(Group.2 ~ cov1 + cov2, data=clust)
+bmod3 <- lm(Group.2 ~ 1, data=clust)
+wald_cl <- waldtest(bmod2, bmod3, vcov = vcovHC(bmod2, type = "HC2"))
+
+## Repeat using randomization inference
+ri_dist <- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Zcluster_ri <- cluster_ra(cluster=dat1_$buildingID)
+    by_groups <- list(dat1_$buildingID, dat1_$Zcluster_ri)
+    clust_ri <- aggregate(dat1_[,covlist], by = by_groups, mean)
+    unrestr <- lm(Group.2 ~ cov1 + cov2, data=clust_ri)
+    restr <- lm(Group.2 ~ 1, data=clust_ri)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
+    }
+  )
+wald_cl$ri_p <- c(NA, mean(abs(wald_cl$F[2]) <= abs(ri_dist)))
+
+## Blocked RA omnibus balance check
+bmod4 <- lm(ZblockV2 ~ cov1 + cov2 + blockV2, data=dat1_)
+bmod5 <- lm(ZblockV2 ~ blockV2, data=dat1_)
+wald_bl <- waldtest(bmod4, bmod5, vcov = vcovHC(bmod4, type = "HC2"))
+
+## Repeat using randomization inference
+ri_dist <- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$ZblockV2_ri <- block_ra(blocks = dat1$blockV2)
+    unrestr <- lm(ZblockV2_ri ~ cov1 + cov2 + blockV2, data=dat1_)
+    restr <- lm(ZblockV2_ri ~ blockV2, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
+    }
+  )
+wald_bl$ri_p <- c(NA, mean(abs(wald_bl$F[2]) <= abs(ri_dist)))
+
+## Organize
+omnibus <- data.frame(
+  design = c("complete RA", "clustered RA (SE only)", "clustered RA", "blocked RA"),
+  wald_p = c(wald$`Pr(>F)`[2], waldb$`Pr(>F)`[2], wald_cl$`Pr(>F)`[2], wald_bl$`Pr(>F)`[2]),
+  ri_p = c(wald$ri_p[2], waldb$ri_p[2], wald_cl$ri_p[2], wald_bl$ri_p[2])
+  )
+omnibus$wald_p <- round(omnibus$wald_p, 3)
+omnibus$ri_p <- round(omnibus$ri_p, 4)
+
+## Review
+omnibus
+```
+:::
+::: {#ch4Stata11 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Prepare data for this exercise, save prior data
+tempfile restore
+save `restore', replace
+local treatlist z2armequal zcluster zblockv2
+foreach l of local treatlist {
+	replace `l' = cond(`l' == "T", "1", "0")
+	destring `l', replace
+}
+
+** Complete RA omnibus balance check
+qui reg z2armequal cov1 cov2, vce(hc2)
+test cov1=cov2=0
+local waldp = r(p)
+local waldf = r(F)
+
+** Repeat using randomization inference
+capture program drop ri_draw
+program define ri_draw, rclass
+	capture drop riZ
+	complete_ra riZ
+	qui reg riZ cov1 cov2, vce(hc2)
+	qui test cov1=cov2=0
+	return scalar ri_F = r(F)
+end
+preserve
+	simulate ///
+	ri_F = r(ri_F), ///
+	reps(1000) nodots: ///
+	ri_draw
+	gen equal_or_greater = abs(ri_F) >= abs(`waldf')
+	qui sum equal_or_greater, meanonly
+	local waldp_ri = r(mean)
+restore
+
+** Cluster RA omnibus balance check (error adjust only)
+* (Note: this is CR1, not CR2)
+qui reg zcluster cov1 cov2, cluster(buildingid)
+qui test cov1=cov2=0
+local waldb_p = r(p)
+local waldb_f = r(F)
+
+** Repeat using randomization inference
+capture program drop ri_draw
+program define ri_draw, rclass
+	capture drop riZ
+	qui sum zcluster
+	local zsum = r(sum)
+	cluster_ra riZ, cluster_var(buildingid)
+	qui reg riZ cov1 cov2, cluster(buildingid)
+	qui test cov1=cov2=0
+	return scalar ri_F = r(F)
+end
+preserve
+	simulate ///
+	ri_F = r(ri_F), ///
+	reps(1000) nodots: ///
+	ri_draw
+	gen equal_or_greater = abs(ri_F) >= abs(`waldb_f')
+	qui sum equal_or_greater, meanonly
+	local waldb_p_ri = r(mean)
+restore
+
+** Cluster RA balance check: Wald test
+preserve
+	collapse (mean) cov1 cov2 (first) zcluster, by(buildingid)
+	qui reg zcluster cov1 cov2, vce(hc2)
+	qui test cov1=cov2=0
+restore
+local wald_clp = r(p)
+local wald_clf = r(F)
+
+** Repeat using randomization inference
+capture program drop ri_draw
+program define ri_draw, rclass
+	capture drop riZ
+	qui sum zcluster
+	local zsum = r(sum)
+	cluster_ra riZ, cluster_var(buildingid)
+	preserve
+		collapse (mean) cov1 cov2 (first) riZ, by(buildingid)
+		qui reg riZ cov1 cov2, vce(hc2)
+		qui test cov1=cov2=0
+	restore
+	return scalar ri_F = r(F)
+end
+preserve
+	simulate ///
+	ri_F = r(ri_F), ///
+	reps(1000) nodots: ///
+	ri_draw
+	gen equal_or_greater = abs(ri_F) >= abs(`wald_clf')
+	qui sum equal_or_greater, meanonly
+	local wald_clp_ri = r(mean)
+restore
+
+** Blocked RA omnibus balance check
+encode blockv2, gen(fblockv2)
+qui reg zblockv2 cov1 cov2 i.fblockv2, vce(hc2)
+test cov1=cov2=0
+local wald_blp = r(p)
+local wald_blf = r(F)
+
+** Repeat using randomization inference
+capture program drop ri_draw
+program define ri_draw, rclass
+	capture drop riZ
+	block_ra riZ, block_var(blockv2)
+	qui reg riZ cov1 cov2 i.fblockv2, vce(hc2)
+	qui test cov1=cov2=0
+	return scalar ri_F = r(F)
+end
+preserve
+	simulate ///
+	ri_F = r(ri_F), ///
+	reps(1000) nodots: ///
+	ri_draw
+	gen equal_or_greater = abs(ri_F) >= abs(`wald_blf')
+	qui sum equal_or_greater, meanonly
+	local wald_blp_ri = r(mean)
+restore
+
+** Organize
+matrix omnibus = J(4, 2, .)
+matrix rownames omnibus = "complete RA" "clustered RA (se only)" "clustered RA" "blocked RA"
+matrix colnames omnibus = "wald_p" "ri_p"
+matrix omnibus[1,1] = round(`waldp', 0.001)
+matrix omnibus[1,2] = round(`waldp_ri', 0.001)
+matrix omnibus[2,1] = round(`waldb_p', 0.001)
+matrix omnibus[2,2] = round(`waldb_p_ri', 0.001)
+matrix omnibus[3,1] = round(`wald_clp', 0.001)
+matrix omnibus[3,2] = round(`wald_clp_ri', 0.001)
+matrix omnibus[4,1] = round(`wald_blp', 0.001)
+matrix omnibus[4,2] = round(`wald_blp_ri', 0.001)
+
+** Review
+matrix list omnibus
+```
+::: 
+::: {#ch4Hide11 .tabcontent}
+::: 
+:::
+
+```{r omnibal, eval = T, echo = F}
+## Prepare data for this exercise
+dat1_ <- dat1
+dat1_$Z2armEqual <- ifelse(dat1_$Z2armEqual == "T", 1, 0)
+dat1_$Zcluster <- ifelse(dat1_$Zcluster == "T", 1, 0)
+dat1_$ZblockV2 <- ifelse(dat1$ZblockV2 == "T", 1, 0)
+dat1_$blockV2 <- as.factor(dat1_$blockV2)
+
+## Complete RA omnibus balance check
+bmod0 <- lm(Z2armEqual ~ cov1 + cov2, data=dat1_)
+bmod1 <- lm(Z2armEqual ~ 1, data=dat1_)
+wald <- waldtest(bmod0, bmod1, vcov = vcovHC(bmod0, type = "HC2"))
+
+## Repeat using randomization inference
+ri_dist <- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Z2armEqual_ri <- complete_ra(nrow(dat1_))
+    unrestr <- lm(Z2armEqual_ri ~ cov1 + cov2, data=dat1_)
+    restr <- lm(Z2armEqual_ri ~ 1, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
+    }
+  )
+wald$ri_p <- c(NA, mean(abs(wald$F[2]) <= abs(ri_dist)))
+
+## Cluster RA omnibus balance check (error adjust only)
+bmod0b <- lm(Zcluster ~ cov1 + cov2, data=dat1_)
+bmod1b <- lm(Zcluster ~ 1, data=dat1_)
+waldb <- waldtest(bmod0b, bmod1b, vcov = vcovCL(bmod0b, cluster = dat1_$buildingID, type = "HC2"))
+
+## Repeat using randomization inference
+ri_dist <- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Zcluster_ri <- cluster_ra(cluster=dat1_$buildingID)
+    unrestr <- lm(Zcluster_ri ~ cov1 + cov2, data=dat1_)
+    restr <- lm(Zcluster_ri ~ 1, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovCL(unrestr, cluster = dat1_$buildingID, type = "HC2"))$F[2]
+    }
+  )
+waldb$ri_p <- c(NA, mean(abs(waldb$F[2]) <= abs(ri_dist)))
+
+## Cluster RA balance check: Wald test
+by_groups <- list(dat1_$buildingID, dat1_$Zcluster)
+clust <- aggregate(dat1_[,covlist], by = by_groups, mean)
+bmod2 <- lm(Group.2 ~ cov1 + cov2, data=clust)
+bmod3 <- lm(Group.2 ~ 1, data=clust)
+wald_cl <- waldtest(bmod2, bmod3, vcov = vcovHC(bmod2, type = "HC2"))
+
+## Repeat using randomization inference
+ri_dist <- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Zcluster_ri <- cluster_ra(cluster=dat1_$buildingID)
+    by_groups <- list(dat1_$buildingID, dat1_$Zcluster_ri)
+    clust_ri <- aggregate(dat1_[,covlist], by = by_groups, mean)
+    unrestr <- lm(Group.2 ~ cov1 + cov2, data=clust_ri)
+    restr <- lm(Group.2 ~ 1, data=clust_ri)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
+    }
+  )
+wald_cl$ri_p <- c(NA, mean(abs(wald_cl$F[2]) <= abs(ri_dist)))
+
+## Blocked RA omnibus balance check
+bmod4 <- lm(ZblockV2 ~ cov1 + cov2 + blockV2, data=dat1_)
+bmod5 <- lm(ZblockV2 ~ blockV2, data=dat1_)
+wald_bl <- waldtest(bmod4, bmod5, vcov = vcovHC(bmod4, type = "HC2"))
+
+## Repeat using randomization inference
+ri_dist <- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$ZblockV2_ri <- block_ra(blocks = dat1$blockV2)
+    unrestr <- lm(ZblockV2_ri ~ cov1 + cov2 + blockV2, data=dat1_)
+    restr <- lm(ZblockV2_ri ~ blockV2, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
+    }
+  )
+wald_bl$ri_p <- c(NA, mean(abs(wald_bl$F[2]) <= abs(ri_dist)))
+
+## Organize
+omnibus <- data.frame(
+  design = c("complete RA", "clustered RA (SE only)", "clustered RA", "blocked RA"),
+  wald_p = c(wald$`Pr(>F)`[2], waldb$`Pr(>F)`[2], wald_cl$`Pr(>F)`[2], wald_bl$`Pr(>F)`[2]),
+  ri_p = c(wald$ri_p[2], waldb$ri_p[2], wald_cl$ri_p[2], wald_bl$ri_p[2])
+  )
+omnibus$wald_p <- round(omnibus$wald_p, 3)
+omnibus$ri_p <- round(omnibus$ri_p, 4)
+
+## Review
+omnibus
+```
+
+In these examples, both standard asymptotic and randomization-based inference yield similar conclusions in terms of failing to reject the joint null of overall imbalance (where "overall imbalance" is quantified using the F-statistic from a Wald test). Given the relatively small sample size in this example, though we do not see sufficient evidence to reject the joint null, concerns that the omnibus test could be under-powered might still support evaluating covariate-by-covariate statistics as we do above as supplementary evidence. 
+
+Finally, while we do not report results in text, we also illustrate how to perform the $d^2$ omnibus test mentioned above for a few different randomization designs. This is implemented in R using the function `balanceTest()` from the package `RItools` [@hansen_covariate_2008; @bowers_ritools_2016]. In Stata, this is implemented through a command that calls the R package and applies it to the data in memory (so it still requires an R installation on the user's computer). This function provides significance test results based on large-sample approximations to the "permutation" or "randomization" distribution of $d^2$ statistic, but its randomization distribution could be computed manually as in our examples above. You can think of the $d^2$ test statistic as a summary measure of mean differences across each covariate.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch4R9')">R code</button>
@@ -763,8 +1484,14 @@ We provide an example of an omnibus test below with a binary treatment, a contin
 ::: {#ch4R9 .tabcontent} 
 <br />
 ```{stata, highlight = F, eval = F}
-randAssessV1 <- balanceTest(Z~cov1+cov2, data=dat1)
-randAssessV1$overall[,]
+## Complete RA
+balanceTest(Z~cov1+cov2, data=dat1)
+
+## Blocked RA
+balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), 
+
+## Blocked RA
+balanceTest(ZblockV3~cov1+cov2+strata(blocksV3)+cluster(clusterID), data=dat1)
 ```
 :::
 ::: {#ch4Stata9 .tabcontent} 
@@ -775,47 +1502,22 @@ randAssessV1$overall[,]
 * This is calling the RItools R package, so you will need R installed.
 * The necessary path to Rterm.exe may look something like this:
 global Rterm_path "C:\Program Files\R\R-4.2.1\bin\x64\Rterm.exe"
+
+** Complete RA
 gen single_block = 1 // To force only unstratified balance testing
 label val zblockV2 // Remove value labels first
 label val z
-
 xbalance z single_block cov1 cov2
-```
-::: 
-::: {#ch4Hide9 .tabcontent}
-::: 
-:::
 
-We can assess the implementation of block-randomized assignment using a similar strategy:
-
-::: {.tab} 
-<button class="tablinks" onclick="unrolltab(event, 'ch4R10')">R code</button>
-<button class="tablinks" onclick="unrolltab(event, 'ch4Stata10')">Stata code</button>
-<button class="tablinks" onclick="unrolltab(event, 'ch4Hide10')">Hide</button>
-::: {#ch4R10 .tabcontent} 
-<br />
-```{stata, highlight = F, eval = F}
-randAssessV3 <- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), data=dat1)
-randAssessV3$overall[,]
-```
-:::
-::: {#ch4Stata10 .tabcontent} 
-<br />
-```{stata, highlight = F, eval = F}
+** Block RA
 * zblockV2 instead of zblockV3
 * zblockV3 is generated using blockTools, with no Stata equivalent
 xbalance zblockV2 blockV2 cov1 cov2 
 ```
 ::: 
-::: {#ch4Hide10 .tabcontent}
+::: {#ch4Hide9 .tabcontent}
 ::: 
 :::
-
-Lastly, we could assess randomization under both blocked and clustered random assignment using a regression model like the following, where `strata(blockID)` and `cluster(clusterID)` refer to block and cluster fixed effects (FEs), respectively.
-
-`Z ~ cov1 + cov2 + strata(blockID) + cluster(clusterID)`
-
-Again, a test statistic summarizing the estimated differences across covariates would be used to calculate a p-value using standard methods. This approach, implemented for instance by the `RItools` package, works well for experiments that are not overly small. But as noted above, in a very small experiment (with relatively few clusters), we might have a more appropriately powered balance test if we rely on randomization-based inference methods instead (i.e., the design-based approach to inference discussed in Chapter 3).
 
 ### What to do with "failed" randomization assessments?
 

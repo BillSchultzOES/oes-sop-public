@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-07-19">
+<meta name="date" content="2024-08-30">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -544,7 +544,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.6" data-path="randomization-choices.html"><a href="randomization-choices.html#other-randomized-designs"><i class="fa fa-check"></i><b>4.6</b> Other randomized designs</a></li>
 <li class="chapter" data-level="4.7" data-path="randomization-choices.html"><a href="randomization-choices.html#as-if-random-assignment"><i class="fa fa-check"></i><b>4.7</b> As-if random assignment</a></li>
 <li class="chapter" data-level="4.8" data-path="randomization-choices.html"><a href="randomization-choices.html#assessing-randomization-balance-testing"><i class="fa fa-check"></i><b>4.8</b> Assessing randomization (balance testing)</a><ul>
-<li class="chapter" data-level="4.8.1" data-path="randomization-choices.html"><a href="randomization-choices.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.8.1</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
+<li class="chapter" data-level="4.8.1" data-path="randomization-choices.html"><a href="randomization-choices.html#separate-tests-for-each-covariate"><i class="fa fa-check"></i><b>4.8.1</b> Separate tests for each covariate</a></li>
+<li class="chapter" data-level="4.8.2" data-path="randomization-choices.html"><a href="randomization-choices.html#omnibus-tests"><i class="fa fa-check"></i><b>4.8.2</b> Omnibus tests</a></li>
+<li class="chapter" data-level="4.8.3" data-path="randomization-choices.html"><a href="randomization-choices.html#summary"><i class="fa fa-check"></i><b>4.8.3</b> Summary</a></li>
+<li class="chapter" data-level="4.8.4" data-path="randomization-choices.html"><a href="randomization-choices.html#coded-examples"><i class="fa fa-check"></i><b>4.8.4</b> Coded examples</a></li>
+<li class="chapter" data-level="4.8.5" data-path="randomization-choices.html"><a href="randomization-choices.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.8.5</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="analysis-choices.html"><a href="analysis-choices.html"><i class="fa fa-check"></i><b>5</b> Analysis choices</a><ul>
@@ -603,7 +607,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="randomization-choices" class="section level1">
 <h1><span class="header-section-number">Chapter 4</span> Randomization choices</h1>
-<p>After working together with our agency partners to translate insights from the social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).<a href="references.html#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.</p>
+<p>After working together with our agency partners to translate insights from the social and behavioral sciences into potential policy recommendations, we assess those new ideas by observing differences or changes in real world outcomes (usually measured using existing administrative data).<a href="references.html#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a> In most cases, we design a randomized control trial (an RCT) to ensure that the differences or changes we observe are driven by the policy intervention itself. Here, we show examples of the different methods we consider for randomly assigning units to treatment. These form the core of the different types of RCTs that we use to build evidence about the effectiveness of the new policies.</p>
 <div id="coin-flipping-vs-urn-drawing-randomization" class="section level2">
 <h2><span class="header-section-number">4.1</span> Coin flipping vs urn-drawing randomization</h2>
 <p>Many discussions of RCTs begin by talking about the intervention being assigned to units (people, schools, offices, districts) &#x201C;by the flip of a coin,&#x201D; or <strong>simple</strong> random assignment. Each unit&#x2019;s assignment to treatment occurs separately, and there is no <em>ex ante</em> guarantee as to exactly what the final number of treated or control units will be. We don&#x2019;t always use this method in practice, even though it is a useful way to introduce the idea that RCTs guarantee fair access to a new policy.</p>
@@ -828,9 +832,9 @@ treatment1  C  T
 same time, they may not provide the same degree of power when testing
 hypotheses about the <em>interaction</em> between the two treatments. If we want to
 learn about how two different interventions work together, then the sample
-size requirements will be much larger than if we were satisfied with learning about each treatment separately.<a href="references.html#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a></p>
+size requirements will be much larger than if we were satisfied with learning about each treatment separately.<a href="references.html#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a></p>
 <p>Importantly, <a href="https://direct.mit.edu/rest/article-abstract/doi/10.1162/rest_a_01317/115272/Factorial-Designs-Model-Selection-and-Incorrect?redirectedFrom=fulltext">recent work</a> highlights some important concerns regarding (1) the consequences of omitting interaction terms when estimating separate effects of each treatment and (2) the interpretation of factorial treatment effects <span class="citation">(Muralidharan, Romero, and W&#xFC;thrich <a href="#ref-muralidharan2023factorial">2023</a>)</span>. First, on (1), even if the interaction between treatments is not of academic or policy relevance, including it in the estimation model may be important for making correct inferences. Specifically, if the true interaction effect is not zero, excluding it from the model could increase the risk of Type I errors (i.e., false positives).</p>
-<p>Meanwhile, on (2), consider a two-arm factorial design with two Treatments, A and B, with 25% of the sample is in each treatment condition. An estimated effect of Treatment A from a model without an interaction should be interpreted as a weighted average of the effects of A across two subsamples: those receiving B (50%), and those not receiving B (50%). This weighted average treatment effect may or may not provide useful information about the likely effects of Treatment A if it is scaled up later.<a href="references.html#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> For instance, there may be a substantial interaction with treatment B, which is rarely administered in reality and which will not be scaled up alongside A. The subgroup effect of A among &#x201C;not B&#x201D; is then more policy relevant, but the subgroup effect of A among &#x201C;receiving B&#x201D; pulls the overall estimated average effect of A away from it.</p>
+<p>Meanwhile, on (2), consider a two-arm factorial design with two Treatments, A and B, with 25% of the sample is in each treatment condition. An estimated effect of Treatment A from a model without an interaction should be interpreted as a weighted average of the effects of A across two subsamples: those receiving B (50%), and those not receiving B (50%). This weighted average treatment effect may or may not provide useful information about the likely effects of Treatment A if it is scaled up later.<a href="references.html#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> For instance, there may be a substantial interaction with treatment B, which is rarely administered in reality and which will not be scaled up alongside A. The subgroup effect of A among &#x201C;not B&#x201D; is then more policy relevant, but the subgroup effect of A among &#x201C;receiving B&#x201D; pulls the overall estimated average effect of A away from it.</p>
 <p>To deal with those issues, the OES Methods Team recommends estimating treatment effects in factorial experiments using a model that includes an interaction, at least as a robustness check.</p>
 </div>
 <div id="block-random-assignment" class="section level2">
@@ -838,7 +842,7 @@ size requirements will be much larger than if we were satisfied with learning ab
 <div id="the-benefits-of-blocking" class="section level3">
 <h3><span class="header-section-number">4.4.1</span> The benefits of blocking</h3>
 <p>Statistical power depends not only on the size of the experiment and the strength of the treatment effect, but also on the amount of &#x201C;noise&#x201D; (non-treatment-related variability) in the outcome measure. Block-randomized designs can help reduce this noise while simultaneously minimizing estimation error&#x2014;the amount that our particular experiment&#x2019;s estimate differs from the truth.</p>
-<p>In a <strong>block-randomized</strong>, or stratified, design, we randomly assign units to the policy intervention <em>within</em> pre-specified groups.<a href="references.html#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a> Suppose we are evaluating whether dedicated navigators can increase the percentage of students living in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. In a real study we can never know the outcome in all buildings both with and without navigators (the &#x201C;fundamental problem of causal inference&#x201D; from the last chapter). But if we could, we might have the data below:</p>
+<p>In a <strong>block-randomized</strong>, or stratified, design, we randomly assign units to the policy intervention <em>within</em> pre-specified groups.<a href="references.html#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> Suppose we are evaluating whether dedicated navigators can increase the percentage of students living in public housing who complete federal financial aid applications (FAFSA). Our experiment will send navigators to two of four eligible buildings, two of which are large and two of which are small. In a real study we can never know the outcome in all buildings both with and without navigators (the &#x201C;fundamental problem of causal inference&#x201D; from the last chapter). But if we could, we might have the data below:</p>
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1250,7 +1254,7 @@ TCTC
 </table>
 <p>With this blocked design restricting the random assignments that are possible, we now get an estimate that is no more than 10 percentage points from the truth. Further, our estimates will have less variability (an SD of 8.16 rather than 11.4). This improves the statistical power of our design.</p>
 <p>For a more realistic example, suppose we are designing an experiment
-where the sample includes patients from two different hospitals. We might randomly assign patients to treatment and control <em>within</em> each hospital. For instance, we might assign half of the patients in hospital &#x201C;A&#x201D; to treatment and half to control, then do the same in hospital &#x201C;B.&#x201D;<a href="references.html#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a> Below, we have 50 units in hospital &#x201C;A&#x201D; and 50 in hospital &#x201C;B&#x201D;:</p>
+where the sample includes patients from two different hospitals. We might randomly assign patients to treatment and control <em>within</em> each hospital. For instance, we might assign half of the patients in hospital &#x201C;A&#x201D; to treatment and half to control, then do the same in hospital &#x201C;B.&#x201D;<a href="references.html#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> Below, we have 50 units in hospital &#x201C;A&#x201D; and 50 in hospital &#x201C;B&#x201D;:</p>
 <div class="tab">
 <button class="tablinks" onclick="unrolltab(event, &apos;ch4R4&apos;)">
 R code
@@ -1599,7 +1603,7 @@ intervention in isolation (rather than the effects when people can communicate w
 <div id="as-if-random-assignment" class="section level2">
 <h2><span class="header-section-number">4.7</span> As-if random assignment</h2>
 <p>In some circumstances, we might judge that randomly assigning a treatment of interest would be logistically infeasible. There are a variety of methods we have applied in such cases in the past to ensure assignment to treatment is at least idiosyncratic or arbitrary. What is key here is not really that assignment is random, <em>per se</em>. Instead, assignment must be conditionally independent of a unit&#x2019;s potential outcomes <span class="citation">(Holland <a href="#ref-holland:1986a">1986</a>)</span>. Random assignment is simply the best way of guaranteeing this. But sometimes, there are available methods of assigning treatment non-randomly that we decide are likely to satisfy this condition. Of course, relying on any as-if random assignment procedure makes it especially important to review evidence of appropriate treatment administration afterwards (see the next section).</p>
-<p>We list a few examples of as-if random assignment procedures below, all of which link to Analysis Plans pre-registered on the OES website. But note that an as-if random procedure that satisfies conditional independence in one study will not necessarily satisfy it in another. This needs to be determined on a case-by-case basis. When possible, it is usually better to layer two arbitrary assignment procedures on top of each other rather than rely on the plausibility of only one.</p>
+<p>We list a few examples of as-if random assignment procedures below, all of which link to Analysis Plans pre-registered on the OES website. But note that an as-if random procedure that satisfies conditional independence in one study will not necessarily satisfy it in another. This needs to be determined on a case-by-case basis. When possible, it may be ideal to layer two arbitrary assignment procedures on top of each other rather than rely on the plausibility of only one.</p>
 <ul>
 <li><p>Grouping people into partitions based on the last two digits of their SSN and then <a href="https://oes.gsa.gov/assets/analysis/1902-analysis-plan.pdf">rotating each partition&#x2019;s treatment assignment monthly</a></p></li>
 <li><p>Assigning program applicants to different conditions based on the <a href="https://oes.gsa.gov/assets/analysis/2310-decreasing-SNAP-denial-rates_analysis-plan.pdf">last digits of their submission time and submission day</a> (are both even, both odd, or is it mixed?)</p></li>
@@ -1608,46 +1612,28 @@ intervention in isolation (rather than the effects when people can communicate w
 </div>
 <div id="assessing-randomization-balance-testing" class="section level2">
 <h2><span class="header-section-number">4.8</span> Assessing randomization (balance testing)</h2>
-<p>If we have covariates, we can evaluate the implementation of a random assignment procedure by exploring covariate differences across treatment arms. The goal is to ensure that the results appear consistent with our intended randomization strategy <span class="citation">(Imai, King, and Stuart <a href="#ref-imai2008misunderstandings">2008</a>)</span>. In the absence of covariates, we can at least assess whether the number of units assigned to each arm (conditional on other design features, such as blocking or stratification) is consistent with our intended strategy.</p>
-<p>There are a number of ways a researcher might use covariates to provide evidence that randomized assignment was implemented as intended. But it&#x2019;s good to be cautious about methods that rely on statistical significance testing. This is especially true when performing separate significance tests for many covariates, which raises &#x201C;multiple testing&#x201D; concerns (see Chapter 5). Briefly, it would be easy to discover one or a few covariates with individual differences-in-means that differ detectably from zero due to random chance (rather than real implementation problems). That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates&#x2014;roughly 5 in 100.</p>
-<p>Another issue is the relationship between significance test results and sample size. If a sample is too small, meaningful imbalances may still happen to be statistically insignificant. And on the other hand, when working with large samples, truly negligible differences may still happen to be statistically significant. When comparing individual covariates across treatment arms, one strategy for dealing with this is to rely on <em>equivalence tests</em>, such as the &#x201C;Two One-Sided Test&#x201D; (TOST) procedure <span class="citation">(Hartman and Hidalgo <a href="#ref-hartman2018equivalence">2018</a>; Rainey <a href="#ref-rainey2014arguing">2014</a>)</span>.<a href="references.html#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a> Another strategy is to calculate <em>statistics that are less sensitive to sample size</em> like standardized mean differences (e.g., Cohen&#x2019;s <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> or Hedge&#x2019;s <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi></mrow><annotation encoding="application/x-tex">g</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span></span></span></span>) and variance ratios.<a href="references.html#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> A common heuristic is that standardized mean differences greater than around 0.1 or 0.2 are more likely to represent a meaningful imbalance. But this is not a hard and fast rule. For either strategy, results need to be judged on a case-by-case basis with a study&#x2019;s policy context and research goals in mind.</p>
-<p>That said, there is often still value in judging whether a sample appears sufficiently incompatible with the joint (or &#x201C;omnibus&#x201D;) null hypothesis of no overall covariate differences between treatment arms. This focus on overall imbalance helps sidestep the multiple testing concerns noted above (but not the sample size concerns). This kind of test is often implemented <a href="https://blogs.worldbank.org/en/impactevaluations/tools-trade-joint-test-orthogonality-when-testing-balance">in practice</a> by regressing a treatment indicator on a set of covariates and then calculating a p-value based on the model&#x2019;s F-statistic. Failing to find a statistically significant difference in an <em>omnibus F-test</em> does not definitively prove that there are no concerning imbalances. But finding a statistically significant difference tells you that a closer look at covariate balance is clearly needed.</p>
-<p>There are other ways to perform an omnibus balance test as well, such as using a Wald test or a likelihood ratio (LR) test.<a href="references.html#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> Additionally, see <span class="citation">Hansen and Bowers (<a href="#ref-hansen_covariate_2008">2008</a>)</span> for an additional omnibus test option called the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> test, and some evidence that omnibus tests relying on randomization-inference maintain appropriate false positive rates better than other methods we discuss here (the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> test can be performed under either randomization inference or standard asymptotic-theory inference).</p>
-<p>At a minimum, the Methods Team recommends that all OES projects involving random assignment to treatment perform some form of an omnibus test, and then plan to explore individual covariate imbalances further if this test suggests rejecting the joint null of no covariate differences (using, for example, one of the alternatives discussed above). Time-permitting, more thorough balance checks are always valuable. The Methods Team is happy to consult on what kinds of checks might be most appropriate for particular projects.</p>
-<p>We provide an example of an omnibus test below with a binary treatment, a continuous outcome, and 2 covariates. In this case we use the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> omnibus balance test function <code>xBalance()</code> in the package <code>RItools</code> <span class="citation">(Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>; Bowers, Fredrickson, and Hansen <a href="#ref-bowers_ritools_2016">2016</a>)</span>. The overall <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value below shows us that this test provides little evidence against the null hypothesis that treatment (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi></mrow><annotation encoding="application/x-tex">Z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span></span></span></span>) really was assigned at random&#x2014;at least in terms of the relationships between treatment assignment and available covariates. You can think of the test statistic here as a summary measure of mean differences across each covariate.</p>
-<div class="tab">
-<button class="tablinks" onclick="unrolltab(event, &apos;ch4R9&apos;)">
-R code
-</button>
-<button class="tablinks" onclick="unrolltab(event, &apos;ch4Stata9&apos;)">
-Stata code
-</button>
-<button class="tablinks" onclick="unrolltab(event, &apos;ch4Hide9&apos;)">
-Hide
-</button>
-<div id="ch4R9" class="tabcontent">
-<p><br></p>
-<pre class="text"><code>randAssessV1 &lt;- balanceTest(Z~cov1+cov2, data=dat1)
-randAssessV1$overall[,]</code></pre>
+<p>If we have covariates, we can evaluate the implementation of a random assignment procedure by exploring covariate differences across treatment arms.<a href="references.html#fn11" class="footnote-ref" id="fnref11"><sup>11</sup></a> The goal is to ensure that the distribution of covariates appears consistent with our intended randomization strategy <span class="citation">(Imai, King, and Stuart <a href="#ref-imai2008misunderstandings">2008</a>)</span>. Since the intention is to draw conclusions about the realized sample and not to make inferences about some broader population, it is important to think carefully about what we learn from significance tests when assessing balance.</p>
+<div id="separate-tests-for-each-covariate" class="section level3">
+<h3><span class="header-section-number">4.8.1</span> Separate tests for each covariate</h3>
+<p>To see the issues significance testing raises here, consider the common practice of performing separate difference-in-means tests for each of many different covariates. <em>First</em>, this approach raises &#x201C;multiple testing&#x201D; concerns (see Chapter 5). Briefly, it would be easy to discover one or a few covariates with noticeable mean differences due to random chance rather than real implementation problems. That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates&#x2014;roughly 5 in 100. <em>Second</em>, the relationship between sample size and significance is important. If a sample is too small, large imbalances (suggesting problems with treatment administration) may still be statistically insignificant: the balance test is too underpowered to be informative. On the other hand, when working with large samples, negligible mean differences may still be significant, leading to spurious conclusions of imbalance.</p>
+<p>When comparing individual covariates across treatment arms, one strategy for dealing with the large-sample issue is to rely on equivalence tests, such as the &#x201C;Two One-Sided Test&#x201D; (TOST) procedure <span class="citation">(Hartman and Hidalgo <a href="#ref-hartman2018equivalence">2018</a>; Rainey <a href="#ref-rainey2014arguing">2014</a>)</span>.<a href="references.html#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a> Another option is to evaluate statistics that are less sensitive to sample size like standardized mean differences (e.g., Cohen&#x2019;s <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span>) and variance ratios. Here, it may be useful for transparency to pre-register what would represent evidence of meaningful treatment administration problems.<a href="references.html#fn13" class="footnote-ref" id="fnref13"><sup>13</sup></a> A common heuristic is that values of Cohen&#x2019;s <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> greater than around 0.2 or 0.25, or variance ratios greater than 2 and less than 0.5, are more likely to represent a meaningful imbalance <span class="citation">(Stuart <a href="#ref-stuart2010matching">2010</a>)</span>. But these are not hard and fast rules.</p>
+<p>There are fewer options for dealing with the small-sample issue above, though procedures employing randomization inference may perform relatively better in small samples <span class="citation">(Reichardt and Gollob <a href="#ref-reichardt1999justifying">1999</a>; Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>)</span>. Remember that if the sample is too small to perform a well-powered balance test, it may also be too under-powered for treatment effect estimation.</p>
 </div>
-<div id="ch4Stata9" class="tabcontent">
-<p><br></p>
-<pre class="text"><code>* ssc install xbalance.
-* See &quot;help xbalance&quot; for additional Stata setup instructions.
-* This is calling the RItools R package, so you will need R installed.
-* The necessary path to Rterm.exe may look something like this:
-global Rterm_path &quot;C:\Program Files\R\R-4.2.1\bin\x64\Rterm.exe&quot;
-gen single_block = 1 // To force only unstratified balance testing
-label val zblockV2 // Remove value labels first
-label val z
-
-xbalance z single_block cov1 cov2</code></pre>
+<div id="omnibus-tests" class="section level3">
+<h3><span class="header-section-number">4.8.2</span> Omnibus tests</h3>
+<p>Instead of performing separate tests for each covariate, a different tactic is to judge whether a sample appears sufficiently incompatible with the joint (or &#x201C;omnibus&#x201D;) null hypothesis of no average covariate differences between treatment arms. Above all, this helps sidestep the multiple testing concerns noted above. This kind of test is often implemented <a href="https://blogs.worldbank.org/en/impactevaluations/tools-trade-joint-test-orthogonality-when-testing-balance">in practice</a> by OLS regressing a treatment indicator on a set of covariates and then calculating a p-value based on the model&#x2019;s F-statistic. Failing to find a significant difference in an <em>omnibus F-test</em> does not &#x201C;prove&#x201D; that there are no imbalances. But finding a statistically significant difference tells you that a closer look at covariate balance is needed.</p>
+<p>An omnibus F-statistic can also be calculated using a <a href="https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqhow-are-the-likelihood-ratio-wald-and-lagrange-multiplier-score-tests-different-andor-similar/">Wald test</a>. The idea is to compare an <em>unrestricted</em> model regressing treatment on the set of covariates with a <em>restricted</em> model including only an intercept. The Wald test then provide evidence on the null hypothesis that the unrestricted model does not fit the data appreciably better. This method is useful when estimating balance across covariates while adjusting for block fixed effects. Here, both models should include block fixed effects, and the restricted model should simply drop the covariates (but is no longer be &#x201C;intercept-only&#x201D;). The Wald test more easily accommodates modifications like alternate standard errors (e.g.: HC2) than other alternatives like a likelihood ratio (LR) test.</p>
+<p>Both of these procedures are normally applied in a sampling-based statistical inference framework. But design-based inference (see Chapter 3) is likely more appropriate for balance-testing. Failing to reject the null hypothesis in a randomization-based setting&#x2014;where &#x201C;random error&#x201D; comes from permuting treatment assignment&#x2014;implies that observed imbalances are not sufficiently distinguishable from the distribution of imbalance estimates we&#x2019;d expect in a well-run experiment. Notice that this is exactly what we hope to learn from balance tests. Additionally, randomization-based omnibus tests may control the Type-I error rate (i.e, avoids spurious conclusions that a sample is imbalanced) in small-to-moderate samples better than an omnibus LR test <span class="citation">(Kerwin, Rostom, and Sterck <a href="#ref-kerwin2024striking">2024</a>; Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>)</span>. See <span class="citation">Hansen and Bowers (<a href="#ref-hansen_covariate_2008">2008</a>)</span> for more discussion of this issue and an introduction to an alternative omnibus balance statistic <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msup><mi>d</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(d^{2})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>.</p>
 </div>
-<div id="ch4Hide9" class="tabcontent">
-
+<div id="summary" class="section level3">
+<h3><span class="header-section-number">4.8.3</span> Summary</h3>
+<p>For OES randomized evaluations, it is preferred to perform some form of omnibus balance test, and to write out a brief plan for exploring individual imbalances further if this test rejects the null hypothesis. Time-permitting, more extensive balance checks are always valuable.</p>
+<p>It can be important for balance testing procedures to account for any clustering or blocking employed when assigning treatment <span class="citation">(Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>)</span>. For blocking, this implies calculating balance within blocks (and then potentially aggregating across blocks to yield a single overall estimate). For clustering, this may imply exploring whether a comparison of cluster-level aggregates (rather than a comparison of individual units) provides evidence of treatment administration problems. Or it might imply just accounting for within-cluster independence when performing significance tests.</p>
+<p>All of those modifications are straightforward when estimating an omnibus balance statistic using a regression model. But they can also be incorporated into covariate-by-covariate statistics. For instance, in a blocked design, it may be reasonable to calculate separate standardized mean differences within each block (dividing within-block differences by the overall sample-level standard deviation) and then take a weighted average across blocks (where block-level estimates are weighted by their share of the overall sample size).</p>
 </div>
-</div>
-<p>We can assess the implementation of block-randomized assignment using a similar strategy:</p>
+<div id="coded-examples" class="section level3">
+<h3><span class="header-section-number">4.8.4</span> Coded examples</h3>
+<p>We provide R and Stata examples of various procedures discussed above. In all cases, we evaluate balance for two covariates&#x2014;<code>cov1</code> and <code>cov2</code>&#x2014;under one of the randomized designs discussed earlier in this chapter: complete randomization (<code>Z2armEqual</code>), clustered randomization (<code>Zcluster</code>), or blocked randomization (<code>ZblockV2</code>). First, we illustrate methods for calculating standardized mean differences (SMDs; mean difference divided by pooled SD) and variance ratios (VRs) for each covariate under different randomization designs. Although there are canned packages in R (e.g., <code>cobalt</code>) and Stata (e.g., <code>tebalance</code>) that can perform some of these calculations, we show how to do them manually.</p>
 <div class="tab">
 <button class="tablinks" onclick="unrolltab(event, &apos;ch4R10&apos;)">
 R code
@@ -1660,24 +1646,559 @@ Hide
 </button>
 <div id="ch4R10" class="tabcontent">
 <p><br></p>
-<pre class="text"><code>randAssessV3 &lt;- balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), data=dat1)
-randAssessV3$overall[,]</code></pre>
+<pre class="text"><code>## List covariates to evaluate
+covlist &lt;- c(&quot;cov1&quot;, &quot;cov2&quot;)
+
+## Define convenience function to perform calculations.
+## May be applied to the whole dataset, cluster-level aggregates,
+## or individual blocks. Assumes only 2 arms. See use below.
+bstats_2arm &lt;- function(
+  d = dat1, # data to calculate balance within
+  n = NULL, # total sample size; only use when d is a subset (blocking)
+  tr = &quot;Z2armEqual&quot;, # treatment var name
+  y = &quot;cov2&quot;, # evaluate balance for what covariate?
+  psd = sd(dat1$cov2) # what sd to use in SMDs?
+  ) {
+  
+  # Check whether a total sample size was specified.
+  # Default is to impute this from d (assume d is not a subset).
+  if (is.null(n)) {
+    n &lt;- nrow(d)
+  }
+  
+  # Get levels of treatment var, always decreasing order
+  lvl &lt;- unique(d[,tr])
+  lvl &lt;- sort(lvl, decreasing = T)
+  
+  # Difference in means
+  dm &lt;- mean(d[d[,tr]==lvl[1],y], na.rm = T) - 
+    mean(d[d[,tr]==lvl[2],y], na.rm = T)
+  
+  # Standardize using provided SD
+  smd &lt;- dm/psd
+  
+  # Variance ratio
+  vr &lt;- var(d[d[,tr]==lvl[1],y], na.rm = T) / 
+    var(d[d[,tr]==lvl[2],y], na.rm = T)
+  
+  # Proportion of total sample in subset
+  # (1 if n was not set)
+  prop &lt;- nrow(d)/n
+  
+  # Prepare output
+  out &lt;- list(
+    diff_means = dm,
+    smd = smd,
+    vr = vr,
+    prop = prop
+    )
+  
+  return(out)
+  
+}
+
+## Iterate through this covariate list, building a table
+btab &lt;- data.frame(var = covlist)
+for (cov in covlist) {
+
+  # approach 1: overall mean differences and SMDs
+  sel &lt;- btab$var == cov
+  pooled &lt;- sd(dat1[,cov])
+  overall &lt;- bstats_2arm(y = cov, psd = pooled)
+  btab$diff[sel] &lt;- overall$diff_means
+  btab$smd[sel] &lt;- overall$smd
+  btab$vratio[sel] &lt;- overall$vr 
+  
+  # approach 2: cluster-level mean differences and SMD.
+  # approach 1 might be applied for clustered designs as well.
+  by_groups &lt;- list(dat1$buildingID, dat1$Zcluster)
+  clust &lt;- aggregate(dat1[,cov], by = by_groups, mean)
+  clust &lt;- bstats_2arm(d = clust, tr = &quot;Group.2&quot;, y = &quot;x&quot;, psd = pooled)
+  btab$cluster_diff[sel] &lt;- clust$diff_means
+  btab$cluster_smd[sel] &lt;- clust$smd
+  btab$cluster_vratio[sel] &lt;- clust$vr
+  
+  # approach 3: weighted avg of in-block mean differences and SMDs.
+  blocked &lt;- by(
+    data = dat1, 
+    INDICES = dat1$blockV2,
+    FUN = function(x) {
+      bstats_2arm(x, nrow(dat1), &quot;ZblockV2&quot;, cov, pooled)
+      },
+    simplify = F
+    )
+  smd_block &lt;- sapply(blocked, function(x) x$smd)
+  dm_block &lt;- sapply(blocked, function(x) x$diff_means)
+  vr_block &lt;- sapply(blocked, function(x) x$vr)
+  prop_block &lt;- sapply(blocked, function(x) x$prop)
+  btab$block_diff[sel] &lt;- weighted.mean(dm_block,prop_block)
+  btab$block_smd[sel] &lt;- weighted.mean(smd_block,prop_block)
+  btab$block_vratio[sel] &lt;- weighted.mean(vr_block,prop_block)
+  
+}
+
+## View output
+btab[, c(1, 3:4, 6:7, 9:10)]</code></pre>
 </div>
 <div id="ch4Stata10" class="tabcontent">
 <p><br></p>
-<pre class="text"><code>* zblockV2 instead of zblockV3
-* zblockV3 is generated using blockTools, with no Stata equivalent
-xbalance zblockV2 blockV2 cov1 cov2 </code></pre>
+<pre class="text"><code>** List covariates to evaluate
+global covlist cov1 cov2
+
+** Define convenience program to perform calculations.
+** May be applied to the whole dataset, cluster-level aggregates,
+** or individual blocks. Assumes only 2 arms. See use below.
+capture program drop bstats_2arm
+program define bstats_2arm, rclass sortpreserve byable(onecall)
+
+    * varname = evaluate balance for what covariate?
+    * tr = treatment var name
+    * n = total sample size; only use when applied to a subset (Blocks)
+    syntax varname [if] [in], tr(varname) ///
+        [ n(string) psd(string) ttestopt(string) ]
+    
+    * Get list of by vars, passed from &quot;by varlist:&quot; or &quot;bysort varlist:&quot;
+    local by &quot;`_byvars&apos;&quot;
+    
+    * Identify the correct sample to use (if/in)
+    marksample touse
+    
+    * Further by var setup.
+    * Confirm something was passed.
+    capture confirm variable `by&apos;
+    
+    * If not, treat all obs as in same group.
+    if _rc != 0 {
+        tempvar group
+        qui gen `group&apos; = 1 if `touse&apos;  
+    }
+    
+    * If something was, set this up as a grouping var.
+    else {      
+        tempvar group
+        qui egen `group&apos; = group(`by&apos;) if `touse&apos;       
+    }
+    
+    * In either case, get the levels as a macro.
+    qui levelsof `group&apos; if `touse&apos;, local(by_levels)
+    local len : word count `by_levels&apos;
+    
+    * Make rownames, used below
+    local rownames
+    foreach l of local by_levels {
+        local rownames `rownames&apos; &quot;`l&apos;&quot;
+    }
+    
+    * Get n as sample size in memory, if not specified
+    if &quot;`n&apos;&quot;==&quot;&quot; {
+        qui count if `touse&apos;
+        local n = r(N)
+    }
+    
+    * Get psd as pooled sd of varname, if not specified.
+    * Though varname indicated above, still mapped to `varlist&apos;.
+    if &quot;`psd&apos;&quot;==&quot;&quot; {
+        qui sum `varlist&apos; if `touse&apos;, d
+        local psd = r(sd)
+    }
+
+    * Loop through those levels, calculating
+    * desired stats and saving in a matrix.
+    matrix stats = J(`len&apos;, 5, .)
+    matrix rownames stats = `rownames&apos;
+    matrix colnames stats = &quot;dm&quot; &quot;smd&quot; &quot;vr&quot; &quot;prop&quot; &quot;group_n&quot;
+    local i = 0
+    foreach l of local by_levels {
+        
+        * Update index
+        local ++i
+        
+        * Difference in means (treatment level 2 is greater value)
+        qui ttest `varlist&apos; if `touse&apos; &amp; `group&apos; == `l&apos;, by(`tr&apos;) `ttestopt&apos;
+        local dm = r(mu_2) - r(mu_1)
+        matrix stats[`i&apos;, 1] = `dm&apos;
+        
+        * Standardize using provided SD
+        local smd = `dm&apos;/`psd&apos;
+        matrix stats[`i&apos;, 2] = `smd&apos;
+        
+        * Variance ratio
+        qui ttest `varlist&apos; if `touse&apos; &amp; `group&apos; == `l&apos;, by(`tr&apos;) `ttestopt&apos;
+        local vr = (r(sd_2)^2)/(r(sd_1)^2)
+        matrix stats[`i&apos;, 3] = `vr&apos;
+        
+        * Proportion of total sample in subset
+        * (1 if n was not set)
+        qui count if `touse&apos; &amp; `group&apos; == `l&apos;
+        local prop = r(N)/`n&apos;
+        local group_n = r(N)
+        matrix stats[`i&apos;, 4] = `prop&apos;
+        matrix stats[`i&apos;, 5] = `group_n&apos;
+            
+    }
+    
+    * Prepare output
+    return matrix stats = stats
+
+end
+
+** Iterate through this covariate list, building a table
+local clen : word count $covlist
+matrix btab = J(`clen&apos;, 6, .)
+local rownames
+foreach g of global covlist {
+    local rownames `rownames&apos; &quot;`g&apos;&quot;
+}
+matrix rownames btab = `rownames&apos;
+matrix colnames btab = &quot;smd&quot; &quot;vratio&quot; &quot;cluster_smd&quot; &quot;cluster_vratio&quot; &quot;block_smd&quot; &quot;block_vratio&quot;
+local k = 0
+foreach var of varlist $covlist {
+    
+    * approach 1: overall mean differences and SMDs
+    local ++k
+    qui sum `var&apos;, d
+    local pooled = r(sd)
+    bstats_2arm `var&apos;, tr(z2armequal) psd(`pooled&apos;)
+    matrix btab[`k&apos;, 1] = r(stats)[1,&quot;smd&quot;]
+    matrix btab[`k&apos;, 2] = r(stats)[1,&quot;vr&quot;]
+    
+    * approach 2: cluster-level mean differences and SMD.
+    * approach 1 might be applied for clustered designs as well.
+    preserve
+        qui collapse (mean) cov1 cov2 (first) zcluster, by(buildingid)
+        bstats_2arm `var&apos;, tr(zcluster) psd(`pooled&apos;) ttestopt(&quot;reverse&quot;)
+    restore
+    matrix btab[`k&apos;, 3] = r(stats)[1,&quot;smd&quot;]
+    matrix btab[`k&apos;, 4] = r(stats)[1,&quot;vr&quot;]
+    
+    * approach 3: weighted avg of in-block mean differences and SMDs.
+    preserve
+        bysort blockv2: bstats_2arm `var&apos;, tr(zblockv2) psd(`pooled&apos;) n(100)
+        qui clear
+        qui svmat r(stats), names(col)
+        qui sum smd [iw=prop]
+        local blocked_smd = r(mean)
+        qui sum vr [iw=prop]
+        local blocked_vr = r(mean)
+    restore
+    matrix btab[`k&apos;, 5] = `blocked_smd&apos;
+    matrix btab[`k&apos;, 6] = `blocked_vr&apos;
+    
+}
+
+** View output
+matrix list btab</code></pre>
 </div>
 <div id="ch4Hide10" class="tabcontent">
 
 </div>
 </div>
-<p>Lastly, we could assess randomization under both blocked and clustered random assignment using a regression model like the following, where <code>strata(blockID)</code> and <code>cluster(clusterID)</code> refer to block and cluster fixed effects (FEs), respectively.</p>
-<p><code>Z ~ cov1 + cov2 + strata(blockID) + cluster(clusterID)</code></p>
-<p>Again, a test statistic summarizing the estimated differences across covariates would be used to calculate a p-value using standard methods. This approach, implemented for instance by the <code>RItools</code> package, works well for experiments that are not overly small. But as noted above, in a very small experiment (with relatively few clusters), we might have a more appropriately powered balance test if we rely on randomization-based inference methods instead (i.e., the design-based approach to inference discussed in Chapter 3).</p>
+<pre><code>   var      smd vratio cluster_smd cluster_vratio block_smd block_vratio
+1 cov1 0.085873 0.6287     0.12226         0.6578  -0.08384        1.521
+2 cov2 0.007977 0.7846     0.02615         2.8861   0.13802        2.026</code></pre>
+<p>Applying common heuristics that SMDs should be less than about 0.25 while VRs should be between about 0.5 and 2 <span class="citation">(Stuart <a href="#ref-stuart2010matching">2010</a>)</span>, the R output for the completely randomized design doesn&#x2019;t show sufficient evidence of imbalance, though the variance ratios come close (and may therefore be worth a closer look). In contrast, in the clustered design (where balance is assessed by comparing cluster-level aggregates), the variance ratios are more obviously concerning. This makes sense given that treatment was assigned at the level of only 10 clusters. Lastly, for the blocked design (where balance is assessed within each block, and then this is aggregated across blocks), recall that blocks were assigned based on first dividing <code>cov2</code> into three groups and then determining whether <code>cov1</code> was above it&#x2019;s median. Both groupings are relatively coarse, and the sample sizes within some blocks are quite small, leading blocked randomization to also perform more poorly in terms of variance ratios.</p>
+<p>Whether it is better to evaluate overall balance in a blocked/clustered design, or whether it is better to adapt the balance test in some way to the randomization design, depends on the study. But remember that evaluating overall balance in these settings can sometimes yield misleading conclusions <span class="citation">(Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>)</span>.</p>
+<p>Next, we illustrate methods for performing an omnibus Wald test under each randomization design, with examples of inference based on either standard asymptotic approximations or permutations of treatment assignment (i.e., randomization inference). Again, while there are canned packages to perform tasks like simulating the randomization distribution (see Chapter 5), we perform this manually for illustration.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch4R11&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch4Stata11&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch4Hide11&apos;)">
+Hide
+</button>
+<div id="ch4R11" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Prepare data for this exercise
+dat1_ &lt;- dat1
+dat1_$Z2armEqual &lt;- ifelse(dat1_$Z2armEqual == &quot;T&quot;, 1, 0)
+dat1_$Zcluster &lt;- ifelse(dat1_$Zcluster == &quot;T&quot;, 1, 0)
+dat1_$ZblockV2 &lt;- ifelse(dat1$ZblockV2 == &quot;T&quot;, 1, 0)
+dat1_$blockV2 &lt;- as.factor(dat1_$blockV2)
+
+## Complete RA omnibus balance check
+bmod0 &lt;- lm(Z2armEqual ~ cov1 + cov2, data=dat1_)
+bmod1 &lt;- lm(Z2armEqual ~ 1, data=dat1_)
+wald &lt;- waldtest(bmod0, bmod1, vcov = vcovHC(bmod0, type = &quot;HC2&quot;))
+
+## Repeat using randomization inference
+ri_dist &lt;- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Z2armEqual_ri &lt;- complete_ra(nrow(dat1_))
+    unrestr &lt;- lm(Z2armEqual_ri ~ cov1 + cov2, data=dat1_)
+    restr &lt;- lm(Z2armEqual_ri ~ 1, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = &quot;HC2&quot;))$F[2]
+    }
+  )
+wald$ri_p &lt;- c(NA, mean(abs(wald$F[2]) &lt;= abs(ri_dist)))
+
+## Cluster RA omnibus balance check (error adjust only)
+bmod0b &lt;- lm(Zcluster ~ cov1 + cov2, data=dat1_)
+bmod1b &lt;- lm(Zcluster ~ 1, data=dat1_)
+waldb &lt;- waldtest(bmod0b, bmod1b, vcov = vcovCL(bmod0b, cluster = dat1_$buildingID, type = &quot;HC2&quot;))
+
+## Repeat using randomization inference
+ri_dist &lt;- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Zcluster_ri &lt;- cluster_ra(cluster=dat1_$buildingID)
+    unrestr &lt;- lm(Zcluster_ri ~ cov1 + cov2, data=dat1_)
+    restr &lt;- lm(Zcluster_ri ~ 1, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovCL(unrestr, cluster = dat1_$buildingID, type = &quot;HC2&quot;))$F[2]
+    }
+  )
+waldb$ri_p &lt;- c(NA, mean(abs(waldb$F[2]) &lt;= abs(ri_dist)))
+
+## Cluster RA balance check: Wald test
+by_groups &lt;- list(dat1_$buildingID, dat1_$Zcluster)
+clust &lt;- aggregate(dat1_[,covlist], by = by_groups, mean)
+bmod2 &lt;- lm(Group.2 ~ cov1 + cov2, data=clust)
+bmod3 &lt;- lm(Group.2 ~ 1, data=clust)
+wald_cl &lt;- waldtest(bmod2, bmod3, vcov = vcovHC(bmod2, type = &quot;HC2&quot;))
+
+## Repeat using randomization inference
+ri_dist &lt;- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$Zcluster_ri &lt;- cluster_ra(cluster=dat1_$buildingID)
+    by_groups &lt;- list(dat1_$buildingID, dat1_$Zcluster_ri)
+    clust_ri &lt;- aggregate(dat1_[,covlist], by = by_groups, mean)
+    unrestr &lt;- lm(Group.2 ~ cov1 + cov2, data=clust_ri)
+    restr &lt;- lm(Group.2 ~ 1, data=clust_ri)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = &quot;HC2&quot;))$F[2]
+    }
+  )
+wald_cl$ri_p &lt;- c(NA, mean(abs(wald_cl$F[2]) &lt;= abs(ri_dist)))
+
+## Blocked RA omnibus balance check
+bmod4 &lt;- lm(ZblockV2 ~ cov1 + cov2 + blockV2, data=dat1_)
+bmod5 &lt;- lm(ZblockV2 ~ blockV2, data=dat1_)
+wald_bl &lt;- waldtest(bmod4, bmod5, vcov = vcovHC(bmod4, type = &quot;HC2&quot;))
+
+## Repeat using randomization inference
+ri_dist &lt;- sapply(
+  1:1000,
+  function(.x) {
+    dat1_$ZblockV2_ri &lt;- block_ra(blocks = dat1$blockV2)
+    unrestr &lt;- lm(ZblockV2_ri ~ cov1 + cov2 + blockV2, data=dat1_)
+    restr &lt;- lm(ZblockV2_ri ~ blockV2, data=dat1_)
+    waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = &quot;HC2&quot;))$F[2]
+    }
+  )
+wald_bl$ri_p &lt;- c(NA, mean(abs(wald_bl$F[2]) &lt;= abs(ri_dist)))
+
+## Organize
+omnibus &lt;- data.frame(
+  design = c(&quot;complete RA&quot;, &quot;clustered RA (SE only)&quot;, &quot;clustered RA&quot;, &quot;blocked RA&quot;),
+  wald_p = c(wald$`Pr(&gt;F)`[2], waldb$`Pr(&gt;F)`[2], wald_cl$`Pr(&gt;F)`[2], wald_bl$`Pr(&gt;F)`[2]),
+  ri_p = c(wald$ri_p[2], waldb$ri_p[2], wald_cl$ri_p[2], wald_bl$ri_p[2])
+  )
+omnibus$wald_p &lt;- round(omnibus$wald_p, 3)
+omnibus$ri_p &lt;- round(omnibus$ri_p, 4)
+
+## Review
+omnibus</code></pre>
+</div>
+<div id="ch4Stata11" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Prepare data for this exercise, save prior data
+tempfile restore
+save `restore&apos;, replace
+local treatlist z2armequal zcluster zblockv2
+foreach l of local treatlist {
+    replace `l&apos; = cond(`l&apos; == &quot;T&quot;, &quot;1&quot;, &quot;0&quot;)
+    destring `l&apos;, replace
+}
+
+** Complete RA omnibus balance check
+qui reg z2armequal cov1 cov2, vce(hc2)
+test cov1=cov2=0
+local waldp = r(p)
+local waldf = r(F)
+
+** Repeat using randomization inference
+capture program drop ri_draw
+program define ri_draw, rclass
+    capture drop riZ
+    complete_ra riZ
+    qui reg riZ cov1 cov2, vce(hc2)
+    qui test cov1=cov2=0
+    return scalar ri_F = r(F)
+end
+preserve
+    simulate ///
+    ri_F = r(ri_F), ///
+    reps(1000) nodots: ///
+    ri_draw
+    gen equal_or_greater = abs(ri_F) &gt;= abs(`waldf&apos;)
+    qui sum equal_or_greater, meanonly
+    local waldp_ri = r(mean)
+restore
+
+** Cluster RA omnibus balance check (error adjust only)
+* (Note: this is CR1, not CR2)
+qui reg zcluster cov1 cov2, cluster(buildingid)
+qui test cov1=cov2=0
+local waldb_p = r(p)
+local waldb_f = r(F)
+
+** Repeat using randomization inference
+capture program drop ri_draw
+program define ri_draw, rclass
+    capture drop riZ
+    qui sum zcluster
+    local zsum = r(sum)
+    cluster_ra riZ, cluster_var(buildingid)
+    qui reg riZ cov1 cov2, cluster(buildingid)
+    qui test cov1=cov2=0
+    return scalar ri_F = r(F)
+end
+preserve
+    simulate ///
+    ri_F = r(ri_F), ///
+    reps(1000) nodots: ///
+    ri_draw
+    gen equal_or_greater = abs(ri_F) &gt;= abs(`waldb_f&apos;)
+    qui sum equal_or_greater, meanonly
+    local waldb_p_ri = r(mean)
+restore
+
+** Cluster RA balance check: Wald test
+preserve
+    collapse (mean) cov1 cov2 (first) zcluster, by(buildingid)
+    qui reg zcluster cov1 cov2, vce(hc2)
+    qui test cov1=cov2=0
+restore
+local wald_clp = r(p)
+local wald_clf = r(F)
+
+** Repeat using randomization inference
+capture program drop ri_draw
+program define ri_draw, rclass
+    capture drop riZ
+    qui sum zcluster
+    local zsum = r(sum)
+    cluster_ra riZ, cluster_var(buildingid)
+    preserve
+        collapse (mean) cov1 cov2 (first) riZ, by(buildingid)
+        qui reg riZ cov1 cov2, vce(hc2)
+        qui test cov1=cov2=0
+    restore
+    return scalar ri_F = r(F)
+end
+preserve
+    simulate ///
+    ri_F = r(ri_F), ///
+    reps(1000) nodots: ///
+    ri_draw
+    gen equal_or_greater = abs(ri_F) &gt;= abs(`wald_clf&apos;)
+    qui sum equal_or_greater, meanonly
+    local wald_clp_ri = r(mean)
+restore
+
+** Blocked RA omnibus balance check
+encode blockv2, gen(fblockv2)
+qui reg zblockv2 cov1 cov2 i.fblockv2, vce(hc2)
+test cov1=cov2=0
+local wald_blp = r(p)
+local wald_blf = r(F)
+
+** Repeat using randomization inference
+capture program drop ri_draw
+program define ri_draw, rclass
+    capture drop riZ
+    block_ra riZ, block_var(blockv2)
+    qui reg riZ cov1 cov2 i.fblockv2, vce(hc2)
+    qui test cov1=cov2=0
+    return scalar ri_F = r(F)
+end
+preserve
+    simulate ///
+    ri_F = r(ri_F), ///
+    reps(1000) nodots: ///
+    ri_draw
+    gen equal_or_greater = abs(ri_F) &gt;= abs(`wald_blf&apos;)
+    qui sum equal_or_greater, meanonly
+    local wald_blp_ri = r(mean)
+restore
+
+** Organize
+matrix omnibus = J(4, 2, .)
+matrix rownames omnibus = &quot;complete RA&quot; &quot;clustered RA (se only)&quot; &quot;clustered RA&quot; &quot;blocked RA&quot;
+matrix colnames omnibus = &quot;wald_p&quot; &quot;ri_p&quot;
+matrix omnibus[1,1] = round(`waldp&apos;, 0.001)
+matrix omnibus[1,2] = round(`waldp_ri&apos;, 0.001)
+matrix omnibus[2,1] = round(`waldb_p&apos;, 0.001)
+matrix omnibus[2,2] = round(`waldb_p_ri&apos;, 0.001)
+matrix omnibus[3,1] = round(`wald_clp&apos;, 0.001)
+matrix omnibus[3,2] = round(`wald_clp_ri&apos;, 0.001)
+matrix omnibus[4,1] = round(`wald_blp&apos;, 0.001)
+matrix omnibus[4,2] = round(`wald_blp_ri&apos;, 0.001)
+
+** Review
+matrix list omnibus</code></pre>
+</div>
+<div id="ch4Hide11" class="tabcontent">
+
+</div>
+</div>
+<pre><code>                  design wald_p  ri_p
+1            complete RA  0.907 0.886
+2 clustered RA (SE only)  0.680 0.703
+3           clustered RA  0.834 0.814
+4             blocked RA  0.242 0.261</code></pre>
+<p>In these examples, both standard asymptotic and randomization-based inference yield similar conclusions in terms of failing to reject the joint null of overall imbalance (where &#x201C;overall imbalance&#x201D; is quantified using the F-statistic from a Wald test). Given the relatively small sample size in this example, though we do not see sufficient evidence to reject the joint null, concerns that the omnibus test could be under-powered might still support evaluating covariate-by-covariate statistics as we do above as supplementary evidence.</p>
+<p>Finally, while we do not report results in text, we also illustrate how to perform the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> omnibus test mentioned above for a few different randomization designs. This is implemented in R using the function <code>balanceTest()</code> from the package <code>RItools</code> <span class="citation">(Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>; Bowers, Fredrickson, and Hansen <a href="#ref-bowers_ritools_2016">2016</a>)</span>. In Stata, this is implemented through a command that calls the R package and applies it to the data in memory (so it still requires an R installation on the user&#x2019;s computer). This function provides significance test results based on large-sample approximations to the &#x201C;permutation&#x201D; or &#x201C;randomization&#x201D; distribution of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> statistic, but its randomization distribution could be computed manually as in our examples above. You can think of the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span> test statistic as a summary measure of mean differences across each covariate.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch4R9&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch4Stata9&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch4Hide9&apos;)">
+Hide
+</button>
+<div id="ch4R9" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Complete RA
+balanceTest(Z~cov1+cov2, data=dat1)
+
+## Blocked RA
+balanceTest(ZblockV3~cov1+cov2+strata(blocksV3), 
+
+## Blocked RA
+balanceTest(ZblockV3~cov1+cov2+strata(blocksV3)+cluster(clusterID), data=dat1)</code></pre>
+</div>
+<div id="ch4Stata9" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>* ssc install xbalance.
+* See &quot;help xbalance&quot; for additional Stata setup instructions.
+* This is calling the RItools R package, so you will need R installed.
+* The necessary path to Rterm.exe may look something like this:
+global Rterm_path &quot;C:\Program Files\R\R-4.2.1\bin\x64\Rterm.exe&quot;
+
+** Complete RA
+gen single_block = 1 // To force only unstratified balance testing
+label val zblockV2 // Remove value labels first
+label val z
+xbalance z single_block cov1 cov2
+
+** Block RA
+* zblockV2 instead of zblockV3
+* zblockV3 is generated using blockTools, with no Stata equivalent
+xbalance zblockV2 blockV2 cov1 cov2 </code></pre>
+</div>
+<div id="ch4Hide9" class="tabcontent">
+
+</div>
+</div>
+</div>
 <div id="what-to-do-with-failed-randomization-assessments" class="section level3">
-<h3><span class="header-section-number">4.8.1</span> What to do with &#x201C;failed&#x201D; randomization assessments?</h3>
+<h3><span class="header-section-number">4.8.5</span> What to do with &#x201C;failed&#x201D; randomization assessments?</h3>
 <p>Observing a <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span>-value of less than .05 in an omnibus test like the one above ought to trigger extra scrutiny about implementation and/or how the data were recorded. For example, we might respond by contacting our agency partner to learn more about how random numbers were generated or how random assignment code was used (particularly if we didn&#x2019;t perform the random assignment ourselves). In many circumstances, this follow-up investigation might suggest that random assignment was implemented correctly, and that our understanding of the design or the data was simply incorrect (i.e., the balance test was not performed correctly). But sometimes, a follow-up investigation may not turn up any misunderstandings at all. In those situations, we will need to determine whether our rejection of the null hypothesis of appropriate random assignment is a false positive, or evidence of a more systematic problem.</p>
 <p>If our rejection of the null hypothesis appears to be driven by one or more covariates that are substantively important&#x2014;say, the variable <code>age</code> looks very imbalanced between treated and control groups in a health-related randomized trial&#x2014;then we might present both the unadjusted results and a separate set of results that adjust for the covariate(s) in question (e.g., through a stratified difference-in-means estimator, or by using them as controls in a linear regression). Large differences between the adjusted and unadjusted estimates might help us interpret our findings: estimating separate effects within different age groups, for example, might tell us something useful about the particular context of a study and inform the conclusions we draw.</p>
 
@@ -1713,8 +2234,17 @@ xbalance zblockV2 blockV2 cov1 cov2 </code></pre>
 <div id="ref-rainey2014arguing">
 <p>Rainey, Carlisle. 2014. &#x201C;Arguing for a Negligible Effect.&#x201D; <em>American Journal of Political Science</em> 58 (4): 1083&#x2013;91.</p>
 </div>
+<div id="ref-stuart2010matching">
+<p>Stuart, Elizabeth A. 2010. &#x201C;Matching Methods for Causal Inference: A Review and a Look Forward.&#x201D; <em>Statistical Science: A Review Journal of the Institute of Mathematical Statistics</em> 25 (1): 1.</p>
+</div>
+<div id="ref-reichardt1999justifying">
+<p>Reichardt, Charles S, and Harry F Gollob. 1999. &#x201C;Justifying the Use and Increasing the Power of at Test for a Randomized Experiment with a Convenience Sample.&#x201D; <em>Psychological Methods</em> 4 (1): 117.</p>
+</div>
 <div id="ref-hansen_covariate_2008">
 <p>Hansen, Ben B., and Jake Bowers. 2008. &#x201C;Covariate Balance in Simple, Stratified and Clustered Comparative Studies.&#x201D; <em>Statistical Science</em> 23 (2): 219&#x2013;36.</p>
+</div>
+<div id="ref-kerwin2024striking">
+<p>Kerwin, Jason, Nada Rostom, and Olivier Sterck. 2024. &#x201C;Striking the Right Balance: Why Standard Balance Tests over-Reject the Null, and How to Fix It.&#x201D; Institute of Labor Economics (IZA).</p>
 </div>
 <div id="ref-bowers_ritools_2016">
 <p>Bowers, Jake, Mark Fredrickson, and Ben Hansen. 2016. <em>RItools: Randomization Inference Tools</em>.</p>

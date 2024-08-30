@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-07-19">
+<meta name="date" content="2024-08-30">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -544,7 +544,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.6" data-path="randomization-choices.html"><a href="randomization-choices.html#other-randomized-designs"><i class="fa fa-check"></i><b>4.6</b> Other randomized designs</a></li>
 <li class="chapter" data-level="4.7" data-path="randomization-choices.html"><a href="randomization-choices.html#as-if-random-assignment"><i class="fa fa-check"></i><b>4.7</b> As-if random assignment</a></li>
 <li class="chapter" data-level="4.8" data-path="randomization-choices.html"><a href="randomization-choices.html#assessing-randomization-balance-testing"><i class="fa fa-check"></i><b>4.8</b> Assessing randomization (balance testing)</a><ul>
-<li class="chapter" data-level="4.8.1" data-path="randomization-choices.html"><a href="randomization-choices.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.8.1</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
+<li class="chapter" data-level="4.8.1" data-path="randomization-choices.html"><a href="randomization-choices.html#separate-tests-for-each-covariate"><i class="fa fa-check"></i><b>4.8.1</b> Separate tests for each covariate</a></li>
+<li class="chapter" data-level="4.8.2" data-path="randomization-choices.html"><a href="randomization-choices.html#omnibus-tests"><i class="fa fa-check"></i><b>4.8.2</b> Omnibus tests</a></li>
+<li class="chapter" data-level="4.8.3" data-path="randomization-choices.html"><a href="randomization-choices.html#summary"><i class="fa fa-check"></i><b>4.8.3</b> Summary</a></li>
+<li class="chapter" data-level="4.8.4" data-path="randomization-choices.html"><a href="randomization-choices.html#coded-examples"><i class="fa fa-check"></i><b>4.8.4</b> Coded examples</a></li>
+<li class="chapter" data-level="4.8.5" data-path="randomization-choices.html"><a href="randomization-choices.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.8.5</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="analysis-choices.html"><a href="analysis-choices.html"><i class="fa fa-check"></i><b>5</b> Analysis choices</a><ul>
@@ -620,8 +624,8 @@ Testing</a> describes more about the basics of hypothesis tests. Our team tries 
 </div>
 <div id="unbiased-estimators" class="section level2">
 <h2><span class="header-section-number">2.3</span> Unbiased estimators</h2>
-<p>While 2.1 focuses on the problem of random noise, we also need to think about whether an estimator produces results that are <em>consistently</em> off in a particular direction. A good estimation procedure (i.e., a method of estimating a treatment effect) should not systematically over-estimate or under-estimate the truth&#x2014;i.e., it should be <em>unbiased</em>. The difference-in-means between a randomly assigned treatment and control group is well known to be an unbiased estimator of the sample average treatment effect, so this is often a primary quantity of interest that our team reports. In practice, we usually estimate this using linear regression.</p>
-<p>Even when dealing with binary outcomes, we still tend to prefer linear regression over, e.g., logistic (Logit) regression. This is partly due to concerns about the additional assumptions Logit regression might require when interpreting results <span class="citation">(Gomila <a href="#ref-gomila2021logistic">2021</a>; Freedman <a href="#ref-freedman2008randomization">2008</a><a href="#ref-freedman2008randomization">b</a>)</span>, but also due to linear regression&#x2019;s ease of interpretation and well-established properties as an average treatment effect estimator <span class="citation">(Angrist and Pischke <a href="#ref-angrist2009mostly">2009</a>; Aronow and Miller <a href="#ref-aronow2019foundations">2019</a>)</span>. But we do consider alternative models or estimators in situations where we think they will significantly out perform linear regression.</p>
+<p>While the other criteria focus on the problem of random noise, we also need to think about whether an estimator produces results that are <em>consistently</em> wrong in a particular direction. A good estimation procedure (i.e., a method of estimating a treatment effect) should not systematically over-estimate or under-estimate the truth&#x2014;i.e., it should be <em>unbiased</em>. The difference-in-means between a randomly assigned treatment and control group is well known to be an unbiased estimator of the sample average treatment effect, so this is often a primary quantity of interest that our team reports. In practice, we usually estimate this using a statistical procedure called linear regression.</p>
+<p>Even when dealing with binary outcomes, we still tend to prefer linear regression over other statistical models designed for binary outcomes such as logistic (Logit) regression. This is partly due to concerns about the additional assumptions Logit regression might require when interpreting results <span class="citation">(Gomila <a href="#ref-gomila2021logistic">2021</a>; Freedman <a href="#ref-freedman2008randomization">2008</a><a href="#ref-freedman2008randomization">b</a>)</span>, and to linear regression&#x2019;s ease of interpretation and well-established properties as an average treatment effect estimator <span class="citation">(Angrist and Pischke <a href="#ref-angrist2009mostly">2009</a>; Aronow and Miller <a href="#ref-aronow2019foundations">2019</a>)</span>. That said, we do consider alternative models or estimators in situations where we think they will significantly out perform linear regression.</p>
 
 </div>
 </div>

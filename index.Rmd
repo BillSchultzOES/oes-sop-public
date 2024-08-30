@@ -194,7 +194,7 @@ the General Services Administration](https://oes.gsa.gov/) (the OES), tends to d
 own future selves](http://dx.doi.org/10.4067/S0718-090X2016000300011), and helps us harness the power that arises from our disciplinary diversity. That
 is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them.
 
-*Second*, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. It should help guide our future experimental design and analysis. However, any given project may encounter reasons to make different decisions than those we describe here. This SOP should be thought of as more of a coordination device than a set of firm requirements.
+*Second*, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. Projects will sometimes encounter good reasons to make different decisions than those we describe here. But the SOP represents our methodological thinking in "all else equal" situations.
 
 *Third*, on a related note, this document should help us write better analysis plans and speed our practice of re-analysis. (Our team insists on a blind re-analysis of every study as a quality control for our results before they are reported to our agency partners.)
 
@@ -204,22 +204,19 @@ is, current and past team members have made decisions about how to approach stat
 
 ### We (mostly) focus on randomized field experiments. {-}
 
-This document focuses on design and analysis of randomized field experiments.
-Although we include some discussion about non-randomized studies, often known
-as observational studies, until now, our team has focused primarily on
-randomized field experiments. We plan to include more discussion of observational studies as we pursue more in the future.
+This document focuses on design and analysis of randomized field experiments. Although we include some discussion about non-randomized studies, often known as observational studies, until now, our team has focused primarily on randomized field experiments. We plan to include more discussion of observational studies as we pursue more in the future.
 
 ### We (mostly) present examples using R {-}
 
 We use the [R](http://r-project.org) statistical analysis language in this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the locus of development for many of the latest new statistical techniques for social and behavioral scientists. 
 
-Of course, members of our team also use other software like Stata, SAS, SPSS, and Python (either in addition to or instead of R). To help improve accessibility to Stata users in particular, much of the R code in this SOP is now accompanied by code show how the same task, or something similar, could be accomplished in Stata. However, all reported results and all figures are generated based only on the R code.
+Of course, members of our team also use other software like Stata, SAS, SPSS, and Python. To help improve accessibility to Stata users in particular, much of the R code in this SOP is accompanied by code show how the same task, or something similar, could be accomplished in Stata. However, reported results and figures are generated based only on the R code.
 
 ## Structure {-}
 
 This page provides a basic introduction to what the OES SOP hopes to accomplish. The rest of the document can be thought of as consisting of two parts:
 
-* *For policymakers and agency partners* - Chapters 1-3 provide a higher level overview of how statistical tests can be informative for policy learning, some of our priorities when designing tests, and how we prefer to justify the statistical procedures we use. The goal is to provide more context for how OES make analysis decisions and what we aim to learn from impact evaluations. Chapter 3 goes into more technical detail than Chapters 1 and 2, overlapping with the next part of this document.
+* *For policymakers and agency partners* - Chapters 1-3 provide a higher level overview of how statistical tests can inform policy learning, our priorities when designing tests, and how we prefer to justify the tests we use. This provides more context for how OES make analysis decisions and what we aim to learn from impact evaluations. Chapter 3 goes into more technical detail than Chapters 1 and 2, overlapping with the next part of this document.
 
 * *For OES team members* - Chapters 3 and onward are intended to serve as a reference for design and analysis decisions that need to be made at stages of our project process. Chapter 3 reviews a randomization based framework for statistical decision-making that motivates many of the recommendations in later chapters. Chapter 4 is for teams making decisions about how to randomly assignment treatment or ensure that randomization occurred as planned. Chapter 5 is for teams making decisions about how to analyze their data. Finally, Chapter 6 is for teams interested in performing *ex ante* power simulations before making design choices.
 

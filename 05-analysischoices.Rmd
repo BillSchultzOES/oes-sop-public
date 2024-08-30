@@ -238,7 +238,7 @@ It is also relatively common for OES evaluations to encounter situations where t
 <button class="tablinks" onclick="unrolltab(event, 'ch5Hide6')">Hide</button>
 ::: {#ch5R6 .tabcontent} 
 <br />
-```{r, eval = F, echo = T}
+```{r, highlight = F, eval = F}
 ## Define a function to re-randomize a single time
 ## and return the desired test statistic.
 ri_draw <- function() {
