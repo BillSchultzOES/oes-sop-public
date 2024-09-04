@@ -41,7 +41,7 @@ Finally, in the [Analysis Plans](https://oes.gsa.gov/methodsdetail/#analysis-pla
 #### Continuous outcomes
 
 In a completely randomized trial where outcomes take on many levels (units
-like times, counts of events, dollars, percentages, etc.) we generally assess the **weak null hypothesis** of no average effects and estimate an average treatment effect. We may also assess the **sharp null hypothesis** of no effect for any unit using some test statistic beside a difference-in-means. What we call the weak null corresponds to the null evaluated by default in many software packages (like R and Stata) when implementing procedures like a difference-in-means test or a linear regression. Meanwhile, the sharp null is more often evaluated when employing design-based permutation inference procedures (example below). Note that, particularly in smaller samples, tests of the sharp null may be somewhat better powered [@reichardt1999justifying]. It may also be possible to justify a hypothesis test of the sharp null in situations where justifying other procedures is more difficult [@rubin1986comment].^[As @rubin1986comment discusses, the stable unit treatment value assumption (SUTVA) holds trivially when testing the sharp null via permutation based inference. But this is not the case when estimating average treatment effects or testing the weak null. This is important for thinking through the difficult problem of evaluating impacts of "attributes" rather than manipulable treatments.]
+like times, counts of events, dollars, percentages, etc.) we generally assess the **weak null hypothesis** of no average treatment effect across units. We may also (or instead) assess the **sharp null hypothesis** of no effect for any unit. What we call the "weak null" here corresponds to the null evaluated by default in many software packages (like R and Stata) when implementing procedures like a difference-in-means test or a linear regression. Meanwhile, the sharp null is evaluated when relying on design-based randomization inference. Particularly in smaller samples, tests of the sharp null may be better powered [@reichardt1999justifying]. It may also be possible to justify a hypothesis test of the sharp null in some limited situations where justifying other procedures is more difficult [@rubin1986comment].^[As @rubin1986comment discusses, the stable unit treatment value assumption (SUTVA) holds trivially when testing the sharp null via randomization inference. But this is not the case when estimating average treatment effects or testing the weak null. For instance, this can be useful for thinking through the difficult problem of evaluating impacts of "attributes" rather than manipulable treatments.]
 
 ##### Estimating the average treatment effect and testing the weak null of no average effects
 
@@ -107,15 +107,23 @@ estAndSE1OLS <- lm(Y~Z,data=dat1)
 summary(estAndSE1OLS)$coef
 ```
 
-The standard errors we prefer, HC2, reflect repeated randomization from a fixed experimental pool. As discussed in Chapter 3, @lin_agnostic_2013 and @samii_equivalencies_2012 show that the standard error estimator of an unbiased average treatment effect within a "finite-sample" or design based framework is equivalent to what is called the HC2 standard error. In R, these SEs are produced by default by the `estimatr` package's function `difference_in_means()` and the `lmtest` package's functions `coeftest()` and `coefci()`. They can also be produced using the `vcovHC()` function from the `sandwich` package. In Stata, when using `regress`, these can be estimated using the `vce(hc2)` option (they are not the default used by the `robust` option). Some other commands offer a similar option; check the help file to see.
+The standard errors we prefer, HC2, reflect repeated randomization from a fixed experimental pool (chapter 3). Specifically, @lin_agnostic_2013 and @samii_equivalencies_2012 show that the standard error estimator of an unbiased average treatment effect within a "finite-sample" or design based framework is equivalent to the HC2 standard error. In R, these SEs are produced by default by the `estimatr` package's function `difference_in_means()` and `lm_robust()`. They can also be produced, for instance, using the `vcovHC()` function from the `sandwich` package or the `lmtest` package's `coeftest()` and `coefci()` functions. In Stata, when using `regress`, these can be estimated using the `vce(hc2)` option (they are not the default used by the `robust` option). Some other commands offer a similar option; check the help file to see.
 
-Our preference for HC2 errors follows from their design-based justification, but many researchers encounter them as one of several methods of correcting OLS standard errors for *heteroscedasticity*. Essentially, this means that the variance of the regression model's error term is not constant across observations. Classical OLS standard errors assume away heteroscedasticity, rendering them potentially inaccurate when heteroscedasticity is present. When using OLS to analyze data from a two-arm randomized trial, heteroscedasticity might appear because the variance of the outcome is different in the treatment and control groups. This is common.
+Our preference for HC2 errors follows from their design-based justification, but most researchers likely encounter them as one of several methods of correcting OLS standard errors for *heteroscedasticity*. Essentially, this means that the variance of the regression model's error term is not constant across observations. Classical OLS standard errors assume away heteroscedasticity, which may render them meaningfully inaccurate when heteroscedasticity is present. When using OLS to analyze data from a two-arm randomized trial, heteroscedasticity might appear because the variance of the outcome is different in the treatment and control groups. This is common.
 
 ##### Testing the sharp null of no effects
 
-We may assess the sharp null of no effects via direct permutation as a check on the assumptions underlying the calculations and statistical inferences above (i.e., "randomization inference"). We tend to use a $t$-statistic as our test statistic here to parallel the above tests. But we could use a rank-based test statistic instead if we were concerned about long-tails (i.e., skew) reducing statistical power, or we could even use the point estimates themselves.
+We may assess the sharp null of no effects via treatment permutation as a check on the assumptions underlying the calculations and statistical inferences above (i.e., "randomization inference"). We could use a $t$-statistic as our test statistic here to parallel the above tests. But we could also use a rank-based test statistic instead if we were concerned about long-tails (i.e., skew) reducing statistical power. In the interests of simplificity, we can even use treatment effect estimates themselves.
 
-Below, we show how to perform these tests using two different R packages and several Stata commands.  First, lets look at the `coin` package [@R-coin] in R and `permute` in Stata:
+The basic procedure is as follows:
+
+- Estimate the treatment effect of interest using the real treatment indicator: $\hat{\tau}_{real}$. As we note, you could use some other statistic here instead, such as a t-statistic or a rank-based statistic.
+
+- Randomly reassign treatment $R$ times, each time following the same assignment procedure used originally. Estimate a treatment effect using each of the simulated re-assignments: $\hat{\tau}_{sim,r}$. This yields a distribution of treatment effects under the sharp null (the "randomization distribution").
+
+- Compare the treatment effect to its randomization distribution to estimate a (two-sided) p-value: $\frac{1}{R}\sum_{r=1}^{R} \mathcal{1}(|\hat{\tau}_{real}| \leq |\hat{\tau}_{sim,r}|)$
+
+Below, we show how to implement this approach using two different R packages and several Stata commands.  First, lets look at the `coin` package [@R-coin] in R and `permute` in Stata:
 
 ```{stata RItest1, eval=FALSE, cache=F,include=F, echo=F}
 ## As of Fall 2023, RItest is only in the randomization-distribution
@@ -230,7 +238,7 @@ test1riR <- conduct_ri(rankY ~ Z, declaration = thedesign1,
 tidy(test1riR)
 ```
 
-It is also relatively common for OES evaluations to encounter situations where these canned approaches aren't useful (e.g., the study design employs an uncommon randomization scheme). It is useful to be able to program randomization inference manually as well. We provide templates for how this could be done in the code below, focusing on complete random assignment. This yields similar results to the canned functions above.
+It is also relatively common for OES evaluations to encounter situations where these canned approaches aren't viable. It is useful to be able to program randomization inference manually. We provide templates for how this could be done in the code below, focusing on complete random assignment. This yields similar results to the canned functions above.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R6')">R code</button>
@@ -580,7 +588,7 @@ print(se_compare)
 
 ##### Testing the sharp null of no effects
 
-With a binary treatment and a binary outcome, we could test hypothesis that outcomes are totally independent of treatment assignment using what is called *Fisher's exact test*. We can also use the permutation-based approaches above to produce results that do not rely on asymptotic assumptions. Below we show how Fisher's exact test, the Exact Cochran-Mantel-Haenszel test, and the Exact $\chi$-squared test produce the same answers.
+With a binary treatment and a binary outcome, we could test hypothesis that outcomes are totally independent of treatment assignment using what is called *Fisher's exact test*. We can also use the permutation-based approaches above to avoid relying on asymptotic (large-sample) assumptions. Below we show how Fisher's exact test, the Exact Cochran-Mantel-Haenszel test, and the Exact $\chi$-squared test produce the same answers.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R9')">R code</button>
@@ -649,6 +657,8 @@ matpt<-prop.test(mat[,2:1])
 matpt
 ```
 
+## Multiple tests
+
 ### Multiple arms
 
 Multiple treatment arms can be analyzed as above, except that we now have
@@ -702,22 +712,23 @@ In general, our analyses of studies with multiple arms should reflect the fact t
 
 Second, multiple tests will often be correlated, and corrections for multiple testing should recognize these relationships --- importantly, accounting for this correlation *will penalize multiple testing less*! When we say that tests are "correlated," we mean that there is some relationship between the test statistics (e.g., a student's t-statistic, or a $\chi^{2}$ statistic) used to perform statistical inference in each case. In other words, it means that the test statistics are jointly distributed --- when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$, but the assumed reference distributions for the test statistics were identical: by accident, ran the same exact code twice. In that case, we are really just doing one test and so we haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
 
-That issue in mind, our default recommendations for multi-arm trials are as follows:
+These issues in mind, our default procedures for evaluating multi-arm trials are as follows:
 
  - First, decide on a focal, **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. Such a test would likely have more statistical power than a test that evaluates each arm separately, and would also have a correctly controlled false positive rate. This would then serve as the primary confirmatory finding we report.
 
- - Next, we perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for overall conclusions on their own.
+ - Second, perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for policy conclusions on their own.
  
- - Alternatively, we might perform confirmatory comparisons that adjust for the collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] Other options we consider are using the Tukey HSD procedure for pairwise comparisons, or testing the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
+ - Alternatively, we might instead make multiple confirmatory comparisons and adjust for their collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.]
+ 
+Other options we consider in some cases are using the Tukey HSD procedure for pairwise comparisons (illustrated below), or testing the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
 
 #### Adjusting p-values and confidence intervals for multiple comparisons
 
 Here is an illustration of different methods of adjusting for multiple comparisons in R.
 
-To reflect that fact that we are making multiple comparisons, we could adjust
-$p$-values from (uncorrelated) tests to control the familywise error rate at $\alpha$ through either a single step procedure (e.g. [Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise stepwise procedure (such as the [Holm correction](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We might also control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)).
+To reflect that fact that we are making multiple comparisons, we could adjust $p$-values from (uncorrelated) tests to control the familywise error rate at $\alpha$ through either a single step procedure (e.g. [Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise stepwise procedure (such as the [Holm correction](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We might also control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)).
 
-Our standard practice is to adjust the FWER for uncorrelated tests using Holm adjustment. For more on such adjustments and multiple comparisons see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
+Our standard practice when making multiple confirmatory comparisons is to adjust the FWER for uncorrelated tests using Holm adjustment. For more on such adjustments and multiple comparisons see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
 
 <!-- Explain
 here about what constitutes a family and how we choose. Also why Holm. And
@@ -807,9 +818,9 @@ print("Hochberg")
 round(p.adjust(pvals, "hochberg"), 3) # FDR instead of FWER
 ```
 
-Simply adjusting $p$-values from this linear model, however, ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. It also ignores potential correlations in the distribution of test statistics (i.e., we are leaving statistical power "on the table").
+Though, simply adjusting $p$-values from this linear model ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. It also ignores potential correlations in the distribution of test statistics (i.e., we are leaving statistical power "on the table").
 
-Instead of the above, and instead of employing simulation to control the FWER (step 7 on [this page](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/)), we can also implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
+Instead of the above, and instead of employing simulation to control the FWER (step 7 on [this page](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/)), we can implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
 Tukey test) calculates multiple-comparison-adjusted $p$-values and simultaneous confidence intervals *for all pairwise comparisons* in a model, while taking into account possible correlations between test statistics. It is similar to a two-sample t-test, but with built in adjustment for multiple comparisons. The test statistic for any comparison between two equally-sized groups $i$ and $j$ is:
 
 $$ t_{ij} = \frac{\bar{y_i}-\bar{y_j}}{s\sqrt{\frac{2}{n}}} $$
