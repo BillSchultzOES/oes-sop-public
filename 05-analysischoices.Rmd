@@ -125,21 +125,6 @@ The basic procedure is as follows:
 
 Below, we show how to implement this approach using two different R packages and several Stata commands.  First, lets look at the `coin` package [@R-coin] in R and `permute` in Stata:
 
-```{stata RItest1, eval=FALSE, cache=F,include=F, echo=F}
-## As of Fall 2023, RItest is only in the randomization-distribution
-## development branch of RItools. This code would work if that branch
-## were installed. Right now (current renv package versions, as of 9/7/23)
-## it is not, and I'm (Bill) hesistant to make the code here reliant
-## on a development package that some Fellows may not be able to
-## easily install under GSA IT permissions. So, excluding this chunk.
-
-# set.seed(12345)
-# test1T <- RItest(y=dat1$Y,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
-# print(test1T)
-# test1R <- RItest(y=dat1$rankY,z=dat1$Z,test.stat=t.mean.difference,samples=1000)
-# print(test1R)
-```
-
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R3')">R code</button>
 <button class="tablinks" onclick="unrolltab(event, 'ch5Stata3')">Stata code</button>
@@ -706,33 +691,25 @@ estAndSE3multarms <- lm_robust(Y~Z4arms,data=dat1)
 print(estAndSE3multarms)
 ```
 
-In this case, we could make $((4 \times 4)-4)/2)=6$ different possible comparisons between pairs of treatment groups. Consider that if there were really no effects of any treatment, and if we chose to reject the null at the standard significance threshold of $\alpha=.05$, we would actually claim that there was at least one effect *more than 5% of the time*. $1 - ( 1 - .05)^6 = .27$, or 27% of the time, we would make a false positive error, claiming an effect existed when it did not.
+In this case, we could make $((4 \times 4)-4)/2)=6$ different possible comparisons between pairs of treatment groups. Consider that if there were really no effect of any treatment, and if we chose to reject the null across treatments at the standard significance threshold of $\alpha=.05$, we would incorrectly claim that there was at least one effect *more than 5% of the time*. $1 - ( 1 - .05)^6 = .27$, or 27% of the time, we would make a false positive error, claiming an effect existed when it did not.
 
-In general, our analyses of studies with multiple arms should reflect the fact that we are making multiple comparisons. Two points are worth emphasizing here. First, the family-wise error rate (FWER) of these tests will differ from the individual error rate of single test. In short, testing more than one hypothesis increases the chance of making at least one Type I error (i.e., incorrectly rejecting a true null hypothesis). Suppose instead of testing a single hypothesis at a conventional significance level of $\alpha = 0.05$ we tested two hypothesis at $\alpha = 0.05$. The probability of retaining both hypotheses is $(1-\alpha)^2 = .9025$  and the probability of rejecting at least one of these hypotheses is $1-(1-\alpha)^2 = .0975$ --- almost double our stated significance threshold of $\alpha = 0.05$.
+Two points are worth emphasizing. First, the "family-wise error rate" (FWER) will differ from the individual error rate of any single test. In short, performing multiple tests to draw a conclusion about a single underlying hypothesis increases our chances of incorrectly rejecting a true null at least once. Suppose that we calculated two p-values and compared each to the conventional significance level $\alpha = 0.05$. The probability of retaining (failing to reject) both hypotheses is $(1-\alpha)^2 = .9025$ and the probability of rejecting at least one of these hypotheses is $1-(1-\alpha)^2 = .0975$---almost double our intended significance threshold of $\alpha = 0.05$ across tests.
 
-Second, multiple tests will often be correlated, and corrections for multiple testing should recognize these relationships --- importantly, accounting for this correlation *will penalize multiple testing less*! When we say that tests are "correlated," we mean that there is some relationship between the test statistics (e.g., a student's t-statistic, or a $\chi^{2}$ statistic) used to perform statistical inference in each case. In other words, it means that the test statistics are jointly distributed --- when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$, but the assumed reference distributions for the test statistics were identical: by accident, ran the same exact code twice. In that case, we are really just doing one test and so we haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
+Second, multiple tests will often be correlated, and corrections for multiple testing should recognize these relationships. Importantly, accounting for this correlation *will penalize multiple testing less*. When we say that tests are "correlated," we mean that there is some relationship between the test statistics (e.g., a student's t-statistic, or a $\chi^{2}$ statistic) used to perform statistical inference. In other words, the test statistics are jointly distributed---when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$, but the assumed reference distributions for the test statistics were identical: by accident, we ran the same exact code twice. In that case, we are really just doing one test and so we haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
 
-These issues in mind, our default procedures for evaluating multi-arm trials are as follows:
+Our default procedure for evaluating multi-arm trials is as follows:
 
- - First, decide on a focal, **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. Such a test would likely have more statistical power than a test that evaluates each arm separately, and would also have a correctly controlled false positive rate. This would then serve as the primary confirmatory finding we report.
+ - First, decide on an omnibus **confirmatory** comparison for the entire evaluation: say, control/status quo *versus* receiving any version of the treatment. Such a test would likely have more statistical power than a test that evaluates each arm separately, and would also have a correctly controlled false positive rate. This would then serve as the primary finding we report.
 
- - Second, perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment --- i.e., as analyses that may inform future projects and give hints about where we might be seeing more or less of an effect, but which cannot serve as a foundation for policy conclusions on their own.
+ - Second, perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment---i.e., as analyses that may inform future projects and suggest where we might be seeing more or less of an effect, but which cannot serve as a foundation for policy conclusions on their own.
  
- - Alternatively, we might instead make multiple confirmatory comparisons and adjust for their collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.]
- 
-Other options we consider in some cases are using the Tukey HSD procedure for pairwise comparisons (illustrated below), or testing the hypotheses in a particular order to preserve statistical power [@rosenbaum2008a].
+ - Alternatively, if we do want to make multiple confirmatory comparisons, we need to adjust their collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] The most appropriate method varies. Options include: canned procedures like Bonferroni adjustment, particularly if test statistics should not be correlated; the Tukey HSD procedure for pairwise comparisons of multiple treatment arms; simulations to calculate a significance threshold that properly controls the collective error rate;^[Generally, we would use simulation method based on randomization inference; see the coded examples below. Though this is less common in social science, studies in other disciplines sometimes simulate the joint distribution of the test statistics instead [@conneely2007so]. This often requires either estimating or assuming the correlation between test statistics.] or performing the tests in a specific order to protect the familywise error rate [@rosenbaum2008a].
 
 #### Adjusting p-values and confidence intervals for multiple comparisons
 
-Here is an illustration of different methods of adjusting for multiple comparisons in R.
+We review some of the adjustments listed above in more detail, with coded examples.
 
-To reflect that fact that we are making multiple comparisons, we could adjust $p$-values from (uncorrelated) tests to control the familywise error rate at $\alpha$ through either a single step procedure (e.g. [Bonferroni correction](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise stepwise procedure (such as the [Holm correction](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We might also control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)).
-
-Our standard practice when making multiple confirmatory comparisons is to adjust the FWER for uncorrelated tests using Holm adjustment. For more on such adjustments and multiple comparisons see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
-
-<!-- Explain
-here about what constitutes a family and how we choose. Also why Holm. And
-when FDR.-->
+First, if we want to rely on established procedures that only require the p-values themselves, we might hold the familywise error rate at $\alpha$ through either a single step correction (e.g. [Bonferroni](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise correction (such as [Holm](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We could also use a procedure control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)). As mentioned above, these adjustments assume the test statistics are uncorrelated. Our default practice when dealing with multiple uncorrelated tests is to apply the Holm correction. For more, see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R12')">R code</button>
@@ -818,9 +795,9 @@ print("Hochberg")
 round(p.adjust(pvals, "hochberg"), 3) # FDR instead of FWER
 ```
 
-Though, simply adjusting $p$-values from this linear model ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. It also ignores potential correlations in the distribution of test statistics (i.e., we are leaving statistical power "on the table").
+However, simply adjusting $p$-values from this linear model ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. And we could be leaving meaningful statistical power "on the table" by applying procedures that ignore correlations between our test statistics.
 
-Instead of the above, and instead of employing simulation to control the FWER (step 7 on [this page](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/)), we can implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
+A different option when dealing with multiple comparisons is to implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
 Tukey test) calculates multiple-comparison-adjusted $p$-values and simultaneous confidence intervals *for all pairwise comparisons* in a model, while taking into account possible correlations between test statistics. It is similar to a two-sample t-test, but with built in adjustment for multiple comparisons. The test statistic for any comparison between two equally-sized groups $i$ and $j$ is:
 
 $$ t_{ij} = \frac{\bar{y_i}-\bar{y_j}}{s\sqrt{\frac{2}{n}}} $$
@@ -918,27 +895,809 @@ par(op)
 
 See also, in R: `pairwise.prop.test` for binary outcomes.
 
-### Multiple Outcomes
+Finally, when test statistics are correlated but a Tukey-styled test is not desirable, we could instead employ randomization inference. To do this, we would start by simulating the distribution of p-values observed for each test across many random permutations of treatment (estimating the "randomization distribution" of our correlated test statistics under the sharp null). After that, we would use the distribution of p-values to calculate an *alternative significance threshold*. By comparing our real p-values to this simulated threshold, we could evaluate statistical significance while properly controling the FWER. We provide examples below for R and Stata. See step 7 on [this page](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/) for an alternative R code example.
 
-Our studies often involve more than one outcome measure. Assessing the effect of even a simple two-arm treatment on 10 different outcomes raises the same kinds of questions that come up in the context of multi-arm trials, generally requiring applications of the methods discussed above.
+In the code below, we first define a function to randomly re-assign treatment and estimate a p-value for each regression coefficient (based on HC2 errors). We repeatedly call this function 1000 times and save the resulting distribution of p-values. We then define two more functions (`find_threshold1` and `find_threshold2`) that illustrate two different methods of calculating an appropriate significance threshold using those p-values (the first may be a little slower, but it walks through the logic in more detail). We also use this simulation to illustrate the advantages of an omnibus approach where we simply perform our confirmatory test using an alternative indicator for receipt of one of the treatment arms.
 
-<!-- Insert examples here? Or not?-->
+Both calculation approaches yield similar significance thresholds. And the collective false positive rate when making multiple comparisons is noticably higher than when making a single, omnibus comparison.
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch5Re40')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch5Statae40')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch5Hidee40')">Hide</button>
+::: {#ch5Re40 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Function to permute treatment and generate
+## p-values / null rejection for each of the
+## three comparisons (i.e., arm 1 vs each of the other 3)
+draw_multiple_arms <- function() {
+  
+  ## Generate a new simulated treatment variable
+  ## (same approach as in chapter 4 to produce the original)
+  dat1$Z4arms_mt <- complete_ra(nrow(dat1), m_each=rep(nrow(dat1)/4,4))
+  
+  ## Generate a binary indicator for being either T2 or T3.
+  dat1$treat_any_mt <- ifelse(dat1$Z4arms_mt == "T1", 0, 1)
+  
+  ## Regress the outcome on treatment dummies.
+  mod_each <- lm_robust(Y ~ as.factor(Z4arms_mt), data = dat1)
+  
+  ## Regress the outcome on the "any treatment" dummy
+  mod_any <- lm_robust(Y ~ treat_any_mt, data = dat1)
+
+  ## Is there at least one null rejection
+  ## for the treatment dummies in mod_each?
+  each <- sum(mod_each$p.value[2:4] <= 0.05) > 0
+
+  ## Is there a null rejection in mod_any?
+  any <- mod_any$p.value[2] <= 0.05
+  
+  ## Prepare output (the p-values are used for
+  ## a simulation-based FWER adjustment below)
+  out <- c(each, any, mod_each$p.value[2:4])
+  names(out) <- c("unadjusted", "any", "pT2", "pT3", "pT4")
+  
+  return(out)
+  
+}
+
+## Calculate the output of that function 1000 times
+multiple_arms <- 
+  
+  ## Default output will be a list
+  replicate(
+    n = 1000,
+    draw_multiple_arms(),
+    simplify = F
+    ) %>%
+  
+  ## Stack the results from each draw as a df instead
+  purrr::reduce(bind_rows)
+
+## A function to use the p-values produced by the above to
+## calculate a simulated significance threshold
+## that controls the FWER rate.
+## METHOD 1: try many possible thresholds,
+## and find the largest one that sets the FWER to
+## at least X% (default = 5). Slower, but
+## makes the logic of this procedure clearer.
+## P-values is a df/matrix where each column is
+## the p-value for a different test, and each row
+## is a set of p-values from a different iteration.
+find_threshold1 <- function(
+  p_values, # Df of p-values (columns = tests, rows = iterations)
+  from = 0.001, # Lowest possible threshold to try
+  to = 0.999, # Highest to try
+  by = 0.001, # Increments to try
+  sig_level = 0.05 # Desired FWER (FW significance level)
+  ) {
+  
+  ## Generate the sequence of thresholds to test
+  test_thresholds <- seq(from, to, by)
+  
+  ## Create a df for each test_threshold:
+  ## threshold and resulting FWER.
+  candidates <-
+    
+    lapply(
+      
+      ## To each test threshold...
+      test_thresholds,
+      
+      ## ... Apply the following function
+      ## (.x is the test threshold):
+      function(.x) {
+        
+        ## Convert each p-value to a null rejection indicator
+        significant <- p_values <= .x
+        
+        ## By row: at least one rejection in this family of tests?
+        at_least_one <- rowSums(significant) >= 1
+        
+        ## From this, we can get a FWER
+        type_I_rate <- mean(at_least_one)
+        
+        ## Prepare output
+        out <- c(.x, type_I_rate)
+        names(out) <- c("threshold", "fwer")
+        
+        return(out)
+        
+      }
+      
+    ) %>%
+    
+    purrr::reduce(bind_rows)
+  
+  ## Keep only candidate thresholds with less than or
+  ## equal to the target set above (default 5%).
+  candidates <- candidates[ candidates$fwer <= sig_level, ]
+  
+  ## Find the largest threshold satisfying that criterion.
+  candidates <- candidates[ order(-candidates$threshold), ]
+  
+  return(candidates$threshold[1])
+  
+}
+
+## Apply this function to calculate the adjusted
+## significance threshold
+sim_alpha1 <- find_threshold1(multiple_arms[, 3:5])
+
+## Method 2: A less intuitive shortcut that runs faster
+find_threshold2 <- function(p_values) {
+  
+  ## Get the minimum p-value in each family of tests
+  min_p_infamily <- apply(p_values, 1, min)
+  
+  ## The 5th percentile of these is (approx.)
+  ## the simulated threshold we want.
+  p5 <- quantile(min_p_infamily, 0.05)
+  
+  return(p5)
+  
+}
+
+## Apply this function to calculate the adjusted
+## significance threshold
+sim_alpha2 <- as.numeric(find_threshold2(multiple_arms[, 3:5]))
+
+## Compare the two simulation approaches:
+print("sim_alpha1")
+sim_alpha1
+print("sim_alpha2")
+sim_alpha2
+
+## Notice: the false positive rate is too high
+## across replications without accounting for
+## multiple tests, but is closer to the right value
+## when relying on the simpler "omnibus" indicator
+## for receipt of some treatment.
+print("False positive rate: separate tests")
+mean(multiple_arms$unadjusted)
+print("False positive rate: omnibus test")
+mean(multiple_arms$any)
+```
+:::
+::: {#ch5Statae40 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Program to permute treatment and generate
+** p-values / null rejection for each of the
+** three comparisons (i.e., arm 1 vs each of the other 3)
+capture program drop draw_multiple_arms
+program define draw_multiple_arms, rclass
+
+	** Generate a new simulated treatment variable
+	** (same approach as in chapter 4 to produce the original)
+	capture drop z4arms_mt
+	qui count
+	local count_list = r(N)/4
+	local count_list : di _dup(4) "`count_list' " 
+	qui complete_ra z4arms_mt, m_each(`count_list')
+
+	** Generate a binary indicator for being either T2 or T3
+	capture drop treat_any_mt
+	qui gen treat_any_mt = cond(z4arms_mt == 1, 0, 1)
+	
+	** Regress the outcome on treatment dummies.
+	** Any of the p-values statistically significant?
+	qui reg y i.z4arms_mt, vce(hc2)
+	local each = (r(table)[4,2] <= 0.05) | (r(table)[4,3] <= 0.05) | (r(table)[4,4] <= 0.05)
+	return scalar each = `each'
+	return scalar pT2 = r(table)[4,2]
+	return scalar pT3 = r(table)[4,3]
+	return scalar pT4 = r(table)[4,4]
+	
+	** Regress the outcome on the "any treatment" dummy
+	qui reg y treat_any_mt, vce(hc2)
+	local any = (r(table)[4,1] <= 0.05)
+	return scalar any = `any'
+
+end
+
+** Program to avoid some typing when specifying what we want from simulate
+capture program drop simlist
+program define simlist
+	local rscalars : r(scalars)
+	global sim_targets "" // must be a global
+	foreach item of local rscalars {
+	  global sim_targets "$sim_targets `item' = r(`item')"
+	}
+end
+
+** Calculate the output of that function 1000 times
+draw_multiple_arms
+simlist
+simulate $sim_targets, reps(1000) nodots: draw_multiple_arms
+
+** A program to use the p-values produced by the above to
+** calculate a simulated significance threshold
+** that controls the FWER rate.
+** METHOD 1: try many possible thresholds,
+** and find the largest one that sets the FWER to
+** at least X% (default = 5). Slower, but
+** makes the logic of this procedure clearer.
+** P-values is a varlist of vars storing p-values
+** from different tests (rows are different iterations,
+** columns are assumed to represent different tests)
+capture program drop find_threshold1
+program define find_threshold1, rclass
+
+	syntax, pvalues(varlist) /// P-value varnames
+	[ to_val(real 0.005) /// Lowest possible threshold to try
+	from_val(real 0.15) /// Highest to try (starts here)
+	by_val(real 0.001) /// Increments to try
+	sig_level(real 0.05) ] // Desired FWER (FW significance level)
+
+	** Make list of candidate thresholds
+	numlist "`from_val'(-`by_val')`to_val'"
+	local candidate_thresholds `r(numlist)'
+	
+	** Minimum p-value across tests
+	tempvar minimum_p_value
+	qui egen `minimum_p_value' = rowmin(`pvalues')
+	
+	** Loop through candidate thresholds
+	foreach l of local candidate_thresholds {
+	
+		** Indicator for at least one test in each randomization being significant
+		** under the candidate threshold in question. If the minimum
+		** is not significant, none of them will be.
+		tempvar at_least_one
+		qui gen `at_least_one' = `minimum_p_value' <= `l'
+		
+		** Get the mean, representing the family-wise type I error rate
+		** for this threshold. It will be stored internally in r().
+		qui sum `at_least_one', meanonly
+		
+		** Evaluate if we're at the target FW type I error rate yet.
+		** If we are, save the threshold and stop the loop.
+		if (`r(mean)' <= `sig_level') {
+			
+			return scalar alpha_fwer = `l'
+			continue, break
+			
+		}
+	
+	}
+
+end
+
+** Apply this program to calculate the adjusted
+** significance threshold
+find_threshold1, pvalues(pT3 pT2 pT4)
+global sim_alpha1 = r(alpha_fwer)
+
+** Method 2: A less intuitive shortcut that runs faster
+capture program drop find_threshold2
+program define find_threshold2, rclass
+
+	syntax, pvalues(varlist)
+	
+	** Get the minimum p-value in each family of tests
+	egen minp = rowmin(`pvalues')
+	qui sum minp, d
+
+	** The 5th percentile of these is (approx.)
+	** the simulated threshold we want.
+	local alpha_fwer = round(`r(p5)', 0.0001)
+	return scalar alpha_fwer = `alpha_fwer'
+
+end
+
+** Apply this program to calculate the adjusted
+** significance threshold
+find_threshold2, pvalues(pT3 pT2 pT4)
+global sim_alpha2 = r(alpha_fwer)
+
+** Compare the two simulation approaches:
+macro list sim_alpha1
+macro list sim_alpha2
+
+** Notice: the false positive rate is too high
+** across replications without accounting for
+** multiple tests, but is closer to the right value
+** when relying on the simpler "omnibus" indicator
+** for receipt of some treatment.
+qui sum each, meanonly
+di r(mean)
+qui sum any, meanonly
+di r(mean)
+```
+::: 
+::: {#ch5Hidee40 .tabcontent}
+::: 
+:::
+
+```{r, eval = T, echo = F, results = "hold", collapse = T}
+## Function to permute treatment and generate
+## p-values / null rejection for each of the
+## three comparisons (i.e., arm 1 vs each of the other 3)
+draw_multiple_arms <- function() {
+  
+  ## Generate a new simulated treatment variable
+  ## (same approach as in chapter 4 to produce the original)
+  dat1$Z4arms_mt <- complete_ra(nrow(dat1), m_each=rep(nrow(dat1)/4,4))
+  
+  ## Generate a binary indicator for being either T2 or T3.
+  dat1$treat_any_mt <- ifelse(dat1$Z4arms_mt == "T1", 0, 1)
+  
+  ## Regress the outcome on treatment dummies.
+  mod_each <- lm_robust(Y ~ as.factor(Z4arms_mt), data = dat1)
+  
+  ## Regress the outcome on the "any treatment" dummy
+  mod_any <- lm_robust(Y ~ treat_any_mt, data = dat1)
+
+  ## Is there at least one null rejection
+  ## for the treatment dummies in mod_each?
+  each <- sum(mod_each$p.value[2:4] <= 0.05) > 0
+
+  ## Is there a null rejection in mod_any?
+  any <- mod_any$p.value[2] <= 0.05
+  
+  ## Prepare output (the p-values are used for
+  ## a simulation-based FWER adjustment below)
+  out <- c(each, any, mod_each$p.value[2:4])
+  names(out) <- c("unadjusted", "any", "pT2", "pT3", "pT4")
+  
+  return(out)
+  
+}
+
+
+## Calculate the output of that function 1000 times
+multiple_arms <- 
+  
+  ## Default output will be a list
+  replicate(
+    n = 1000,
+    draw_multiple_arms(),
+    simplify = F
+    ) %>%
+  
+  ## Stack the results from each draw as a df instead
+  purrr::reduce(bind_rows)
+
+## A function to use the p-values produced by the above to
+## calculate a simulated significance threshold
+## that controls the FWER rate.
+## METHOD 1: try many possible thresholds,
+## and find the largest one that sets the FWER to
+## at least X% (default = 5). Slower, but
+## makes the logic of this procedure clearer.
+## P-values is a df/matrix where each column is
+## the p-value for a different test, and each row
+## is a set of p-values from a different iteration.
+find_threshold1 <- function(
+  p_values, # Df of p-values (columns = tests, rows = iterations)
+  from = 0.001, # Lowest possible threshold to try
+  to = 0.999, # Highest to try
+  by = 0.001, # Increments to try
+  sig_level = 0.05 # Desired FWER (FW significance level)
+  ) {
+  
+  ## Generate the sequence of thresholds to test
+  test_thresholds <- seq(from, to, by)
+  
+  ## Create a df for each test_threshold:
+  ## threshold and resulting FWER.
+  candidates <-
+    
+    lapply(
+      
+      ## To each test threshold...
+      test_thresholds,
+      
+      ## ... Apply the following function
+      ## (.x is the test threshold):
+      function(.x) {
+        
+        ## Convert each p-value to a null rejection indicator
+        significant <- p_values <= .x
+        
+        ## By row: at least one rejection in this family of tests?
+        at_least_one <- rowSums(significant) >= 1
+        
+        ## From this, we can get a FWER
+        type_I_rate <- mean(at_least_one)
+        
+        ## Prepare output
+        out <- c(.x, type_I_rate)
+        names(out) <- c("threshold", "fwer")
+        
+        return(out)
+        
+      }
+      
+    ) %>%
+    
+    purrr::reduce(bind_rows)
+  
+  ## Keep only candidate thresholds with less than or
+  ## equal to the target set above (default 5%).
+  candidates <- candidates[ candidates$fwer <= sig_level, ]
+  
+  ## Find the largest threshold satisfying that criterion.
+  candidates <- candidates[ order(-candidates$threshold), ]
+  
+  return(candidates$threshold[1])
+  
+}
+
+## Apply this function to calculate the adjusted
+## significance threshold
+sim_alpha1 <- find_threshold1(multiple_arms[, 3:5])
+
+## Method 2: A less intuitive shortcut that runs faster
+find_threshold2 <- function(p_values) {
+  
+  ## Get the minimum p-value in each family of tests
+  min_p_infamily <- apply(p_values, 1, min)
+  
+  ## The 5th percentile of these is (approx.)
+  ## the simulated threshold we want.
+  p5 <- quantile(min_p_infamily, 0.05)
+  
+  return(p5)
+  
+}
+
+## Apply this function to calculate the adjusted
+## significance threshold
+sim_alpha2 <- as.numeric(find_threshold2(multiple_arms[, 3:5]))
+
+## Compare the two simulation approaches:
+print("sim_alpha1")
+sim_alpha1
+print("sim_alpha2")
+sim_alpha2
+
+## Notice: the false positive rate is too high
+## across replications without accounting for
+## multiple tests, but is closer to the right value
+## when relying on the simpler "omnibus" indicator
+## for receipt of some treatment.
+print("False positive rate: separate tests")
+mean(multiple_arms$unadjusted)
+print("False positive rate: omnibus test")
+mean(multiple_arms$any)
+```
+
+### Multiple outcomes
+
+Our studies also often involve more than one outcome measure. Assessing the effects of even a simple two-arm treatment across 10 different outcomes can raise the same kinds of questions that come up in the context of multi-arm trials. Classic adjustments such as the Bonferroni and Holm procedures (which ignore correlations between test statistics), testing hypotheses in a pre-specified order [@rosenbaum2008a], and randomization inference simulations could all be appropriate adjustments to apply when dealing with multiple outcomes (whereas the Tukey HSD procedure is specifically for multiple comparisons).
+
+Additionally, as we did with multiple comparisons, we can perform omnibus tests for an overall treatment effect across multiple outcomes. One method we'll highlight is creating a "stacked" regression model, where each observation has a separate row in the dataset for each outcome measure [@oberfichtner2021stacked].^[For another method we don't discuss, see @rosenbaum2012testing.] A modified version of the original model with unit-clustered errors can then be fit to the stacked dataset, evaluating joint significance across outcomes using a Wald test (see chapter 4 for a summary of Wald tests). This approach usually yields the same or similar results to fitting separate tests for each outcome in a "seemingly unrelated estimation" (SUE) framework [@weesie2000seemlingly]. Which method is more convenient depends on the situation. We focus on stacked regression, but see `suest` in Stata or `systemfit` in R for guidance on implementing SUE.
+
+The code below illustrates the stacked regression method using two simulated outcomes drawn from a multivariate normal distribution. First, we need to prepare the data.
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch5Re41')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch5Statae41')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch5Hidee41')">Hide</button>
+::: {#ch5Re41 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Jointly draw correlated outcomes from a multivariate normal
+mu <- c(1, 3)
+sigma <- rbind( c(1, 0.2), c(0.2, 3) )
+dat1[, c("y_mo_1", "y_mo_2")] <- as.data.frame(mvrnorm(n = nrow(dat1), mu = mu, Sigma = sigma))
+
+## Transform outcomes stored as separate variables into
+## separate observations instead.
+dat1stack <- pivot_longer(dat1, cols = c("y_mo_1", "y_mo_2"), names_to = "outcome", values_to = "stacky")
+
+## Review
+head(dat1stack[, c("id", "outcome", "stacky")])
+```
+:::
+::: {#ch5Statae41 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Jointly draw correlated outcomes from a multivariate normal
+matrix sigma = (1, 0.2 \ .2, 3)
+drawnorm y_mo_1 y_mo_2, cov(sigma)
+
+** Transform outcomes stored as separate variables into
+** separate observations instead.
+tempfile return_to
+save `return_to', replace
+keep id y_mo_1 y_mo_2 z2armequal
+reshape long y_mo_, i(id) j(outcome)
+
+** Review
+list in 1/6
+```
+::: 
+::: {#ch5Hidee41 .tabcontent}
+::: 
+:::
+
+```{r, eval = T, echo = F}
+## Jointly draw correlated outcomes from a multivariate normal
+mu <- c(1, 3)
+sigma <- rbind( c(1, 0.2), c(0.2, 3) )
+dat1[, c("y_mo_1", "y_mo_2")] <- as.data.frame(mvrnorm(n = nrow(dat1), mu = mu, Sigma = sigma))
+
+## Transform outcomes stored as separate variables into
+## separate observations instead.
+dat1stack <- pivot_longer(dat1, cols = c("y_mo_1", "y_mo_2"), names_to = "outcome", values_to = "stacky")
+
+## Review
+head(dat1stack[, c("id", "outcome", "stacky")])
+```
+
+Next, as above, we define a function to repeatedly permute treatment, estimate an omnibus p-value for an effect across outcomes using a stacked regression, and compare this to the collective false positive rate we observe when evaluating the tests separately. We perform the simulation by permuting treatment just to illustrate the collective false positive rate in a case where we know the null of no effect is true.
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch5Re42')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch5Statae42')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch5Hidee42')">Hide</button>
+::: {#ch5Re42 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## As before, define a function to repeatedly
+## permute treatment and estimate p-value
+draw_multiple_outcomes <- function() {
+  
+  ## Generate a new simulated treatment variable
+  dat1$Z2armEqual_mo <- complete_ra(nrow(dat1))
+  
+  ## Merge into the stacked data
+  stack_merge <- merge(dat1stack, dat1[, c("id", "Z2armEqual_mo")], by = "id")
+  stack_merge$out1 <- ifelse(stack_merge$outcome == "y_mo_1", 1, 0)
+  
+  ## Fit a stacked regression model (unrestricted)
+  mod_stack <- lm(
+    stacky ~ Z2armEqual_mo * out1,
+    data = stack_merge
+    )
+
+  ## Fit restricted model for the Wald test
+  mod_restr <- lm(
+    stacky ~ out1,
+    data = stack_merge
+    )
+  
+  ## Variance-covariance matrix of unrestricted model
+  vcov <- vcovCL(mod_stack, type = "HC2", cluster = stack_merge$id)
+  
+  ## Wald test: joint significance of treatment effect 
+  ## and difference across outcomes. Could also use
+  ## linearHypothesis from car with the following constraints:
+  ## c("Z2armEqual_mo", "Z2armEqual_mo:out1") or
+  ## c("Z2armEqual_mo", ""Z2armEqual_mo + Z2armEqual_mo:out1")
+  waldp <- waldtest(mod_stack, mod_restr, vcov = vcov)$`Pr(>F)`[2]
+
+  ## Model each outcome separately
+  pO1 <- summary(lm_robust(y_mo_1 ~ Z2armEqual_mo, data = dat1))$coefficients[2,4]
+  pO2 <- summary(lm_robust(y_mo_2 ~ Z2armEqual_mo, data = dat1))$coefficients[2,4]
+  
+  ## Prepare output
+  out <- c(waldp, pO1, pO2)
+  names(out) <- c("waldp", "p01", "p02")
+  
+  return(out)
+  
+}
+
+## Calculate the output of that function 1000 times
+multiple_outcomes <- 
+  
+  ## Default output will be a list
+  replicate(
+    n = 1000,
+    draw_multiple_outcomes(),
+    simplify = F
+    ) %>%
+  
+  ## Stack the results from each draw as a df instead
+  purrr::reduce(bind_rows)
+
+## False positive rate: stacked
+print("False positive rate: stacked")
+mean(multiple_outcomes$waldp <= 0.05)
+
+## False positive rate: separate
+print("False positive rate: separate tests")
+mean(rowSums(multiple_outcomes[,c(2:3)] <= 0.05) > 0)
+```
+:::
+::: {#ch5Statae42 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** As before, define a function to repeatedly
+** permute treatment and estimate p-value
+capture program drop draw_multiple_outcomes
+program define draw_multiple_outcomes, rclass
+
+	** Generate a new simulated treatment variable
+	capture drop z2armequal_mo
+	preserve
+		qui keep id
+		qui duplicates drop
+		qui count
+		local count_list = r(N)/2
+		local count_list : di _dup(2) "`count_list' " 
+		qui complete_ra z2armequal_mo, m_each(`count_list')
+		tempfile newtreat
+		save `newtreat', replace
+	restore
+	
+	** Merge into the stacked data
+	qui merge m:1 id using `newtreat'
+	assert _merge == 3
+	qui drop _merge
+	
+	** Fit a stacked regression model
+	qui reg y_mo_ z2armequal_mo##i.outcome, vce(cluster id)
+	
+	** Wald test: joint significance of treatment effect 
+	** and difference across outcomes. In this case we just specify
+	** restrictions/tests directly instead of fitting separate models.
+	qui test ((1.z2armequal_mo#2.outcome+1.z2armequal_mo) = 0) (1.z2armequal_mo = 0)
+	local waldp = r(p) <= 0.05
+	return scalar waldp = `waldp'
+
+	** Model each outcome separately
+	preserve
+		qui keep if outcome == 1
+		qui reg y_mo_ z2armequal_mo, vce(hc2)
+		local p1 = r(table)[4,1]
+	restore
+	preserve
+		qui keep if outcome == 2
+		qui reg y_mo_ z2armequal_mo, vce(hc2)
+		local p2 = r(table)[4,1]
+	restore
+	local each = (`p1' <= 0.05) | (`p2' <= 0.05)
+	return scalar each = `each'
+
+end
+
+** Calculate the output of that function 1000 times
+draw_multiple_outcomes
+simlist
+simulate $sim_targets, reps(1000) nodots: draw_multiple_outcomes
+
+** False positive rate: stacked
+qui sum waldp, meanonly
+di r(mean)
+
+** False positive rate: separate
+qui sum each, meanonly
+di r(mean)
+
+** Return to primary data
+use `return_to', clear
+```
+::: 
+::: {#ch5Hidee42 .tabcontent}
+::: 
+:::
+
+```{r, eval = T, echo = F, results = "hold", collapse = T}
+## As before, define a function to repeatedly
+## permute treatment and estimate p-value
+draw_multiple_outcomes <- function() {
+  
+  ## Generate a new simulated treatment variable
+  dat1$Z2armEqual_mo <- complete_ra(nrow(dat1))
+  
+  ## Merge into the stacked data
+  stack_merge <- merge(dat1stack, dat1[, c("id", "Z2armEqual_mo")], by = "id")
+  stack_merge$out1 <- ifelse(stack_merge$outcome == "y_mo_1", 1, 0)
+  
+  ## Fit a stacked regression model (unrestricted)
+  mod_stack <- lm(
+    stacky ~ Z2armEqual_mo * out1,
+    data = stack_merge
+    )
+
+  ## Fit restricted model for the Wald test
+  mod_restr <- lm(
+    stacky ~ out1,
+    data = stack_merge
+    )
+  
+  ## Variance-covariance matrix of unrestricted model
+  vcov <- vcovCL(mod_stack, type = "HC2", cluster = stack_merge$id)
+  
+  ## Wald test: joint significance of treatment effect 
+  ## and difference across outcomes. Could also use
+  ## linearHypothesis from car with the following constraint:
+  ## c("Z2armEqual_mo", "Z2armEqual_mo:out1")
+  waldp <- waldtest(mod_stack, mod_restr, vcov = vcov)$`Pr(>F)`[2]
+
+  ## Model each outcome separately
+  pO1 <- summary(lm_robust(y_mo_1 ~ Z2armEqual_mo, data = dat1))$coefficients[2,4]
+  pO2 <- summary(lm_robust(y_mo_2 ~ Z2armEqual_mo, data = dat1))$coefficients[2,4]
+  
+  ## Prepare output
+  out <- c(waldp, pO1, pO2)
+  names(out) <- c("waldp", "p01", "p02")
+  
+  return(out)
+  
+}
+
+## Calculate the output of that function 1000 times
+multiple_outcomes <- 
+  
+  ## Default output will be a list
+  replicate(
+    n = 1000,
+    draw_multiple_outcomes(),
+    simplify = F
+    ) %>%
+  
+  ## Stack the results from each draw as a df instead
+  purrr::reduce(bind_rows)
+
+## False positive rate: stacked
+print("False positive rate: stacked")
+mean(multiple_outcomes$waldp <= 0.05)
+
+## False positive rate: separate
+print("False positive rate: separate tests")
+mean(rowSums(multiple_outcomes[,c(2:3)] <= 0.05) > 0)
+```
+
+### When is this necessary?
+
+So far, we've focused on the mechanics of performing different kinds of adjustments for multiple testing (different outcomes, multiple comparisons, multiple model specifications we are agnostic about, etc.). But we've avoided a more fundamental question: how do we determine when adjustment is necessary in the first place? Failing to apply a multiple testing correction when it is needed yields overconfident inferences. But adjusting when it is not needed yields overly conservative inferences. Both miscalculations work against our ability to correctly control error rates, one of our key design criteria (chapter 2).
+
+This is an area where our thinking at OES has evolved over time. To see the logic for our current approach, consider the two hypothetical examples below.
+
+In **Example 1**, we want to evaluate whether outreach increases enrollment in a public benefit program. Past research doesn't clarify which available outreach method is most effective, so we design a four-arm trial with a control group and three different intervention groups (texts, emails, and phone calls). We decide that if we see statistically significant evidence for the effectiveness of any treatment arm, this is sufficient to **reject the joint null hypothesis** of no effect across outreach methods, corresponding to $H_{0, joint}$ below, where $\cap$ means "and." Our primary concern is whether *at least one intervention* works.
+
+$$H_{0, text} : \tau_{text} = 0$$
+$$H_{0, email} : \tau_{email} = 0$$
+$$H_{0, phone} : \tau_{phone} = 0$$
+
+$$H_{0, joint} = H_{0, text} \cap H_{0, email} \cap H_{0, phone}$$
+
+In contrast, in **Example 2**, we are evaluating two separate interventions to process benefit applications more quickly. This is a three-arm trial with a control group and two intervention groups, but the interventions are unrelated. We can justify each intervention separately, and there is no joint null we are interested in. Instead, we simply want to **reject the constituent null hypotheses** of no effect for each intervention, $H_{0, int1}$ and $H_{0, int2}$.
+
+$$H_{0, int1} : \tau_{int1} = 0$$
+
+$$H_{0, int2} : \tau_{int2} = 0$$
+In Example 1, the joint null of no effect across outreach methods is the *intersection* of three constituent null hypotheses. Rejecting this null implies accepting the *union* of their alternative hypotheses (where $\cup$ means "or," and we have $H_{A, method} : \tau_{method} \neq 0$):
+
+$$H_{A, joint} = H_{A, text} \cup H_{A, email} \cup H_{A, phone}$$
+Rejecting any one of the constituent null hypotheses is grounds to reject $H_{0, joint}$. This is sometimes called a **union-intersection** test [@rubin2024inconsistent]. To maintain appropriate error rate control, we apply multiple testing adjustment whenever we base a conclusion on a union-intersection test. These are the situations where we are most concerned about being mislead by inflated error rates: where we are drawing one underlying conclusion based on the results of multiple tests.
+
+In contrast, in example 2, the interventions are justified separately, and the truth of $H_{0, int1}$ has no bearing on the truth of $H_{0, int2}$. In this case, we have determined that it is not useful to only know that at least one of the two modifications decreased application processing times (i.e., rejecting the intersection of their nulls is not informative)---we need to know whether each modification on its own was sufficient. Therefore, we would not adjust for multiple testing. The FWER is inflated, but we are not drawing a joint conclusion. Moreover, the Type I error rates for the separate tests remain uninflated [@rubin2024inconsistent]. Returning to the three simulated p-values from the multiple arms adjustment example code, we can see that the estimated false positive rate under a true null is approximately correct when each test is considered alone.
+
+```{r}
+colMeans(multiple_arms[,c(3:5)] <= 0.05)
+```
+
+Lastly, consider the reverse of example 1: we wish to determine whether there is sufficient evidence that all three outreach methods work. This is sometimes called an **intersection-union** test. We would again not adjust for multiple testing when performing an intersection-union test. The risk of seeing at least one false positive is not compelling if our conclusion depends on seeing supportive results for all three outreach methods, rather than only one.
+
+In sum, at OES we prefer to adjust for multiple testing when drawing conclusions based on union-intersection tests, but not in other cases. Put more simply, are we drawing a conclusion after looking for statistical significance in at least one of several tests? If so, we adjust for multiple testing. But otherwise we often elect not to. Researchers sometimes seek to define "families" of related tests to help determine where multiple testing adjustments are or are not needed. By the logic outlined above, two tests might be thought of as in the same "family" if they contribute to the same joint null hypothesis, as defined above for union-intersection tests $(H_{0, joint} : H_{0, 1} \cap H_{0, 2} \cap ... )$.
+
+Determining which case above best represents any given evaluation is [a question of theory and policy relevance](https://lakens.github.io/statistical_inferences/02-errorcontrol.html#why-you-dont-need-to-adjust-your-alpha-level-for-all-tests-youll-do-in-your-lifetime) as much as it is a statistical question. It may depend on what we hope to learn from an evaluation, and what kinds of conclusions would be most useful for our partners. It helps to carefully lay out and justify the claims we wish to make or evaluate as a part of pre-registering our analysis plans.
 
 ## Covariance adjustment (the use of background information to increase precision)
 
-When we have additional information about experimental units (covariates), we can use this to increase the the statistical power of our tests. When we can, we use this information during the design phase to randomize interventions within blocks. But we also often pre-specify covariance adjustment as a part of our confirmatory analyses.
+When we have additional information about experimental units (covariates), we can use this to increase the the statistical power of our tests. When possible, we use this information during the design phase to randomize interventions within blocks. But we also often pre-specify covariance adjustment as a part of our analyses.
 
-Researchers typically do this by regressing the outcome on a treatment indicator and a set of linear, additive terms for each covariate (like $X_{i}$ in equation 3 below). This estimator of the average treatment effect is *consistent* (bias decreasing as $n \rightarrow \infty$, i.e. "asymptotically"), but *is technically not unbiased* in finite samples. The risk of appreciable bias is greater in especially small samples (see below).^[The unadjusted difference in means, in constrast, is unbiased, but as @lin_agnostic_2013 points out, this is not reassuring if, for instance, treatment and control groups appear noticeably imbalanced despite randomization.] It can also counterproductively *less efficient* than an unadjusted difference in means in some cases [@freedman2008rae].^[This becomes more likely as the probability of treatment gets further from 0.5, or if the relationship between covariates and treatment effect heterogeneity is stronger than the relationship between covariates and the potential outcomes. See @lin_agnostic_2013 p. 304, remark *v*.] In contrast, an approach to covariance adjustment that we call the **Lin estimator** or **Lin adjustment** *performs better in terms of asymptotic efficiency*---at worst, it will be no less asymptotically efficient than an unadjusted difference in means [@lin_agnostic_2013; @negi2021revisiting]. Though it is also only consistent and not unbiased, the Lin estimator generally performs better in terms of RMSE (root mean squared error), a metric that incorporates both bias and precision [@negi2021revisiting].^[The Lin estimator will be unbiased if it accurately models the conditional expectation of $Y$ given treatment and the covariates, though this is unlikely in practice. See @negi2021revisiting, 510-511.]
+Researchers typically do this by regressing the outcome on a treatment indicator and a set of linear, additive terms for each covariate (like $X_{i}$ in equation 3 below). This estimator of the average treatment effect is *consistent* (bias decreases as $n \rightarrow \infty$, i.e. asymptotically), but it can be biased in finite samples. The risk of appreciable bias is greater in small samples (see below). The unadjusted difference in means, in constrast, is unbiased, but as @lin_agnostic_2013 points out, this is not reassuring if, for instance, treatment and control groups are noticeably imbalanced despite randomization. Standard linear covariance adjustment can be less efficient than an unadjusted difference in means [@freedman2008rae].^[This becomes more likely as the probability of treatment gets further from 0.5, or if the relationship between covariates and treatment effect heterogeneity is stronger than the relationship between covariates and the potential outcomes. See @lin_agnostic_2013 p. 304, remark *v*.]
 
-The precision-loss attributable to linear covariance adjustment estimator can be quite small when sample sizes are large. Yet, because it is frequently costless to use the Lin estimator in large samples, Lin adjustment is our default recommendation (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, it is not uncommon for projects to encounter situations where linear covariate adjustment is still preferred, either for practical grounds (e.g., simplifying regression models that are already complex for other reasons) or statistical grounds (situations where the benefits of Lin estimation are likely negligible):
+In contrast, an approach to covariance adjustment that we call the **Lin estimator** or **Lin adjustment** performs better---at worst, it will be no less asymptotically efficient than an unadjusted difference in means [@lin_agnostic_2013], and it often has a lower root mean squared error (RMSE) [@negi2021revisiting]. We explain how it is implemented below. Like linear covariance adjustment, the Lin estimator is generally consistent and not unbiased. But the Lin estimator will be unbiased if it correctly models the true conditional expectation of $Y$ given treatment and the covariates [@negi2021revisiting; @lin_agnostic_2013]. This condition is met when the model is "saturated" with controls for every combination of covariate values, such as when using the Lin estimator to account for a set of dummies representing block fixed effects [@miratrix2013adjusting]. 
+
+The precision-loss attributable to standard linear covariance adjustment estimator can be quite small in large samples. Yet, because it is frequently costless to use the Lin estimator in large samples, it is our default recommendation (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, it is not uncommon for us to encounter situations where linear covariate adjustment is still preferred, either on practical or statistical grounds. A few examples:
 
 - The randomization design has only two arms, and the probability of receiving treatment is approximately 0.5
 
-- We do not expect the covariates to be associated with meaningful treatment effect heterogeneity
+- We do not expect the covariates we observe to be associated with meaningful treatment effect heterogeneity
 
-- The number of parameters in a model is large enough relative to the sample size that the loss of degrees of freedom from using Lin adjustment (i.e., the finite sample efficiency costs of adding more terms to the model) is substantial; Lin adjustment is only more efficient *asymptotically*, as sample size increases indefinitely
+- The number of parameters in a model is large enough, relative to the sample size, that the loss of degrees of freedom from using Lin adjustment may be substantial (the number of terms added is the number of controls multipled by the number of treatments); Lin adjustment is more efficient *asymptotically*
 
-We expand on some of these issues in the subsections below.
+We expand on some of these issues in the subsections below, with more detail on how Lin estimation works
 
 ### Possible bias in the least squares ATE estimator with covariates
 
@@ -972,9 +1731,9 @@ What is $\beta_1$ in this case? The matrix representation here is: $(\beta X^{T}
 $$ \hat{\beta}_1 = \frac{\var(X)\cov(Z,Y) - \cov(X,Z)\cov(X,Y)}{\var(Z)\var(X) - \cov(Z,X)^2} $$
 
 In large experiments $\cov(X,Z) \approx 0$ because $Z$ is randomly
-assigned and is thus independent of background variables like $X$. However in any given finite sized experiment $\cov(X,Z) \ne 0$, so this does not reduce to an unbiased estimator as it does in the bivariate case. Thus, @freedman2008rae showed that there is a risk of bias in using the equation above to estimate the average treatment effect.
+assigned and is thus independent of background variables like $X$. However in any given finite sized experiment $\cov(X,Z) \ne 0$, so this does not reduce to an unbiased estimator as it does in the bivariate case. Thus, @freedman2008rae showed that there is a risk of bias in using the equation above to estimate the average treatment effect. In contrast, the unadjusted difference in means will be unbiased.
 
-As discussed above, this kind of covariance adjustment is generally also less asymptotically efficient. To resolve the efficiency issue, @lin_agnostic_2013 suggests the following least squares approach --- regressing the outcome on binary treatment assignment $Z_i$ and its interaction with mean-centered covariates:^[Lin adjustment could also mitigate bias in some circumstances, if for instance the only covariates are dummies for mutually exclusive subgroups or block fixed effects [@lin_agnostic_2013; @miratrix2013adjusting].]
+As discussed above, this kind of covariance adjustment will also sometimes counterproductively decrease asmyptotic efficiency relative to an unadjusted difference in means, or may simply fail to improve efficiency as much as we hope. To resolve that issue, @lin_agnostic_2013 suggests the following least squares approach---regressing the outcome on binary treatment assignment $Z_i$ and its interaction with mean-centered covariates:^[Lin adjustment might also mitigate bias; for instance, if the only covariates are dummies for mutually exclusive subgroups or block fixed effects [@lin_agnostic_2013; @miratrix2013adjusting].]
 
 $$
 \begin{equation}
@@ -982,7 +1741,7 @@ Y_i = \beta_0 + \beta_1 Z_i + \beta_2 ( X_i - \bar{X} ) + \beta_3 Z_i (X_i - \ba
 \end{equation}
 $$
 
-When implementing this covariance adjustment strategy, remember that every covariate, *including binary indicators used to estimate fixed effects or to control for categorical covariates*, should be mean-centered and interacted with treatment.
+When implementing this covariance adjustment strategy, remember that every covariate, *including binary indicators used to estimate fixed effects or to control for values of categorical covariates*, should be mean-centered and interacted with treatment.
 
 For instance, imagine a design with two treatment arms (treatment vs control) and three covariates. Linear adjustment for these covariates would involve fitting an OLS regression with *four* slope coefficients (one for the treatment group, and one for each covariate). Lin adjustment for these covariates would instead involve fitting a regression with *seven* slope coefficients (one for the treatment group, one for each mean-centered covariate, and one for each interaction of treatment with a mean-centered covariate).^[The covariates outside the treatment interactions do not actually need to be mean-centered, but the version of each covariate in the interaction term does. E.g., in Equation 4, $\beta_2 (X_i - \bar{X})$ could be replaced by $\beta_2 X_i$, but $Z_i (X_i - \bar{X})$ must be kept as-is. It is often easier to simply only use mean-centered covariates in Lin adjustment here to avoid confusion.]
 
@@ -990,7 +1749,7 @@ See the [Green-Lin-Coppock SOP](https://alexandercoppock.com/Green-Lab-SOP/Green
 
 ### Illustrating the Lin Approach to Covariance Adjustment
 
-Here, we show how typical covariance adjustment can lead to bias or inefficiency in estimation of the average treatment effect, increaseing the overall RMSE (root mean squared error)---and how using the Lin procedure (or increasing sample size) can reduce the RMSE. In this case, we compare an experiment with 20 units to an experiement with 100 units, in each case with half of the units assigned to treatment by complete random assignment.
+Here, we show how typical covariance adjustment can lead to bias or inefficiency in estimation of the average treatment effect, increasing the overall RMSE (root mean squared error, which is influenced by both bias and variance)---and how using the Lin procedure (or increasing sample size) can reduce the RMSE. In this case, we compare an experiment with 20 units to an experiement with 100 units, in each case with half of the units assigned to treatment by complete random assignment.
 
 We'll use the [DeclareDesign](https://declaredesign.org/) package in the R code to make this process of writing a simulation to assess bias easier.^[For more, see also [this accompanying book](https://book.declaredesign.org/introduction/preface.html).] Much of the R code that follows is providing instructions to the `diagnose_design` command, which repeats the design of the experiment many times, each time estimating an average treatment effect, and comparing the mean of those estimate to the truth (labeled "Mean Estimand" below). We also provide code illustrating how you could accomplish something similar in Stata using manually defined programs and the `simulate` command.
 
@@ -1516,7 +2275,7 @@ print(g)
 The Lin approach works well when covariates are few and sample sizes
 are larger, but these simulations show where the approach is weaker: when there are many covariates relative to the number of observations, some of which may not actually be correlated with the outcome. In this case, the estimator involving both correct and irrelevant covariates included 18 terms. Fitting a model with 18 terms using a small sample, e.g. $N=20$, allows nearly any observation to exert undue influence, increases the risk of serious multicollinearity, and leads to overfitting problems in general.
 
-Our team does not often run into such an extreme version of this problem because our studies have tended to involve many thousands of units and relatively few covariates. However, when we do encounter situations where the number of covariates (or fixed effects) we'd like to account for is large relative to the sample size, we consider a few alternative approaches: (1) omitting covariate adjustment; (2) standard linear covariate adjustment; (3) collapsing the covariates into fewer dimensions (e.g., using principal component analysis); or (4) working with a residualized version of the outcome, as described below.
+Our team does not often run into such an extreme version of this problem because our studies have tended to involve many thousands of units and relatively few covariates. However, when we do encounter situations where the number of covariates (or fixed effects) we'd like to account for is large relative to the sample size, we consider a few alternative approaches: (1) omitting some covariates; (2) standard linear covariate adjustment; (3) collapsing the covariates into fewer dimensions (e.g., using principal component analysis); or (4) working with a residualized version of the outcome, as described below.
 
 ### The Rosenbaum Approach to Covariance Adjustment
 
@@ -1902,16 +2661,7 @@ kable(reshape_diagnosis(thediagnosisCovAdj4)[7:9,diagcols])
 
 Our analysis plans commonly specify a few covariates based on what we know about the mechanisms and context of the study. In general, if we have a measurement of the outcome *before the treatment was assigned* --- the baseline outcome --- we try to use it as a part of a blocking or covariance adjustment strategy.
 
-When we have access to many covariates, we may sometimes use simple machine
-learning methods to select variables that strongly predict the outcome, such as a lasso model. In particular, we tend to prefer the *adaptive lasso* rather than a simple lasso because it has better theoretical properties [@zou2006adaptive], but also because the adaptive lasso tends to produce sparser results --- and the bias from covariance adjustment can sometimes be significance if we include too many covariates.
-
-<!-- #### Example of using the adaptive lasso for variable selection -->
-
-<!-- Here, we show how we use *baseline data*, or data collected before treatment was assigned or a new policy was implemented, to choose covariates to include later in blocking or covariance adjustment. -->
-
-<!-- We tend to use the adaptive lasso rather than the simple lasso because the adaptive lasso has better theoretical properties [@zou2006adaptive] but also because the adaptive lasso tends to produce sparser results --- and the bias from covariance adjustment can be severe if we add many many covariates to a covriance adjustment procedure. -->
-
-<!-- **TO DO** -->
+When we have access to many covariates, we may sometimes use simple machine learning methods to select variables that strongly predict the outcome, such as a lasso model. In particular, we tend to prefer the *adaptive lasso* rather than a simple lasso because it has better theoretical properties [@zou2006adaptive], but also because the adaptive lasso tends to produce sparser results --- and the bias from covariance adjustment can sometimes be significance if we include too many non-prognostic covariates.
 
 ## Block-randomized trials {#blockrandanalysis}
 

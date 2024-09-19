@@ -2,7 +2,7 @@
 ********************** 6.1
 
 ** Set root directory
-cd "...\Stata code"
+cd "C:\Users\WilliamBSchultz\Documents\oes-sop-public\Stata code"
 
 ** Read in data for the fake experiment.
 import delimited using "dat1_with_designs.csv", clear
@@ -95,7 +95,11 @@ program define single_estimator, rclass
 	* Call the design program
 	draw_from_design
 	
-	* Write out the desired estimation strategy
+	* Apply the desired estimation strategy
+	* (Code below, as written, will ignore any variable specified with factor 
+	* notation; i.x. You may need to tweak the next program more if you need
+	* power estimates for terms that have to be factorials. This behavior is 
+	* intended, as an easy way to silently ignore fixed effects.)
 	reg y x, vce(hc2)
 
 end
@@ -107,10 +111,13 @@ end
 * - (1) Define both programs above (data generation and a single_estimator)
 * Inputs on use:
 * - (1) Number of replicates (default = 200)
+* - (2) Variables(s) we want to be powered to estimate the effects of
+* 		- Generally just the treatment var(s)
+* 		- Specify like a normal varlist
 capture program drop replicate
 program define replicate, rclass
 
-	syntax[, reps(integer 200) ]
+	syntax[, reps(integer 200) vars(string) ]
 
 	* Check that design program exists
 	quietly capture draw_from_design
@@ -132,6 +139,21 @@ program define replicate, rclass
 	reps(`reps') nodots: ///
 	single_estimator
 	
+	* (Optional): subset to specified explanatory variables.
+	local updatenames
+	foreach var of local vars {
+		local updatenames `updatenames' _b_`var' _se_`var'
+	}
+	capture confirm variable `updatenames'
+	if _rc == 0 {
+		keep `updatenames'
+	}
+	
+	* Either way, keep only needed vars (e.g.: drop coefs/ses for factorial terms)
+	else {
+		keep _b_* _se_*
+	}
+	
 	* Simulation indicator
 	gen sim = _n
 	
@@ -142,7 +164,7 @@ program define replicate, rclass
 
 	* Reshape to a format that makes the desired power calculation easier.
 	qui reshape long b_ se_, i(sim) j(term) string
-		
+	
 end
 
 **** EVALUATE power of the design ****
@@ -460,11 +482,11 @@ program define draw_from_design, nclass
 	qui sum z2
 	gen cz2 = z2 - r(mean)
 	
-	* Generate simulated treatment (10%)
-	complete_ra x, prob(0.1)
+	* Generate simulated treatment (5%)
+	complete_ra x, prob(0.05)
 	
 	* Simulate y
-	gen y = ((z1 + z2) * x) + (0.8 * z1) - (1 * z2) + rnormal()
+	gen y = z1 + z2 * 0.3 + z2*z1 + rnormal()
 
 end
 

@@ -14,60 +14,9 @@ trueate <- mean(dat1$y1) - mean(dat1$y0)
 
 # Power analysis {#poweranalysis}
 
-In this chapter, we provide examples of how we assess statistical power for different experimental research designs. We often prefer to use simulation to assess the power of different research designs because we rarely have designs that fit easily into the assumptions made by analytic tools.
+This chapter provides examples of how we assess statistical power for different experimental research designs. We often employ simulation here because we rarely have designs that fit easily into the assumptions made by analytic tools (though when we do, these tools are an invaluable reference). By "analytic tools," we refer to methods of calculating power (or a minimum required sample size, etc.) based on mathematical derivations under particular assumptions.
 
-By "analytic tools," we refer to methods of calculating power (or a minimum required sample size, etc.) based on mathematical derivations under particular assumptions. For instance, in an *i.i.d.* two-arm design with random assignment of half the sample, no covariates, a roughly normally distributed outcome, and equal variance in each treatment group, it's possible show that we would have 80% power to estimate a difference in means of $\Delta$ if we collect data on approximately $n = (5.6 \sigma /\Delta)^{2}$ observations, where $\sigma$ is the overall standard deviation of the outcome.^[See @gelman2006data, section 20.3, page 443.] But we frequently consider situations where such derivations are not readily available.
-
-<!-- I'm not sure this introductory example is useful, in that it doesn't show what we claimed to want (that analytical and simulation yield the same results in a simple example; I cut this text [Bill] in my recent edit) due to the skewed nature of this outcome. For the purposes of this walkthrough, I think skew is a complication we want to put aside? And also, both designs have power of basically 100% with this example data, so the description in the text is no longer accurate. So let's just jump to the more detailed examples of each approach below? -->
-
-<!-- Imagine that we thought a study would have an effect of about 1 standard deviation -- this is more or less the effect difference in the example data we've been using. How much statistical power would we have with a sample size of only 40 observations? -->
-
-```{r, echo = F, eval = F}
-## Bill: skipping for now, since we have the sims below.
-
-## Set up some DeclareDesign objects for our simulation
-population <- declare_population(dat1)
-potentials <- declare_potential_outcomes(Y ~ y0 + Z * delta)
-assignment <- declare_assignment(Z=complete_ra(N))
-reveal <- declare_reveal(Y, Z)
-design <- population + potentials + assignment + reveal
-
-## Draw one simulated dataset
-simdat1 <- draw_data(design)
-
-## Set inquiry and estiamtor
-estimand <- declare_inquiry(ATE = mean(Y_Z_1 - Y_Z_0))
-estimator <- declare_estimator(Y ~ Z, inquiry = estimand, label = "Simple D-I-M")
-
-## Illustrate how the estimator works
-estimator(simdat1)
-
-## Add the inquiry and estimator to our design
-designPlusEst <- design + estimand + estimator
-```
-
-<!-- Now that the setup is complete, we can assess the statistical power of our -->
-<!-- proposed design with $N=100$ and an effect of roughly 1 SD. The output below -->
-<!-- shows the statistical power as well as the false positive rate (called -->
-<!-- "Coverage" below), as well as the difference between the mean difference we -->
-<!-- calculate and the true average treatment effect (called "Bias" below). -->
-
-```{r diagpow1, cache=TRUE, echo = F, eval = F}
-## Skipping for now
-sim_power <- diagnose_design(designPlusEst, sims = 200)
-```
-
-<!-- Initially, this analytic approach suggests more power than the simulation based approach -- a difference that arises from our fairly skewed outcome. -->
-
-```{r powerttest, echo = F, eval = F}
-## skipping for now
-analytic_power <- power.t.test(n = 100, delta = delta, sd = sd(dat1$y0))
-analytic_power
-```
-
-<!-- For ways to compare different sample sizes, effect sizes, etc. see [more -->
-<!-- information from the DeclareDesign -->
-<!-- package](https://declaredesign.org/blog/2018-10-02-power-strategies.html). -->
+For instance, in an *i.i.d.* two-arm design with random assignment of half the sample, no covariates, a roughly normally distributed outcome, and equal variance in each treatment group, it's possible show that we would have 80% power to estimate a difference in means of $\Delta$ if we collect data on approximately $n = (5.6 \sigma /\Delta)^{2}$ observations, where $\sigma$ is the overall standard deviation of the outcome.^[See @gelman2006data, section 20.3, page 443.] But we frequently consider situations where such derivations are not readily available.
 
 ## An example of the off-the-shelf approach
 
@@ -136,7 +85,7 @@ cnum <- 0
 ```
 
 We can compare the output of `power.t.test()` to the output from a
-simulation-based (i.e., computational) approach, which we illustrate in the code chunk below. Notice that our example below relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility for simulating more complicated designs (particularly designs we cannot specify as easily within the `DeclareDesign` framework).
+simulation-based (i.e., computational) approach, which we illustrate below. Our example relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility for simulating some more complicated designs.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch6R1')">R code</button>
@@ -446,7 +395,11 @@ program define single_estimator, rclass
 	* Call the design program
 	draw_from_design
 	
-	* Write out the desired estimation strategy
+	* Apply the desired estimation strategy
+	* (Code below, as written, will ignore any variable specified with factor 
+	* notation; i.x. You may need to tweak the next program more if you need
+	* power estimates for terms that have to be factorials. This behavior is 
+	* intended, as an easy way to silently ignore fixed effects.)
 	reg y x, vce(hc2)
 
 end
@@ -458,10 +411,13 @@ end
 * - (1) Define both programs above (data generation and a single_estimator)
 * Inputs on use:
 * - (1) Number of replicates (default = 200)
+* - (2) Variables(s) we want to be powered to estimate the effects of
+* 		- Generally just the treatment var(s)
+* 		- Specify like a normal varlist
 capture program drop replicate
 program define replicate, rclass
 
-	syntax[, reps(integer 200) ]
+	syntax[, reps(integer 200) vars(string) ]
 
 	* Check that design program exists
 	quietly capture draw_from_design
@@ -483,6 +439,21 @@ program define replicate, rclass
 	reps(`reps') nodots: ///
 	single_estimator
 	
+	* (Optional): subset to specified explanatory variables.
+	local updatenames
+	foreach var of local vars {
+		local updatenames `updatenames' _b_`var' _se_`var'
+	}
+	capture confirm variable `updatenames'
+	if _rc == 0 {
+		keep `updatenames'
+	}
+	
+	* Either way, keep only needed vars (e.g.: drop coefs/ses for factorial terms)
+	else {
+		keep _b_* _se_*
+	}
+	
 	* Simulation indicator
 	gen sim = _n
 	
@@ -493,7 +464,7 @@ program define replicate, rclass
 
 	* Reshape to a format that makes the desired power calculation easier.
 	qui reshape long b_ se_, i(sim) j(term) string
-		
+	
 end
 
 **** EVALUATE power of the design ****
@@ -1089,9 +1060,7 @@ g +
     ) 
 ```
 
-As mentioned above, we produced those computational estimates using some pre-written functions that are housed in OES's GitHub code library. These functions are also laid out and explained step-by-step in comments in a code chunk above.
-
-These tools are designed around a simple workflow, and they should help remove some of the programming that may otherwise be a barrier to project teams calculating power computationally. The workflow proceeds as follows (we'll focus on explaining the R code here in text):
+As mentioned above, we produced those computational estimates using some pre-written functions laid step-by-step in the code chunk above. These tools are designed around a simple workflow, and they should help remove some of the programming that may otherwise be a barrier to project teams calculating power computationally. The workflow proceeds as follows (we'll focus on explaining the R code here in text):
 
 1. Replicate
 2. Estimate  
@@ -1099,9 +1068,9 @@ These tools are designed around a simple workflow, and they should help remove s
   
 The first step, **Replicate**, entails specifying an example data-generation process (which may include only an outcome variable and treatment assignment) and simulating it multiple times to create a series of randomly generated datasets. Each individual dataset produced is a *sample replicate*.
 
-The next step, **Estimate**, entails estimating effects for select treatments within each sample replicate. We can use those estimates to produce a distribution of test statistics for each effect size of interest.
+The next step, **Estimate**, entails estimating treatment effects within each sample replicate. We can use those estimates to produce a distribution of test statistics for each effect size (i.e., hypothetical true treatment effect) of interest.
 
-Finally, the last step, **Evaluate**, entails using those test statistics to evaluate our power to detect a range of different effect sizes.
+Finally, the last step, **Evaluate**, entails using those test statistics to evaluate our power to detect a range of different possible true effect sizes.
 
 This workflow is supported by three functions: `replicate_design()`,
 `estimate()`, and `evaluate_power()`. Here's the simulation code used to generate Figure 1 in R in more detail (alongside a similar illustration of the Stata version of our power simulation toolkit):
@@ -1198,11 +1167,11 @@ delta_steps(0.005) // Increments to apply
 ::: 
 :::
 
-The final product---`pwr_eval_sim` above in the R code---reports the power for each of the user-specified effect sizes (`delta`) and (`vars`) model terms specified when calling `estimate()`. The output can be used to plot power curves or to compute minimum detectable effects.
+The final product---`pwr_eval_sim` above in the R code---reports the power for each of the user-specified effect sizes (`delta`) and model terms (`vars`) specified when calling `estimate()`. The output can be used to plot power curves or to compute minimum detectable effects.
 
-These functions help make the process of performing computational power analysis for OES projects easier, while still providing ample room for flexibility in both design and estimation strategy. For example, `replicate_design()` in the R code is a wrapper for `fabricate()` in the [fabricatr](https://declaredesign.org/r/fabricatr/) package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters.
+These functions help make the process of performing computational power analysis easier, while still providing ample room for flexibility in both design and estimation strategy. For example, `replicate_design()` in the R code is a wrapper for `fabricate()` in the [fabricatr](https://declaredesign.org/r/fabricatr/) package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters.
 
-By default, estimates in R are returned using `lm_robust()` from the [estimatr](https://declaredesign.org/r/estimatr/) package, but alternative estimators can be specified. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:
+By default, estimates in R are returned using `lm_robust()` from the [estimatr](https://declaredesign.org/r/estimatr/) package, but alternative estimators can be specified through further modifications to the code. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:
 
 ```{r, eval=FALSE}
 ## Define logit estimator function
@@ -1215,15 +1184,13 @@ est <- estimate(
 ```
 
 Other tools for power simulation exist as well. For instance, throughout this SOP, we have used [DeclareDesign](https://declaredesign.org/r/declaredesign/articles/DeclareDesign_101.html) to simulate hypothetical research designs and compare their performance. And there is no shortage of further simulation
-examples that can be found online for more specialized use-cases.
+examples that can be found online (or in our internal records of past OES project code) for more specialized use-cases.
 
 ## When to use which approach
 
-For a simple difference in means test, the programming required for an analytical power analysis is much much less involved. When is computational power analysis worth the extra time investment?
+For a simple difference in means test, the programming required for an analytical power analysis is much much less involved. In cases where we’re interested in the power to detect a simple difference in means, or a difference in proportions for binary responses, it is probably sufficient to use `power.t.test()` (for means) or `power.prop.test()` (for proportions).
 
-To start, in cases where we’re interested in the power to detect a simple difference in means, or a difference in proportions for binary responses, it is probably sufficient to use `power.t.test()` (for means) or `power.prop.test()` (for proportions).
-
-However, OES projects often involve design features or analytic strategies that are difficult to account for using off-the-shelf tools. For example, we often include covariates in our statistical models to enhance the precision of our treatment effect estimates. If the gain in precision is small, then it might not be important to account for this in power calculations in the design phase of the project. But if we expect a substantial gain in precision due to including covariates, then we probably want to account for estimating power. The natural way to do this is by simulation, including the covariates in the "replicate" and "estimate" steps above. Accounting for covariates is especially useful if we can use real historical or pre-treatment data that represent the correlations we expect to see between covariates and outcomes in our later analysis of the trial data.
+However, OES projects often involve design features or analytic strategies that are difficult to account for using off-the-shelf tools. For example, we often include covariates in our statistical models to enhance the precision of our treatment effect estimates. If the gain in precision is small, then it might not be important to account for this in power calculations. But if we expect a substantial gain in precision due to including covariates, then we probably want to account for this when estimating power. The natural way to do this is by simulation, including the covariates in the "replicate" and "estimate" steps above. 
 
 More complex design features or analytic strategies may make investing in the
 simulation approach even more worthwhile, or downright necessary. Examples
@@ -1473,19 +1440,14 @@ Of course, in this simple example, we could still have relied on some reasonable
 
 ### Covariate adjustment with the Lin estimator
 
-Another scenario where computational power analysis is worth the investment is if a design calls for covariate adjustment. This is common in OES projects, and, in many instances, the @lin_agnostic_2013 saturated regression estimator is the solution we choose.
-
-Devising an off-the-shelf method to calculate power for such a study is
-possible, but would likely require investing time doing background research to
-ensure its accuracy. Alternatively, we could simply replicate, estimate, and
-evaluate such a design computationally. The results will be roughly just as accurate, without regarding a review of the methods literature.
+Another scenario where computational power analysis is worth the investment is if a design calls for covariate adjustment. This is common in OES projects, and, in many instances, the @lin_agnostic_2013 saturated regression estimator is the solution we choose. Employing an off-the-shelf method here is
+possible, but would likely require investing time doing background research. Alternatively, we could simply replicate, estimate, and
+evaluate such a design computationally. The results will be roughly just as accurate, without requiring a review of the methods literature.
 
 Suppose we have a sample of 1,000 observations and a continuous outcome
-variable. We wish to assess the effect of some policy intervention on this
-continuous outcome. Our design calls for randomly assigning only $M = 100$
-individuals to receive the intervention --- perhaps because it is expensive to implement --- and the rest to control.
+variable. We wish to assess the effect of some policy intervention on this continuous outcome. Our design calls for randomly assigning only $M = 75$ individuals to receive the intervention --- perhaps because it is very expensive to implement --- and the rest to control.
 
-In addition to having data on the outcome and on treatment assignment, let's say that we also anticipate obtaining a dataset of covariates for our 1,000 observations. This data contains two variables that are prognostic of the outcome *and the treatment effect*. We’ll call these `z1` and `z2`. The first is a continuous measure and the latter is a binary indicator. Our design calls for adjusting for these covariates to improve the precision of our estimated treatment effect. We can simulate such a design to illustrate the possible benefits of covariate adjustment in terms of improved statistical power.
+In addition to having data on the outcome and on treatment assignment, let's say that we also anticipate obtaining covariates for our 1,000 observations. This data contains two variables that are prognostic of the outcome *and the treatment effect*. We’ll call these `z1` and `z2`. The first is a continuous measure and the latter is a binary indicator. Our design calls for adjusting for these covariates to improve the precision of our estimated treatment effect. We can simulate such a design to illustrate the possible benefits of covariate adjustment in terms of improved statistical power.
 
 We begin by replicating the data-generating process:
 
@@ -1496,22 +1458,62 @@ We begin by replicating the data-generating process:
 ::: {#ch6R6 .tabcontent} 
 <br />
 ```{r, highlight = F, eval = F}
+## Generally, this approach to power calculation
+## calls for estimating a distribution of t-statistics
+## under the null (i.e. no y ~ x relationship in the data),
+## but we'll incorporate this anyway to illustrate the impacts
+## of treatment effect heterogeneity on the performance
+## of these various estimators.
+
+sim_given_delta <- function(delta) {
+  fabricate(
+    N = 1000,
+    z1 = rnorm(N, mean = 3, sd = 3), # Continuous covariate
+    z2 = rbinom(N, 1, 0.25), # Binary covariate
+    cz1 = z1 - mean(z1), # Mean center z1
+    cz2 = z2 - mean(z2), # Mean center z2
+    x = complete_ra(N, m = N * 0.1), # 10% treatment
+    y = x*delta*z2 + x*delta + z1*0.3 + rnorm(N) # Generate y
+    )
+}
+
+sim_across_deltas <- function(deltas) {
+  lapply(deltas, function(.d) sim_given_delta(.d))
+}
+
+many_sims <- function() {
+  sim
+}
+
+sim_across_deltas(0.3) %>% 
+  estimate(
+    form = y ~ x + cz1 + cz2 + x:cz1 + x:cz2,
+    vars = "x"
+    )
+
 rep_data <-
   
   replicate_design(
     N = 1000,
-    z1 = rnorm(N, sd = 3),   # Continuous covariate
+    z1 = rnorm(N, mean = 3, sd = 3),   # Continuous covariate
     z2 = rbinom(N, 1, 0.25), # Binary covariate
     cz1 = z1 - mean(z1),     # Mean center z1
     cz2 = z2 - mean(z2), # Mean center z2
-    x = complete_ra(N, m = N * 0.1), # Randomly assign 10% to treatment
-    y = (z1 + z2) * x + (0.8 * z1) - (1 * z2) + rnorm(N) # Simulate Y
+    x = complete_ra(N, m = N * 0.1), # Randomly assign 7.5% to treatment,
+    y = x*0.5*z2 + x*0.5 + z1*0.3 + rnorm(N)
     )
 ```
 :::
 ::: {#ch6Stata6 .tabcontent} 
 <br />
 ```{stata, highlight = F, eval = F}
+** Generally, this approach to power calculation
+** calls for estimating a distribution of t-statistics
+** under the null (i.e. no y ~ x relationship in the data),
+** but we'll incorporate this anyway to illustrate the impacts
+** of treatment effect heterogeneity on the performance
+** of these various estimators.
+
 ** Basic elements of each simulated sample replicate
 * Redefine data generation
 capture program drop draw_from_design
@@ -1535,11 +1537,11 @@ program define draw_from_design, nclass
 	qui sum z2
 	gen cz2 = z2 - r(mean)
 	
-	* Generate simulated treatment (10%)
-	complete_ra x, prob(0.1)
+	* Generate simulated treatment (5%)
+	complete_ra x, prob(0.05)
 	
 	* Simulate y
-	gen y = ((z1 + z2) * x) + (0.8 * z1) - (1 * z2) + rnormal()
+	gen y = z2*x*0.5 + z1*x*0.2 + rnormal()
 
 end
 ```
@@ -1549,6 +1551,12 @@ end
 :::
 
 ```{r, eval = T, echo = F}
+## Generally, this approach to power calculation
+## calls for estimating a distribution of t-statistics
+## under the null (i.e. no y ~ x relationship in the data),
+## but we'll incorporate this anyway to illustrate the impacts
+## of treatment effect heterogeneity on the performance
+## of these various estimators.
 rep_data <-
   
   replicate_design(
@@ -1557,8 +1565,9 @@ rep_data <-
     z2 = rbinom(N, 1, 0.25), # Binary covariate
     cz1 = z1 - mean(z1),     # Mean center z1
     cz2 = z2 - mean(z2), # Mean center z2
-    x = complete_ra(N, m = N * 0.1), # Randomly assign 10% to treatment
-    y = (z1 + z2) * x + (0.8 * z1) - (1 * z2) + rnorm(N) # Simulate Y
+    x = complete_ra(N, m = N * 0.25), # Randomly assign 7.5% to treatment
+    cx = x - mean(x),
+    y = 0.3*z1*cx - 0.5*z2*cx + rnorm(N) # Simulate Y
     )
 ```
 
@@ -1578,9 +1587,9 @@ lin_adjust <-
   rep_data %>%
   
   estimate(
-    form = y ~ x + z1 + z2 + x:cz1 + x:cz2,
+    form = y ~ x + cz1 + cz2 + x:cz1 + x:cz2,
     vars = "x"
-    ) %>%
+    )
   
   evaluate_power(
     delta = seq(0, 0.5, len = 200)
@@ -1608,7 +1617,7 @@ standard_adjust <-
   estimate(
     form = y ~ x + z1 + z2,
     vars = "x"
-    ) %>%
+    )
   
   evaluate_power(
     delta = seq(0, 0.5, len = 200)
@@ -1730,7 +1739,7 @@ standard_adjust <-
     )
 ```
 
-We can now compare results under these alternative empirical strategies. Figure 3 shows the power curves for each approach. The Lin estimator provides substantial improvements in power over both no covariate adjustment and linear additive adjustment.^[This is, of course, true by design in our example here. In real projects, the differences between these covariate adjustment strategies could often be negligible. But it is useful to remember that @lin_agnostic_2013 adjustment may be especially valuable with especially imbalanced treatment assignment or designs where covariates may be highly correlated with treatment effect heterogeneity; see our discussion in the Analysis Choices chapter.] And it only took a few lines of code to get this result!
+We can now compare results under these alternative empirical strategies. Figure 3 shows the power curves for each approach. The Lin estimator provides substantial improvements in power over the unadjusted difference in means, and smaller improvements in power over linear covariance adjustment.^[This is, of course, true by design in our example here. In real projects, the differences between these covariate adjustment strategies could often be negligible. But it is useful to remember that @lin_agnostic_2013 adjustment may be especially valuable with imbalanced treatment assignment (or designs where covariates may be highly correlated with treatment effect heterogeneity). See our discussion in the Analysis Choices chapter.] And it only took a few lines of code to get this result!
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch6R8')">R code</button>
@@ -1779,7 +1788,7 @@ bind_rows(
   theme(
     legend.position = "bottom"
     ) 
-```
+a```
 :::
 ::: {#ch6Stata8 .tabcontent} 
 <br />
