@@ -694,7 +694,7 @@ We can also compute confidence intervals using randomization inference through a
 
 - Choose a "grid" of values to consider, $G$, generally symmetric around 0 (e.g., [-0.5, 0.5]).
 
-- For each $g \in G$, construct a new outcome measure: $y_{i}^{g} = y_{i} - g \times treat_{i}$, and estimate a treatment effect, $(\tau_{g})$. Then, calculate a p-value for $(\tau_{g})$ using randomization inference:
+- For each $g \in G$, construct a new outcome measure: $y_{i}^{g} = y_{i} - g \times treat_{i}$, and estimate a treatment effect, $\tau_{g}$. Then, calculate a p-value for $\tau_{g}$ using randomization inference:
 
   - We talk more about calculating p-values using treatment permutation in chapters 4 and 5.
   
