@@ -1177,6 +1177,7 @@ program define find_threshold2, rclass
 	syntax, pvalues(varlist)
 	
 	** Get the minimum p-value in each family of tests
+	capture drop minp
 	egen minp = rowmin(`pvalues')
 	qui sum minp, d
 
