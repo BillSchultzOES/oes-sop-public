@@ -1,0 +1,51 @@
+# [Methods topic index](#methodindex)
+
+Below, we list places where you can find discussions of common methodological issues we often have to think about when designing evaluations. There are many more minor issues we cover that we can't exhaustively cover. But this should but a useful reference:
+
+Design-based inference:
+
+- (3.1.1) The logic for why we prefer HC2 standard errors, and why we prefer design-justified inference methods in general
+
+- (5.1.1) The "sharp null" (employed when using randomization inference simulations to estimate a p-value), and how it differs from the standard null hypothesis researchers often employ
+
+Random assignment decisions:
+
+- (4.1) Why we prefer urn-draw based (i.e., complete) random assignment over coin-flip based (simple) assignment
+
+- (4.3) Issues to think about when analyzing factorial experiments
+
+- (4.4.1) The benefits of blocking, along with a review of some occasional disadvantages (in 4.4.4)
+
+- (4.7) The logic of as-if random assignment, with examples of past OES projects relying on this
+
+Balance checks:
+
+- (4.8.1) Some statistical issues raised by performing significance tests to check balance for each of many different covariates
+
+- (4.8.2) The advantages of "omnibus" balance tests, particularly those that rely on randomization inference
+
+- (4.8.5) How we tend to think through evidence of "failed" random assignments
+
+Linear regression as a useful tool for treatment effect estimation
+
+- (2.3) Quick review of our thinking
+
+- (5.1.1) More detailed illustration, for continuous (5.1.1.1) and binary (5.1.1.2) outcomes
+
+Multiple testing
+
+- (5.2 - 5.2.2) When might we want to use different approaches to handle the problem of multiple testing?
+
+- (5.2.3) Putting aside the problem of choosing adjustment methods, when do we think adjusting for multiple tests is needed in the first place?
+
+Estimation choices
+
+- (5.3 - 5.3.2) What is "Lin adjustment" or "Lin estimation," and when does it have advantages (or not) over the more standard approach of linear, additive adjustment for covariates.
+
+- (5.5.2) How do different methods of adjusting for blocked random assignment compare to each other? In particular: unbiased vs precision-weighted methods.
+
+- (5.6) How does adjusting standard errors for clustering generally impact the precision of our tests? Do we ever need to worry about bias due to clustering (5.6.1)?
+
+Preliminary power calculation
+
+- (6.3) When are simple analytic tools sufficient, and when do we need to set aside time for more intensive simulations?

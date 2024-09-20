@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-09-18">
+<meta name="date" content="2024-09-20">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -525,8 +525,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="3" data-path="design-based-inference.html"><a href="design-based-inference.html"><i class="fa fa-check"></i><b>3</b> Design based inference</a><ul>
 <li class="chapter" data-level="3.1" data-path="design-based-inference.html"><a href="design-based-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
-<li class="chapter" data-level="3.1.1" data-path="design-based-inference.html"><a href="design-based-inference.html#how-do-we-calculate-randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> How do we calculate randomization-based standard errors?</a></li>
-<li class="chapter" data-level="3.1.2" data-path="design-based-inference.html"><a href="design-based-inference.html#how-do-we-calculate-randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> How do we calculate randomization-based confidence intervals?</a></li>
+<li class="chapter" data-level="3.1.1" data-path="design-based-inference.html"><a href="design-based-inference.html#randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> Randomization-based standard errors</a></li>
+<li class="chapter" data-level="3.1.2" data-path="design-based-inference.html"><a href="design-based-inference.html#randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> Randomization-based confidence intervals</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="design-based-inference.html"><a href="design-based-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
@@ -585,8 +585,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.4.3" data-path="poweranalysis.html"><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools"><i class="fa fa-check"></i><b>6.4.3</b> Incorporating DeclareDesign into OES Power Tools</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="glossary-of-terms.html"><a href="glossary-of-terms.html"><i class="fa fa-check"></i><b>7</b> <span>Glossary of Terms</span></a></li>
-<li class="chapter" data-level="8" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>8</b> <span>Appendix</span></a></li>
+<li class="chapter" data-level="7" data-path="code-example-index.html"><a href="code-example-index.html"><i class="fa fa-check"></i><b>7</b> <span>Code example index</span></a></li>
+<li class="chapter" data-level="8" data-path="methods-topic-index.html"><a href="methods-topic-index.html"><i class="fa fa-check"></i><b>8</b> <span>Methods topic index</span></a></li>
+<li class="chapter" data-level="9" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>9</b> <span>Appendix</span></a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
@@ -611,7 +612,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments</h1>
 <h4 class="author"><em>Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz</em></h4>
-<h4 class="date"><em>September 18, 2024</em></h4>
+<h4 class="date"><em>September 20, 2024</em></h4>
 </div>
 <div id="overview" class="section level1 unnumbered">
 <h1>Overview</h1>
@@ -635,7 +636,7 @@ is, current and past team members have made decisions about how to approach stat
 <div id="we-mostly-present-examples-using-r" class="section level3 unnumbered">
 <h3>We (mostly) present examples using R</h3>
 <p>We use the <a href="http://r-project.org">R</a> statistical analysis language in this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the locus of development for many of the latest new statistical techniques for social and behavioral scientists.</p>
-<p>Of course, members of our team also use other software like Stata, SAS, SPSS, and Python. To help improve accessibility to Stata users in particular, much of the R code in this SOP is accompanied by code show how the same task, or something similar, could be accomplished in Stata. However, reported results and figures are generated based only on the R code.</p>
+<p>Of course, members of our team also use other software like Stata, SAS, SPSS, and Python. To help improve accessibility to Stata users in particular, almost all of the R code in this SOP is accompanied by code showing how the same task, or something similar, could be accomplished in Stata. But reported results and figures are generated based only on the R code.</p>
 </div>
 </div>
 <div id="structure" class="section level2 unnumbered">
@@ -645,7 +646,6 @@ is, current and past team members have made decisions about how to approach stat
 <li><p><em>For policymakers and agency partners</em> - Chapters 1-3 provide a higher level overview of how statistical tests can inform policy learning, our priorities when designing tests, and how we prefer to justify the tests we use. This provides more context for how OES make analysis decisions and what we aim to learn from impact evaluations. Chapter 3 goes into more technical detail than Chapters 1 and 2, overlapping with the next part of this document.</p></li>
 <li><p><em>For OES team members</em> - Chapters 3 and onward are intended to serve as a reference for design and analysis decisions that need to be made at stages of our project process. Chapter 3 reviews a randomization based framework for statistical decision-making that motivates many of the recommendations in later chapters. Chapter 4 is for teams making decisions about how to randomly assignment treatment or ensure that randomization occurred as planned. Chapter 5 is for teams making decisions about how to analyze their data. Finally, Chapter 6 is for teams interested in performing <em>ex ante</em> power simulations before making design choices.</p></li>
 </ul>
-<p>Throughout the document, we plan to eventually include links to a <a href="#glossary">Glossary</a> and an <a href="appendix.html#appendix">Appendix</a> clarifying terms or explaining tools and procedures in more depth. This aspect of the SOP is still under-development, but we plan to add more here moving forward.</p>
 </div>
 <div id="help-us-improve-our-work" class="section level2 unnumbered">
 <h2>Help us improve our work!</h2>

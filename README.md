@@ -120,6 +120,8 @@ And then hit `shift+tab` when your cursor is to the right of `}`. Then copy in R
 
 Open the sop.Rproj file in RStudio. There should be a "Build" tab in the same pane as the "Environment" tab. Under "Build Book" in this tab, click on `bookdown::gitbook`, which is the format we're currently using.
 
+You might occasionally see an error in the build panel indicating that the build failed because it couldn't load a package that you aren't even using anymore (i.e., removed from the `renv` environment for this project). Try deleting the contents of the "OES_SOP_cache" directory and building again. This can happen sometimes when a chunk is "cached" (i.e., output saved to produce again later without re-running it) while some package is available, but then the book is re-built later when the package has been removed.
+
 # Making the book available online
 
 This book is hosted online via Github Pages, specifically displaying the version of the book compiled in the "docs" folder (see [the instructions here](https://bookdown.org/yihui/bookdown/github.html)).

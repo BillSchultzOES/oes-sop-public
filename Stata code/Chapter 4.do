@@ -1,11 +1,11 @@
 
-********************** 4.1
+**********************
 
 ** Set root directory
 *cd "...Stata code"
 cd "C:\Users\WilliamBSchultz\Documents\oes-sop-public\Stata code"
 
-**********
+**********************
 
 ** Start with a small experiment with only 10 units
 clear
@@ -39,7 +39,7 @@ label values trt_urn tc
 table trt_coinflip
 table trt_urn
 
-********************** 4.2
+**********************
 
 ** Read in data for the fake experiment.
 import delimited using "dat1.csv", clear
@@ -72,7 +72,7 @@ table z2armUnequalA
 table z2armUnequalB
 table z4arms
 
-********************** 4.3
+**********************
 
 ** Two equal arms, adding a second cross treatment
 complete_ra z2armEqual2
@@ -81,7 +81,7 @@ label var z2armEqual "Treatment 1"
 label val z2armEqual2 tc
 table z2armEqual z2armEqual2
 
-********************** 4.?
+**********************
 
 local Anum = $N/2
 gen blockID = .
@@ -94,14 +94,14 @@ label define blocklab 1 "Block A" 2 "Block B"
 label values blockID blocklab
 table blockID
 
-**********
+**********************
 
 block_ra z2armBlocked, block_var(blockID) replace
 label val z2armBlocked tc
 table blockID z2armBlocked
 capture drop __00* // Clean up
 
-**********
+**********************
 
 block_ra z2armBlockedUneqProb, block_var(blockID) block_prob(0.5 0.25) replace
 label val z2armBlockedUneqProb tc
@@ -115,7 +115,7 @@ qui count if blockID == 2
 global ExpectedNumTreatedB = `r(N)'/4
 assert ($NumTreatedB == ceil($ExpectedNumTreatedB)) | ($NumTreatedB == floor($ExpectedNumTreatedB))
 
-********************** 4.4.1
+**********************
 
 ** For example, make three groups from the cov2 variable
 egen cov2cat = cut(cov2), group(3) label
@@ -136,7 +136,7 @@ label val zblockV2 tc
 table blockV2 zblockV2
 capture drop __00* // Clean up
 
-********************** 4.5
+**********************
 
 ** Make an indicator for cluster membership
 qui count
@@ -146,7 +146,7 @@ set seed 12345
 cluster_ra zcluster, cluster_var(buildingID)
 table zcluster buildingID
 
-********************** 4.6a
+**********************
 
 ** load data to match R code
 import delimited "ch4finaldat1.csv", clear
@@ -298,7 +298,7 @@ foreach var of varlist $covlist {
 ** View output
 matrix list btab
 
-********************** 4.6b
+**********************
 
 ** Prepare data for this exercise, save prior data
 tempfile restore
@@ -437,11 +437,9 @@ matrix omnibus[4,2] = round(`wald_blp_ri', 0.001)
 ** Review
 matrix list omnibus
 
-********************** 4.7
+**********************
 
 use `restore', clear
-
-stop
 
 * ssc install xbalance.
 * See "help xbalance" for additional Stata setup instructions.

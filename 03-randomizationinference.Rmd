@@ -173,7 +173,7 @@ estATE2 <- lm(Y~Z, data=dat1)$coef[["Z"]]
 c(estimatedATEv1=estATE1, estimatedATEv2=estATE2)
 ```
 
-###  How do we calculate randomization-based standard errors?
+###  Randomization-based standard errors
 
 How much would these estimates of the average treatment effect vary due to "random noise" if we repeated an experiment on the same group of people multiple times (randomly re-assigning treatment each time)? The **standard error** of an estimate of the average treatment effect is one answer to this question. As the expected variation due to random noise gets larger relative to the size of our treatment effect estimate, we should become increasingly cautious about the risk that our finding is actually an artifact of random noise.^[As discussed above, under a design based approach, random noise is assumed to be introduced by treatment assignment decisions. Under more common sampling-based inference procedures, it is instead assumed to be introduced by the process of sampling from a larger population.]
 
@@ -610,7 +610,7 @@ ExpectedSEs <- apply(sePerformance[c("estSEiid", "estSENeyman"),], 1, mean)
 c(ExpectedSEs, trueSE=seEstATETrue, simSE=sd(sePerformance["estATE",]))
 ```
 
-###  How do we calculate randomization-based confidence intervals?
+###  Randomization-based confidence intervals
 
 When we have a two arm trial (and a relatively large sample size), we can estimate the ATE, calculate design based standard errors, and then use them to create large-sample justified confidence intervals through either of the following approaches:^[Though applications of design based inference often rely on hypothetical permutations of treatment rather than asymptotic (i.e., large-sample) justifications, asymptotic approximations can be used as a basis for design based statistical procedures as well.]
 
@@ -688,6 +688,171 @@ out <- apply(out, 2, round, 3)
 colnames(out) <- c("Est", "SE", "pvalue", "CI lower", "CI upper")
 row.names(out) <- c("Approach 1 (diff. means)", "Approach 2 (OLS)")
 out
+```
+
+We can also compute confidence intervals using randomization inference through an entirely simulation-based procedure: test inversion. It proceeds as follows for a simple two-arm trial:
+
+- Choose a "grid" of values to consider, $G$, generally symmetric around 0 (e.g., [-0.5, 0.5]).
+
+- For each $g \in G$, construct a new outcome measure: $y_{i}^{g} = y_{i} - g \times treat_{i}$, and estimate a treatment effect, $(\tau_{g})$. Then, calculate a p-value for $(\tau_{g})$ using randomization inference:
+
+  - We talk more about calculating p-values using treatment permutation in chapters 4 and 5.
+  
+  - Briefly: you randomly permute (i.e., re-randomize) treatment, yielding $treat_{i}^{r}$, estimate the treatment effect of interest, $\tau_{r}$, and repeat that process many times. At the end, you calculate the proportion of times the absolute value of $\tau_{r}$ was greater than or equal to the absolute value of $\tau_{g}$: $\frac{1}{n} \sum \mathcal{1}(|\tau_{r}| \geq |\tau_{g}|)$. This is your p-value for a given $g$.
+  
+- Compare the p-values of each $g \in G$. The highest and lowest values of $g$ that yield p-values greater than (e.g.) 0.05 are our simulated 95% confidence interval.
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch3R13')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Stata13')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch3Hide13')">Hide</button>
+::: {#ch3R13 .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Define the grid to search through
+grid <- seq(-10, 10, 0.05)
+
+## Loop through values in this grid
+res <- matrix(NA, length(grid), 2)
+i <- 0
+for (g in grid) {
+  
+  ## Update loop index
+  i <- i + 1
+  
+  ## Create outcome for this g
+  gdat <- dat1
+  gdat$yg <- gdat$Y - g*gdat$Z
+  
+  ## "Real" treatment effect for this g
+  mod <- lm(yg ~ Z, data = gdat)
+  
+  ## p-value through randomization inference
+  ridraws <- lapply(
+    1:500,
+    function(.x) {
+      gdat$Zri <- sample(gdat$Z, length(gdat$Z), replace = F)
+      lm(yg ~ Zri, data = gdat)$coefficients[2]
+      }
+    )
+  ridraws <- do.call(c, ridraws)
+  res[i,1] <- g
+  res[i,2] <- mean(abs(ridraws) >= abs(mod$coefficients[2]))
+  
+}
+
+## Compute CI from results
+res <- res[ res[,2] > 0.05, ]
+c( min(res[,1]), max(res[,1]) )
+```
+:::
+::: {#ch3Stata13 .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Define the grid to search through
+numlist "-10(0.05)10" 
+local grid `r(numlist)'
+macro list _grid
+
+** Simple RI program to use here
+capture program drop ri_p
+program define ri_p, rclass
+	capture drop Zri
+	qui complete_ra Zri, m(25)
+	qui reg yg Zri
+	return scalar taur = _b[Zri]
+end
+
+** Loop through values in this grid
+tempfile realdat
+save `realdat', replace
+local i = 0
+foreach g of local grid {
+	
+	local ++i
+	
+	** Create outcome for this g
+	use `realdat', clear
+	qui gen yg = y - `g' * z
+	
+	** Real regression for this g
+	qui reg yg z
+	local taug = _b[z]
+	
+	** RI inference for this g
+	qui simulate taur = r(taur), ///
+	reps(500) : ///
+	ri_p
+	replace taur = abs(taur) >= abs(`taug')
+	collapse (mean) taur
+	qui gen g = `g'
+	
+	** Save results
+	if `i' == 1 {
+		qui tempfile running
+		qui save `running'
+	}
+	else {
+		append using `running'
+		qui save `running', replace
+	}
+
+	** Return to original data
+	use `realdat', clear
+	
+}
+
+** Load the results
+use `running', clear
+
+** Compute the CI
+keep if taur > 0.05
+qui sum g
+global lower = r(min)
+global upper = r(max)
+di "$lower, $upper"
+```
+::: 
+::: {#ch3Hide13 .tabcontent}
+::: 
+:::
+
+```{r, eval = T, echo = F, cache = T}
+## Define the grid to search through
+grid <- seq(-10, 10, 0.05)
+
+## Loop through values in this grid
+res <- matrix(NA, length(grid), 2)
+i <- 0
+for (g in grid) {
+  
+  ## Update loop index
+  i <- i + 1
+  
+  ## Create outcome for this g
+  gdat <- dat1
+  gdat$yg <- gdat$Y - g*gdat$Z
+  
+  ## "Real" treatment effect for this g
+  mod <- lm(yg ~ Z, data = gdat)
+  
+  ## p-value through randomization inference
+  ridraws <- lapply(
+    1:500,
+    function(.x) {
+      gdat$Zri <- sample(gdat$Z, length(gdat$Z), replace = F)
+      lm(yg ~ Zri, data = gdat)$coefficients[2]
+      }
+    )
+  ridraws <- do.call(c, ridraws)
+  res[i,1] <- g
+  res[i,2] <- mean(abs(ridraws) >= abs(mod$coefficients[2]))
+  
+}
+
+## Compute CI from results
+res <- res[ res[,2] > 0.05, ]
+c( min(res[,1]), max(res[,1]) )
 ```
 
 ## Summary: What does a design based approach mean for policy evaluation?

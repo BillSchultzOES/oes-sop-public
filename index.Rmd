@@ -21,6 +21,10 @@ geometry: margin=1in
 graphics: yes
 ---
 
+```{r, echo = F, include = F}
+knitr::opts_chunk$set(cache.extra = 1)
+```
+
 ```{r options, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
 ## Libraries are now managed by the renv system
 require(knitr)
@@ -211,7 +215,7 @@ This document focuses on design and analysis of randomized field experiments. Al
 
 We use the [R](http://r-project.org) statistical analysis language in this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the locus of development for many of the latest new statistical techniques for social and behavioral scientists. 
 
-Of course, members of our team also use other software like Stata, SAS, SPSS, and Python. To help improve accessibility to Stata users in particular, much of the R code in this SOP is accompanied by code show how the same task, or something similar, could be accomplished in Stata. However, reported results and figures are generated based only on the R code.
+Of course, members of our team also use other software like Stata, SAS, SPSS, and Python. To help improve accessibility to Stata users in particular, almost all of the R code in this SOP is accompanied by code showing how the same task, or something similar, could be accomplished in Stata. But reported results and figures are generated based only on the R code.
 
 ## Structure {-}
 
@@ -220,8 +224,6 @@ This page provides a basic introduction to what the OES SOP hopes to accomplish.
 * *For policymakers and agency partners* - Chapters 1-3 provide a higher level overview of how statistical tests can inform policy learning, our priorities when designing tests, and how we prefer to justify the tests we use. This provides more context for how OES make analysis decisions and what we aim to learn from impact evaluations. Chapter 3 goes into more technical detail than Chapters 1 and 2, overlapping with the next part of this document.
 
 * *For OES team members* - Chapters 3 and onward are intended to serve as a reference for design and analysis decisions that need to be made at stages of our project process. Chapter 3 reviews a randomization based framework for statistical decision-making that motivates many of the recommendations in later chapters. Chapter 4 is for teams making decisions about how to randomly assignment treatment or ensure that randomization occurred as planned. Chapter 5 is for teams making decisions about how to analyze their data. Finally, Chapter 6 is for teams interested in performing *ex ante* power simulations before making design choices.
-
-Throughout the document, we plan to eventually include links to a [Glossary](#glossary) and an [Appendix](#appendix) clarifying terms or explaining tools and procedures in more depth. This aspect of the SOP is still under-development, but we plan to add more here moving forward.
 
 ## Help us improve our work! {-}
 

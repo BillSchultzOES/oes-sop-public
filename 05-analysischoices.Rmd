@@ -709,7 +709,7 @@ Our default procedure for evaluating multi-arm trials is as follows:
 
 We review some of the adjustments listed above in more detail, with coded examples.
 
-First, if we want to rely on established procedures that only require the p-values themselves, we might hold the familywise error rate at $\alpha$ through either a single step correction (e.g. [Bonferroni](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise correction (such as [Holm](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We could also use a procedure control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)). As mentioned above, these adjustments assume the test statistics are uncorrelated. Our default practice when dealing with multiple uncorrelated tests is to apply the Holm correction. For more, see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
+First, if we want to rely on established procedures that only require the p-values themselves, we might hold the familywise error rate at $\alpha$ through either a single step correction (e.g. [Bonferroni](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise correction (such as [Holm](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We could also use a procedure control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)). These adjustments assume the test statistics are uncorrelated, and may be too conservative when test statistics are correlated. Our default practice when dealing with multiple uncorrelated tests is to apply the Holm correction. For more, see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R12')">R code</button>
@@ -795,7 +795,7 @@ print("Hochberg")
 round(p.adjust(pvals, "hochberg"), 3) # FDR instead of FWER
 ```
 
-However, simply adjusting $p$-values from this linear model ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. And we could be leaving meaningful statistical power "on the table" by applying procedures that ignore correlations between our test statistics.
+Simply adjusting $p$-values from this linear model ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. And we could be leaving meaningful statistical power "on the table" by applying procedures that ignore correlations between our test statistics.
 
 A different option when dealing with multiple comparisons is to implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
 Tukey test) calculates multiple-comparison-adjusted $p$-values and simultaneous confidence intervals *for all pairwise comparisons* in a model, while taking into account possible correlations between test statistics. It is similar to a two-sample t-test, but with built in adjustment for multiple comparisons. The test statistic for any comparison between two equally-sized groups $i$ and $j$ is:
@@ -1669,7 +1669,7 @@ In Example 1, the joint null of no effect across outreach methods is the *inters
 $$H_{A, joint} = H_{A, text} \cup H_{A, email} \cup H_{A, phone}$$
 Rejecting any one of the constituent null hypotheses is grounds to reject $H_{0, joint}$. This is sometimes called a **union-intersection** test [@rubin2024inconsistent]. To maintain appropriate error rate control, we apply multiple testing adjustment whenever we base a conclusion on a union-intersection test. These are the situations where we are most concerned about being mislead by inflated error rates: where we are drawing one underlying conclusion based on the results of multiple tests.
 
-In contrast, in example 2, the interventions are justified separately, and the truth of $H_{0, int1}$ has no bearing on the truth of $H_{0, int2}$. In this case, we have determined that it is not useful to only know that at least one of the two modifications decreased application processing times (i.e., rejecting the intersection of their nulls is not informative)---we need to know whether each modification on its own was sufficient. Therefore, we would not adjust for multiple testing. The FWER is inflated, but we are not drawing a joint conclusion. Moreover, the Type I error rates for the separate tests remain uninflated [@rubin2024inconsistent]. Returning to the three simulated p-values from the multiple arms adjustment example code, we can see that the estimated false positive rate under a true null is approximately correct when each test is considered alone.
+In contrast, in Example 2, the interventions are justified separately, and the truth of $H_{0, int1}$ has no bearing on the truth of $H_{0, int2}$. In this case, we have determined that it is not useful to only know that at least one of the two modifications decreased application processing times (i.e., rejecting the intersection of their nulls is not informative)---we need to know whether each modification on its own was sufficient. Therefore, we would not adjust for multiple testing. The FWER is inflated, but we are not drawing a joint conclusion. Moreover, the Type I error rates for the separate tests remain uninflated [@rubin2024inconsistent]. Returning to the three simulated p-values from the multiple arms adjustment example code, we can see that the estimated false positive rate under a true null is approximately correct when each test is considered alone.
 
 ```{r}
 colMeans(multiple_arms[,c(3:5)] <= 0.05)
@@ -1687,7 +1687,7 @@ When we have additional information about experimental units (covariates), we ca
 
 Researchers typically do this by regressing the outcome on a treatment indicator and a set of linear, additive terms for each covariate (like $X_{i}$ in equation 3 below). This estimator of the average treatment effect is *consistent* (bias decreases as $n \rightarrow \infty$, i.e. asymptotically), but it can be biased in finite samples. The risk of appreciable bias is greater in small samples (see below). The unadjusted difference in means, in constrast, is unbiased, but as @lin_agnostic_2013 points out, this is not reassuring if, for instance, treatment and control groups are noticeably imbalanced despite randomization. Standard linear covariance adjustment can be less efficient than an unadjusted difference in means [@freedman2008rae].^[This becomes more likely as the probability of treatment gets further from 0.5, or if the relationship between covariates and treatment effect heterogeneity is stronger than the relationship between covariates and the potential outcomes. See @lin_agnostic_2013 p. 304, remark *v*.]
 
-In contrast, an approach to covariance adjustment that we call the **Lin estimator** or **Lin adjustment** performs better---at worst, it will be no less asymptotically efficient than an unadjusted difference in means [@lin_agnostic_2013], and it often has a lower root mean squared error (RMSE) [@negi2021revisiting]. We explain how it is implemented below. Like linear covariance adjustment, the Lin estimator is generally consistent and not unbiased. But the Lin estimator will be unbiased if it correctly models the true conditional expectation of $Y$ given treatment and the covariates [@negi2021revisiting; @lin_agnostic_2013]. This condition is met when the model is "saturated" with controls for every combination of covariate values, such as when using the Lin estimator to account for a set of dummies representing block fixed effects [@miratrix2013adjusting]. 
+In contrast, an approach to covariance adjustment that we call the **Lin estimator** or **Lin adjustment** performs better---at worst, it will be no less asymptotically efficient than an unadjusted difference in means [@lin_agnostic_2013]. We explain how it is implemented below. Like linear covariance adjustment, the Lin estimator is also generally only consistent and not unbiased. But it will be unbiased if it correctly models the true conditional expectation of $Y$ given treatment and the covariates [@negi2021revisiting; @lin_agnostic_2013].^[As will linear covariate adjustment, though this condition is relatively less likely in the lienar adjustment case; see the next footnote.] This condition is met when the model is "saturated" with controls for every combination of covariate values, such as when using the Lin estimator to account for a set of dummies representing block fixed effects [@miratrix2013adjusting].^[Notice that this is not possible under linear covariate adjustment, since by assumption under linear adjustment we are not "saturating" our model with the terms that estimate separate block fixed effects in each treatment arm.]
 
 The precision-loss attributable to standard linear covariance adjustment estimator can be quite small in large samples. Yet, because it is frequently costless to use the Lin estimator in large samples, it is our default recommendation (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, it is not uncommon for us to encounter situations where linear covariate adjustment is still preferred, either on practical or statistical grounds. A few examples:
 
@@ -3968,9 +3968,8 @@ thedesignNorm <- thepop2 + theysNorm + theestimand + theassign + theobsident
 datNorm <- draw_data(thedesignNorm)
 thedesignPlusEstimatorsNorm <- thedesignNorm +
   estnowtHC2 + estnowtIID + estnbwt1 +
-  estnbwt2 + estnbwt3 + estnbwt4 +
-  esthbwt1 + esthbwt2 + esthbwt3 + 
-  esthbwt4
+  estnbwt2 + estnbwt3 + esthbwt1 + 
+  esthbwt2 + esthbwt3 + esthbwt4
 
 ## Perform a new simulation
 sims <- 200
@@ -4127,9 +4126,8 @@ thedesignNorm <- thepop2 + theysNorm + theestimand + theassign + theobsident
 datNorm <- draw_data(thedesignNorm)
 thedesignPlusEstimatorsNorm <- thedesignNorm +
   estnowtHC2 + estnowtIID + estnbwt1 +
-  estnbwt2 + estnbwt3 + estnbwt4 +
-  esthbwt1 + esthbwt2 + esthbwt3 + 
-  esthbwt4
+  estnbwt2 + estnbwt3 + esthbwt1 + 
+  esthbwt2 + esthbwt3 + esthbwt4
 
 ## Perform a new simulation
 sims <- 200
@@ -4175,8 +4173,8 @@ thedesignNormEqual <- thepop2 + theysNorm + theestimand +
 datNormEqual <- draw_data(thedesignNormEqual)
 thedesignPlusEstimatorsNormEqual <- thedesignNormEqual +
   estnowtHC2 + estnowtIID + estnbwt1 + 
-  estnbwt2 + estnbwt3 + estnbwt4 +
-  esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
+  estnbwt2 + estnbwt3 + esthbwt1 + 
+  esthbwt2 + esthbwt3 + esthbwt4
 
 ## Perform a new simulation
 sims <- 200
@@ -4302,8 +4300,8 @@ thedesignNormEqual <- thepop2 + theysNorm + theestimand +
 datNormEqual <- draw_data(thedesignNormEqual)
 thedesignPlusEstimatorsNormEqual <- thedesignNormEqual +
   estnowtHC2 + estnowtIID + estnbwt1 + 
-  estnbwt2 + estnbwt3 + estnbwt4 +
-  esthbwt1 + esthbwt2 + esthbwt3 + esthbwt4
+  estnbwt2 + estnbwt3 + esthbwt1 + 
+  esthbwt2 + esthbwt3 + esthbwt4
 
 ## Perform a new simulation
 sims <- 200
@@ -4764,7 +4762,7 @@ matrix list diagnosands
 ::: 
 :::
 
-```{r defineestimatorsCluster, results="hide", echo = F, eval = T}
+```{r defineestimatorsCluster, results="hide", echo = F, eval = T, cache=T}
 ## Define estimators that can be repeated in the simulation below
 
 ## No adjustment for clustering

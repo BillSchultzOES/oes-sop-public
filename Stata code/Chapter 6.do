@@ -1,8 +1,8 @@
 
-********************** 6.1
+**********************
 
 ** Set root directory
-cd "C:\Users\WilliamBSchultz\Documents\oes-sop-public\Stata code"
+cd "...\Stata code"
 
 ** Read in data for the fake experiment.
 import delimited using "dat1_with_designs.csv", clear
@@ -21,23 +21,23 @@ global trueates = r(StatTotal)[1,2] - r(StatTotal)[1,1]
 qui tabstat y1 y0, stat(mean) save
 global trueate = r(StatTotal)[1,2] - r(StatTotal)[1,1]
 
-**********
+**********************
 
 power twomeans 0, /// Requires specifying a control mean
 n(1000) /// The total number of observations (default is equal division)
 power(0.8) // The traditional power threshold of 80%
 
-**********
+**********************
 
 qui power twomeans 0, n(1000) power(0.8) 
 global delta = r(delta) // See: return list
 di "$delta"
 
-**********
+**********************
 
 power twomeans 0, diff($delta) power(0.8)
 
-********************** 6.2
+**********************
 
 ** OES Power Simulation Toolkit (Stata):
 ** 
@@ -308,7 +308,7 @@ program define evaluate_bias, nclass
 	
 end
 
-**********
+**********************
 
 ** Analytical power estimates
 * View power estimates for a range of effect sizes as a table
@@ -345,7 +345,7 @@ twoway ///
 legend(pos(6) rows(1)) ///
 xtitle("Effect size") ytitle("Power")
 
-**********
+**********************
 
 ** 0. Define the programs used to simulate data and apply an estimator
 
@@ -396,7 +396,7 @@ delta_min(0.005) /// Smallest delta to consider
 delta_max(0.500) /// Largest delta to consider
 delta_steps(0.005) // Increments to apply
 
-**********
+**********************
 
 ** Basic elements of each simulated sample replicate
 * Redefine data generation
@@ -441,7 +441,7 @@ replicate, reps(200)
 ** Evaluate power
 evaluate_power, delta_min(0) delta_max(0.25) delta_steps(0.002)
 
-**********
+**********************
 
 ** Reshape to apply plotting code similar to above
 reshape wide power, i(delta) j(term) string
@@ -457,21 +457,22 @@ twoway ///
 legend(pos(6) rows(1)) ///
 xtitle("Effect size") ytitle("Power")
 
-**********
+**********************
 
-** Basic elements of each simulated sample replicate
-* Redefine data generation
+** Simulate a single dataset with the given effect size
 capture program drop draw_from_design
 program define draw_from_design, nclass
+
+	syntax, delta(real) // required argument, specify effect size
 
 	* Clear existing data
 	clear
 
-	* Sample size of 1000 observations
-	set obs 1000
+	* Sample size of 500 observations
+	set obs 500
 	
 	* Continuous covariate
-	gen z1 = rnormal(0, 3)
+	gen z1 = rnormal(3, 3)
 	
 	* Binary covariate
 	gen z2 = rbinomial(1, 0.25)
@@ -482,90 +483,138 @@ program define draw_from_design, nclass
 	qui sum z2
 	gen cz2 = z2 - r(mean)
 	
-	* Generate simulated treatment (5%)
-	complete_ra x, prob(0.05)
+	* Generate simulated treatment (10%)
+	complete_ra x, prob(0.1)
 	
 	* Simulate y
-	gen y = z1 + z2 * 0.3 + z2*z1 + rnormal()
+	gen y = x*`delta'*z2 - z1*`delta'*x*0.3 + x*`delta' + rnormal()
 
 end
 
-**********
+** Program to avoid some typing when specifying what we want from simulate
+capture program drop simlist
+program define simlist
+	local rscalars : r(scalars)
+	global sim_targets "" // must be a global
+	foreach item of local rscalars {
+	  global sim_targets "$sim_targets `item' = r(`item')"
+	}
+end
 
-** With the lin estimator
+** Apply the three estimators to the list of datasets,
+** using the estimate() function defined above.
+** Still for only a single given delta.
 capture program drop single_estimator
 program define single_estimator, rclass
+
+	syntax, delta(real) // required argument, specify effect size
+
+	* Check that design program exists
+	quietly capture draw_from_design, delta(`delta')
+	if _rc != 0 {
+		di as error "Error: define data generation program (draw_from_design) first"
+		exit
+	}
 	
 	* Call the design program
-	draw_from_design
+	draw_from_design, delta(`delta')
 	
-	* Write out the desired estimation strategy
-	* (As noted above, this code isn't currently written for factor notation)
-	gen x_cz2 = x * cz2
-	gen x_cz1 = x * cz1
-	reg y x x_cz2 x_cz1 cz1 cz2, vce(hc2)
+	* Apply the desired estimation strategies, save p-values
+	* (output will appear in "return list")
+	qui reg y c.x##c.cz1 c.x#c.cz2 cz2, vce(hc2)
+	return scalar p_lin = r(table)["pvalue","x"]
+	qui reg y x z1 z2, vce(hc2)
+	return scalar p_stand = r(table)["pvalue","x"]
+	qui reg y x, vce(hc2)
+	return scalar p_none = r(table)["pvalue","x"]
+	return scalar delta = `delta'
+	
+end
+
+** Replicate p-value draws reps (default 200) times
+capture program drop replicate
+program define replicate, rclass
+
+	syntax, delta(real) /// required argument
+		[ reps(integer 200) ] // optional argument, with a default
+
+	* Check that design program exists
+	quietly capture draw_from_design, delta(`delta')
+	if _rc != 0 {
+		di as error "Error: define data generation program (draw_from_design) first"
+		exit
+	}
+	
+	* Check that single_estimator program exists
+	quietly capture single_estimator, delta(`delta')
+	if _rc != 0 {
+		di as error "Error: define estimation program (single_estimator) first"
+		exit
+	}
+
+	* Save coefficients and SEs from each draw to memory.
+	qui single_estimator, delta(`delta')
+	simlist // pull scalar names returned by single_estimator, save as macro $sim_targets
+	simulate ///
+	$sim_targets, ///
+	reps(`reps') nodots: ///
+	single_estimator, delta(`delta')
+	gen sim = _n
 
 end
 
-* Replicate and save
-replicate, reps(200)
-evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
-keep if term == "x"
-rename power power_lin
-tempfile lin
-save `lin', replace
+** Function to repeat that process and estimate
+** power across multiple possible effect sizes.
+capture program drop across_deltas
+program define across_deltas
 
-** With no covariate adjustment
-capture program drop single_estimator
-program define single_estimator, rclass
-	
-	* Call the design program
-	draw_from_design
-	
-	* Write out the desired estimation strategy
-	reg y x, vce(hc2)
+	syntax, deltas(numlist) /// required argument
+		[ reps(integer 200) ] // optional argument, with a default
+
+	* Loop across the specified effect sizes
+	local i = 0
+	foreach d of numlist `deltas' {
+		
+		local ++i
+		
+		* Run replicate for a given delta
+		qui replicate, delta(`d') reps(`reps')
+		
+		* Get power for each estimator, est across reps
+		foreach var of varlist p_* {
+			qui replace `var' = `var' <= 0.05
+		}
+		qui drop sim
+		collapse (mean) *
+		
+		* If first iteration, init temp file to store results.
+		* Otherwise, append to that running tempfile
+		if (`i' == 1) {
+			qui tempfile results
+			qui save `results', replace
+		}
+		else {
+			append using `results'
+			qui save `results', replace
+		}
+		
+	}
 
 end
 
-* Replicate and save
-replicate, reps(200)
-evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
-keep if term == "x"
-rename power power_no
-tempfile no
-save `no', replace
+** Run the sim (to get similar sequence as in R)
+across_deltas, deltas(0.75(0.0153061)1.5)
 
-** With linear, additive covariate adjustment
-capture program drop single_estimator
-program define single_estimator, rclass
-	
-	* Call the design program
-	draw_from_design
-	
-	* Write out the desired estimation strategy
-	reg y x cz1 cz2, vce(hc2)
-
-end
-
-* Replicate and merge
-replicate, reps(200)
-evaluate_power, delta_min(0) delta_max(0.5) delta_steps(0.005)
-keep if term == "x"
-merge 1:1 delta using `lin'
-drop _merge
-merge 1:1 delta using `no'
-drop _merge
-
-**********
+**********************
 
 ** Line plot
-label var power "Additive"
-label var power_no "No covariates"
-label var power_lin "Lin"
+label var p_stand "Additive"
+label var p_none "No covariates"
+label var p_lin "Lin"
 twoway ///
-(line power delta, lcolor(black) lpattern(solid)) ///
-(line power_lin delta, lcolor(black) lpattern(dash)) ///
-(line power_no delta, lcolor(black) lpattern(dot)), ///
+(line p_stand delta, lcolor(black) lpattern(solid)) ///
+(line p_lin delta, lcolor(black) lpattern(dash)) ///
+(line p_none delta, lcolor(black) lpattern(dot)), ///
 legend(pos(6) rows(1)) ///
 xtitle("Effect size") ytitle("Power") ///
 title("Power with Lin adjustment") yline(0.8)

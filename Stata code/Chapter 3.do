@@ -1,10 +1,10 @@
 
-********************** 3.1
+**********************
 
 ** Set root directory
-cd "...Stata code"
+cd "...\Stata code"
 
-**********
+**********************
 
 ** Read in data for the fake experiment.
 import delimited using "dat1.csv", clear
@@ -13,7 +13,7 @@ rename v1 x
 ** Table of the first few observations.
 list x y0 y1 z y id in 1/6, sep(6)
 
-**********
+**********************
 
 ** y0 and y1 are the true underlying potential outcomes.
 label var y0 "Control"
@@ -21,14 +21,14 @@ label var y1 "Treatment"
 * ssc install stripplot
 stripplot y0 y1, box vertical iqr whiskers(recast(rcap)) ytitle("Outcomes") variablelabels
 
-**********
+**********************
 
 qui tabstat y0 y1, stat(mean) save
 * return list
 * di r(StatTotal)
 global trueATE = r(StatTotal)[1,2] - r(StatTotal)[1,1]
 
-**********
+**********************
 
 ** Y is the observed outcome, Z is the observed treatment.
 qui ttest y, by(z)
@@ -38,7 +38,7 @@ global estATE2 = round(r(table)[1,1], 0.001)
 di "Difference in means, $estATE1; OLS regression, $estATE2"
 assert $estATE1 == $estATE2
 
-********************** 3.1.1
+**********************
 
 ** A program to re-assign treatment and recalculate the difference of means.
 ** Treatment was assigned without blocking or other structure, so we
@@ -80,7 +80,7 @@ restore
 ** The standard error of this estimate of the ATE (via simulation)
 di "$seEstATEsim"
 
-**********
+**********************
 
 ** True SE (Dunning Chap 6, Gerber and Green Chap 3, or Freedman, Pisani and Purves A-32).
 ** Requires knowing the true covariance between potential outcomes.
@@ -98,7 +98,7 @@ local nc = `N' - `nt'
 local varestATE = (((`varc' * `nt') / `nc') + ((`vart' * `nc') / `nt') + (2 * `covtc')) / (`N' - 1)
 global seEstATETrue = sqrt(`varestATE')
 
-**********
+**********************
 
 ** Feasible SE
 qui sum y if z == 0
@@ -108,19 +108,19 @@ local varYt = r(sd) * r(sd)
 local fvarestATE = (`N'/(`N'-1)) * ( (`varYt'/`nt') + (`varYc'/`nc') )
 global estSEEstATE = sqrt(`fvarestATE')
 
-**********
+**********************
 
 ** OLS SE
 qui reg y z
 global iidSE = _se[z] // Or: sqrt(e(V)["z","z"])
 
-**********
+**********************
 
 ** Neyman SE (HC2)
 qui reg y z, vce(hc2)
 global NeymanSE = _se[z]  // Or: sqrt(e(V)["z","z"])
 
-**********
+**********************
 
 matrix compareSEs = J(1, 5, .)
 matrix compareSEs[1, 1] = $seEstATEsim
@@ -131,7 +131,7 @@ matrix compareSEs[1, 5] = $NeymanSE
 matrix colnames compareSEs = "simSE" "feasibleSE" "trueSE" "olsIIDSE" "NeymanDesignSE"
 matrix list compareSEs
 
-***********
+**********************
 
 ** Define a function to calculate several SEs, given potential outcomes and treatment
 capture program drop sePerfFn
@@ -183,7 +183,7 @@ di "Expected Neyman SE: $estSENeyman"
 di "SIM SE: $simSE"
 di "True SE: $seEstATETrue"
 
-********************** 3.1.2
+**********************
 
 ** Organize output
 matrix compareCIs = J(2, 5, .)
@@ -210,3 +210,67 @@ matrix compareCIs[2,5] = round(r(table)[6, 1], 0.001)
 
 matrix list compareCIs
 
+**********************
+
+** Define the grid to search through
+numlist "-10(0.05)10" 
+local grid `r(numlist)'
+macro list _grid
+
+** Simple RI program to use here
+capture program drop ri_p
+program define ri_p, rclass
+	capture drop Zri
+	qui complete_ra Zri, m(25)
+	qui reg yg Zri
+	return scalar taur = _b[Zri]
+end
+
+** Loop through values in this grid
+tempfile realdat
+save `realdat', replace
+local i = 0
+foreach g of local grid {
+	
+	local ++i
+	
+	** Create outcome for this g
+	use `realdat', clear
+	qui gen yg = y - `g' * z
+	
+	** Real regression for this g
+	qui reg yg z
+	local taug = _b[z]
+	
+	** RI inference for this g
+	qui simulate taur = r(taur), ///
+	reps(500) : ///
+	ri_p
+	replace taur = abs(taur) >= abs(`taug')
+	collapse (mean) taur
+	qui gen g = `g'
+	
+	** Save results
+	if `i' == 1 {
+		qui tempfile running
+		qui save `running'
+	}
+	else {
+		append using `running'
+		qui save `running', replace
+	}
+
+	** Return to original data
+	use `realdat', clear
+	
+}
+
+** Load the results
+use `running', clear
+
+** Compute the CI
+keep if taur > 0.05
+qui sum g
+global lower = r(min)
+global upper = r(max)
+di "$lower, $upper"

@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-09-18">
+<meta name="date" content="2024-09-20">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -525,8 +525,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="3" data-path="design-based-inference.html"><a href="design-based-inference.html"><i class="fa fa-check"></i><b>3</b> Design based inference</a><ul>
 <li class="chapter" data-level="3.1" data-path="design-based-inference.html"><a href="design-based-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
-<li class="chapter" data-level="3.1.1" data-path="design-based-inference.html"><a href="design-based-inference.html#how-do-we-calculate-randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> How do we calculate randomization-based standard errors?</a></li>
-<li class="chapter" data-level="3.1.2" data-path="design-based-inference.html"><a href="design-based-inference.html#how-do-we-calculate-randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> How do we calculate randomization-based confidence intervals?</a></li>
+<li class="chapter" data-level="3.1.1" data-path="design-based-inference.html"><a href="design-based-inference.html#randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> Randomization-based standard errors</a></li>
+<li class="chapter" data-level="3.1.2" data-path="design-based-inference.html"><a href="design-based-inference.html#randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> Randomization-based confidence intervals</a></li>
 </ul></li>
 <li class="chapter" data-level="3.2" data-path="design-based-inference.html"><a href="design-based-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
@@ -585,8 +585,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.4.3" data-path="poweranalysis.html"><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools"><i class="fa fa-check"></i><b>6.4.3</b> Incorporating DeclareDesign into OES Power Tools</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="glossary-of-terms.html"><a href="glossary-of-terms.html"><i class="fa fa-check"></i><b>7</b> <span>Glossary of Terms</span></a></li>
-<li class="chapter" data-level="8" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>8</b> <span>Appendix</span></a></li>
+<li class="chapter" data-level="7" data-path="code-example-index.html"><a href="code-example-index.html"><i class="fa fa-check"></i><b>7</b> <span>Code example index</span></a></li>
+<li class="chapter" data-level="8" data-path="methods-topic-index.html"><a href="methods-topic-index.html"><i class="fa fa-check"></i><b>8</b> <span>Methods topic index</span></a></li>
+<li class="chapter" data-level="9" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>9</b> <span>Appendix</span></a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
@@ -1461,13 +1462,13 @@ blockV2           C  T
 <p>If instead we have many background variables, we can increase precision by thinking about blocking as a problem of &#x201C;matching,&#x201D; or creating sets of
 units which are as similar as possible across the entire set of covariates <span class="citation">(Moore <a href="#ref-moore2012multivariate">2012</a>; Moore and Schnakenberg <a href="#ref-moore2016bT063">2016</a>)</span>. Here we show two approaches using R.</p>
 <p>Creating pairs:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" title="1"><span class="co">## Using the blockTools package</span></a>
-<a class="sourceLine" id="cb52-2" title="2">mvblocks &lt;-<span class="st"> </span><span class="kw">block</span>(dat1, <span class="dt">id.vars=</span><span class="st">&quot;id&quot;</span>, <span class="dt">block.vars=</span><span class="kw">c</span>(<span class="st">&quot;cov1&quot;</span>,<span class="st">&quot;cov2&quot;</span>), <span class="dt">algorithm=</span><span class="st">&quot;optimal&quot;</span>)</a>
-<a class="sourceLine" id="cb52-3" title="3">dat1<span class="op">$</span>blocksV3 &lt;-<span class="st"> </span><span class="kw">createBlockIDs</span>(mvblocks, <span class="dt">data=</span>dat1, <span class="dt">id.var =</span> <span class="st">&quot;id&quot;</span>)</a>
-<a class="sourceLine" id="cb52-4" title="4">dat1<span class="op">$</span>ZblockV3 &lt;-<span class="st"> </span><span class="kw">labelTC</span>(<span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blocksV3))</a>
-<a class="sourceLine" id="cb52-5" title="5"></a>
-<a class="sourceLine" id="cb52-6" title="6"><span class="co">## Just show the first ten pairs</span></a>
-<a class="sourceLine" id="cb52-7" title="7"><span class="kw">with</span>(dat1,<span class="kw">table</span>(blocksV3,ZblockV3,<span class="dt">exclude=</span><span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</a></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" title="1"><span class="co">## Using the blockTools package</span></a>
+<a class="sourceLine" id="cb55-2" title="2">mvblocks &lt;-<span class="st"> </span><span class="kw">block</span>(dat1, <span class="dt">id.vars=</span><span class="st">&quot;id&quot;</span>, <span class="dt">block.vars=</span><span class="kw">c</span>(<span class="st">&quot;cov1&quot;</span>,<span class="st">&quot;cov2&quot;</span>), <span class="dt">algorithm=</span><span class="st">&quot;optimal&quot;</span>)</a>
+<a class="sourceLine" id="cb55-3" title="3">dat1<span class="op">$</span>blocksV3 &lt;-<span class="st"> </span><span class="kw">createBlockIDs</span>(mvblocks, <span class="dt">data=</span>dat1, <span class="dt">id.var =</span> <span class="st">&quot;id&quot;</span>)</a>
+<a class="sourceLine" id="cb55-4" title="4">dat1<span class="op">$</span>ZblockV3 &lt;-<span class="st"> </span><span class="kw">labelTC</span>(<span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blocksV3))</a>
+<a class="sourceLine" id="cb55-5" title="5"></a>
+<a class="sourceLine" id="cb55-6" title="6"><span class="co">## Just show the first ten pairs</span></a>
+<a class="sourceLine" id="cb55-7" title="7"><span class="kw">with</span>(dat1,<span class="kw">table</span>(blocksV3,ZblockV3,<span class="dt">exclude=</span><span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</a></code></pre></div>
 <pre><code>        ZblockV3
 blocksV3 C T
       1  1 1
@@ -1481,30 +1482,30 @@ blocksV3 C T
       9  1 1
       10 1 1</code></pre>
 <p>Creating larger blocks:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1"><span class="co">## Using the quickblock package</span></a>
-<a class="sourceLine" id="cb54-2" title="2">distmat &lt;-<span class="st"> </span><span class="kw">distances</span>(dat1, <span class="dt">dist_variables =</span> <span class="kw">c</span>(<span class="st">&quot;cov1bin&quot;</span>, <span class="st">&quot;cov2&quot;</span>), <span class="dt">id_variable =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">normalize=</span><span class="st">&quot;mahalanobiz&quot;</span>)</a>
-<a class="sourceLine" id="cb54-3" title="3">distmat[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" title="1"><span class="co">## Using the quickblock package</span></a>
+<a class="sourceLine" id="cb57-2" title="2">distmat &lt;-<span class="st"> </span><span class="kw">distances</span>(dat1, <span class="dt">dist_variables =</span> <span class="kw">c</span>(<span class="st">&quot;cov1bin&quot;</span>, <span class="st">&quot;cov2&quot;</span>), <span class="dt">id_variable =</span> <span class="st">&quot;id&quot;</span>, <span class="dt">normalize=</span><span class="st">&quot;mahalanobiz&quot;</span>)</a>
+<a class="sourceLine" id="cb57-3" title="3">distmat[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a></code></pre></div>
 <pre><code>       1      2      3       4       5
 1 0.0000 1.0697 0.3453 0.14026 0.14827
 2 1.0697 0.0000 1.4150 0.92947 0.92146
 3 0.3453 1.4150 0.0000 0.48555 0.49356
 4 0.1403 0.9295 0.4856 0.00000 0.00801
 5 0.1483 0.9215 0.4936 0.00801 0.00000</code></pre>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" title="1"><span class="kw">quantile</span>(<span class="kw">as.vector</span>(distmat), <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,.<span class="dv">1</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" title="1"><span class="kw">quantile</span>(<span class="kw">as.vector</span>(distmat), <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,.<span class="dv">1</span>))</a></code></pre></div>
 <pre><code>      0%      10%      20%      30%      40%      50%      60%      70%      80%      90%     100% 
 -3.13279 -0.60902 -0.22924 -0.02745  0.09799  0.28989  0.68065  1.23306  1.76838  2.00726  2.91687 </code></pre>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" title="1"><span class="co">## The caliper argument helps prevent ill-matched points</span></a>
-<a class="sourceLine" id="cb58-2" title="2">mvbigblock &lt;-<span class="st"> </span><span class="kw">quickblock</span>(distmat, <span class="dt">size_constraint =</span> 6L, <span class="dt">caliper =</span> <span class="fl">2.5</span>)</a>
-<a class="sourceLine" id="cb58-3" title="3"></a>
-<a class="sourceLine" id="cb58-4" title="4"><span class="co">## Look for missing points</span></a>
-<a class="sourceLine" id="cb58-5" title="5"><span class="kw">table</span>(mvbigblock,<span class="dt">exclude=</span><span class="kw">c</span>()) <span class="co"># One point dropped due to caliper</span></a></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" title="1"><span class="co">## The caliper argument helps prevent ill-matched points</span></a>
+<a class="sourceLine" id="cb61-2" title="2">mvbigblock &lt;-<span class="st"> </span><span class="kw">quickblock</span>(distmat, <span class="dt">size_constraint =</span> 6L, <span class="dt">caliper =</span> <span class="fl">2.5</span>)</a>
+<a class="sourceLine" id="cb61-3" title="3"></a>
+<a class="sourceLine" id="cb61-4" title="4"><span class="co">## Look for missing points</span></a>
+<a class="sourceLine" id="cb61-5" title="5"><span class="kw">table</span>(mvbigblock,<span class="dt">exclude=</span><span class="kw">c</span>()) <span class="co"># One point dropped due to caliper</span></a></code></pre></div>
 <pre><code>mvbigblock
    0    1    2    3    4    5    6    7    8    9   10   11   12   13 &lt;NA&gt; 
    7    6    6    6    6    6    7    7    8    8    9    7    6   10    1 </code></pre>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" title="1">dat1<span class="op">$</span>blocksV4 &lt;-<span class="st"> </span>mvbigblock</a>
-<a class="sourceLine" id="cb60-2" title="2">dat1<span class="op">$</span>notblocked &lt;-<span class="st"> </span><span class="kw">is.na</span>(dat1<span class="op">$</span>blocksV4) </a>
-<a class="sourceLine" id="cb60-3" title="3">dat1<span class="op">$</span>ZblockV4[dat1<span class="op">$</span>notblocked<span class="op">==</span>F] &lt;-<span class="st"> </span><span class="kw">labelTC</span>(<span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blocksV4))</a>
-<a class="sourceLine" id="cb60-4" title="4"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blocksV4, ZblockV4, <span class="dt">exclude=</span><span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</a></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" title="1">dat1<span class="op">$</span>blocksV4 &lt;-<span class="st"> </span>mvbigblock</a>
+<a class="sourceLine" id="cb63-2" title="2">dat1<span class="op">$</span>notblocked &lt;-<span class="st"> </span><span class="kw">is.na</span>(dat1<span class="op">$</span>blocksV4) </a>
+<a class="sourceLine" id="cb63-3" title="3">dat1<span class="op">$</span>ZblockV4[dat1<span class="op">$</span>notblocked<span class="op">==</span>F] &lt;-<span class="st"> </span><span class="kw">labelTC</span>(<span class="kw">block_ra</span>(<span class="dt">blocks =</span> dat1<span class="op">$</span>blocksV4))</a>
+<a class="sourceLine" id="cb63-4" title="4"><span class="kw">with</span>(dat1, <span class="kw">table</span>(blocksV4, ZblockV4, <span class="dt">exclude=</span><span class="kw">c</span>()))[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</a></code></pre></div>
 <pre><code>        ZblockV4
 blocksV4 C T &lt;NA&gt;
        0 4 3    0
@@ -1518,15 +1519,15 @@ blocksV4 C T &lt;NA&gt;
        8 4 4    0
        9 4 4    0</code></pre>
 <p>It&#x2019;s worth pausing to examine the differences within blocks. We&#x2019;ll focus on the proportion of people in category &#x201C;1&#x201D; on the binary covariate (notice that the blocks are homogeneous on this covariate), as well as the difference between the largest and smallest value of the continuous covariate. This table also illustrates that, due to our use of a caliper when calling <code>quickblock</code> above, one observation was not included in treatment assignment.</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" title="1">blockingDescEval &lt;-<span class="st"> </span>dat1 <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb62-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(blocksV4) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb62-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(</a>
-<a class="sourceLine" id="cb62-4" title="4">    <span class="dt">cov2diff =</span> <span class="kw">max</span>(<span class="kw">abs</span>(cov2)) <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(<span class="kw">abs</span>(cov2)),</a>
-<a class="sourceLine" id="cb62-5" title="5">    <span class="dt">cov1 =</span> <span class="kw">mean</span>(cov1bin),</a>
-<a class="sourceLine" id="cb62-6" title="6">    <span class="dt">count_in_block =</span> <span class="kw">n</span>()</a>
-<a class="sourceLine" id="cb62-7" title="7">    )</a>
-<a class="sourceLine" id="cb62-8" title="8"></a>
-<a class="sourceLine" id="cb62-9" title="9">blockingDescEval</a></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" title="1">blockingDescEval &lt;-<span class="st"> </span>dat1 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb65-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(blocksV4) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb65-3" title="3"><span class="st">  </span><span class="kw">summarize</span>(</a>
+<a class="sourceLine" id="cb65-4" title="4">    <span class="dt">cov2diff =</span> <span class="kw">max</span>(<span class="kw">abs</span>(cov2)) <span class="op">-</span><span class="st"> </span><span class="kw">min</span>(<span class="kw">abs</span>(cov2)),</a>
+<a class="sourceLine" id="cb65-5" title="5">    <span class="dt">cov1 =</span> <span class="kw">mean</span>(cov1bin),</a>
+<a class="sourceLine" id="cb65-6" title="6">    <span class="dt">count_in_block =</span> <span class="kw">n</span>()</a>
+<a class="sourceLine" id="cb65-7" title="7">    )</a>
+<a class="sourceLine" id="cb65-8" title="8"></a>
+<a class="sourceLine" id="cb65-9" title="9">blockingDescEval</a></code></pre></div>
 <pre><code># A tibble: 15 &#xD7; 4
    blocksV4   cov2diff  cov1 count_in_block
    &lt;qb_blckn&gt;    &lt;dbl&gt; &lt;dbl&gt;          &lt;int&gt;

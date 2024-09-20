@@ -1,0 +1,67 @@
+# [Code example index](#codeindex)
+
+Below, we list places where you can find coded examples of common tasks our evaluations often require. But note that there examples of many other more minor tasks throughout chapters 3-6 that we can't exhaustively list here. All examples referenced provide both R and Stata versions.
+
+Calculating design-justified standard errors:
+
+- (3.1.1) Using simulation (comparing designs with fake data) and derived expressions (real data)
+
+Calculating design-justified confidence intervals:
+
+- (3.1.2) Using simulation (randomization inference CIs) or standard methods (i.e., $\theta \pm 1.96 \times SE$)
+
+Random assignment
+
+- (4.1 - 4.2) Advantages of urn draw randomization in terms of precise control over the number treated; 2+ groups
+
+- (4.3) Factorial assignment
+
+- (4.4) Blocked assignment
+
+- (4.5) Clustered assignment
+
+Balance testing
+
+- (4.8.4) Separate comparisons for each of many covariates
+
+- (4.8.4) Omnibus tests (asymptotic inference and randomization inference)
+
+Estimation
+
+- (5.1.1) Estimating average treatment effects, standard errors, and performing randomization inference with two-arm trials (continuous and binary outcomes)
+
+- (5.2.1) Estimating in multiple arm trials
+
+Multiple testing adjustment
+
+- (5.2.1 - 5.2.2) Some methods for multiple treatment arms and/or multiple outcomes, including randomization inference simulations
+
+Covariate adjustment
+
+- (5.3.2 - 5.3.3) Lin (2013) adjustment and Rosenbaum (2002) adjustment as alternatives to (standard) linear, additive adjustment for covariates
+
+Adjusting estimation to account for our randomization design
+
+- (5.5.2) Different methods of adjusting for blocked random assignment
+
+- (5.6) Adjusting for clustered random assignment
+
+Design simulation (e.g., estimating bias and/or precision)
+
+- (5.3 - 5.6) Comparing estimation strategies using `DeclareDesign` in R or a parallel approach in Stata
+
+Power analysis
+
+- (6.1) Analytical power calculations
+
+- (6.2 and 6.4) Simulating test statistics under a true null and using them to calculate power
+
+- (6.4.2) Simulating data with effect sizes built in, and comparing power estimates across effect sizes
+
+Comparing "nested" models (e.g., testing differences between regression coefficients)
+
+- (4.8.4 and 5.2.2) Wald test
+
+Randomization inference
+
+- (3.1.2, 4.8.4, 5.1.1, and 5.2.1) Applications in various settings listed above
