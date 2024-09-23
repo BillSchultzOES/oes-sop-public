@@ -1444,12 +1444,12 @@ Another scenario where computational power analysis is worth the investment is i
 possible, but would likely require investing time doing background research. Alternatively, we could simply replicate, estimate, and
 evaluate such a design computationally. The results will be roughly just as accurate, without requiring a review of the methods literature.
 
-Suppose we have a sample of 500 observations and a continuous outcome
-variable. We wish to assess the effect of some policy intervention on this continuous outcome. Our design calls for randomly assigning only $M = 50$ individuals to receive the intervention---perhaps because it is very expensive to implement---and the rest to control.
+Suppose we have a sample of 100 observations and a continuous outcome
+variable. We wish to assess the effect of some policy intervention on this continuous outcome. Our design calls for randomly assigning only $M = 25$ individuals to receive the intervention---perhaps because it is very expensive to implement---and the rest to control.
 
 In addition to having data on the outcome and on treatment assignment, let's say that we also anticipate obtaining covariates. These data contain two variables we suspect to be associated with treatment effect heterogeneity. We’ll call these `z1` and `z2`. The first is a continuous measure and the latter is a binary indicator. We're considering adjusting for these covariates to improve the precision of our estimated average treatment effect. We can simulate such a design to illustrate the possible benefits of different approaches to covariate adjustment in terms of improved statistical power.
 
-In the other examples in this chapter, we simulate a distribution of test statistics under a true null, and then estimate power by performing some calculations on them. When feasible, this approach speeds up power simulation. But it's not as easy to implement that approach (in a straightforward way) when we want to build in treatment effect heterogeneity. We illustrate a different approach to power simulation in the following code chunk, though we still use some of the functions defined above. In short, we simulate 200 datasets *for each of a sequence of 50 possible effect sizes* (200 $\times$ 50 = 10,000 total), and then estimate power among the 200 replicates for each effect size. Coding the simulation this way gives us even more control than we had in the other examples, though it does take longer to run.
+In the other examples in this chapter, we simulate a distribution of 200 test statistics under a true null, and then estimate power by performing some calculations on them. When feasible, this approach speeds up power simulation. But it's not as easy to rely on that approach (in a straightforward way) when we want to build in treatment effect heterogeneity. We illustrate a different approach to power simulation in the following code chunk, where we build different average effect sizes (and effect heterogeneity) into the simulated data itself. In short, we simulate 200 datasets *for each of a sequence of possible effect sizes* (200 $\times$ 50 = 10,000 total), and then estimate power among the 200 replicates for each effect size. Coding the simulation this way gives us even more control, though it often does take longer to run.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch6R6')">R code</button>
@@ -1458,17 +1458,23 @@ In the other examples in this chapter, we simulate a distribution of test statis
 ::: {#ch6R6 .tabcontent} 
 <br />
 ```{r, highlight = F, eval = F}
-## Simulate a single dataset with the given effect size
+## Simulate a single dataset with the given avg effect size
+## and heterogenous effects (fixed het effect for z1,
+## but proportional het effect for z2)
 sim_given_delta <- function(delta) {
   fabricate(
-    N = 500,
+    N = 100, # Sample size of 100 observations
     delta = delta,
-    z1 = rnorm(N, mean = 3, sd = 3), # Continuous covariate
+    z1 = rnorm(N, mean = 0, sd = 3), # Continuous covariate
     z2 = rbinom(N, 1, 0.25), # Binary covariate
     cz1 = z1 - mean(z1), # Mean center z1
     cz2 = z2 - mean(z2), # Mean center z2
-    x = complete_ra(N, m = N * 0.1), # 10% treatment
-    y = x*delta*z2 - z1*delta*x*0.3 + x*delta + rnorm(N) # Generate y
+    x = complete_ra(N, m = N * 0.25), # 25% treatment
+    error = rnorm(N, 0, 1.75),
+    y_0 = z2*0.5 + z1*0.5 + error, # Control potential outcome
+    effect = delta + z2*delta*2 + z1*1.5, # Effect
+    y_1 = y_0 + effect, # Treated potential outcome
+    y = x*y_1 + (1-x)*y_0 # Observed
     )
 }
 
@@ -1477,41 +1483,41 @@ repeat_sim_delta <- function(delta, reps = 200) {
   lapply(1:reps, function(.x) sim_given_delta(delta))
 }
 
-## Apply the three estimators to the list of datasets,
-## using the estimate() function defined above.
+## Apply the three estimators to the list of datasets.
 ## Still for only a single given delta.
+## Estimate() above could work here, but
+## adds some processing time overhead
+## we can avoid by rewriting estimation.
 get_estimator_pvalues <- function(delta, reps = 200) {
   
   # Get list of datasets, one for each delta
   simdat <- repeat_sim_delta(delta, reps)
   
   # Lin adjustment
+  # (HC1 errors to sidestep estimation issues for this e.g.)
+  lin_f <- y ~ x + cz1 + cz2 + x:cz1 + x:cz2
   lin <- simdat %>%
-    estimate(
-    form = y ~ x + cz1 + cz2 + x:cz1 + x:cz2,
-    vars = "x"
-    )
+    lapply(function(.x) lm(lin_f, data = .x)) %>%
+    lapply(function(.x) coeftest(.x, vcovHC(.x, "HC1"))["x","Pr(>|t|)"])
   
   # Standard linear, additive adjustment
+  stand_f <- y ~ x + z1 + z2
   standard <- simdat %>%
-    estimate(
-    form = y ~ x + z1 + z2,
-    vars = "x"
-    )
+    lapply(function(.x) lm(stand_f, data = .x)) %>%
+    lapply(function(.x) coeftest(.x, vcovHC(.x, "HC1"))["x","Pr(>|t|)"])
   
   # No adjustment
+  no_f <- y ~ x
   none <- simdat %>%
-    estimate(
-    form = y ~ x,
-    vars = "x"
-    )
+    lapply(function(.x) lm(no_f, data = .x)) %>%
+    lapply(function(.x) coeftest(.x, vcovHC(.x, "HC1"))["x","Pr(>|t|)"])
   
   # Prepare output
   out <- data.frame(
     delta = delta,
-    lin = lin$p.value,
-    additive = standard$p.value,
-    none = none$p.value
+    lin = do.call(c, lin),
+    additive = do.call(c, standard),
+    none = do.call(c, none)
     )
   
   return(out)
@@ -1534,13 +1540,15 @@ across_deltas <- function(deltas, reps = 200) {
 }
 
 ## Run the sim
-cov_adjust_sim <- across_deltas(seq(0.75, 1.5, length = 50), reps = 200)
+cov_adjust_sim <- across_deltas(seq(0.025, 1.2, 0.025), reps = 200)
 ```
 :::
 ::: {#ch6Stata6 .tabcontent} 
 <br />
 ```{stata, highlight = F, eval = F}
-** Simulate a single dataset with the given effect size
+** Simulate a single dataset with the given avg effect size
+** and heterogenous effects (fixed het effect for z1,
+** but proportional het effect for z2)
 capture program drop draw_from_design
 program define draw_from_design, nclass
 
@@ -1549,11 +1557,11 @@ program define draw_from_design, nclass
 	* Clear existing data
 	clear
 
-	* Sample size of 500 observations
-	set obs 500
+	* Sample size of 100 observations
+	set obs 100
 	
 	* Continuous covariate
-	gen z1 = rnormal(3, 3)
+	gen z1 = rnormal(0, 3)
 	
 	* Binary covariate
 	gen z2 = rbinomial(1, 0.25)
@@ -1564,11 +1572,15 @@ program define draw_from_design, nclass
 	qui sum z2
 	gen cz2 = z2 - r(mean)
 	
-	* Generate simulated treatment (10%)
-	complete_ra x, prob(0.1)
+	* Generate simulated treatment (25%)
+	complete_ra x, prob(0.25)
 	
-	* Simulate y
-	gen y = x*`delta'*z2 - z1*`delta'*x*0.3 + x*`delta' + rnormal()
+	* Simulate observed y 
+	gen error = rnormal(0, 1.75) 
+	gen y_0 = z2*0.5 + z1*0.5 + error // Control potential outcome
+	gen effect = `delta' + z2*`delta'*2 + z1*1.5 // Effect
+	gen y_1 = y_0 + effect // Treated potential outcome
+	gen y = x*y_1 + (1-x)*y_0 // Observed outcome
 
 end
 
@@ -1601,12 +1613,13 @@ program define single_estimator, rclass
 	draw_from_design, delta(`delta')
 	
 	* Apply the desired estimation strategies, save p-values
-	* (output will appear in "return list")
-	qui reg y c.x##c.cz1 c.x#c.cz2 cz2, vce(hc2)
+	* (output will appear in "return list");
+	* normal robust errors to sidestep estimation issues in this e.g.
+	qui reg y c.x##c.cz1 c.x#c.cz2 cz2, r
 	return scalar p_lin = r(table)["pvalue","x"]
-	qui reg y x z1 z2, vce(hc2)
+	qui reg y x z1 z2, r
 	return scalar p_stand = r(table)["pvalue","x"]
-	qui reg y x, vce(hc2)
+	qui reg y x, r
 	return scalar p_none = r(table)["pvalue","x"]
 	return scalar delta = `delta'
 	
@@ -1683,8 +1696,8 @@ program define across_deltas
 
 end
 
-** Run the sim (to get similar sequence as in R)
-across_deltas, deltas(0.75(0.0153061)1.5) reps(10)
+** Run the sim.
+across_deltas, deltas(0.025(0.025)1.2)
 ```
 ::: 
 ::: {#ch6Hide6 .tabcontent}
@@ -1692,17 +1705,23 @@ across_deltas, deltas(0.75(0.0153061)1.5) reps(10)
 :::
 
 ```{r, eval = T, echo = F, cache=T}
-## Simulate a single dataset with the given effect size
+## Simulate a single dataset with the given avg effect size
+## and heterogenous effects (fixed het effect for z1,
+## but proportional het effect for z2)
 sim_given_delta <- function(delta) {
   fabricate(
-    N = 500,
+    N = 100, # Sample size of 100 observations
     delta = delta,
-    z1 = rnorm(N, mean = 3, sd = 3), # Continuous covariate
+    z1 = rnorm(N, mean = 0, sd = 3), # Continuous covariate
     z2 = rbinom(N, 1, 0.25), # Binary covariate
     cz1 = z1 - mean(z1), # Mean center z1
     cz2 = z2 - mean(z2), # Mean center z2
-    x = complete_ra(N, m = N * 0.1), # 10% treatment
-    y = x*delta*z2 - z1*delta*x*0.3 + x*delta + rnorm(N) # Generate y
+    x = complete_ra(N, m = N * 0.5), # 25% treatment
+    error = rnorm(N, 0, 1.75),
+    y_0 = z2*0.5 + z1*0.5 + error, # Control potential outcome
+    effect = delta + z2*delta*2 + z1*1.5, # Effect
+    y_1 = y_0 + effect, # Treated potential outcome
+    y = x*y_1 + (1-x)*y_0 # Observed
     )
 }
 
@@ -1711,41 +1730,41 @@ repeat_sim_delta <- function(delta, reps = 200) {
   lapply(1:reps, function(.x) sim_given_delta(delta))
 }
 
-## Apply the three estimators to the list of datasets,
-## using the estimate() function defined above.
-## For a given delta.
+## Apply the three estimators to the list of datasets.
+## Still for only a single given delta.
+## Estimate() above could work here, but
+## adds some processing time overhead
+## we can avoid by rewriting estimation.
 get_estimator_pvalues <- function(delta, reps = 200) {
   
   # Get list of datasets, one for each delta
   simdat <- repeat_sim_delta(delta, reps)
   
   # Lin adjustment
+  # (HC1 errors to sidestep estimation issues for this e.g.)
+  lin_f <- y ~ x + cz1 + cz2 + x:cz1 + x:cz2
   lin <- simdat %>%
-    estimate(
-    form = y ~ x + cz1 + cz2 + x:cz1 + x:cz2,
-    vars = "x"
-    )
+    lapply(function(.x) lm(lin_f, data = .x)) %>%
+    lapply(function(.x) coeftest(.x, vcovHC(.x, "HC1"))["x","Pr(>|t|)"])
   
   # Standard linear, additive adjustment
+  stand_f <- y ~ x + z1 + z2
   standard <- simdat %>%
-    estimate(
-    form = y ~ x + z1 + z2,
-    vars = "x"
-    )
+    lapply(function(.x) lm(stand_f, data = .x)) %>%
+    lapply(function(.x) coeftest(.x, vcovHC(.x, "HC1"))["x","Pr(>|t|)"])
   
   # No adjustment
+  no_f <- y ~ x
   none <- simdat %>%
-    estimate(
-    form = y ~ x,
-    vars = "x"
-    )
+    lapply(function(.x) lm(no_f, data = .x)) %>%
+    lapply(function(.x) coeftest(.x, vcovHC(.x, "HC1"))["x","Pr(>|t|)"])
   
   # Prepare output
   out <- data.frame(
     delta = delta,
-    lin = lin$p.value,
-    additive = standard$p.value,
-    none = none$p.value
+    lin = do.call(c, lin),
+    additive = do.call(c, standard),
+    none = do.call(c, none)
     )
   
   return(out)
@@ -1767,11 +1786,8 @@ across_deltas <- function(deltas, reps = 200) {
   return(res)
 }
 
-## Run the sim (note: simulating power by iteratively
-## generating data with different effect sizes built
-## in tends to take longer than the approach we use
-## in our other code examples in this chapter).
-cov_adjust_sim <- across_deltas(seq(0.75, 1.5, length = 50), reps = 500)
+## Run the sim
+cov_adjust_sim <- across_deltas(seq(0.025, 1.2, 0.025), reps = 200)
 ```
 
 This simulation yields power estimates across a range of effect sizes for three different estimators: (1) covariate adjustment via the Lin estimator; (2) without covariate adjustment; and (3) with standard linear, additive covariate adjustment. Figure 3 shows the power curves for each.
@@ -1853,7 +1869,7 @@ title("Power with Lin adjustment") yline(0.8)
 ::: 
 :::
 
-We chose parameters to limit processing time, so the results are a bit noisy. Nonetheless, for this data generating process, it's clear that the Lin estimator provides substantial improvements in power over the unadjusted difference in means, while standard covariate adjustment provides minimal improvements in power. This is, of course, true by design. In real projects, the differences between these covariate adjustment strategies could often be negligible. But it is useful to remember that @lin_agnostic_2013 adjustment is more likely to be valuable with imbalanced treatment assignment (or designs where we want to adjust for covariates that may be highly correlated with effect heterogeneity). See our discussion in the Analysis Choices chapter.
+We chose parameters to limit processing time, so the results are a bit noisy (you could reduce this by adding replications for each effect size). Nonetheless, for this data generating process, it's clear that the Lin estimator provides substantial improvements in power over the unadjusted difference in means, while standard covariate adjustment provides smaller improvements in power. This is, of course, true by design. In real projects, the differences between these covariate adjustment strategies may be negligible. But it is useful to remember that @lin_agnostic_2013 adjustment is more likely to be valuable with imbalanced treatment assignment and substantial effect heterogeneity. See our discussion in the Analysis Choices chapter.
 
 ```{r, eval = T, echo = F}
 ## Apply similar plotting code to above

@@ -490,7 +490,7 @@ program define draw_from_design, nclass
 	
 	* Simulate observed y 
 	gen error = rnormal(0, 1.75) 
-	gen y_0 = z2*0.5 + z1*0.5 + error // Control potential outcome
+	gen y_0 = z2*0.5 + z1*0.5 + erro // Control potential outcome
 	gen effect = `delta' + z2*`delta'*2 + z1*1.5 // Effect
 	gen y_1 = y_0 + effect // Treated potential outcome
 	gen y = x*y_1 + (1-x)*y_0 // Observed outcome
