@@ -2,7 +2,7 @@
 **********************
 
 ** Set root directory
-cd "C:\Users\WilliamBSchultz\Documents\oes-sop-public\Stata code"
+cd "...\Stata code"
 
 ** Read in data for the fake experiment.
 import delimited using "dat1_with_designs.csv", clear
