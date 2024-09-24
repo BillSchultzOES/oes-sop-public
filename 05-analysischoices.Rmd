@@ -693,9 +693,9 @@ print(estAndSE3multarms)
 
 In this case, we could make $((4 \times 4)-4)/2)=6$ different possible comparisons between pairs of treatment groups. Consider that if there were really no effect of any treatment, and if we chose to reject the null across treatments at the standard significance threshold of $\alpha=.05$, we would incorrectly claim that there was at least one effect *more than 5% of the time*. $1 - ( 1 - .05)^6 = .27$, or 27% of the time, we would make a false positive error, claiming an effect existed when it did not.
 
-Two points are worth emphasizing. First, the "family-wise error rate" (FWER) will differ from the individual error rate of any single test. In short, performing multiple tests to draw a conclusion about a single underlying hypothesis increases our chances of incorrectly rejecting a true null at least once. Suppose that we calculated two p-values and compared each to the conventional significance level $\alpha = 0.05$. The probability of retaining (failing to reject) both hypotheses is $(1-\alpha)^2 = .9025$ and the probability of rejecting at least one of these hypotheses is $1-(1-\alpha)^2 = .0975$---almost double our intended significance threshold of $\alpha = 0.05$ across tests.
+Two points are worth emphasizing. First, the "family-wise error rate" (FWER) will differ from the individual error rate of any single test. In short, performing multiple tests to draw a conclusion *about a single underlying hypothesis* increases our chances of incorrectly rejecting a true null at least once. Suppose that we calculated two p-values and compared each to the conventional significance level $\alpha = 0.05$. The probability of retaining (failing to reject) both hypotheses is $(1-\alpha)^2 = .9025$ and the probability of rejecting at least one of these hypotheses is $1-(1-\alpha)^2 = .0975$---almost double our intended significance threshold of $\alpha = 0.05$ across tests.
 
-Second, multiple tests will often be correlated, and corrections for multiple testing should recognize these relationships. Importantly, accounting for this correlation *will penalize multiple testing less*. When we say that tests are "correlated," we mean that there is some relationship between the test statistics (e.g., a student's t-statistic, or a $\chi^{2}$ statistic) used to perform statistical inference. In other words, the test statistics are jointly distributed---when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$, but the assumed reference distributions for the test statistics were identical: by accident, we ran the same exact code twice. In that case, we are really just doing one test and so we haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
+Second, multiple tests will often be correlated, and optimal corrections for multiple testing incorporate information about these relationships. Importantly, accounting for this correlation *will penalize multiple testing less* than an adjustment procedure developed under an assumption that tests are uncorrelated. When we say that tests are "correlated," we mean that there is some relationship between the test statistics (e.g., a student's t-statistic, or a $\chi^{2}$ statistic) used to perform statistical inference. In other words, the test statistics are jointly distributed---when one test statistic is higher, the other will tend to be higher as well.^[Imagine testing two hypotheses with $\alpha = .05$, but the assumed reference distributions for the test statistics were identical: by accident, we ran the same exact code twice. In that case, we are really just doing one test and so we haven't changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.]
 
 Our default procedure for evaluating multi-arm trials is as follows:
 
@@ -703,13 +703,13 @@ Our default procedure for evaluating multi-arm trials is as follows:
 
  - Second, perform the rest of the comparisons as **exploratory** analyses without multiple testing adjustment---i.e., as analyses that may inform future projects and suggest where we might be seeing more or less of an effect, but which cannot serve as a foundation for policy conclusions on their own.
  
- - Alternatively, if we do want to make multiple confirmatory comparisons, we need to adjust their collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] The most appropriate method varies. Options include: canned procedures like Bonferroni adjustment, particularly if test statistics should not be correlated; the Tukey HSD procedure for pairwise comparisons of multiple treatment arms; simulations to calculate a significance threshold that properly controls the collective error rate;^[Generally, we would use simulation method based on randomization inference; see the coded examples below. Though this is less common in social science, studies in other disciplines sometimes simulate the joint distribution of the test statistics instead [@conneely2007so]. This often requires either estimating or assuming the correlation between test statistics.] or performing the tests in a specific order to protect the familywise error rate [@rosenbaum2008a].
+ - Alternatively, if we do want to make multiple confirmatory comparisons, we need to adjust their collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] The most appropriate method varies. Options include: canned procedures like Holm-Bonferroni adjustment (which do not account for correlations between tests); the Tukey HSD procedure for pairwise comparisons of multiple treatment arms; simulations to calculate a significance threshold that properly controls the collective error rate;^[Generally, we would use simulation methods based on randomization inference; see the coded examples below. Though this is less common in social science, studies in other disciplines sometimes simulate the joint distribution of the test statistics instead [@conneely2007so]. This might require either estimating or assuming the correlation between test statistics under the true null.] or performing the tests in a specific, theory-informed order to protect the familywise error rate [@rosenbaum2008a].
 
 #### Adjusting p-values and confidence intervals for multiple comparisons
 
-We review some of the adjustments listed above in more detail, with coded examples.
+We review some of the adjustment options listed above in more detail, with coded examples.
 
-First, if we want to rely on established procedures that only require the p-values themselves, we might hold the familywise error rate at $\alpha$ through either a single step correction (e.g. [Bonferroni](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise correction (such as [Holm](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We could also use a procedure control the false discovery rate (e.g., using the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)). These adjustments assume the test statistics are uncorrelated, and may be too conservative when test statistics are correlated. Our default practice when dealing with multiple uncorrelated tests is to apply the Holm correction. For more, see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
+First, if we want to rely on relatively simple procedures that only require the p-values themselves (i.e., not the underlying data), we might hold the familywise error rate at $\alpha$ through either a single step correction (e.g. [Bonferroni](https://en.wikipedia.org/wiki/Bonferroni_correction)) or a stepwise correction (such as [Holm-Bonferroni](https://en.wikipedia.org/wiki/Holm%E2%80%93Bonferroni_method)). We could also use a procedure that controls the false discovery rate instead (e.g., the [Benjamini-Hochberg correction](https://en.wikipedia.org/wiki/False_discovery_rate#Benjamini.E2.80.93Hochberg_procedure)). These adjustments are derived assuming the included tests are uncorrelated. It is still valid to apply them to correlated tests, they simply may be too conservative (i.e., they may be suboptimal in terms of power). Our default practice when dealing with multiple uncorrelated tests is to apply the Holm-Bonferroni correction. For more, see EGAP's [10 Things you need to know about multiple comparisons](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/).
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R12')">R code</button>
@@ -721,7 +721,10 @@ First, if we want to rely on established procedures that only require the p-valu
 ## Get p-values but exclude intercept
 pvals <- summary(estAndSE3multarms)$coef[2:4,4]
 
-## Illustrate different corrections (or lack thereof)
+## Illustrate different corrections (or lack thereof).
+## Many of these corrections can be applied either as
+## p-value adjustments, or by constructing alternative
+## significance thresholds. We focus on p-value adjustments:
 
 # None
 round(p.adjust(pvals, "none"), 3)
@@ -745,7 +748,10 @@ matrix pvals = r(table)["pvalue", 2..4] // save in a matrix
 matrix pvalst = pvals' // transpose
 svmat pvalst, names(col) // add matrix as data in memory
 
-** Illustrate different corrections (or lack thereof)
+** Illustrate different corrections (or lack thereof).
+** Many of these corrections can be applied either as
+** p-value adjustments, or by constructing alternative
+** significance thresholds. We focus on p-value adjustments:
 
 * None
 replace pvalue = round(pvalue, 0.0001)
@@ -795,7 +801,7 @@ print("Hochberg")
 round(p.adjust(pvals, "hochberg"), 3) # FDR instead of FWER
 ```
 
-Simply adjusting $p$-values from this linear model ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. And we could be leaving meaningful statistical power "on the table" by applying procedures that ignore correlations between our test statistics.
+Notice that simply adjusting $p$-values from this linear model ignores the fact that we may be interested in other pairwise comparisons, such as the difference in effects between receiving `T3` vs `T4`. And as already emphasized, we could be leaving meaningful statistical power "on the table" by applying procedures that ignore correlations between our test statistics.
 
 A different option when dealing with multiple comparisons is to implement a [Tukey Honestly Signficant Differences (HSD) test](https://en.wikipedia.org/wiki/Tukey%27s_range_test). The Tukey HSD test (sometimes called a Tukey range test or just a
 Tukey test) calculates multiple-comparison-adjusted $p$-values and simultaneous confidence intervals *for all pairwise comparisons* in a model, while taking into account possible correlations between test statistics. It is similar to a two-sample t-test, but with built in adjustment for multiple comparisons. The test statistic for any comparison between two equally-sized groups $i$ and $j$ is:
