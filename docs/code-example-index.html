@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-09-24">
+<meta name="date" content="2024-09-25">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -622,7 +622,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Random assignment</p>
 <ul>
-<li><p>(4.1 - 4.2) Advantages of urn draw randomization in terms of precise control over the number treated; 2+ groups</p></li>
+<li><p>(4.1 - 4.2) Advantages of urn draw randomization; randomization with 2+ groups</p></li>
 <li><p>(4.3) Factorial assignment</p></li>
 <li><p>(4.4) Blocked assignment</p></li>
 <li><p>(4.5) Clustered assignment</p></li>
@@ -630,20 +630,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Balance testing</p>
 <ul>
 <li><p>(4.8.4) Separate comparisons for each of many covariates</p></li>
-<li><p>(4.8.4) Omnibus tests (asymptotic inference and randomization inference)</p></li>
+<li><p>(4.8.4) Omnibus tests (asymptotic inference or randomization inference)</p></li>
 </ul>
 <p>Estimation</p>
 <ul>
 <li><p>(5.1.1) Estimating average treatment effects, standard errors, and performing randomization inference with two-arm trials (continuous and binary outcomes)</p></li>
-<li><p>(5.2.1) Estimating in multiple arm trials</p></li>
+<li><p>(5.2.1) In multiple arm trials</p></li>
 </ul>
 <p>Multiple testing adjustment</p>
 <ul>
-<li>(5.2.1 - 5.2.2) Some methods for multiple treatment arms and/or multiple outcomes, including randomization inference simulations</li>
+<li>(5.2.1 - 5.2.2) Methods for multiple testing with multiple treatment arms and/or multiple outcomes, including examples of randomization inference simulations</li>
 </ul>
 <p>Covariate adjustment</p>
 <ul>
-<li>(5.3.2 - 5.3.3) Lin (2013) adjustment and Rosenbaum (2002) adjustment as alternatives to (standard) linear, additive adjustment for covariates</li>
+<li>(5.3.2 - 5.3.3) Lin (2013) adjustment and Rosenbaum (2002) adjustment as alternatives to standard linear, additive adjustment for covariates in a regression</li>
 </ul>
 <p>Adjusting estimation to account for our randomization design</p>
 <ul>
@@ -656,6 +656,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Power analysis</p>
 <ul>
+<li><p>(5.3 - 5.6) Using <code>DeclareDesign</code> in R or a parallel approach in Stata</p></li>
 <li><p>(6.1) Analytical power calculations</p></li>
 <li><p>(6.2 and 6.4) Simulating test statistics under a true null and using them to calculate power</p></li>
 <li><p>(6.4.2) Simulating data with effect sizes built in, and comparing power estimates across effect sizes</p></li>

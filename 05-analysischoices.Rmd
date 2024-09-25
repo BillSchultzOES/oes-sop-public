@@ -705,7 +705,7 @@ Our default procedure for evaluating multi-arm trials is as follows:
  
  - Alternatively, if we do want to make multiple confirmatory comparisons, we need to adjust their collective false positive rate.^[We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.] The most appropriate method varies. Options include: canned procedures like Holm-Bonferroni adjustment (which do not account for correlations between tests); the Tukey HSD procedure for pairwise comparisons of multiple treatment arms; simulations to calculate a significance threshold that properly controls the collective error rate;^[Generally, we would use simulation methods based on randomization inference; see the coded examples below. Though this is less common in social science, studies in other disciplines sometimes simulate the joint distribution of the test statistics instead [@conneely2007so]. This might require either estimating or assuming the correlation between test statistics under the true null.] or performing the tests in a specific, theory-informed order to protect the familywise error rate [@rosenbaum2008a].
 
-#### Adjusting p-values and confidence intervals for multiple comparisons
+#### Adjusting for multiple comparisons
 
 We review some of the adjustment options listed above in more detail, with coded examples.
 
@@ -903,7 +903,7 @@ See also, in R: `pairwise.prop.test` for binary outcomes.
 
 Finally, when test statistics are correlated but a Tukey-styled test is not desirable, we could instead employ randomization inference. To do this, we would start by simulating the distribution of p-values observed for each test across many random permutations of treatment (estimating the "randomization distribution" of our correlated test statistics under the sharp null). After that, we would use the distribution of p-values to calculate an *alternative significance threshold*. By comparing our real p-values to this simulated threshold, we could evaluate statistical significance while properly controling the FWER. We provide examples below for R and Stata. See step 7 on [this page](https://egap.org/resource/10-things-to-know-about-multiple-comparisons/) for an alternative R code example.
 
-In the code below, we first define a function to randomly re-assign treatment and estimate a p-value for each regression coefficient (based on HC2 errors). We repeatedly call this function 1000 times and save the resulting distribution of p-values. We then define two more functions (`find_threshold1` and `find_threshold2`) that illustrate two different methods of calculating an appropriate significance threshold using those p-values (the first may be a little slower, but it walks through the logic in more detail). We also use this simulation to illustrate the advantages of an omnibus approach where we simply perform our confirmatory test using an alternative indicator for receipt of one of the treatment arms.
+In the code below, we first define a function to randomly re-assign treatment and estimate a p-value for each regression coefficient (based on HC2 errors). We repeatedly call this function 1000 times and save the resulting distribution of p-values. We then define two more functions (`find_threshold1` and `find_threshold2`) that illustrate different methods of calculating an appropriate significance threshold using those p-values (the first may be a little slower, but it walks through the logic in more detail). We also use this simulation to illustrate the advantages of an omnibus approach where we simply perform our confirmatory test using an alternative indicator for receipt of one of the treatment arms.
 
 Both calculation approaches yield similar significance thresholds. And the collective false positive rate when making multiple comparisons is noticably higher than when making a single, omnibus comparison.
 
@@ -976,7 +976,7 @@ find_threshold1 <- function(
   from = 0.001, # Lowest possible threshold to try
   to = 0.999, # Highest to try
   by = 0.001, # Increments to try
-  sig_level = 0.05 # Desired FWER (FW significance level)
+  sig_level = 0.05 # Desired max FWER (FW significance level)
   ) {
   
   ## Generate the sequence of thresholds to test
@@ -1049,7 +1049,7 @@ find_threshold2 <- function(p_values) {
 ## significance threshold
 sim_alpha2 <- as.numeric(find_threshold2(multiple_arms[, 3:5]))
 
-## Compare the two simulation approaches:
+## Compare the three simulation approaches:
 print("sim_alpha1")
 sim_alpha1
 print("sim_alpha2")
@@ -1253,7 +1253,6 @@ draw_multiple_arms <- function() {
   
 }
 
-
 ## Calculate the output of that function 1000 times
 multiple_arms <- 
   
@@ -1282,7 +1281,7 @@ find_threshold1 <- function(
   from = 0.001, # Lowest possible threshold to try
   to = 0.999, # Highest to try
   by = 0.001, # Increments to try
-  sig_level = 0.05 # Desired FWER (FW significance level)
+  sig_level = 0.05 # Desired max FWER (FW significance level)
   ) {
   
   ## Generate the sequence of thresholds to test
@@ -1355,7 +1354,7 @@ find_threshold2 <- function(p_values) {
 ## significance threshold
 sim_alpha2 <- as.numeric(find_threshold2(multiple_arms[, 3:5]))
 
-## Compare the two simulation approaches:
+## Compare the three simulation approaches:
 print("sim_alpha1")
 sim_alpha1
 print("sim_alpha2")
@@ -1654,7 +1653,7 @@ mean(rowSums(multiple_outcomes[,c(2:3)] <= 0.05) > 0)
 
 ### When is this necessary?
 
-So far, we've focused on the mechanics of performing different kinds of adjustments for multiple testing (different outcomes, multiple comparisons, multiple model specifications we are agnostic about, etc.). But we've avoided a more fundamental question: how do we determine when adjustment is necessary in the first place? Failing to apply a multiple testing correction when it is needed yields overconfident inferences. But adjusting when it is not needed yields overly conservative inferences. Both miscalculations work against our ability to correctly control error rates, one of our key design criteria (chapter 2).
+So far, we've focused on the mechanics of performing different kinds of adjustments for multiple testing (different outcomes, multiple comparisons, multiple model specifications we are agnostic about, etc.). But we've avoided a more fundamental question: how do we determine when adjustment is necessary in the first place? Failing to apply a multiple testing correction when it is needed yields overconfident inferences. But adjusting for multiple testing when it is not needed yields overly conservative inferences. Both miscalculations work against our ability to correctly control error rates, one of our key design criteria (chapter 2).
 
 This is an area where our thinking at OES has evolved over time. To see the logic for our current approach, consider the two hypothetical examples below.
 
@@ -1704,7 +1703,7 @@ The precision-loss attributable to standard linear covariance adjustment estimat
 
 - The number of parameters in a model is large enough, relative to the sample size, that the loss of degrees of freedom from using Lin adjustment may be substantial (the number of terms added is the number of controls multipled by the number of treatments); Lin adjustment is more efficient *asymptotically*
 
-We expand on some of these issues in the subsections below, with more detail on how Lin estimation works
+We expand on some of these issues in the subsections below, with more detail on how Lin estimation works. We also provide a simulated example illustrating hypothetical power differences between standard covariate adjustment and Lin adjustment in Chapter 6.
 
 ### Possible bias in the least squares ATE estimator with covariates
 
@@ -2726,23 +2725,23 @@ We could also use the CMH test to compare odds ratios between experiments, rathe
 
 ### Estimating an overall average treatment effect {#blockrandate}
 
-Whether or not we randomly assign a policy intervention within blocks or strata, our team nearly always reports a single estimate of the average treatment effect. To review, we define the overall ATE (the theoretical estimand) as a simple average of the individual treatment effects. For two treatments, we might write this individual-level causal effect as $\tau_i = y_{i,0} - y_{i,1}$. We'd therefore express the overall (true) ATE across our sample as as $\bar{\tau}=(1/n) \sum_{i=1}^n \tau_i$. Unfortunately, this quantity is unobservable.
+Regardless of how treatment is assigned, our team nearly always reports a single estimate of the average treatment effect. To review, we define the overall ATE (the theoretical estimand) as a simple average of the individual treatment effects. For two treatments, we might write this individual-level causal effect as $\tau_i = y_{i,0} - y_{i,1}$. We'd therefore express the overall (true) ATE across our sample as as $\bar{\tau}=(1/n) \sum_{i=1}^n \tau_i$. Unfortunately, this quantity is unobservable.
 
-In blocked designs, we have randomly assigned the intervention within each block independently. As we note above, this (1) increases precision and (2) supports more credible subgroup analysis. How might we "analyze as we have randomized" to learn about $\bar{\tau}$ using observable data? Our approach is to build up from the block-level. See @gerber_field_2012 for more context.
+In blocked designs, we have randomly assigned the intervention within each block independently. As we note above, this (1) increases precision and (2) supports more credible subgroup analysis. How might we "analyze as we have randomized" to learn about $\bar{\tau}$ using observable data? Our approach is to think about this in terms of block-level treatment effects. See @gerber_field_2012 for more context.
 
-Say, for example, that the unobserved ATE within a given block, $b$, was $\text{ATE}_{b}=\bar{\tau}_b=(1/n_b)\sum_{i=1}^{n_b} \tau_{i}$. Here, we are averaging the individual level treatment effects ($\tau_{i}$) across all $n_b$ people in block $b$. Now, imagine that we had an experiment with blocks of different sizes (and perhaps with different proportions of units assigned to treatment --- e.g., certain blocks may be more expensive places in which to run an experiment). We can learn about $\bar{\tau}$ by first reframing it as the block-size weighted average of the true within-block treatment effects:^[We illustrate the equivalence between $\bar{\tau}$ and $\bar{\tau}_{\text{nbwt}$ in our code below: the comparison between `trueATE1` and `trueATE2`.] $$\bar{\tau} = \bar{\tau}_{\text{nbwt}} = (1/B) \sum_{b=1}^B (n_b/n) \bar{\tau}_b$$
+Say, for example, that the unobserved ATE within a given block, $b$, was $\text{ATE}_{b}=\bar{\tau}_b=(1/n_b)\sum_{i=1}^{n_b} \tau_{i}$. Here, we are averaging the individual level treatment effects ($\tau_{i}$) across all $n_b$ people in block $b$. Now, imagine that we had an experiment with blocks of different sizes (and perhaps with different proportions of units assigned to treatment --- e.g., certain blocks may be more expensive places in which to run an experiment). We can learn about $\bar{\tau}$ by first reframing it as the block-size weighted average of the true within-block treatment effects:^[We illustrate the equivalence between $\bar{\tau}$ and $\bar{\tau}_{nbwt}$ in our code below: the comparison between `trueATE1` and `trueATE2`.] $$\bar{\tau} = \bar{\tau}_{\text{nbwt}} = (1/B) \sum_{b=1}^B (n_b/n) \bar{\tau}_b$$
 
 We can then estimate $\bar{\tau}_{\text{nbwt}}$ based on its observable analogue, just as we have with a completely randomized experiment. Blocks are essentially their own randomized experiments, so we can estimate each $\bar{\tau}_b$ using the following unbiased estimator, where $i \in t$ means "for $i$ in the treatment group" and where $m_b$ is the number of units assigned to treatment in block $b$: $$\hat{\tau}_b=\sum_{i \in t} Y_{ib}/m_b - \sum_{i \in c} Y_{ib}/(n_b - m_b)$$
 
-We would then plug the $\hat{\tau}_b$ estimates into the expression for $\bar{\tau}_{\text{nbwt}}$ above, yielding $\hat{\bar{\tau}}_{\text{nbwt}}$. *Note that many people do not use this unbiased estimator because its precision is worse that those of another, slightly biased estimator.* We illustrate both methods below, the block-size weighted estimator and what we call the "precision-weighted" estimator. We also offer some reflections on when a biased estimator that tends to produce answers closer to the truth might be preferred over an unbiased estimator where any given estimate may be farther from the truth.
+We would then plug the $\hat{\tau}_b$ estimates into the expression for $\bar{\tau}_{\text{nbwt}}$ above, yielding $\hat{\bar{\tau}}_{\text{nbwt}}$. Note that many people do not use this unbiased estimator, in part because its precision is worse that those of another, slightly biased estimator. We illustrate both methods below, the block-size weighted estimator and what we call the "precision-weighted" estimator. We also offer some reflections on when a biased estimator that tends to produce answers closer to the truth might be preferred over an unbiased estimator where any given estimate may be farther from the truth.
 
 The precision-weighted estimator is based on *harmonic-weights*. We have also tended to call it a "precision-weighted average." The weights combine block size, $n_b$, and the proportion of the block assigned to treatment, $p_b = (1/n_b) \sum_{i=1}^{n_b} Z_{ib}$, for a binary treatment, $Z_{ib}$. The harmonic weight for each block is $h_b = n_b p_b (1 - p_b)$, and the theoretical estimand is then: $$\bar{\tau}_{\text{hbwt}}= (1/B) \sum_{b=1}^B (1/h_b) \bar{\tau}_b$$
 
-This approach may sound unfamiliar. But using precision weights to average a set of within-block treatment effect estimates is equivalent to the more common practice of regression adjustment for linear, additive blocked fixed effects (and we show an example of this in our code below).
+This approach may *sound* unfamiliar. But using precision weights to average a set of within-block treatment effect estimates is equivalent to the more common practice of regression adjustment for linear, additive blocked fixed effects (and we show an example of this in our code below).
 
-Two more points are worth emphasizing. First, by weighting blocks proportionally to their contributions to overall sample size, $\bar{\tau}_{\text{nbwt}}$ effectively treats all units equally in terms of their contributions to the ATE. In contrast, $\bar{\tau}_{\text{hbwt}}$ weights treatment effects from blocks (and therefore the individuals within them) relatively less if the within-block treatment probability is closer to 0.5.^[A block of 100 units would have a harmonic weight of 25 with a treatment probability of 0.5 $(100 \times 0.5 \times 0.5)$, but a harmonic weight of 18.75 under an alternative treatment probability of 0.25 $(100 \times 0.25 \times 0.75)$. Notice that within-block treatment effect estimates are then multiplied by the inverses of these harmonic weights.]
+Two points are worth emphasizing. First, by weighting blocks proportionally to their contributions to overall sample size, $\bar{\tau}_{\text{nbwt}}$ effectively treats all units equally in terms of their contributions to the ATE. In contrast, $\bar{\tau}_{\text{hbwt}}$ weights treatment effects from blocks (and therefore the individuals within them) relatively less if the within-block treatment probability is closer to 0.5.^[A block of 100 units would have a harmonic weight of 25 with a treatment probability of 0.5 $(100 \times 0.5 \times 0.5)$, but a harmonic weight of 18.75 under an alternative treatment probability of 0.25 $(100 \times 0.25 \times 0.75)$. Notice that within-block treatment effect estimates are then multiplied by the inverses of these harmonic weights.]
 
-Second, it should be clear from the expression for $h_b$ above that the precision-weighted approach will give no weight to units in blocks where the probability of treatment is 0 or 1 (i.e., all units are eiter treated or untreated, due perhaps to treatment administration issues). What may not be obvious yet is that the unbiased, block-size weighted approach suffers from the same problem. Treatment probabilities may not factor into $n_b/n$, but these are block-level weights that we can't apply without a within-block treatment effect estimate (which we cannot calculate in the absence of within-block variation in treatment). Moreover, the unit level expression for these unbiased weights *is* a function of the within-block treated proportion $(p_{ib})$:
+Second, the expression for $h_b$ above shows that the precision-weighted approach will give no weight to units in blocks where the probability of treatment is 0 or 1 (i.e., all units are eiter treated or untreated, due perhaps to treatment administration issues). What may not be obvious yet is that the unbiased, block-size weighted approach suffers from the same problem. Treatment probabilities may not factor into $n_b/n$, but these are block-level weights that we can't apply without a within-block treatment effect estimate (which we cannot calculate in the absence of within-block variation in treatment). The unit level expression for these unbiased weights *is* a function of the within-block treated proportion $(p_{ib})$:
 
 $$nbwt_{i} = Z_{i}/p_{ib} + (1-Z_{i})/(1 - p_{ib})$$
 
@@ -2750,7 +2749,7 @@ For reference, an expression for unit-level precision-weights is:
 
 $$hbwt_{i} = nbwt_{i} \times p_{ib} \times (1 - p_{ib})$$
 
-Now, we'll show multiple approaches to applying these estimators. We'll also demonstrate (1) that ignoring the blocks when estimating treatment effects can produce problems in both estimation and testing, and (2) that the block-size weighted approaches are unbiased but possibly less precise than the precision weighted approaches.
+Let's review various approaches to applying these estimators. We'll demonstrate (1) that ignoring the blocks when estimating treatment effects can produce problems in both estimation and testing, and (2) that the block-size weighted approaches are unbiased but possibly less precise than the precision weighted approaches.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R22')">R code</button>
@@ -3571,7 +3570,9 @@ hbwtses <- c(
 hbwtses
 ```
 
-Now, we claimed that the block size weighted estimator is unbiased but perhaps less precise than the precision-weighted estimator. In R, we'll use `DeclareDesign` to compare the performance of those estimators and illustrate our point. We implement those estimators as functions passed to the `diagnose_design` function in the next code block. In Stata, we use the same approach as above, passing manually-written programs to `simulate`.
+Now, we claimed that the block size weighted estimator is unbiased but perhaps less precise than the precision-weighted estimator. The evidence from this one draw of data does not bear that prediction out. But this isn't a very rigorous comparison.
+
+To provide a better comparison, in R, we'll use `DeclareDesign` to evaluate the performance of these estimators. We implement them as functions passed to the `diagnose_design` function in the next code block. In Stata, we use the same approach as above, passing manually-written programs to `simulate`.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R28')">R code</button>
@@ -3918,9 +3919,7 @@ set.seed(12345)
 thediagnosis <- diagnose_design(thedesignPlusEstimators, sims=sims, bootstrap_sims = 0, diagnosands = diagnosands)
 ```
 
-We can see in the diagnostic output below that the estimators using block-size weights (E2, E3, E4, or E5) all eliminate bias (within simulation error).^[We've omitted power, since all the estimators in this example have a power of approximately 100%] The estimators ignoring blocks (E0 and E1), are biased, and in this particular simulation the precision weighed estimators (E6--E9) are also highly biased --- with some of them also producing poor "coverage" or false positive rates (E7 and E9).
-
-This output also shows us the "SD Estimate" (which is a good estimate of the standard error of the estimate) and the "Mean SE" (which is the average of the analytic estimates of the standard error). In the case of E2, E3, E4 or E5 the Mean SE is larger than the SD Estimate --- this is good in that it means that our analytic standard errors will be conservative. However, we also would prefer that our analytic standard errors not be *too* conservative.
+We can see in the diagnostic output below that the estimators using block-size weights (E2, E3, E4, or E5) all eliminate bias (within simulation error).^[We've omitted power, since all the estimators in this example have a power of approximately 100%] The estimators ignoring blocks (E0 and E1), are biased, and in this particular simulation the precision weighed estimators (E6--E9) are also highly biased --- with some of them also producing poor "coverage" or false positive rates (E7 and E9). This output also shows us the "SD Estimate" (an estimate of the true standard error) and the "Mean SE" (which is the average of the analytic estimates of the standard error). In the case of E2, E3, E4 or E5 the Mean SE is larger than the SD Estimate --- this is good in that it means that our analytic standard errors will be conservative rather than overly liberal. However, we also would prefer that our analytic standard errors not be *too* conservative.
 
 ```{r diagnosisblocks, echo = F}
 kable(reshape_diagnosis(thediagnosis)[, c(3, 6:10, 13)])
@@ -3947,9 +3946,9 @@ g <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
 print(g)
 ```
 
-The simulated outcome data we used here is highly skewed by design. This helps illustrate that the biases of precision-weighted estimates could be exacerbated by common problems in administrative data like skewed outcomes or zero-inflation (i.e., many 0s). In this case, the skew even prevents us from illustrating the precision benefits of harmonic weights.
+Why is the performance of the precision-weighted approach so poor so far, even just in terms of precision? Well, the simulated outcome data used in this example is highly skewed by design. All else equal, the precision-weighted approach makes a reasonable choice to allow some bias in return for reduced variance. But it's performance can suffer dramatically in the presence of common problems in administrative data like skewed outcomes or zero-inflation (i.e., many 0s). With skewed or zero-inflated outcomes, the block-size weighted approach may be safer.
 
-One solution we could apply in this case is rank-transforming the outcome measure. This transformed outcome nearly erases the bias from the block-size weighted estimators, and the precision-weighted approaches also perform as expected. However, ignoring the blocked design is still a problem --- E0 and E1 continue to show substantial bias. Moreover, notice here and above that although using regression weights alone to apply these blocking adjustments (rather than, e.g., an appropriate fixed effects specification) produces the right estimates, it does so at the cost of a larger standard error.
+One solution we could apply to allow more confident use of the precision-weighted approach is rank-transforming the outcome measure. We apply this change in the code chunk below. This transformation nearly erases the bias from the block-size weighted estimators, and the precision-weighted approaches now perform closer to our expectations (they produce identical effect estiates after rounding here, with a slightly lower standard error). Ignoring the blocking design is still a problem---E0 and E1 continue to show substantial bias. Moreover, notice here and above that although using regression weights to apply these blocking adjustments (rather than, e.g., an appropriate fixed effects specification) produces the right estimates, it may do so at the cost of more conservative standard error estimates.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R29')">R code</button>
@@ -4164,7 +4163,7 @@ g2 <- ggplot(data=simdesignsNorm,aes(x=estimate,color=estimator)) +
 print(g2)
 ```
 
-In a pair-randomized design, for instance, we know that bias should not arise from ignoring the blocking structure. But we could still improve precision by taking the pairing into account [@bowers2011mem]. This final simulation changes the design to still have unequal sized blocks, but with a uniform probability of treatment assignment in each. Here, only two estimators show appreciable bias (E5 and E8). However, ignoring the blocks leads to overly conservative standard errors.
+Lastly, note that when the probability of treatment is the same in each block (e.g., with a pair-randomized design), ignoring the blocking structure during estimation should not lead to meaningful bias. But we could still improve precision by taking blocking into account [@bowers2011mem]. This final simulation changes the design to still have unequal sized blocks, but with a uniform probability of treatment assignment in each block. Here, only two estimators show appreciable bias (E4 and E7). However, ignoring the blocks during estimation leads to overly conservative standard errors.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R36')">R code</button>
@@ -4341,7 +4340,7 @@ print(g3)
 
 #### Summary of Approaches to the Analysis of Block Randomized Trials
 
-Our team prefers block randomized trials because of their potential to increase statistical power, as well as their ability to let us focus on subgroup effects. Our approach has been guided by evidence like the simulations we present above: we "analyze as we randomize" to avoid bias and increase statistical power, and we are careful in our choice of weighting approaches. Different designs will require different analytical decisions --- sometimes we may be willing to trade a small amount of bias for a guarantee that our estimates will be closer to the truth and more precise, on average (i.e. get lower mean-squared error, but more bias). Other studies will be so large or small that one or another strategy will become obvious. We use our Analysis Plans to explain our choices, and simulation studies like those shown here when we are uncertain about the applicability of statistical rules of thumb to any given design.
+Our team often prefers block randomized trials because of their potential to increase statistical power, help us avoid bias, and help us better highlight subgroup effects. We generally prefer to "analyze as we randomize." But this can mean a number of things with blocked designs, and different designs will require different analytical decisions. Sometimes we may be willing to trade a small amount of bias to make our estimates more precise. Other studies will be so large or small that one or another estimation strategy will be obviously superior. We use our Analysis Plans to explain our choices, and generally rely on simulation studies when we are uncertain about the applicability of statistical rules of thumb to any given design.
 
 ## Cluster-randomized trials {#clusterrandanalysis}
 

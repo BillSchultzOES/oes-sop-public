@@ -12,7 +12,7 @@ Calculating design-justified confidence intervals:
 
 Random assignment
 
-- (4.1 - 4.2) Advantages of urn draw randomization in terms of precise control over the number treated; 2+ groups
+- (4.1 - 4.2) Advantages of urn draw randomization; randomization with 2+ groups
 
 - (4.3) Factorial assignment
 
@@ -24,21 +24,21 @@ Balance testing
 
 - (4.8.4) Separate comparisons for each of many covariates
 
-- (4.8.4) Omnibus tests (asymptotic inference and randomization inference)
+- (4.8.4) Omnibus tests (asymptotic inference or randomization inference)
 
 Estimation
 
 - (5.1.1) Estimating average treatment effects, standard errors, and performing randomization inference with two-arm trials (continuous and binary outcomes)
 
-- (5.2.1) Estimating in multiple arm trials
+- (5.2.1) In multiple arm trials
 
 Multiple testing adjustment
 
-- (5.2.1 - 5.2.2) Some methods for multiple treatment arms and/or multiple outcomes, including randomization inference simulations
+- (5.2.1 - 5.2.2) Methods for multiple testing with multiple treatment arms and/or multiple outcomes, including examples of randomization inference simulations
 
 Covariate adjustment
 
-- (5.3.2 - 5.3.3) Lin (2013) adjustment and Rosenbaum (2002) adjustment as alternatives to (standard) linear, additive adjustment for covariates
+- (5.3.2 - 5.3.3) Lin (2013) adjustment and Rosenbaum (2002) adjustment as alternatives to standard linear, additive adjustment for covariates in a regression
 
 Adjusting estimation to account for our randomization design
 
@@ -51,6 +51,8 @@ Design simulation (e.g., estimating bias and/or precision)
 - (5.3 - 5.6) Comparing estimation strategies using `DeclareDesign` in R or a parallel approach in Stata
 
 Power analysis
+
+- (5.3 - 5.6) Using `DeclareDesign` in R or a parallel approach in Stata
 
 - (6.1) Analytical power calculations
 

@@ -6,7 +6,7 @@ Design-based inference:
 
 - (3.1.1) The logic for why we prefer HC2 standard errors, and why we prefer design-justified inference methods in general
 
-- (5.1.1) The "sharp null" (employed when using randomization inference simulations to estimate a p-value), and how it differs from the standard null hypothesis researchers often employ
+- (5.1.1) The "sharp null" (employed when using randomization inference simulations to estimate a p-value), and how it differs from the standard null hypothesis researchers generally employ
 
 Random assignment decisions:
 
@@ -26,21 +26,21 @@ Balance checks:
 
 - (4.8.5) How we tend to think through evidence of "failed" random assignments
 
-Linear regression as a useful tool for treatment effect estimation
+OLS linear regression as a useful tool for treatment effect estimation
 
 - (2.3) Quick review of our thinking
 
-- (5.1.1) More detailed illustration, for continuous (5.1.1.1) and binary (5.1.1.2) outcomes
+- (5.1.1) More detailed illustration, for both continuous (5.1.1.1) and binary (5.1.1.2) outcomes
 
 Multiple testing
 
 - (5.2 - 5.2.2) When might we want to use different approaches to handle the problem of multiple testing?
 
-- (5.2.3) Putting aside the problem of choosing adjustment methods, when do we think adjusting for multiple tests is needed in the first place?
+- (5.2.3) When do we think adjusting for multiple tests is most needed in the first place?
 
 Estimation choices
 
-- (5.3 - 5.3.2) What is "Lin adjustment" or "Lin estimation," and when does it have advantages (or not) over the more standard approach of linear, additive adjustment for covariates.
+- (5.3 - 5.3.2) What is "Lin adjustment" or "Lin estimation," and when does it have advantages over the more standard approach of linear, additive adjustment for covariates?
 
 - (5.5.2) How do different methods of adjusting for blocked random assignment compare to each other? In particular: unbiased vs precision-weighted methods.
 
