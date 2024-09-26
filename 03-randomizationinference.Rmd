@@ -290,11 +290,6 @@ The feasible SE is designed to be *at least as large* as the true standard error
 
 We already have the simulated SE from the code above. Next, let's calculate the true SE. 
 
-```{r oldcode, echo = F, include = F}
-# This was used previously to get the true SE, but may be wrong?
-#varestATE <- ((N-nt)/(N-1)) * (vart/(N-nt)) + ((N-nc)/(N-1)) * (varc/nc) + (2/(N-1)) * covtc
-```
-
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R6')">R code</button>
 <button class="tablinks" onclick="unrolltab(event, 'ch3Stata6')">Stata code</button>

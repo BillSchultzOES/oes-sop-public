@@ -2017,18 +2017,6 @@ estCov5 <- declare_estimator(Y~Znew,covariates=~cov2, inquiry=theestimanddat1, .
 all_estimators <- estCov0 + estCov1 + estCov2 + estCov3 + estCov4 + estCov5
 ```
 
-```{r testestimators, eval = F, echo=FALSE, results = FALSE}
-## Testing, hidden from book
-blah <- draw_data(thedesignsmalldat1)
-blahBig <- draw_data(thedesignbigdat1)
-estCov0(blah)
-estCov1(blah)
-estCov2(blah)
-estCov3(blah)
-estCov4(blah)
-estCov5(blah)
-```
-
 After this, as a last step in R, we'll add those estimators to our `design` class objects.
 
 ```{r setup_design_plus_est_objects}
@@ -2252,30 +2240,6 @@ The experiment with $N=100$ shows much smaller bias than the other experiment ab
 
 ```{r diagnostCovAdj2, echo = F, eval = T}
 kable(reshape_diagnosis(thediagnosisCovAdj2)[,diagcols] )
-```
-
-```{r setupgraph, eval = F, echo = F}
-## Bill: not sure what the intended takeaway is here.
-## I feel like the table already communicates everything.
-## And this code (and the chunk below) was already left out of the SOP.
-## Past authors had trouble getting this to run? To potentially revisit.
-## Leaving out for now (see chunk options)
-simdesignsCovAdj1 <- get_simulations(thediagnosisCovAdj1)
-trueATE1covadj <- with(dat1,mean(y1-y0))
-## simdesigns <- simulate_design(thedesign,sims=sims)
-simmeansCovAdj1 <- simdesignsCovAdj1 %>% group_by(estimator) %>% summarize(expest=mean(estimate))
-```
-
-```{r plotcovadjsims, eval=FALSE, echo=FALSE}
-g <- ggplot(data=simdesignsCovAdj1,aes(x=estimate,color=estimator)) +
-	geom_density(size=2) +
-	geom_vline(xintercept=trueATE1covadj) +
-	geom_point(data=simmeansCovAdj1,aes(x=expest,y=rep(0,6)),shape=17,size=6) +
-	theme_bw() +
-	theme(legend.position = c(.9,.8)) +
-scale_x_continuous(limits = c(-10, 20))
-
-print(g)
 ```
 
 The Lin approach works well when covariates are few and sample sizes
@@ -2860,7 +2824,7 @@ write.csv(dat, "blocksimdat.csv", row.names = F)
 ```
 
 To make the differences between these estimation approaches more vivid,
-we've create a dataset with blocks of widely varying sizes. Half of the blocks have half of the units assigned to treatment and the other half 10% of the units assigned to treatment. Notice also that the baseline outcomes are strongly predicted by the blocks ($R^2$ around $`r round(blockpredpower,2)`$).
+we've create a dataset with blocks of widely varying sizes. Half of the blocks have half of the units assigned to treatment and the other half have 10% of the units assigned to treatment (i.e., varying assignment proabilities across blocks). Notice also that the baseline outcomes are strongly predicted by the blocks ($R^2$ around $`r round(blockpredpower,2)`$).
 
 We'll use `DeclareDesign` (in R) to assess bias, coverage and power (or precision) of several different approaches to applying each estimator. We'll also provide a parallel Stata example. The next code block sets up the simulation and also demonstrates different approaches to estimating an ATE (as usual, we can only do this because we are using simulation to compare these different statistical techniques in a setting where we know the true data generating process).
 
@@ -3570,7 +3534,7 @@ hbwtses <- c(
 hbwtses
 ```
 
-Now, we claimed that the block size weighted estimator is unbiased but perhaps less precise than the precision-weighted estimator. The evidence from this one draw of data does not bear that prediction out. But this isn't a very rigorous comparison.
+We claimed that the block size weighted estimator is unbiased but perhaps less precise than the precision-weighted estimator. The evidence from this one draw of data does not bear that prediction out. But this isn't a very rigorous comparison.
 
 To provide a better comparison, in R, we'll use `DeclareDesign` to evaluate the performance of these estimators. We implement them as functions passed to the `diagnose_design` function in the next code block. In Stata, we use the same approach as above, passing manually-written programs to `simulate`.
 
@@ -3925,27 +3889,6 @@ We can see in the diagnostic output below that the estimators using block-size w
 kable(reshape_diagnosis(thediagnosis)[, c(3, 6:10, 13)])
 ```
 
-```{r setupblockdiaggraph, eval=FALSE, echo = F}
-## For a visualization below currently not included in the SOP
-simdesigns <- get_simulations(thediagnosis)
-## simdesigns <- simulate_design(thedesign,sims=sims)
-simmeans <- simdesigns %>%
-  group_by(estimator) %>%
-  summarize(expest=mean(estimate))
-```
-
-```{r graphblockdiag, eval=FALSE, include=F}
-## Now compare to better behaved outcomes.
-## 
-g <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
-	geom_density() +
-	geom_vline(xintercept=trueATE1) +
-	geom_point(data=simmeans,aes(x=expest,y=rep(0,10)),shape=17,size=6) +
-	theme_bw() +
-	theme(legend.position = c(.9,.8))
-print(g)
-```
-
 Why is the performance of the precision-weighted approach so poor so far, even just in terms of precision? Well, the simulated outcome data used in this example is highly skewed by design. All else equal, the precision-weighted approach makes a reasonable choice to allow some bias in return for reduced variance. But it's performance can suffer dramatically in the presence of common problems in administrative data like skewed outcomes or zero-inflation (i.e., many 0s). With skewed or zero-inflated outcomes, the block-size weighted approach may be safer.
 
 One solution we could apply to allow more confident use of the precision-weighted approach is rank-transforming the outcome measure. We apply this change in the code chunk below. This transformation nearly erases the bias from the block-size weighted estimators, and the precision-weighted approaches now perform closer to our expectations (they produce identical effect estiates after rounding here, with a slightly lower standard error). Ignoring the blocking design is still a problem---E0 and E1 continue to show substantial bias. Moreover, notice here and above that although using regression weights to apply these blocking adjustments (rather than, e.g., an appropriate fixed effects specification) produces the right estimates, it may do so at the cost of more conservative standard error estimates.
@@ -4145,25 +4088,7 @@ thediagnosisNorm <- diagnose_design(thedesignPlusEstimatorsNorm, sims = sims, bo
 kable(reshape_diagnosis(thediagnosisNorm)[, c(3, 6:10, 13)])
 ```
 
-```{r setupblockdiaggraph2s, eval=FALSE, echo = F}
-## Again, leaving this out of SOP for now
-simdesignsNorm <- get_simulations(thediagnosisNorm)
-## simdesigns <- simulate_design(thedesign,sims=sims)
-simmeansNorm <- simdesignsNorm %>% group_by(estimator) %>% summarize(expest=mean(estimate))
-```
-
-```{r plotthediagnosisNorm, eval=FALSE, echo = F}
-## Again, leaving this out of SOP for now
-g2 <- ggplot(data=simdesignsNorm,aes(x=estimate,color=estimator)) +
-	geom_density() +
-	geom_vline(xintercept=trueATE1) +
-	geom_point(data=simmeansNorm,aes(x=expest,y=rep(0,10)),shape=17,size=6) +
-	theme_bw() +
-	theme(legend.position = c(.9,.8))
-print(g2)
-```
-
-Lastly, note that when the probability of treatment is the same in each block (e.g., with a pair-randomized design), ignoring the blocking structure during estimation should not lead to meaningful bias. But we could still improve precision by taking blocking into account [@bowers2011mem]. This final simulation changes the design to still have unequal sized blocks, but with a uniform probability of treatment assignment in each block. Here, only two estimators show appreciable bias (E4 and E7). However, ignoring the blocks during estimation leads to overly conservative standard errors.
+Lastly, note that when the probability of treatment is the same in each block (e.g., with a pair-randomized design), ignoring the blocking structure during estimation should not lead to meaningful bias. But we can still improve precision by taking blocking into account [@bowers2011mem]. This final simulation changes the design to still have unequal sized blocks, but now with a uniform probability of treatment assignment in each block (instead of a mix of 10% and 50%). Here, only two estimators show appreciable bias (E4 and E7). However, ignoring the blocks during estimation leads to overly conservative standard errors.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R36')">R code</button>
@@ -4318,24 +4243,6 @@ thediagnosisNormEqual <- diagnose_design(thedesignPlusEstimatorsNormEqual, sims 
 ```{r, echo = F, eval = T}
 ## View results
 kable(reshape_diagnosis(thediagnosisNormEqual)[, c(3, 6:10, 13)])
-```
-
-```{r setupblockdiaggraph3, eval=FALSE, echo=F}
-## Again, leaving this out of SOP for now
-simdesignsNormEqual <- get_simulations(thediagnosisNorm)
-simmeansNormEqual <- simdesignsNormEqual %>% group_by(estimator) %>% summarize(expest=mean(estimate))
-```
-
-```{r graphblockdiag3, eval=FALSE, echo=F}
-## Again, leaving this out of SOP for now
-## Now compare to better behaved outcomes.
-g3 <- ggplot(data=simdesignsNormEqual,aes(x=estimate,color=estimator)) +
-	geom_density() +
-	geom_vline(xintercept=trueATE1) +
-	geom_point(data=simmeansNormEqual,aes(x=expest,y=rep(0,10)),shape=17,size=6) +
-	theme_bw() +
-	theme(legend.position = c(.9,.8))
-print(g3)
 ```
 
 #### Summary of Approaches to the Analysis of Block Randomized Trials
@@ -4819,55 +4726,10 @@ set.seed(12345)
 thediagnosisCluster <- diagnose_design(thedesignClusterPlusEstimators, sims = sims, bootstrap_sims = 0)
 ```
 
-```{r, echo = F, include = F, eval = F}
-## Bill: code I'm leaving out for now
-
-## Get a character vector of the estimators just created
-## (using a regular expression)
-theestimatorsC <- ls(patt="^estC[0-9]")
-
-## Apply each of these estimators to the data
-## (get(x) calls an object with this name from the environment;
-## this function is then applied to the dataframe in question)
-checkestC <- sapply(
-  theestimatorsC,
-  function(x){
-    get(x)(as.data.frame(datCluster))[c("estimate","std.error")]
-    }
-  )
-
-## Review the results
-checkestC
-```
-
-
 The results of our simulation show how certain approaches can yield very biased estimates, while other approaches can reduce the bias. With variaion in cluster size, the C5 and C6 estimators have the lowest bias in this particular example (with very few clusters). We also see evidence of problems with some of these standard errors --- the actual standard errors (in "SD Estimate") should be much higher than those estimated by the approaches ignoring the clustered design (C0 and C1).
 
 ```{r diagclustres1, echo = F}
 kable(reshape_diagnosis(thediagnosisCluster)[, c(3, 6:9, 11:12)])
-```
-
-```{r setupclustgraph1, echo = F, eval = F}
-## commenting out for now
-simdesigns <- get_simulations(thediagnosis)
-## simdesigns <- simulate_design(thedesign,sims=sims)
-simmeans <- simdesigns %>% group_by(estimator) %>% summarize(expest=mean(estimate))
-```
-
-<!-- The following plot shows many of the estimators produce results far from the -->
-<!-- truth (shown by the vertical black bar), and also shows the diversity in -->
-<!-- precision of the estimators. -->
-
-```{r clusterresultsplot, eval = F, echo = F}
-## commenting out for now
-## Now compare to better behaved outcomes.
-gDiagClust <- ggplot(data=simdesigns,aes(x=estimate,color=estimator)) +
-	geom_density() +
-	geom_vline(xintercept=trueATE1) +
-	geom_point(data=simmeans,aes(x=expest,y=rep(0,10)),shape=17,size=6) +
-	theme_bw() #+
-	#theme(legend.position = c(.9,.8))
-print(gDiagClust)
 ```
 
 ### Incorrect false positive rates from tests and confidence intervals
@@ -5004,19 +4866,4 @@ paste0("fprateStata05 = ", fprateStata05)
 
 In this case, with 10 equal sized clusters, a simple outcome, and equal numbers of clusters in treatment and control, we see that the CR2 standard error controls the false positive rate (*less than* 5% of the 1000 simulations testing a true null hypothesis of no effect return a $p$-value of less than .05) while the default "Stata" (CR1) standard error has a slightly too high false positive rate of `r fprateStata05` at the 5\% error level.
 
-<!-- The following plot shows that, in this case the Stata standard error tends to -->
-<!-- make slightly too many false positive errors (shown by open circles above the -->
-<!-- 45 degree line) and the CR2 standard error tends control the error rate of the -->
-<!-- test (with black dots below the 45 degree line). -->
-
-```{r plotfpr, eval = F, echo = F}
-## commenting out for now
-plot(ecdf(fpresCR2),pch=19)
-plot(ecdf(fpresStata),pch=21)
-abline(0,1)
-```
-
 If a simulation like the one above shows false positive rate problems with the CR2 standard error as well, we may prefer to rely on permutation-based randomization inference. For more discussion of issues with standard error calculation in the presence of few clusters, and examples of some other possible approaches to testing with few clusters, see @esarey2019practical.
-
-<!-- [TO DO: An example using permutation based inference, illustrating a better false positive rate]. -->
-

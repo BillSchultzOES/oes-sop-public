@@ -293,19 +293,6 @@ tibble(
   kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid") %>%
   kableExtra::row_spec(5, extra_css = "border-bottom: 1px solid") %>%
   kable_styling(full_width = F)
-
-# This LaTex code was used previously
-# \begin{center}
-# \begin{tabular}{ccccc}
-# &&& FAFSA \% & FAFSA \% \\
-# Building & Size & Navigators? & if No Navigators & if Navigators   \\ \hline
-# 1 & Large & $\_$ & 20 & 60 \\
-# 2 & Large & $\_$ & 30 & 70 \\
-# 3 & Small & $\_$ & 20 & 30 \\
-# 4 & Small & $\_$ & 30 & 40 \\ \hline
-# && Means: & 25 & 50 \\
-# \end{tabular}
-# \end{center}
 ```
 
 The true average treatment effect for this sample is the average under treatment (i.e., the average treated potential outcome) minus the average under control (i.e., the average control potential outcome): $\text{ATE} = 50-25=25$ percent more applications per building when a navigator is deployed.
@@ -324,19 +311,6 @@ tibble(
   kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid") %>%
   kableExtra::row_spec(5, extra_css = "border-bottom: 1px solid") %>%
   kable_styling(full_width = F)
-
-# This LaTex code was used previously
-# \begin{center}
-# \begin{tabular}{ccccc}
-# &&& FAFSA \% & FAFSA \% \\
-# Building & Size & Navigators? & if No Navigators & if Navigators   \\ \hline
-# 1 & Large & Yes &  & 60 \\
-# 2 & Large & Yes &  & 70 \\
-# 3 & Small & No & 20 &  \\
-# 4 & Small & No & 30 &  \\ \hline
-# && Means: & 25 & 65 \\
-# \end{tabular}
-# \end{center}
 ```
 
 This yields a treatment effect estimate of $65-25 = 40$ percent more applications due to the presence of a navigator. This is *larger* than the true value of $25$.
@@ -355,19 +329,6 @@ tibble(
   kableExtra::row_spec(4, extra_css = "border-bottom: 1px solid") %>%
   kableExtra::row_spec(5, extra_css = "border-bottom: 1px solid") %>%
   kable_styling(full_width = F)
-
-# This LaTex code was used previously
-# \begin{center}
-# \begin{tabular}{ccccc}
-# &&& FAFSA \% & FAFSA \% \\
-# Building & Size & Navigators? & if No Navigators & if Navigators   \\ \hline
-# 1 & Large & $\_$ &  & 60 \\
-# 2 & Large & $\_$ & 30 &  \\
-# 3 & Small & $\_$ &  & 30 \\
-# 4 & Small & $\_$ & 30 &  \\ \hline
-# && Means: & 30 & 45 \\
-# \end{tabular}
-# \end{center}
 ```
 
 This, in contrast, yields an estimated treatment effect of $35-25 = 10$ percentage point more applications due to the navigators -- now *smaller* than the true value of $25$.
@@ -381,18 +342,6 @@ tibble(
   ) %>%
   knitr::kable() %>%
   kable_styling(full_width = F)
-# This LaTex code was used previously
-# \begin{center}
-# \begin{tabular}{cc}
-# Assignments & Est TE \\ \hline
-# YYNN & 40  \\ 
-# NYNY & 35 \\
-# YNNY & 25 \\
-# NYYN & 25 \\
-# YNYN & 15 \\
-# NNYY & 10
-# \end{tabular}
-# \end{center}
 ```
 
 These possible treatment effect estimates have a mean equal to the true value of 25, illustrating the difference in means is an unbiased estimator. However, some of these estimates are far from the truth, and they have a lot of variability.
@@ -406,16 +355,6 @@ tibble(
   ) %>%
   knitr::kable() %>%
   kable_styling(full_width = F)
-# This LaTex code was used previously
-# \begin{center}
-# \begin{tabular}{cc}
-# Assignments & Est TE \\ \hline
-# NYNY & 35 \\
-# YNNY & 25 \\
-# NYYN & 25 \\
-# YNYN & 15 \\
-# \end{tabular}
-# \end{center}
 ```
 
 With this blocked design restricting the random assignments that are possible, we now get an estimate that is no more than 10 percentage points from the truth. Further, our estimates will have less variability (an SD of `r round(sd(c(35, 25, 25, 15)), 2)` rather than `r round(sd(c(35, 25, 25, 15, 40, 10)), 2)`). This improves the statistical power of our design.
