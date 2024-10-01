@@ -708,6 +708,39 @@ matrix list diagnosands
 
 **********************
 
+** In preserve/restore to not interrupt
+** the flow of simulation code between
+** the last section and the next section
+preserve
+
+	** Perform Lin adjustment
+	use main.dta, clear
+	qui sum cov2, meanonly
+	gen gmc_cov2 = cov2 - r(mean)
+	qui reg y z gmc_cov2 c.z#c.gmc_cov2
+	global gcomp_lin = _b[z]
+
+	** Perform G-computation
+	qui reg y cov2 if z == 0
+	predict g_y0 if z == 1, xb
+	replace g_y0 = y if z == 0
+	qui reg y cov2 if z == 1
+	predict g_y1 if z == 0, xb
+	replace g_y1 = y if z == 1
+	gen g_diff = g_y1 - g_y0
+	qui sum g_diff, meanonly
+	global gcomp_gcomp = r(mean)
+
+	** Compare
+	di "Lin estimation"
+	di $gcomp_lin
+	di "G-computation"
+	di $gcomp_gcomp
+
+restore
+
+**********************
+
 ** Define a program to perform Rosenbaum estimation
 * (with all variables specified as in regress).
 capture program drop rosenbaum_est

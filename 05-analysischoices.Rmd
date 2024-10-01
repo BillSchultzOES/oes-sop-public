@@ -1653,7 +1653,7 @@ mean(rowSums(multiple_outcomes[,c(2:3)] <= 0.05) > 0)
 
 ### When is this necessary?
 
-So far, we've focused on the mechanics of performing different kinds of adjustments for multiple testing (different outcomes, multiple comparisons, multiple model specifications we are agnostic about, etc.). But we've avoided a more fundamental question: how do we determine when adjustment is necessary in the first place? Failing to apply a multiple testing correction when it is needed yields overconfident inferences. But adjusting for multiple testing when it is not needed yields overly conservative inferences. Both miscalculations work against our ability to correctly control error rates, one of our key design criteria (chapter 2).
+So far, we've focused on the mechanics of performing different kinds of adjustments (for different outcomes, multiple comparisons, multiple model specifications we are agnostic about, etc.). But we've avoided a more fundamental question: how do we determine when adjustment is necessary in the first place? Failing to apply a multiple testing correction when it is needed yields overconfident inferences. But adjusting for multiple testing when it is not needed yields overly conservative inferences! *Both miscalculations work against our ability to correctly control error rates*, one of our key design criteria (chapter 2).
 
 This is an area where our thinking at OES has evolved over time. To see the logic for our current approach, consider the two hypothetical examples below.
 
@@ -1665,7 +1665,7 @@ $$H_{0, phone} : \tau_{phone} = 0$$
 
 $$H_{0, joint} = H_{0, text} \cap H_{0, email} \cap H_{0, phone}$$
 
-In contrast, in **Example 2**, we are evaluating two separate interventions to process benefit applications more quickly. This is a three-arm trial with a control group and two intervention groups, but the interventions are unrelated. We can justify each intervention separately, and there is no joint null we are interested in. Instead, we simply want to **reject the constituent null hypotheses** of no effect for each intervention, $H_{0, int1}$ and $H_{0, int2}$.
+In contrast, in **Example 2**, we are evaluating two separate interventions to process benefit applications more quickly. This is a three-arm trial with a control group and two intervention groups, but the interventions are unrelated. We can justify each intervention separately, and there is no joint null we are interested in. Instead, we simply want to **reject the constituent null hypotheses** for each intervention, $H_{0, int1}$ and $H_{0, int2}$.
 
 $$H_{0, int1} : \tau_{int1} = 0$$
 
@@ -1675,7 +1675,7 @@ In Example 1, the joint null of no effect across outreach methods is the *inters
 $$H_{A, joint} = H_{A, text} \cup H_{A, email} \cup H_{A, phone}$$
 Rejecting any one of the constituent null hypotheses is grounds to reject $H_{0, joint}$. This is sometimes called a **union-intersection** test [@rubin2024inconsistent]. To maintain appropriate error rate control, we apply multiple testing adjustment whenever we base a conclusion on a union-intersection test. These are the situations where we are most concerned about being mislead by inflated error rates: where we are drawing one underlying conclusion based on the results of multiple tests.
 
-In contrast, in Example 2, the interventions are justified separately, and the truth of $H_{0, int1}$ has no bearing on the truth of $H_{0, int2}$. In this case, we have determined that it is not useful to only know that at least one of the two modifications decreased application processing times (i.e., rejecting the intersection of their nulls is not informative)---we need to know whether each modification on its own was sufficient. Therefore, we would not adjust for multiple testing. The FWER is inflated, but we are not drawing a joint conclusion. Moreover, the Type I error rates for the separate tests remain uninflated [@rubin2024inconsistent]. Returning to the three simulated p-values from the multiple arms adjustment example code, we can see that the estimated false positive rate under a true null is approximately correct when each test is considered alone.
+In contrast, in Example 2, the interventions are justified separately, and the truth of $H_{0, int1}$ presumably has no bearing on the truth of $H_{0, int2}$. We have determined that it is not useful to only know that at least one of the two modifications decreased application processing times (i.e., rejecting the intersection of their nulls is not informative)---we need to know whether each modification on its own was effective. Therefore, we would not adjust for multiple testing. The collective false positive rate is still inflated, but we are not drawing a collective conclusion across tests, and the Type I error rates for the separate tests remain uninflated [@rubin2024inconsistent]. Returning to the three simulated p-values from the multiple arms adjustment example code, we can see that the estimated false positive rate under a true null is approximately correct when each test is considered alone.
 
 ```{r}
 colMeans(multiple_arms[,c(3:5)] <= 0.05)
@@ -1687,21 +1687,21 @@ In sum, at OES we prefer to adjust for multiple testing when drawing conclusions
 
 Determining which case above best represents any given evaluation is [a question of theory and policy relevance](https://lakens.github.io/statistical_inferences/02-errorcontrol.html#why-you-dont-need-to-adjust-your-alpha-level-for-all-tests-youll-do-in-your-lifetime) as much as it is a statistical question. It may depend on what we hope to learn from an evaluation, and what kinds of conclusions would be most useful for our partners. It helps to carefully lay out and justify the claims we wish to make or evaluate as a part of pre-registering our analysis plans.
 
-## Covariance adjustment (the use of background information to increase precision)
+## Covariance adjustment
 
 When we have additional information about experimental units (covariates), we can use this to increase the the statistical power of our tests. When possible, we use this information during the design phase to randomize interventions within blocks. But we also often pre-specify covariance adjustment as a part of our analyses.
 
-Researchers typically do this by regressing the outcome on a treatment indicator and a set of linear, additive terms for each covariate (like $X_{i}$ in equation 3 below). This estimator of the average treatment effect is *consistent* (bias decreases as $n \rightarrow \infty$, i.e. asymptotically), but it can be biased in finite samples. The risk of appreciable bias is greater in small samples (see below). The unadjusted difference in means, in constrast, is unbiased, but as @lin_agnostic_2013 points out, this is not reassuring if, for instance, treatment and control groups are noticeably imbalanced despite randomization. Standard linear covariance adjustment can be less efficient than an unadjusted difference in means [@freedman2008rae].^[This becomes more likely as the probability of treatment gets further from 0.5, or if the relationship between covariates and treatment effect heterogeneity is stronger than the relationship between covariates and the potential outcomes. See @lin_agnostic_2013 p. 304, remark *v*.]
+Researchers typically do this by regressing the outcome on a treatment indicator and a set of linear, additive terms for each covariate (like $X_{i}$ in equation 3 below). This estimator of the average treatment effect can be biased, though that bias usually reduces quickly as sample size increases (see below). The unadjusted difference in means, in constrast, is unbiased. However, as @lin_agnostic_2013 points out, this is not reassuring if we think adjusting for covariates is necessary (e.g., to account for meaningful imbalances that persist despite randomization). Moreover, standard linear covariance adjustment is actually counter-productively *less efficient* than an unadjusted difference in means in some situations [@freedman2008rae].^[This is more likely as the probability of treatment gets further from 0.5, or if the relationship between covariates and treatment effect heterogeneity is stronger than the relationship between covariates and the potential outcomes. See @lin_agnostic_2013 p. 304, remark *v*.]
 
-In contrast, an approach to covariance adjustment that we call the **Lin estimator** or **Lin adjustment** performs better---at worst, it will be no less asymptotically efficient than an unadjusted difference in means [@lin_agnostic_2013]. We explain how it is implemented below. Like linear covariance adjustment, the Lin estimator is also generally only consistent and not unbiased. But it will be unbiased if it correctly models the true conditional expectation of $Y$ given treatment and the covariates [@negi2021revisiting; @lin_agnostic_2013].^[As will linear covariate adjustment, though this condition is relatively less likely in the lienar adjustment case; see the next footnote.] This condition is met when the model is "saturated" with controls for every combination of covariate values, such as when using the Lin estimator to account for a set of dummies representing block fixed effects [@miratrix2013adjusting].^[Notice that this is not possible under linear covariate adjustment, since by assumption under linear adjustment we are not "saturating" our model with the terms that estimate separate block fixed effects in each treatment arm.]
+An approach to covariance adjustment that we prefer called the **Lin estimator** or **Lin adjustment** performs better---at worst, it will be no less asymptotically efficient than an unadjusted difference in means [@lin_agnostic_2013]. We explain how it is implemented and provide more intuition for its superior efficiency below. Like linear covariance adjustment, the Lin estimator can also be (often negligibly) biased in finite samples. But note that it will be unbiased if it correctly models the true conditional expectation of $Y$ given treatment and the covariates [@negi2021revisiting; @lin_agnostic_2013]. For instance, this condition is met when the model is "saturated" with controls for every combination of covariate and treatment values [@angrist2009mostly], such as when using the Lin estimator to adjust for a set of dummies representing block fixed effects [@miratrix2013adjusting]. Notice that we couldn't meet this condition under linear adjustment for block fixed effects, since we would *by definition* not be "saturating" our model with the terms that estimate separate block fixed effects in each treatment arm.
 
-The precision-loss attributable to standard linear covariance adjustment estimator can be quite small in large samples. Yet, because it is frequently costless to use the Lin estimator in large samples, it is our default recommendation (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, it is not uncommon for us to encounter situations where linear covariate adjustment is still preferred, either on practical or statistical grounds. A few examples:
+The precision-loss attributable to standard linear covariance adjustment is sometimes small in large samples, especially relative to the loss of precision that would be neccesary to change our statistical conclusions. Yet it is frequently costless to use the Lin estimator in large samples, so it is still our default recommendation in these cases (see [this page](https://declaredesign.org/blog/2018-09-11-controlling-pretreatment-covariates.html) as well). That said, we do sometimes encounter situations where still prefer to stick with standard linear covariance adjustment, either on practical or statistical grounds. A few examples:
 
 - The randomization design has only two arms, and the probability of receiving treatment is approximately 0.5
 
 - We do not expect the covariates we observe to be associated with meaningful treatment effect heterogeneity
 
-- The number of parameters in a model is large enough, relative to the sample size, that the loss of degrees of freedom from using Lin adjustment may be substantial (the number of terms added is the number of controls multipled by the number of treatments); Lin adjustment is more efficient *asymptotically*
+- The number of model parameters is large enough relative to the sample size that the loss of degrees of freedom from using Lin adjustment may be substantial (the number of terms added is the number of controls multipled by the number of treatments); Lin adjustment is only more efficient *asymptotically*
 
 We expand on some of these issues in the subsections below, with more detail on how Lin estimation works. We also provide a simulated example illustrating hypothetical power differences between standard covariate adjustment and Lin adjustment in Chapter 6.
 
@@ -1739,7 +1739,7 @@ $$ \hat{\beta}_1 = \frac{\var(X)\cov(Z,Y) - \cov(X,Z)\cov(X,Y)}{\var(Z)\var(X) -
 In large experiments $\cov(X,Z) \approx 0$ because $Z$ is randomly
 assigned and is thus independent of background variables like $X$. However in any given finite sized experiment $\cov(X,Z) \ne 0$, so this does not reduce to an unbiased estimator as it does in the bivariate case. Thus, @freedman2008rae showed that there is a risk of bias in using the equation above to estimate the average treatment effect. In contrast, the unadjusted difference in means will be unbiased.
 
-As discussed above, this kind of covariance adjustment will also sometimes counterproductively decrease asmyptotic efficiency relative to an unadjusted difference in means, or may simply fail to improve efficiency as much as we hope. To resolve that issue, @lin_agnostic_2013 suggests the following least squares approach---regressing the outcome on binary treatment assignment $Z_i$ and its interaction with mean-centered covariates:^[Lin adjustment might also mitigate bias; for instance, if the only covariates are dummies for mutually exclusive subgroups or block fixed effects [@lin_agnostic_2013; @miratrix2013adjusting].]
+As discussed above, this kind of covariance adjustment will also sometimes counterproductively decrease asmyptotic efficiency relative to an unadjusted difference in means, or may simply fail to improve efficiency as much as we hope. To resolve that efficiency issue, @lin_agnostic_2013 suggests the following least squares approach---regressing the outcome on binary treatment assignment $Z_i$ and its interaction with mean-centered covariates:^[Lin adjustment might also help mitigate bias in some cases; for instance, if the only covariates are dummies for mutually exclusive subgroups like block fixed effects [@lin_agnostic_2013; @miratrix2013adjusting].]
 
 $$
 \begin{equation}
@@ -2246,6 +2246,115 @@ The Lin approach works well when covariates are few and sample sizes
 are larger, but these simulations show where the approach is weaker: when there are many covariates relative to the number of observations, some of which may not actually be correlated with the outcome. In this case, the estimator involving both correct and irrelevant covariates included 18 terms. Fitting a model with 18 terms using a small sample, e.g. $N=20$, allows nearly any observation to exert undue influence, increases the risk of serious multicollinearity, and leads to overfitting problems in general.
 
 Our team does not often run into such an extreme version of this problem because our studies have tended to involve many thousands of units and relatively few covariates. However, when we do encounter situations where the number of covariates (or fixed effects) we'd like to account for is large relative to the sample size, we consider a few alternative approaches: (1) omitting some covariates; (2) standard linear covariate adjustment; (3) collapsing the covariates into fewer dimensions (e.g., using principal component analysis); or (4) working with a residualized version of the outcome, as described below.
+
+### Another way to think about Lin adjustment
+
+What we call Lin adjustment, after @lin_agnostic_2013, produces equivalent point estimates to a different procedure that has been called things like the "oaxaca-blinder estimator" [@guo2023generalized], "full regression adjustment" [@negi2021revisiting], or "G-computation" [@snowden2011implementation; @greifer2023estimating]. In a simple two-arm randomized trial, it proceeds as follows:
+
+1. Create separate subsets of treated and control units
+
+2. Regress the outcome on controls separately within each subset
+
+3. Using the control subset model, calculated a predicted control potential outcome for treated units
+
+4. Using the treated subset model, calculated a predicted treatment potential outcome for control units
+
+5. Calculate the unit-level difference between the real and predicted potential outcomes
+
+6. Take the mean of these unit-level differences
+
+We demonstrate in the code chunk below that this yields equivalent point estimates to Lin estimation in a linear regression case (maybe with some negligible finite sample estimation error).
+
+::: {.tab} 
+<button class="tablinks" onclick="unrolltab(event, 'ch5R18g')">R code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch5Stata18g')">Stata code</button>
+<button class="tablinks" onclick="unrolltab(event, 'ch5Hide18g')">Hide</button>
+::: {#ch5R18g .tabcontent} 
+<br />
+```{r, highlight = F, eval = F}
+## Perform Lin adjustment
+mod_lin <- lm(Y ~ Z * I(cov2 - mean(cov2)), data = dat1)
+
+## Perform G-computation
+mod_c <- lm(Y ~ cov2, data = dat1[dat1$Z == 0,])
+mod_t <- lm(Y ~ cov2, data = dat1[dat1$Z == 1,])
+dat1$g_y0[dat1$Z == 1] <- predict(mod_c, newdata = dat1[dat1$Z == 1,])
+dat1$g_y1[dat1$Z == 0] <- predict(mod_t, newdata = dat1[dat1$Z == 0,])
+dat1$g_y0[dat1$Z == 0] <- dat1$Y[dat1$Z == 0]
+dat1$g_y1[dat1$Z == 1] <- dat1$Y[dat1$Z == 1]
+
+## Compare
+print("Lin estimation")
+as.numeric(mod_lin$coefficients[2])
+print("G-computation")
+mean(dat1$g_y1 - dat1$g_y0)
+```
+:::
+::: {#ch5Stata18g .tabcontent} 
+<br />
+```{stata, highlight = F, eval = F}
+** Perform Lin adjustment.
+** Nested in preserve/restore to
+** avoid interrupting the flow from
+** our simulation in the last section
+** to the one in our next simulation.
+preserve
+
+	** Perform Lin adjustment
+	use main.dta, clear
+	qui sum cov2, meanonly
+	gen gmc_cov2 = cov2 - r(mean)
+	qui reg y z gmc_cov2 c.z#c.gmc_cov2
+	global gcomp_lin = _b[z]
+
+	** Perform G-computation
+	qui reg y cov2 if z == 0
+	predict g_y0 if z == 1, xb
+	replace g_y0 = y if z == 0
+	qui reg y cov2 if z == 1
+	predict g_y1 if z == 0, xb
+	replace g_y1 = y if z == 1
+	gen g_diff = g_y1 - g_y0
+	qui sum g_diff, meanonly
+	global gcomp_gcomp = r(mean)
+
+	** Compare
+	di "Lin estimation"
+	di $gcomp_lin
+	di "G-computation"
+	di $gcomp_gcomp
+
+restore
+```
+::: 
+::: {#ch5Hide18g .tabcontent}
+::: 
+:::
+
+```{r, cache=TRUE, eval = T, echo = F, results = "hold", collapse=TRUE}
+## Perform Lin adjustment
+mod_lin <- lm(Y ~ Z * I(cov2 - mean(cov2)), data = dat1)
+
+## Perform G-computation
+mod_c <- lm(Y ~ cov2, data = dat1[dat1$Z == 0,])
+mod_t <- lm(Y ~ cov2, data = dat1[dat1$Z == 1,])
+dat1$g_y0[dat1$Z == 1] <- predict(mod_c, newdata = dat1[dat1$Z == 1,])
+dat1$g_y1[dat1$Z == 0] <- predict(mod_t, newdata = dat1[dat1$Z == 0,])
+dat1$g_y0[dat1$Z == 0] <- dat1$Y[dat1$Z == 0]
+dat1$g_y1[dat1$Z == 1] <- dat1$Y[dat1$Z == 1]
+
+## Compare
+print("Lin estimation")
+as.numeric(mod_lin$coefficients[2])
+print("G-computation")
+mean(dat1$g_y1 - dat1$g_y0)
+```
+
+One advantage of G-computation is that it can be easily generalized to non-linear models like Logit regression [@negi2021revisiting; @guo2023generalized], whereas Lin estimation is specifically for OLS. But a downside of G-computation is that standard error calculation must still be performed afterwards, either using derived estimators or a procedure like a bootstrap. We prefer Lin estimation for our evaluations in practice: we typically use linear regression to analyze experimental data, we know that HC2 standard errors from a Lin-adjusted OLS model are already appropriately conservative [@lin_agnostic_2013], and we like being able to get everything we need from a single model.
+
+Still, Lin adjustment's similarity to G-computation helps provide more intuition for its (potential) efficiency advantages. A model that does a better job of explaining unrelated variation in $Y$ will provide more precise treatment effect estimates. If covariates have a different relationship with the outcome in treated and control groups (e.g., treatment effect heterogeneity), Lin adjustment will obviously be better at explaining variation in $Y$ than standard linear covariate adjustment. On the other hand, when covariates do have the same outcome relationship in treatment and control groups, both covariance adjustment strategies model variation in $Y$ just as well, and the primary efficiency issue is whether we are concerned about the extra degrees of freedom Lin adjustment costs.
+
+Note that in situations where we have accurate estimates of a unit's *propensity score* or probability of receiving treatment (e.g., through repeated simulations of treatment assignment as in randomization inference), we can potentially reduce bias/inefficiency further by performing Lin adjustment in a weighted least squares regression.^[The idea is to limit model dependence, i.e. lingering error due to "incorrectly" modeling the relationship between covariates and the outcome in either treatment group. As discussed above, this is not a concern if our model is saturated with controls for every combination of treatment and covariate values.] The weights are as follows, with $T_{i}$ representing a binary treatment and $p_{i}$ the probability that a unit was treated: $\frac{T_{i}}{p_{i}} + \frac{1-T_{i}}{1-p_{i}}$. Researchers sometimes "stabilize" those weights (reducing the influence of a few observations with especially large weights) by either taking the square root [@imbens2004nonparametric] or by multiplying an observation's weight by the proportion of the sample with its observed treatment exposure [@robins2000marginal]. This estimation procedure is called inverse propensity score weighted regression adjustment (IPWRA). It is straightforward to implement manually, and software like `teffects` in Stata or `WeightIt` in R can perform IPWRA as well.
 
 ### The Rosenbaum Approach to Covariance Adjustment
 
@@ -4247,7 +4356,7 @@ kable(reshape_diagnosis(thediagnosisNormEqual)[, c(3, 6:10, 13)])
 
 #### Summary of Approaches to the Analysis of Block Randomized Trials
 
-Our team often prefers block randomized trials because of their potential to increase statistical power, help us avoid bias, and help us better highlight subgroup effects. We generally prefer to "analyze as we randomize." But this can mean a number of things with blocked designs, and different designs will require different analytical decisions. Sometimes we may be willing to trade a small amount of bias to make our estimates more precise. Other studies will be so large or small that one or another estimation strategy will be obviously superior. We use our Analysis Plans to explain our choices, and generally rely on simulation studies when we are uncertain about the applicability of statistical rules of thumb to any given design.
+Our team often prefers block randomized trials because of their potential to increase statistical power, help us avoid bias, and help us better highlight subgroup effects. And we generally prefer to "analyze as we randomize." *But this can mean a number of things with blocked designs*, and different designs will require different analytical decisions. Sometimes we may be willing to trade a small amount of bias to make our estimates more precise. Other studies will be so large or small that one or another estimation strategy will be obviously superior. We use our Analysis Plans to explain our choices, and generally rely on simulation studies when we are uncertain about the applicability of statistical rules of thumb to any given design.
 
 ## Cluster-randomized trials {#clusterrandanalysis}
 

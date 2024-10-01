@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-09-26">
+<meta name="date" content="2024-10-01">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -560,10 +560,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.2.2" data-path="analysis-choices.html"><a href="analysis-choices.html#multiple-outcomes"><i class="fa fa-check"></i><b>5.2.2</b> Multiple outcomes</a></li>
 <li class="chapter" data-level="5.2.3" data-path="analysis-choices.html"><a href="analysis-choices.html#when-is-this-necessary"><i class="fa fa-check"></i><b>5.2.3</b> When is this necessary?</a></li>
 </ul></li>
-<li class="chapter" data-level="5.3" data-path="analysis-choices.html"><a href="analysis-choices.html#covariance-adjustment-the-use-of-background-information-to-increase-precision"><i class="fa fa-check"></i><b>5.3</b> Covariance adjustment (the use of background information to increase precision)</a><ul>
+<li class="chapter" data-level="5.3" data-path="analysis-choices.html"><a href="analysis-choices.html#covariance-adjustment"><i class="fa fa-check"></i><b>5.3</b> Covariance adjustment</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="analysis-choices.html"><a href="analysis-choices.html#possible-bias-in-the-least-squares-ate-estimator-with-covariates"><i class="fa fa-check"></i><b>5.3.1</b> Possible bias in the least squares ATE estimator with covariates</a></li>
 <li class="chapter" data-level="5.3.2" data-path="analysis-choices.html"><a href="analysis-choices.html#illustrating-the-lin-approach-to-covariance-adjustment"><i class="fa fa-check"></i><b>5.3.2</b> Illustrating the Lin Approach to Covariance Adjustment</a></li>
-<li class="chapter" data-level="5.3.3" data-path="analysis-choices.html"><a href="analysis-choices.html#the-rosenbaum-approach-to-covariance-adjustment"><i class="fa fa-check"></i><b>5.3.3</b> The Rosenbaum Approach to Covariance Adjustment</a></li>
+<li class="chapter" data-level="5.3.3" data-path="analysis-choices.html"><a href="analysis-choices.html#another-way-to-think-about-lin-adjustment"><i class="fa fa-check"></i><b>5.3.3</b> Another way to think about Lin adjustment</a></li>
+<li class="chapter" data-level="5.3.4" data-path="analysis-choices.html"><a href="analysis-choices.html#the-rosenbaum-approach-to-covariance-adjustment"><i class="fa fa-check"></i><b>5.3.4</b> The Rosenbaum Approach to Covariance Adjustment</a></li>
 </ul></li>
 <li class="chapter" data-level="5.4" data-path="analysis-choices.html"><a href="analysis-choices.html#how-to-choose-covariates-for-covariance-adjustment"><i class="fa fa-check"></i><b>5.4</b> How to choose covariates for covariance adjustment?</a></li>
 <li class="chapter" data-level="5.5" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandanalysis"><i class="fa fa-check"></i><b>5.5</b> Block-randomized trials</a><ul>
@@ -622,7 +623,7 @@ studies. When applied to randomized experiments, this principle can be written
 simply as: &#x201C;analyze as you randomize.&#x201D; We provide an example of this
 principle in practice below, and the intuition behind it is to model unexplained variation in the data as noise introduced by random treatment assignment.</p>
 <p>This idea, often known as randomization based or <strong>design based inference</strong>, was proposed by two of the founders of modern statistics. Jerzy Neyman&#x2019;s 1923 paper showed how to use randomization to learn about what we would currently call &#x201C;average treatment effects&#x201D; <span class="citation">(Neyman <a href="#ref-neyman_application_1923">1923</a>)</span>, and Ronald A. Fisher&#x2019;s 1935 book showed how to use randomization to test hypotheses about what we would currently call &#x201C;treatment effects&#x201D; <span class="citation">(Fisher <a href="#ref-fisher_design_1935">1935</a>)</span>. We favor design based justifications because we know exactly how a study was designed&#x2014;after all, we and our agency collaborators chose the sample size, experimental arms, and outcome data.</p>
-<p>Of course, there are other ways to justify statistical procedures, too. We don&#x2019;t exclude any reasonable approach in our work. It is standard for researchers in many applied fields to instead motivate their tests using the idea of sampling from a larger (possibly infinite) population. These statistical procedures often depend on theoretical models of an estimator&#x2019;s behavior as sample size increases indefinitely (i.e., asymptotic theory). OES projects frequently employ statistical procedures justified in this way as well. And note that some common procedures, like the calculation of HC2 standard errors discussed below, can be justified under either design based or sampling based statistical inference.</p>
+<p>Of course, there are other ways to justify statistical procedures, too. We don&#x2019;t exclude any reasonable approach in our work. It is standard for researchers in many applied fields to instead motivate their tests using the idea of sampling from a larger (possibly infinite) population. This often depends on theoretical models of an estimator&#x2019;s behavior as sample size increases indefinitely (&#x201C;asymptotic&#x201D; theory). OES projects frequently employ sampling-justified procedures as well. Moreover, some common procedures like the calculation of HC2 standard errors (discussed below) can be justified under either design based or sampling based statistical inference.</p>
 <div id="randinfex" class="section level2">
 <h2><span class="header-section-number">3.1</span> An example using simulated data</h2>
 <p>Imagine we have a simple randomized experiment where the relationship between
