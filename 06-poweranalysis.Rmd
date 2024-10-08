@@ -2135,10 +2135,10 @@ expost_results <-
 ## Evaluate ex-post results across
 ## simulated datsets; how close
 ## is it in different random draws?
-print("range (min, max)")
+print("heuristic range (min, max)")
 range(expost_results$mde)
-print("standard deviation")
+print("heuristic standard deviation")
 sd(expost_results$mde)
-print("mean")
+print("mean heuristic value")
 mean(expost_results$mde)
 ```
