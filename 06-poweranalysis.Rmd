@@ -2032,5 +2032,113 @@ bind_rows(
     )
 ```
 
+## Approximating power ex-post
 
+We conclude this chapter by discussing a slightly different topic. Sometimes, once an analysis is finished, we might want a sense of what treatment effects we *would have been* sufficiently powered to detect. For reasons outlined in [this World Bank blog post](https://blogs.worldbank.org/en/impactevaluations/why-ex-post-power-using-estimated-effect-sizes-bad-ex-post-mde-not), it is problematic to estimate power for an observed effect size. However, it can be useful to approximate what our minimum detectable effect at 80% power was, for comparison with the [smallest effect of substantive interest, or SESI](https://lakens.github.io/statistical_inferences/09-equivalencetest.html#sec-sesoi).
 
+This is particularly useful for making sense of statistically insignificant results, and is similar to the logic behind equivalence testing [@hartman2018equivalence; @rainey2014arguing]. If the MDE-80 is smaller than the SESI, this implies that our study had acceptable power to detect all possible true effect sizes large enough to be of interest (which should make us more confident in a "no effect" interpretation). In contrast, if the MDE-80 is much larger than the SESI, this implies that there are possible true effect sizes that are policy relevant but too small for our study to detect (which should make us less confident in a "no effect" interpretation).
+
+Rather than conducting another simulation, a useful heuristic for an *approximate* ex-post MDE at 80% power is the estimated standard error of the treatment effect multiplied by 2.8 (for a two-sided test): $MDE_{80} = \hat{SE} \times 2.8$ [@ioannidis2017power; @bloom1995minimum]. The actual MDE-80 is the real SE times 2.8. But plugging in our sample estimate can often still be informative. Remember that the usefulness of this rests on the accuracy of our estimated standard errors.
+
+Why does this work? See @bloom1995minimum for more context. To explain, we need to review some basics of statistical inference first. We generally judge a finding as "statistically significant" if the absolute value of its *test statistic*, $effect/SE$, is greater than or equal to 1.96. Under an assumption that the null is true---and an assumption that the standard normal, $\mathcal{N}(0,1)$, is an appropriate model of the test statistics we could observe under a true null (e.g., central limit theorem)---random chance alone will only produce a test statistic at least as far from 0 as 1.96 about 5% of the time.^[As discussed in Chapter 3, this "chance" or "noise" might arise from sampling from a larger population, or from noise introduced by the different random assignments we could observe in a fixed sample.]
+
+Now, what if there is a positive treatment effect? In that case, the true distribution of test statistics we might observe by random chance is shifted to the right away from $\mathcal{N}(0,1)$. If it is shifted to the right by 2.8, yielding $\mathcal{N}(2.8,1)$, then 80% of the values we might observe will now be above the 1.96 significance threshold. In other words, if the true treatment effect yields a test statistic of exactly 2.8, it is just big enough for us to have an 80% chance of concluding that the treatment effect is statistically significant. And since $effect/SE=2.8$, the smallest effect we could detect with 80% power is $effect = SE \times 2.8$.
+
+We provide a quick R simulation below illustrating that the utility of this heuristic. Specifically, we compute power for a simple design using tools presented above. We then compare this to the ex-post calculation results for each of many randomly drawn datasets. The results are promising! But again, the accuracy of this heuristic will vary from setting to setting, so it should be used cautiously.
+
+```{r, echo = T, eval = F}
+## Parameters
+set.seed(20405)
+n <- 1000
+d <- 0.2
+
+## First, simulate the design many times
+sim_power_data <-
+  
+  replicate_design(
+    N = n,
+    y = rnorm(N),
+    x = randomizr::complete_ra(N, m = N / 2)
+    )
+
+## Then, calculate a MDE using that simulated data (2-4 above)
+sim_results <-
+  
+  sim_power_data %>%
+  
+  estimate(form = y ~ x, vars = "x") %>%
+  
+  evaluate_mde(delta = c(0, 0.5), how_granular = 0.001)
+  
+## MDE from a standard power simulation
+print("simulated MDE")
+sim_results$MDE
+
+## For each of those simulated datasets,
+## apply the ex-post MDE-80 approach instead.
+expost_results <-
+  
+  sim_power_data %>%
+  
+  estimate(form = y ~ x, vars = "x") %>%
+  
+  mutate(mde = std.error * 2.8)
+
+## Evaluate ex-post results across
+## simulated datsets; how close
+## is it in different random draws?
+print("heuristic range (min, max)")
+range(expost_results$mde)
+print("heuristic standard deviation")
+sd(expost_results$mde)
+print("mean heuristic value")
+mean(expost_results$mde)
+```
+
+```{r, echo = F, eval = T, results = "hold", collapse = T}
+## Parameters
+set.seed(20405)
+n <- 1000
+d <- 0.2
+
+## First, simulate the design many times
+sim_power_data <-
+  
+  replicate_design(
+    N = n,
+    y = rnorm(N),
+    x = randomizr::complete_ra(N, m = N / 2)
+    )
+
+## Then, calculate a MDE using that simulated data (2-4 above)
+sim_results <-
+  
+  sim_power_data %>%
+  
+  estimate(form = y ~ x, vars = "x") %>%
+  
+  evaluate_mde(delta = c(0, 0.5), how_granular = 0.001)
+  
+## MDE from a standard power simulation
+sim_results$MDE
+
+## For each of those simulated datasets,
+## apply the ex-post MDE-80 approach instead.
+expost_results <-
+  
+  sim_power_data %>%
+  
+  estimate(form = y ~ x, vars = "x") %>%
+  
+  mutate(mde = std.error * 2.8)
+
+## Evaluate ex-post results across
+## simulated datsets; how close
+## is it in different random draws?
+print("range (min, max)")
+range(expost_results$mde)
+print("standard deviation")
+sd(expost_results$mde)
+print("mean")
+mean(expost_results$mde)
+```

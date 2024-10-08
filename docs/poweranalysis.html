@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-10-02">
+<meta name="date" content="2024-10-08">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -585,6 +585,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.4.2" data-path="poweranalysis.html"><a href="poweranalysis.html#covariate-adjustment-with-the-lin-estimator"><i class="fa fa-check"></i><b>6.4.2</b> Covariate adjustment with the Lin estimator</a></li>
 <li class="chapter" data-level="6.4.3" data-path="poweranalysis.html"><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools"><i class="fa fa-check"></i><b>6.4.3</b> Incorporating DeclareDesign into OES Power Tools</a></li>
 </ul></li>
+<li class="chapter" data-level="6.5" data-path="poweranalysis.html"><a href="poweranalysis.html#approximating-power-ex-post"><i class="fa fa-check"></i><b>6.5</b> Approximating power ex-post</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="code-example-index.html"><a href="code-example-index.html"><i class="fa fa-check"></i><b>7</b> <span>Code example index</span></a></li>
 <li class="chapter" data-level="8" data-path="methods-topic-index.html"><a href="methods-topic-index.html"><i class="fa fa-check"></i><b>8</b> <span>Methods topic index</span></a></li>
@@ -2070,14 +2071,88 @@ data in the figure below:</p>
 <a class="sourceLine" id="cb212-37" title="37">    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span></a>
 <a class="sourceLine" id="cb212-38" title="38">    )</a></code></pre></div>
 <p><img src="OES_SOP_files/figure-html/unnamed-chunk-188-1.png" width=".9\textwidth"></p>
-
 </div>
+</div>
+<div id="approximating-power-ex-post" class="section level2">
+<h2><span class="header-section-number">6.5</span> Approximating power ex-post</h2>
+<p>We conclude this chapter by discussing a slightly different topic. Sometimes, once an analysis is finished, we might want a sense of what treatment effects we <em>would have been</em> sufficiently powered to detect. For reasons outlined in <a href="https://blogs.worldbank.org/en/impactevaluations/why-ex-post-power-using-estimated-effect-sizes-bad-ex-post-mde-not">this World Bank blog post</a>, it is problematic to estimate power for an observed effect size. However, it can be useful to approximate what our minimum detectable effect at 80% power was, for comparison with the <a href="https://lakens.github.io/statistical_inferences/09-equivalencetest.html#sec-sesoi">smallest effect of substantive interest, or SESI</a>.</p>
+<p>This is particularly useful for making sense of statistically insignificant results, and is similar to the logic behind equivalence testing <span class="citation">(Hartman and Hidalgo <a href="#ref-hartman2018equivalence">2018</a>; Rainey <a href="#ref-rainey2014arguing">2014</a>)</span>. If the MDE-80 is smaller than the SESI, this implies that our study had acceptable power to detect all possible true effect sizes large enough to be of interest (which should make us more confident in a &#x201C;no effect&#x201D; interpretation). In contrast, if the MDE-80 is much larger than the SESI, this implies that there are possible true effect sizes that are policy relevant but too small for our study to detect (which should make us less confident in a &#x201C;no effect&#x201D; interpretation).</p>
+<p>Rather than conducting another simulation, a useful heuristic for an <em>approximate</em> ex-post MDE at 80% power is the estimated standard error of the treatment effect multiplied by 2.8 (for a two-sided test): <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>D</mi><msub><mi>E</mi><mn>80</mn></msub><mo>=</mo><mover accent="true"><mrow><mi>S</mi><mi>E</mi></mrow><mo>^</mo></mover><mo>&#xD7;</mo><mn>2.8</mn></mrow><annotation encoding="application/x-tex">MDE_{80} = \hat{SE} \times 2.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">80</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0301em;vertical-align:-0.0833em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">^</span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2.8</span></span></span></span> <span class="citation">(Ioannidis, Stanley, and Doucouliagos <a href="#ref-ioannidis2017power">2017</a>; Bloom <a href="#ref-bloom1995minimum">1995</a>)</span>. The actual MDE-80 is the real SE times 2.8. But plugging in our sample estimate can often still be informative. Remember that the usefulness of this rests on the accuracy of our estimated standard errors.</p>
+<p>Why does this work? See <span class="citation">Bloom (<a href="#ref-bloom1995minimum">1995</a>)</span> for more context. To explain, we need to review some basics of statistical inference first. We generally judge a finding as &#x201C;statistically significant&#x201D; if the absolute value of its <em>test statistic</em>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi mathvariant="normal">/</mi><mi>S</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">effect/SE</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">ec</span><span class="mord mathnormal">t</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span></span>, is greater than or equal to 1.96. Under an assumption that the null is true&#x2014;and an assumption that the standard normal, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{N}(0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>, is an appropriate model of the test statistics we could observe under a true null (e.g., central limit theorem)&#x2014;random chance alone will only produce a test statistic at least as far from 0 as 1.96 about 5% of the time.<a href="references.html#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a></p>
+<p>Now, what if there is a positive treatment effect? In that case, the true distribution of test statistics we might observe by random chance is shifted to the right away from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{N}(0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>. If it is shifted to the right by 2.8, yielding <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>2.8</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{N}(2.8,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord">2.8</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>, then 80% of the values we might observe will now be above the 1.96 significance threshold. In other words, if the true treatment effect yields a test statistic of exactly 2.8, it is just big enough for us to have an 80% chance of concluding that the treatment effect is statistically significant. And since <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi mathvariant="normal">/</mi><mi>S</mi><mi>E</mi><mo>=</mo><mn>2.8</mn></mrow><annotation encoding="application/x-tex">effect/SE=2.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">ec</span><span class="mord mathnormal">t</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2.8</span></span></span></span>, the smallest effect we could detect with 80% power is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mo>=</mo><mi>S</mi><mi>E</mi><mo>&#xD7;</mo><mn>2.8</mn></mrow><annotation encoding="application/x-tex">effect = SE \times 2.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">ec</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2.8</span></span></span></span>.</p>
+<p>We provide a quick R simulation below illustrating that the utility of this heuristic. Specifically, we compute power for a simple design using tools presented above. We then compare this to the ex-post calculation results for each of many randomly drawn datasets. The results are promising! But again, the accuracy of this heuristic will vary from setting to setting, so it should be used cautiously.</p>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb213-1" title="1"><span class="co">## Parameters</span></a>
+<a class="sourceLine" id="cb213-2" title="2"><span class="kw">set.seed</span>(<span class="dv">20405</span>)</a>
+<a class="sourceLine" id="cb213-3" title="3">n &lt;-<span class="st"> </span><span class="dv">1000</span></a>
+<a class="sourceLine" id="cb213-4" title="4">d &lt;-<span class="st"> </span><span class="fl">0.2</span></a>
+<a class="sourceLine" id="cb213-5" title="5"></a>
+<a class="sourceLine" id="cb213-6" title="6"><span class="co">## First, simulate the design many times</span></a>
+<a class="sourceLine" id="cb213-7" title="7">sim_power_data &lt;-</a>
+<a class="sourceLine" id="cb213-8" title="8"><span class="st">  </span></a>
+<a class="sourceLine" id="cb213-9" title="9"><span class="st">  </span><span class="kw">replicate_design</span>(</a>
+<a class="sourceLine" id="cb213-10" title="10">    <span class="dt">N =</span> n,</a>
+<a class="sourceLine" id="cb213-11" title="11">    <span class="dt">y =</span> <span class="kw">rnorm</span>(N),</a>
+<a class="sourceLine" id="cb213-12" title="12">    <span class="dt">x =</span> randomizr<span class="op">::</span><span class="kw">complete_ra</span>(N, <span class="dt">m =</span> N <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb213-13" title="13">    )</a>
+<a class="sourceLine" id="cb213-14" title="14"></a>
+<a class="sourceLine" id="cb213-15" title="15"><span class="co">## Then, calculate a MDE using that simulated data (2-4 above)</span></a>
+<a class="sourceLine" id="cb213-16" title="16">sim_results &lt;-</a>
+<a class="sourceLine" id="cb213-17" title="17"><span class="st">  </span></a>
+<a class="sourceLine" id="cb213-18" title="18"><span class="st">  </span>sim_power_data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb213-19" title="19"><span class="st">  </span></a>
+<a class="sourceLine" id="cb213-20" title="20"><span class="st">  </span><span class="kw">estimate</span>(<span class="dt">form =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">vars =</span> <span class="st">&quot;x&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb213-21" title="21"><span class="st">  </span></a>
+<a class="sourceLine" id="cb213-22" title="22"><span class="st">  </span><span class="kw">evaluate_mde</span>(<span class="dt">delta =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>), <span class="dt">how_granular =</span> <span class="fl">0.001</span>)</a>
+<a class="sourceLine" id="cb213-23" title="23">  </a>
+<a class="sourceLine" id="cb213-24" title="24"><span class="co">## MDE from a standard power simulation</span></a>
+<a class="sourceLine" id="cb213-25" title="25"><span class="kw">print</span>(<span class="st">&quot;simulated MDE&quot;</span>)</a>
+<a class="sourceLine" id="cb213-26" title="26">sim_results<span class="op">$</span>MDE</a>
+<a class="sourceLine" id="cb213-27" title="27"></a>
+<a class="sourceLine" id="cb213-28" title="28"><span class="co">## For each of those simulated datasets,</span></a>
+<a class="sourceLine" id="cb213-29" title="29"><span class="co">## apply the ex-post MDE-80 approach instead.</span></a>
+<a class="sourceLine" id="cb213-30" title="30">expost_results &lt;-</a>
+<a class="sourceLine" id="cb213-31" title="31"><span class="st">  </span></a>
+<a class="sourceLine" id="cb213-32" title="32"><span class="st">  </span>sim_power_data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb213-33" title="33"><span class="st">  </span></a>
+<a class="sourceLine" id="cb213-34" title="34"><span class="st">  </span><span class="kw">estimate</span>(<span class="dt">form =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">vars =</span> <span class="st">&quot;x&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb213-35" title="35"><span class="st">  </span></a>
+<a class="sourceLine" id="cb213-36" title="36"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">mde =</span> std.error <span class="op">*</span><span class="st"> </span><span class="fl">2.8</span>)</a>
+<a class="sourceLine" id="cb213-37" title="37"></a>
+<a class="sourceLine" id="cb213-38" title="38"><span class="co">## Evaluate ex-post results across</span></a>
+<a class="sourceLine" id="cb213-39" title="39"><span class="co">## simulated datsets; how close</span></a>
+<a class="sourceLine" id="cb213-40" title="40"><span class="co">## is it in different random draws?</span></a>
+<a class="sourceLine" id="cb213-41" title="41"><span class="kw">print</span>(<span class="st">&quot;heuristic range (min, max)&quot;</span>)</a>
+<a class="sourceLine" id="cb213-42" title="42"><span class="kw">range</span>(expost_results<span class="op">$</span>mde)</a>
+<a class="sourceLine" id="cb213-43" title="43"><span class="kw">print</span>(<span class="st">&quot;heuristic standard deviation&quot;</span>)</a>
+<a class="sourceLine" id="cb213-44" title="44"><span class="kw">sd</span>(expost_results<span class="op">$</span>mde)</a>
+<a class="sourceLine" id="cb213-45" title="45"><span class="kw">print</span>(<span class="st">&quot;mean heuristic value&quot;</span>)</a>
+<a class="sourceLine" id="cb213-46" title="46"><span class="kw">mean</span>(expost_results<span class="op">$</span>mde)</a></code></pre></div>
+<pre><code>[1] 0.17
+[1] &quot;range (min, max)&quot;
+[1] 0.1655 0.1889
+[1] &quot;standard deviation&quot;
+[1] 0.003925
+[1] &quot;mean&quot;
+[1] 0.1773</code></pre>
+
 </div>
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-lin_agnostic_2013">
 <p>Lin, Winston. 2013. &#x201C;Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman&#x2019;s Critique.&#x201D; <em>The Annals of Applied Statistics</em> 7 (1): 295&#x2013;318.</p>
+</div>
+<div id="ref-hartman2018equivalence">
+<p>Hartman, Erin, and F Daniel Hidalgo. 2018. &#x201C;An Equivalence Approach to Balance and Placebo Tests.&#x201D; <em>American Journal of Political Science</em> 62 (4): 1000&#x2013;1013.</p>
+</div>
+<div id="ref-rainey2014arguing">
+<p>Rainey, Carlisle. 2014. &#x201C;Arguing for a Negligible Effect.&#x201D; <em>American Journal of Political Science</em> 58 (4): 1083&#x2013;91.</p>
+</div>
+<div id="ref-ioannidis2017power">
+<p>Ioannidis, John PA, Tom D Stanley, and Hristos Doucouliagos. 2017. &#x201C;The Power of Bias in Economics Research.&#x201D; Oxford University Press Oxford, UK.</p>
+</div>
+<div id="ref-bloom1995minimum">
+<p>Bloom, Howard S. 1995. &#x201C;Minimum Detectable Effects: A Simple Way to Report the Statistical Power of Experimental Designs.&#x201D; <em>Evaluation Review</em> 19 (5): 547&#x2013;56.</p>
 </div>
 </div>
             </section>

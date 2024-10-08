@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-10-02">
+<meta name="date" content="2024-10-08">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -585,6 +585,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.4.2" data-path="poweranalysis.html"><a href="poweranalysis.html#covariate-adjustment-with-the-lin-estimator"><i class="fa fa-check"></i><b>6.4.2</b> Covariate adjustment with the Lin estimator</a></li>
 <li class="chapter" data-level="6.4.3" data-path="poweranalysis.html"><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools"><i class="fa fa-check"></i><b>6.4.3</b> Incorporating DeclareDesign into OES Power Tools</a></li>
 </ul></li>
+<li class="chapter" data-level="6.5" data-path="poweranalysis.html"><a href="poweranalysis.html#approximating-power-ex-post"><i class="fa fa-check"></i><b>6.5</b> Approximating power ex-post</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="code-example-index.html"><a href="code-example-index.html"><i class="fa fa-check"></i><b>7</b> <span>Code example index</span></a></li>
 <li class="chapter" data-level="8" data-path="methods-topic-index.html"><a href="methods-topic-index.html"><i class="fa fa-check"></i><b>8</b> <span>Methods topic index</span></a></li>
@@ -625,6 +626,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div>
 <p>Blair, Graeme, Jasper Cooper, Alexander Coppock, Macartan Humphreys, and Luke Sonnet. 2022. <em>Estimatr: Fast Estimators for Design-Based Inference</em>. <a href="https://CRAN.R-project.org/package=estimatr">https://CRAN.R-project.org/package=estimatr</a>.</p>
+</div>
+<div>
+<p>Bloom, Howard S. 1995. &#x201C;Minimum Detectable Effects: A Simple Way to Report the Statistical Power of Experimental Designs.&#x201D; <em>Evaluation Review</em> 19 (5): 547&#x2013;56.</p>
 </div>
 <div>
 <p>Bowers, Jake. 2011. &#x201C;Making Effects Manifest in Randomized Experiments.&#x201D; In <em>Cambridge Handbook of Experimental Political Science</em>, edited by James N. Druckman, Donald P. Green, James H. Kuklinski, and Arthur Lupia. New York, NY: Cambridge University Press.</p>
@@ -697,6 +701,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div>
 <p>Imbens, Guido W. 2004. &#x201C;Nonparametric Estimation of Average Treatment Effects Under Exogeneity: A Review.&#x201D; <em>Review of Economics and Statistics</em> 86 (1): 4&#x2013;29.</p>
+</div>
+<div>
+<p>Ioannidis, John PA, Tom D Stanley, and Hristos Doucouliagos. 2017. &#x201C;The Power of Bias in Economics Research.&#x201D; Oxford University Press Oxford, UK.</p>
 </div>
 <div>
 <p>Kerwin, Jason, Nada Rostom, and Olivier Sterck. 2024. &#x201C;Striking the Right Balance: Why Standard Balance Tests over-Reject the Null, and How to Fix It.&#x201D; Institute of Labor Economics (IZA).</p>
@@ -819,6 +826,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li id="fn33"><p>When treatment assignment is <em>influenced by clustering</em> but not completely determined at the cluster level, standard error adjustments for clustering will tend to be too conservative. See <span class="citation">Abadie et al. (<a href="#ref-abadie2023should">2023</a>)</span> for more discussion of this and some potential solutions.<a href="analysis-choices.html#fnref33" class="footnote-back">&#x21A9;</a></p></li>
 <li id="fn34"><p>See the <code>estimatr</code> <a href="https://declaredesign.org/r/estimatr/articles/mathematical-notes.html">mathematical notes</a> for more detail on how this is implemented.<a href="analysis-choices.html#fnref34" class="footnote-back">&#x21A9;</a></p></li>
 <li id="fn35"><p>See <span class="citation">Gelman and Hill (<a href="#ref-gelman2006data">2006</a>)</span>, section 20.3, page 443.<a href="poweranalysis.html#fnref35" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn36"><p>As discussed in Chapter 3, this &#x201C;chance&#x201D; or &#x201C;noise&#x201D; might arise from sampling from a larger population, or from noise introduced by the different random assignments we could observe in a fixed sample.<a href="poweranalysis.html#fnref36" class="footnote-back">&#x21A9;</a></p></li>
 </ol>
 </div>
 <h3>References</h3>

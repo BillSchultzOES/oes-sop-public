@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-10-02">
+<meta name="date" content="2024-10-08">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -585,6 +585,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.4.2" data-path="poweranalysis.html"><a href="poweranalysis.html#covariate-adjustment-with-the-lin-estimator"><i class="fa fa-check"></i><b>6.4.2</b> Covariate adjustment with the Lin estimator</a></li>
 <li class="chapter" data-level="6.4.3" data-path="poweranalysis.html"><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools"><i class="fa fa-check"></i><b>6.4.3</b> Incorporating DeclareDesign into OES Power Tools</a></li>
 </ul></li>
+<li class="chapter" data-level="6.5" data-path="poweranalysis.html"><a href="poweranalysis.html#approximating-power-ex-post"><i class="fa fa-check"></i><b>6.5</b> Approximating power ex-post</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="code-example-index.html"><a href="code-example-index.html"><i class="fa fa-check"></i><b>7</b> <span>Code example index</span></a></li>
 <li class="chapter" data-level="8" data-path="methods-topic-index.html"><a href="methods-topic-index.html"><i class="fa fa-check"></i><b>8</b> <span>Methods topic index</span></a></li>
@@ -1633,7 +1634,7 @@ intervention in isolation (rather than the effects when people can communicate w
 <div id="summary" class="section level3">
 <h3><span class="header-section-number">4.8.3</span> Summary</h3>
 <p>We typically prefer to perform some form of omnibus balance test (ideally using randomization inference), and to write out a brief plan for exploring individual imbalances further if this test rejects the null hypothesis. Time-permitting, more extensive balance checks are always valuable.</p>
-<p>It can be important for balance testing procedures to account for any clustering or blocking employed when assigning treatment <span class="citation">(Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>)</span>. For blocking, this might imply calculating balance within blocks, and then aggregating across blocks to yield a single overall estimate. For clustering, this may imply exploring whether a comparison of cluster-level aggregates (rather than a comparison of individual units) provides evidence of treatment administration problems. Or it might imply just accounting for within-cluster independence when performing significance tests.</p>
+<p>It can be important for balance testing procedures to account for any clustering or blocking employed when assigning treatment <span class="citation">(Hansen and Bowers <a href="#ref-hansen_covariate_2008">2008</a>)</span>. For blocking, this might imply calculating balance within blocks. For clustering, this may imply exploring whether a comparison of cluster-level aggregates (rather than a comparison of individual units) provides evidence of treatment administration problems. Or it might imply just accounting for within-cluster dependence when performing significance tests.</p>
 <p>Modifications like this are straightforward when estimating an omnibus balance statistic using a regression model (examples below). But they can also be incorporated into covariate-by-covariate statistics. For instance, in a blocked design, it may be reasonable to calculate separate standardized mean differences within each block (dividing within-block differences by the overall sample standard deviation) and then take a weighted average across blocks (where block-level estimates are weighted by their share of the overall sample size).</p>
 </div>
 <div id="coded-examples" class="section level3">

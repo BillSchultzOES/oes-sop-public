@@ -1,9 +1,33 @@
 # [Appendix](#appendix)
 
-Here, we organize **internal links** to further resources for OES team members. These resources are not accessible to the public (they require a log-in).
+Here, we organize **internal links** to further resources for OES team members. Most of these resources are not accessible to the public (they require a log-in).
 
 Example data processing templates:
 
 - [R](https://drive.google.com/drive/folders/1kzsXWhkZrOkVUGlFcmDccMIqWVUvprvV?usp=drive_link)
 
 - [Stata](https://drive.google.com/drive/folders/1Gwv-ndU4bbnnjgQWli__y6NnztjrGlkd?usp=drive_link)
+
+Guidance on the use of Regression Discontinuity designs:
+
+- With R and Stata code examples [linked within](https://docs.google.com/document/d/1Mqio5YvW89iFJ0ZT85IfBa08or5BZil6wsHERwkrPGU/edit?usp=sharing)
+
+Guidance for developing descriptive studies
+
+- Available [here](https://docs.google.com/document/d/1-igC6P7kK0qRUw6d4y_NA3_jVJWRtWkKMCLP78cd5xk/edit?usp=sharing). See also the deeper dive with some R code templating [here](https://docs.google.com/document/d/17IpjhkDVEkgxtHL_mpSAQwTluI6rfNsA/edit?usp=drive_link&ouid=102300751917407626743&rtpof=true&sd=true).
+
+Preliminary guidance on the development of meta-analyses
+
+- [Includes](https://docs.google.com/document/d/1Lji1HXOWAN1j6SG5_eMQoMhop_va3c0w7LJ0OYDv1B8/edit?usp=drive_link) a quick summary of common techniques, and discussion of [this OES evaluation](https://oes.gsa.gov/projects/ARP-ACA/)
+
+Our current standards for reporting statistical analyses
+
+- Basic guidance outlined [here](https://docs.google.com/document/d/122mdJKWMOeA4vSgSeCVlVRgV-R4Sd5rOl40DZPckbJs/edit?usp=drive_link); for more on visualizations, see our [style guide](https://docs.google.com/document/d/1UyQv3Ari0i_tNoU4aSfwQNvVbKIRFmxvudAcmMMEkxg/edit#bookmark=id.550pa1gxsyv7)
+
+Some of our earlier internal methods guidance on several topics
+
+- [Power analysis](https://docs.google.com/document/d/166J6gOpgn1JYHXIZNcNWKZmXdyjku7kiXL57uYe43Pg/edit?usp=sharing)
+
+- [Models for binary outcomes](https://docs.google.com/document/d/1ejU_doGX6Ms8YYX9Gun0J0SkJxzQR8K8OUa30TLHL1s/edit?usp=drive_link)
+
+- Various public-facing methods guidance documents [on our website](https://oes.gsa.gov/methods/)
