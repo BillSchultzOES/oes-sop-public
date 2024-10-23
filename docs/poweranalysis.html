@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-10-08">
+<meta name="date" content="2024-10-23">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -928,7 +928,7 @@ evaluate_bias &lt;- function(
 ** 
 ** draw_from_design ---: Generate a simulated dataset (NOT RUN DIRECTLY)
 ** single_estimator ---: Draw data once and estimate results (NOT RUN DIRECTLY)
-** replicate ----------: Repeat (generate -&gt; estimate) many times
+** replicate ----------: Repeat single_estimator many times
 ** evaluate_power -----: Evaluate power to detect non-zero effects.
 ** evaluate_mde -------: Find MDE, searching over range of effect sizes.
 ** evaluate_bias ------: Compute bias and other diagnostics.
@@ -939,7 +939,7 @@ evaluate_bias &lt;- function(
 * Required set-up:
 * - (1) Write code within this program to generate one draw of a simulated dataset.
 *   - See our examples below, this is often simpler than it sounds!
-*   - A built-in simulated treatment effect is not generally needed.
+*   - The idea is sampling t-stats under a true null; no built-in effect
 capture program drop draw_from_design
 program define draw_from_design, nclass
 
