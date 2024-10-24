@@ -52,13 +52,13 @@ Design simulation (e.g., estimating bias and/or precision)
 
 Power analysis
 
-- (5.3.2 - 5.6.1) Using `DeclareDesign` in R or a parallel approach in Stata
+- (5.3.2 - 5.6.1) Using `DeclareDesign` in R or a parallel approach in Stata (comparing the power of different estimation strategies applied to the same data)
 
 - (6.1) Analytical power calculations
 
-- (6.2 and 6.4) Simulating test statistics under a true null and using them to calculate power
+- (6.2 and 6.4) Simulating test statistics under a true null and using them to calculate power (for comparing power across estimation strategies, possible sample sizes, or possible effect sizes)
 
-- (6.4.2) Simulating data with effect sizes built in, and comparing power estimates across effect sizes
+- (6.4.2) Simulating data with particular effect sizes built in (for more complex situations, e.g. power in the presence of treatment effect heterogeneity)
 
 Comparing "nested" models (e.g., testing differences between regression coefficients)
 
