@@ -380,7 +380,7 @@ end
 
 ** Note: Must be modified by user
 * Required set-up:
-* - (1) Define the data generationprogram above.
+* - (1) Define the data generation program above.
 * - (2) Write out the test you want to run in this program (using the simulated data).
 capture program drop single_estimator
 program define single_estimator, rclass
@@ -1594,8 +1594,7 @@ program define simlist
 	}
 end
 
-** Apply the three estimators to the list of datasets,
-** using the estimate() function defined above.
+** Apply the three estimators to the list of datasets.
 ** Still for only a single given delta.
 capture program drop single_estimator
 program define single_estimator, rclass
