@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="using-tests-to-inform-policy.html">
-<link rel="next" href="design-based-inference.html">
+<link rel="prev" href="poweranalysis.html">
+<link rel="next" href="methodindex.html">
 <script src="libs/jquery/jquery.min.js"></script>
 <link href="libs/gitbook/css/style.css" rel="stylesheet">
 <link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet">
@@ -611,52 +611,75 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="key-design-criteria" class="section level1">
-<h1><span class="header-section-number">Chapter 2</span> Key design criteria</h1>
-<p>Here, we briefly define and describe some of the things we prioritize when choosing statistical procedures or designing evaluations. Briefly, we want to observe a reasonably precise estimate of a policy intervention&#x2019;s impacts (i.e., a small margin of error). We also want to use statistical tests that will rarely mislead us&#x2014;i.e., will rarely give a false positive result&#x2014;and we want to estimate policy impacts without bias (i.e., without systematically over-estimating or under-estimating). These properties depend on both the initial design of the study and the choices we make when calculating results.</p>
-<div id="high-statistical-power" class="section level2">
-<h2><span class="header-section-number">2.1</span> High statistical power</h2>
-<p>The research designs we use at OES aim to enhance our ability to
-distinguish signal from random noise: estimates from studies with very few observations are subject to more random noise and therefore cannot tell us much about the treatment effect. In contrast, studies with very many observations are subject to less noise and provide a lot of information about the treatment effect. A study which effectively distinguishes signal from noise has excellent <em>statistical power</em>, while a study which cannot do this has low statistical power. The Evidence in Governance and Politics (EGAP) Methods Guide <a href="https://egap.org/resource/10-things-to-know-about-hypothesis-testing/">10 Things You Need to Know about Statistical Power</a> explains more about what statistical power is and how to assess it.</p>
-<p>Before we field a research design, we assess its statistical power. If we
-anticipate that the intervention will only make a small change in peoples&#x2019;
-behavior, then we will need a relatively large number of people in the study: too few people would result in a report saying something like, &#x201C;The new policy might have improved the lives of participants, but we can&#x2019;t argue strongly that this is so because our margin of error is too wide.&#x201D;</p>
-</div>
-<div id="controlled-error-rates" class="section level2">
-<h2><span class="header-section-number">2.2</span> Controlled error rates</h2>
-<p>A good statistical test rarely rejects a true hypothesis and often rejects
-false hypotheses. For us, the relevant hypothesis for <em>error rate control</em> is the null hypothesis of no treatment effect. It is a norm in many applied fields to design tests so that, over the long run (i.e., across many studies), the rate of rejecting a true null hypothesis will be no more than 5%, while the rate of rejecting a false null hypothesis will be at least 80%.<a href="references.html#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> The EGAP Methods Guide <a href="https://egap.org/resource/10-things-to-know-about-hypothesis-testing/">10 Things to Know about Hypothesis
-Testing</a> describes more about the basics of hypothesis tests. Our team tries to choose testing procedures that are not likely to mislead analysts (i.e., adequately control both error rates), both when we make our analysis plans and as we complete our analyses and re-analyses.</p>
-</div>
-<div id="unbiased-estimators" class="section level2">
-<h2><span class="header-section-number">2.3</span> Unbiased estimators</h2>
-<p>While the other criteria focus on the problem of random noise, we also need to think about whether an estimator produces results that are <em>consistently</em> wrong in a particular direction. A good estimation procedure (i.e., a method of estimating a treatment effect) should not systematically over-estimate or under-estimate the truth&#x2014;i.e., it should be <em>unbiased</em>. The difference-in-means between a randomly assigned treatment and control group is well known to be an unbiased estimator of the sample average treatment effect, so this is often a primary quantity of interest that our team reports. In practice, we usually estimate this using a statistical procedure called linear regression.</p>
-<p>Even when dealing with binary outcomes, we still tend to prefer linear regression over other statistical models designed for binary outcomes such as logistic (Logit) regression. This is partly due to concerns about the additional assumptions Logit regression might require when interpreting results <span class="citation">(Gomila <a href="#ref-gomila2021logistic">2021</a>; Freedman <a href="#ref-freedman2008randomization">2008</a><a href="#ref-freedman2008randomization">b</a>)</span>, and to linear regression&#x2019;s ease of interpretation and well-established properties as an average treatment effect estimator <span class="citation">(Angrist and Pischke <a href="#ref-angrist2009mostly">2009</a>; Aronow and Miller <a href="#ref-aronow2019foundations">2019</a>)</span>. That said, we do consider alternative models or estimators in situations where we think they will significantly out perform linear regression.</p>
+<div id="codeindex" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> Code example index</h1>
+<p>Below, we list places where you can find coded examples of common tasks our evaluations often require. But note that there examples of many other more minor tasks throughout chapters 3-6 that we can&#x2019;t exhaustively list here. All examples referenced provide both R and Stata versions.</p>
+<p>Calculating design-justified standard errors:</p>
+<ul>
+<li>(3.1.1) Using simulation (comparing designs with fake data) and derived expressions (real data)</li>
+</ul>
+<p>Calculating design-justified confidence intervals:</p>
+<ul>
+<li>(3.1.2) Using simulation (randomization inference CIs) or standard methods (i.e., <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3B8;</mi><mo>&#xB1;</mo><mn>1.96</mn><mo>&#xD7;</mo><mi>S</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">\theta \pm 1.96 \times SE</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">&#x3B8;</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xB1;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1.96</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span></span>)</li>
+</ul>
+<p>Random assignment</p>
+<ul>
+<li><p>(4.1 - 4.2) Advantages of urn draw randomization; randomization with 2+ groups</p></li>
+<li><p>(4.3) Factorial assignment</p></li>
+<li><p>(4.4) Blocked assignment</p></li>
+<li><p>(4.5) Clustered assignment</p></li>
+</ul>
+<p>Balance testing</p>
+<ul>
+<li><p>(4.8.4) Separate comparisons for each of many covariates</p></li>
+<li><p>(4.8.4) Omnibus tests (asymptotic inference or randomization inference)</p></li>
+</ul>
+<p>Estimation</p>
+<ul>
+<li><p>(5.1.1) Estimating average treatment effects, standard errors, and performing randomization inference with two-arm trials (continuous and binary outcomes)</p></li>
+<li><p>(5.2.1) In multiple arm trials</p></li>
+</ul>
+<p>Multiple testing adjustment</p>
+<ul>
+<li>(5.2.1 - 5.2.2) Methods for multiple testing with multiple treatment arms and/or multiple outcomes, including examples of randomization inference simulations</li>
+</ul>
+<p>Covariate adjustment</p>
+<ul>
+<li>(5.3.2 - 5.3.3) Lin (2013) adjustment and Rosenbaum (2002) adjustment as alternatives to standard linear, additive adjustment for covariates in a regression</li>
+</ul>
+<p>Adjusting estimation to account for our randomization design</p>
+<ul>
+<li><p>(5.5.2) Different methods of adjusting for blocked random assignment</p></li>
+<li><p>(5.6) Adjusting for clustered random assignment</p></li>
+</ul>
+<p>Design simulation (e.g., estimating bias and/or precision)</p>
+<ul>
+<li>(5.3 - 5.6) Comparing estimation strategies using <code>DeclareDesign</code> in R or a parallel approach in Stata</li>
+</ul>
+<p>Power analysis</p>
+<ul>
+<li><p>(5.3.2 - 5.6.1) Using <code>DeclareDesign</code> in R or a parallel approach in Stata (comparing the power of different estimation strategies applied to the same data)</p></li>
+<li><p>(6.1) Analytical power calculations</p></li>
+<li><p>(6.2 and 6.4) Simulating test statistics under a true null and using them to calculate power (for comparing power across estimation strategies, possible sample sizes, or possible effect sizes)</p></li>
+<li><p>(6.4.2) Simulating data with particular effect sizes built in (for more complex situations, e.g.&#xA0;power in the presence of treatment effect heterogeneity)</p></li>
+</ul>
+<p>Comparing &#x201C;nested&#x201D; models (e.g., testing differences between regression coefficients)</p>
+<ul>
+<li>(4.8.4 and 5.2.2) Wald test</li>
+</ul>
+<p>Randomization inference</p>
+<ul>
+<li>(3.1.2, 4.8.4, 5.1.1, and 5.2.1) Applications in various settings listed above</li>
+</ul>
 
-</div>
-</div>
-<h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-gomila2021logistic">
-<p>Gomila, Robin. 2021. &#x201C;Logistic or Linear? Estimating Causal Effects of Experimental Treatments on Binary Outcomes Using Regression Analysis.&#x201D; <em>Journal of Experimental Psychology: General</em> 150 (4): 700.</p>
-</div>
-<div id="ref-freedman2008randomization">
-<p>&#x2014;&#x2014;&#x2014;. 2008b. &#x201C;Randomization Does Not Justify Logistic Regression.&#x201D; <em>Statistical Science</em> 23 (2): 237&#x2013;49.</p>
-</div>
-<div id="ref-angrist2009mostly">
-<p>Angrist, Joshua D, and J&#xF6;rn-Steffen Pischke. 2009. <em>Mostly Harmless Econometrics: An Empiricist&#x2019;s Companion</em>. Princeton university press.</p>
-</div>
-<div id="ref-aronow2019foundations">
-<p>Aronow, Peter M, and Benjamin T Miller. 2019. <em>Foundations of Agnostic Statistics</em>. Cambridge University Press.</p>
-</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="using-tests-to-inform-policy.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="design-based-inference.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="poweranalysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="methodindex.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook/js/app.min.js"></script>
@@ -686,7 +709,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/gsa-oes/sop/edit/master/Book/02-basics.Rmd",
+"link": "https://github.com/gsa-oes/sop/edit/master/Book/97-code-index.Rmd",
 "text": "Edit"
 },
 "download": ["OES_SOP.pdf", "OES_SOP.epub"],

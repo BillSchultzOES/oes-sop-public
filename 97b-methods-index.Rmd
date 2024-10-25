@@ -1,4 +1,4 @@
-# [Methods topic index](#methodindex)
+# Methods topic index {#methodindex}
 
 Below, we list places where you can find discussions of common methodological issues we often have to think about when designing evaluations. There are many more minor issues we cover that we can't exhaustively cover. But this should but a useful reference:
 

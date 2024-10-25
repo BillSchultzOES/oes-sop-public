@@ -1,4 +1,4 @@
-# [Appendix](#appendix)
+# Appendix {#appendix}
 
 Here, we organize **internal links** to further resources for OES team members. Most of these resources are not accessible to the public (they require a log-in).
 

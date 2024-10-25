@@ -1,4 +1,4 @@
-# [Code example index](#codeindex)
+# Code example index {#codeindex}
 
 Below, we list places where you can find coded examples of common tasks our evaluations often require. But note that there examples of many other more minor tasks throughout chapters 3-6 that we can't exhaustively list here. All examples referenced provide both R and Stata versions.
 
