@@ -2070,7 +2070,7 @@ sim_results <-
   evaluate_mde(delta = c(0, 0.5), how_granular = 0.001)
   
 ## MDE from a standard power simulation
-print("simulated MDE")
+print("Simulated MDE")
 sim_results$MDE
 
 ## For each of those simulated datasets,
@@ -2119,6 +2119,7 @@ sim_results <-
   evaluate_mde(delta = c(0, 0.5), how_granular = 0.001)
   
 ## MDE from a standard power simulation
+print("Simulated MDE")
 sim_results$MDE
 
 ## For each of those simulated datasets,

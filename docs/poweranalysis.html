@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-11-26">
+<meta name="date" content="2024-12-04">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2104,7 +2104,7 @@ data in the figure below:</p>
 <a class="sourceLine" id="cb213-22" title="22"><span class="st">  </span><span class="kw">evaluate_mde</span>(<span class="dt">delta =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>), <span class="dt">how_granular =</span> <span class="fl">0.001</span>)</a>
 <a class="sourceLine" id="cb213-23" title="23">  </a>
 <a class="sourceLine" id="cb213-24" title="24"><span class="co">## MDE from a standard power simulation</span></a>
-<a class="sourceLine" id="cb213-25" title="25"><span class="kw">print</span>(<span class="st">&quot;simulated MDE&quot;</span>)</a>
+<a class="sourceLine" id="cb213-25" title="25"><span class="kw">print</span>(<span class="st">&quot;Simulated MDE&quot;</span>)</a>
 <a class="sourceLine" id="cb213-26" title="26">sim_results<span class="op">$</span>MDE</a>
 <a class="sourceLine" id="cb213-27" title="27"></a>
 <a class="sourceLine" id="cb213-28" title="28"><span class="co">## For each of those simulated datasets,</span></a>
@@ -2126,7 +2126,8 @@ data in the figure below:</p>
 <a class="sourceLine" id="cb213-44" title="44"><span class="kw">sd</span>(expost_results<span class="op">$</span>mde)</a>
 <a class="sourceLine" id="cb213-45" title="45"><span class="kw">print</span>(<span class="st">&quot;mean heuristic value&quot;</span>)</a>
 <a class="sourceLine" id="cb213-46" title="46"><span class="kw">mean</span>(expost_results<span class="op">$</span>mde)</a></code></pre></div>
-<pre><code>[1] 0.17
+<pre><code>[1] &quot;Simulated MDE&quot;
+[1] 0.17
 [1] &quot;heuristic range (min, max)&quot;
 [1] 0.1655 0.1889
 [1] &quot;heuristic standard deviation&quot;
