@@ -1,6 +1,6 @@
 ---
 title: OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments
-author: Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz
+author: OES Methods Team
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 site: bookdown::bookdown_site
 knit: bookdown::render_book
@@ -230,6 +230,16 @@ This page provides a basic introduction to what the OES SOP hopes to accomplish.
 Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our [Google Form (only for OES team members)](https://forms.gle/TqxZB1H6KvGrVPQf6), or as [Issues](https://github.com/gsa-oes/sop/issues) or [pull requests](https://help.github.com/articles/creating-a-pull-request/) on Github.
 
 <!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
+
+## Special thanks to: {-}
+
+- Jake Bowers, Ryan Moore, Lula Chen, Paul Testa, and Nate Higgins for drafting the first edition
+
+- Miles Williams for updating the backend code that allows this document to work
+
+- Bill Schultz for further updates to the backend code, text updates, and example code updates, leading to the second (current) edition. *Current Maintainer*. Contact Bill with questions: william.schultz@gsa.gov.
+
+- Many other OES team members for their thoughts and contributions to this SOP over time, including Oliver McClellan and Tyler Simko.
 
 ## Technical details {-}
 
