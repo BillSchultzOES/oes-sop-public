@@ -4197,7 +4197,7 @@ thediagnosisNorm <- diagnose_design(thedesignPlusEstimatorsNorm, sims = sims, bo
 kable(reshape_diagnosis(thediagnosisNorm)[, c(3, 6:10, 13)])
 ```
 
-Lastly, note that when the probability of treatment is the same in each block (e.g., with a pair-randomized design), ignoring the blocking structure during estimation should not lead to meaningful bias. But we can still improve precision by taking blocking into account [@bowers2011mem]. This final simulation changes the design to still have unequal sized blocks, but now with a uniform probability of treatment assignment in each block (instead of a mix of 10% and 50%). Here, only two estimators show appreciable bias (E4 and E7). However, ignoring the blocks during estimation leads to overly conservative standard errors.
+Additionally, note that when the probability of treatment is the same in each block (e.g., with a pair-randomized design), ignoring the blocking structure during estimation should not lead to meaningful bias. But we can still improve precision by taking blocking into account [@bowers2011mem]. This final simulation changes the design to still have unequal sized blocks, but now with a uniform probability of treatment assignment in each block (instead of a mix of 10% and 50%). Here, only two estimators show appreciable bias (E4 and E7). However, ignoring the blocks during estimation leads to overly conservative standard errors.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R36')">R code</button>
@@ -4352,6 +4352,66 @@ thediagnosisNormEqual <- diagnose_design(thedesignPlusEstimatorsNormEqual, sims 
 ```{r, echo = F, eval = T}
 ## View results
 kable(reshape_diagnosis(thediagnosisNormEqual)[, c(3, 6:10, 13)])
+```
+
+#### Combining blocks with covariate adjustment
+
+As an aside, we quickly show here (R code only) that block dummies may no longer perfectly reconstruct the block-size weight estimates (i.e., inverse propensity score weights, or IPWs, accounting for blocking) when they are included alongside other covariates in Lin adjustment. Specifically, we repeat our first blocked analysis simulation for two estimators: one that adjusts for a continuous covariate using Lin adjustment but adjusts for blocks using unbiased IPWs; and another that adjusts for both blocks and the covariate using Lin adjustment. To be clear, differences between these strategies will likely often be negligible in practice.
+
+```{r, eval = T, echo = F, include = F}
+# Want to save and reset the state, to not mess up
+# concurrence between R and Stata results for the
+# cluster simulations. This section was added later.
+save_state <- .Random.seed
+```
+
+```{r, results="hide", cache = T, echo = T, eval = T}
+## Define estimator functions employed in the simulation below
+
+# Lin adjustment for block dummies and a covariate
+estnbwt2_cov <- declare_estimator(Y~Z, inquiry=theestimand, .method=lm_lin, covariates=~bF+x1, label="Treatment Interaction with Block Indicators and a Continuous Covariate, Design SE")
+
+# Lin adjustment for a covariate, with block size weights
+nbwt_est_fun_cov <- function(data){
+	data$newnbwt <- with(data, (Z/pib) + ((1-Z)/(1-pib)))
+	obj <- lm_lin(Y~Z,data=data, weights=newnbwt, covariates=~x1)
+	res <- tidy(obj) %>% filter(term=="Z")
+	return(res)
+}
+estnbwt3_cov <- declare_estimator(handler=label_estimator(nbwt_est_fun_cov), inquiry=theestimand, label="Least Squares with Block Size Weights and a Continuous Covariate, Design SE")
+
+## Combine all of these design objects
+thedesignPlusEstimators_cov <- thedesign2 +
+	estnbwt2_cov + estnbwt3_cov
+
+## Update the default diagnosands for this simulation
+diagnosands <- declare_diagnosands(
+   mean_estimand = mean(estimand),
+   mean_estimate = mean(estimate),
+   bias = mean(estimate - estimand),
+   sd_estimate = sqrt(pop.var(estimate)),
+   mean_se = mean(std.error),
+   rmse = sqrt(mean((estimate - estimand) ^ 2)),
+   power = mean(p.value <= 0.05),
+   coverage = mean(estimand <= conf.high & estimand >= conf.low)
+   )
+
+## Perform the simulation
+sims <- 200
+set.seed(12345)
+thediagnosis_cov <- diagnose_design(thedesignPlusEstimators_cov, sims=sims, bootstrap_sims = 0, diagnosands = diagnosands)
+```
+
+```{r, echo = F, eval = T}
+## View results
+kable(reshape_diagnosis(thediagnosis_cov)[, c(3, 6:10, 13)])
+```
+
+```{r, eval = T, echo = F, include = F}
+# Want to save and reset the state, to not mess up
+# concurrence between R and Stata results for the
+# cluster simulations. This section was added later.
+.Random.seed <- save_state
 ```
 
 #### Summary of Approaches to the Analysis of Block Randomized Trials

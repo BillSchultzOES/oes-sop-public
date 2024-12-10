@@ -25,7 +25,7 @@
 <meta name="author" content="Jake Bowers, Ryan T. Moore, Miles Williams, and Bill Schultz">
 
 
-<meta name="date" content="2024-12-04">
+<meta name="date" content="2024-12-10">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -5084,7 +5084,7 @@ E8: Direct Demeaning, Design SE
 </tr>
 </tbody>
 </table>
-<p>Lastly, note that when the probability of treatment is the same in each block (e.g., with a pair-randomized design), ignoring the blocking structure during estimation should not lead to meaningful bias. But we can still improve precision by taking blocking into account <span class="citation">(Bowers <a href="#ref-bowers2011mem">2011</a>)</span>. This final simulation changes the design to still have unequal sized blocks, but now with a uniform probability of treatment assignment in each block (instead of a mix of 10% and 50%). Here, only two estimators show appreciable bias (E4 and E7). However, ignoring the blocks during estimation leads to overly conservative standard errors.</p>
+<p>Additionally, note that when the probability of treatment is the same in each block (e.g., with a pair-randomized design), ignoring the blocking structure during estimation should not lead to meaningful bias. But we can still improve precision by taking blocking into account <span class="citation">(Bowers <a href="#ref-bowers2011mem">2011</a>)</span>. This final simulation changes the design to still have unequal sized blocks, but now with a uniform probability of treatment assignment in each block (instead of a mix of 10% and 50%). Here, only two estimators show appreciable bias (E4 and E7). However, ignoring the blocks during estimation leads to overly conservative standard errors.</p>
 <div class="tab">
 <button class="tablinks" onclick="unrolltab(event, &apos;ch5R36&apos;)">
 R code
@@ -5456,8 +5456,121 @@ E8: Direct Demeaning, Design SE
 </tr>
 </tbody>
 </table>
+<div id="combining-blocks-with-covariate-adjustment" class="section level4">
+<h4><span class="header-section-number">5.5.2.1</span> Combining blocks with covariate adjustment</h4>
+<p>As an aside, we quickly show here (R code only) that block dummies may no longer perfectly reconstruct the block-size weight estimates (i.e., inverse propensity score weights, or IPWs, accounting for blocking) when they are included alongside other covariates in Lin adjustment. Specifically, we repeat our first blocked analysis simulation for two estimators: one that adjusts for a continuous covariate using Lin adjustment but adjusts for blocks using unbiased IPWs; and another that adjusts for both blocks and the covariate using Lin adjustment. To be clear, differences between these strategies will likely often be negligible in practice.</p>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb171-1" title="1"><span class="co">## Define estimator functions employed in the simulation below</span></a>
+<a class="sourceLine" id="cb171-2" title="2"></a>
+<a class="sourceLine" id="cb171-3" title="3"><span class="co"># Lin adjustment for block dummies and a covariate</span></a>
+<a class="sourceLine" id="cb171-4" title="4">estnbwt2_cov &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(Y<span class="op">~</span>Z, <span class="dt">inquiry=</span>theestimand, <span class="dt">.method=</span>lm_lin, <span class="dt">covariates=</span><span class="op">~</span>bF<span class="op">+</span>x1, <span class="dt">label=</span><span class="st">&quot;Treatment Interaction with Block Indicators and a Continuous Covariate, Design SE&quot;</span>)</a>
+<a class="sourceLine" id="cb171-5" title="5"></a>
+<a class="sourceLine" id="cb171-6" title="6"><span class="co"># Lin adjustment for a covariate, with block size weights</span></a>
+<a class="sourceLine" id="cb171-7" title="7">nbwt_est_fun_cov &lt;-<span class="st"> </span><span class="cf">function</span>(data){</a>
+<a class="sourceLine" id="cb171-8" title="8">    data<span class="op">$</span>newnbwt &lt;-<span class="st"> </span><span class="kw">with</span>(data, (Z<span class="op">/</span>pib) <span class="op">+</span><span class="st"> </span>((<span class="dv">1</span><span class="op">-</span>Z)<span class="op">/</span>(<span class="dv">1</span><span class="op">-</span>pib)))</a>
+<a class="sourceLine" id="cb171-9" title="9">    obj &lt;-<span class="st"> </span><span class="kw">lm_lin</span>(Y<span class="op">~</span>Z,<span class="dt">data=</span>data, <span class="dt">weights=</span>newnbwt, <span class="dt">covariates=</span><span class="op">~</span>x1)</a>
+<a class="sourceLine" id="cb171-10" title="10">    res &lt;-<span class="st"> </span><span class="kw">tidy</span>(obj) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(term<span class="op">==</span><span class="st">&quot;Z&quot;</span>)</a>
+<a class="sourceLine" id="cb171-11" title="11">    <span class="kw">return</span>(res)</a>
+<a class="sourceLine" id="cb171-12" title="12">}</a>
+<a class="sourceLine" id="cb171-13" title="13">estnbwt3_cov &lt;-<span class="st"> </span><span class="kw">declare_estimator</span>(<span class="dt">handler=</span><span class="kw">label_estimator</span>(nbwt_est_fun_cov), <span class="dt">inquiry=</span>theestimand, <span class="dt">label=</span><span class="st">&quot;Least Squares with Block Size Weights and a Continuous Covariate, Design SE&quot;</span>)</a>
+<a class="sourceLine" id="cb171-14" title="14"></a>
+<a class="sourceLine" id="cb171-15" title="15"><span class="co">## Combine all of these design objects</span></a>
+<a class="sourceLine" id="cb171-16" title="16">thedesignPlusEstimators_cov &lt;-<span class="st"> </span>thedesign2 <span class="op">+</span></a>
+<a class="sourceLine" id="cb171-17" title="17"><span class="st">    </span>estnbwt2_cov <span class="op">+</span><span class="st"> </span>estnbwt3_cov</a>
+<a class="sourceLine" id="cb171-18" title="18"></a>
+<a class="sourceLine" id="cb171-19" title="19"><span class="co">## Update the default diagnosands for this simulation</span></a>
+<a class="sourceLine" id="cb171-20" title="20">diagnosands &lt;-<span class="st"> </span><span class="kw">declare_diagnosands</span>(</a>
+<a class="sourceLine" id="cb171-21" title="21">   <span class="dt">mean_estimand =</span> <span class="kw">mean</span>(estimand),</a>
+<a class="sourceLine" id="cb171-22" title="22">   <span class="dt">mean_estimate =</span> <span class="kw">mean</span>(estimate),</a>
+<a class="sourceLine" id="cb171-23" title="23">   <span class="dt">bias =</span> <span class="kw">mean</span>(estimate <span class="op">-</span><span class="st"> </span>estimand),</a>
+<a class="sourceLine" id="cb171-24" title="24">   <span class="dt">sd_estimate =</span> <span class="kw">sqrt</span>(<span class="kw">pop.var</span>(estimate)),</a>
+<a class="sourceLine" id="cb171-25" title="25">   <span class="dt">mean_se =</span> <span class="kw">mean</span>(std.error),</a>
+<a class="sourceLine" id="cb171-26" title="26">   <span class="dt">rmse =</span> <span class="kw">sqrt</span>(<span class="kw">mean</span>((estimate <span class="op">-</span><span class="st"> </span>estimand) <span class="op">^</span><span class="st"> </span><span class="dv">2</span>)),</a>
+<a class="sourceLine" id="cb171-27" title="27">   <span class="dt">power =</span> <span class="kw">mean</span>(p.value <span class="op">&lt;=</span><span class="st"> </span><span class="fl">0.05</span>),</a>
+<a class="sourceLine" id="cb171-28" title="28">   <span class="dt">coverage =</span> <span class="kw">mean</span>(estimand <span class="op">&lt;=</span><span class="st"> </span>conf.high <span class="op">&amp;</span><span class="st"> </span>estimand <span class="op">&gt;=</span><span class="st"> </span>conf.low)</a>
+<a class="sourceLine" id="cb171-29" title="29">   )</a>
+<a class="sourceLine" id="cb171-30" title="30"></a>
+<a class="sourceLine" id="cb171-31" title="31"><span class="co">## Perform the simulation</span></a>
+<a class="sourceLine" id="cb171-32" title="32">sims &lt;-<span class="st"> </span><span class="dv">200</span></a>
+<a class="sourceLine" id="cb171-33" title="33"><span class="kw">set.seed</span>(<span class="dv">12345</span>)</a>
+<a class="sourceLine" id="cb171-34" title="34">thediagnosis_cov &lt;-<span class="st"> </span><span class="kw">diagnose_design</span>(thedesignPlusEstimators_cov, <span class="dt">sims=</span>sims, <span class="dt">bootstrap_sims =</span> <span class="dv">0</span>, <span class="dt">diagnosands =</span> diagnosands)</a></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Estimator
+</th>
+<th style="text-align:left;">
+Mean Estimand
+</th>
+<th style="text-align:left;">
+Mean Estimate
+</th>
+<th style="text-align:left;">
+Bias
+</th>
+<th style="text-align:left;">
+SD Estimate
+</th>
+<th style="text-align:left;">
+Mean Se
+</th>
+<th style="text-align:left;">
+Coverage
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Least Squares with Block Size Weights and a Continuous Covariate, Design SE
+</td>
+<td style="text-align:left;">
+-12900.57
+</td>
+<td style="text-align:left;">
+-12898.93
+</td>
+<td style="text-align:left;">
+1.63
+</td>
+<td style="text-align:left;">
+100.82
+</td>
+<td style="text-align:left;">
+162.86
+</td>
+<td style="text-align:left;">
+0.99
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Treatment Interaction with Block Indicators and a Continuous Covariate, Design SE
+</td>
+<td style="text-align:left;">
+-12900.57
+</td>
+<td style="text-align:left;">
+-12898.72
+</td>
+<td style="text-align:left;">
+1.84
+</td>
+<td style="text-align:left;">
+95.90
+</td>
+<td style="text-align:left;">
+148.39
+</td>
+<td style="text-align:left;">
+0.98
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div id="summary-of-approaches-to-the-analysis-of-block-randomized-trials" class="section level4">
-<h4><span class="header-section-number">5.5.2.1</span> Summary of Approaches to the Analysis of Block Randomized Trials</h4>
+<h4><span class="header-section-number">5.5.2.2</span> Summary of Approaches to the Analysis of Block Randomized Trials</h4>
 <p>Our team often prefers block randomized trials because of their potential to increase statistical power, help us avoid bias, and help us better highlight subgroup effects. And we generally prefer to &#x201C;analyze as we randomize.&#x201D; <em>But this can mean a number of things with blocked designs</em>, and different designs will require different analytical decisions. Sometimes we may be willing to trade a small amount of bias to make our estimates more precise. Other studies will be so large or small that one or another estimation strategy will be obviously superior. We use our Analysis Plans to explain our choices, and generally rely on simulation studies when we are uncertain about the applicability of statistical rules of thumb to any given design.</p>
 </div>
 </div>
@@ -5582,9 +5695,9 @@ end</code></pre>
 </div>
 <p>In everyday practice, with more than about 50 (equally-sized) clusters, we often produce estimates using more or less the same kinds estimators as those above, but changing our standard error calculations to instead rely on <code>CR2</code> cluster-robust standard error <span class="citation">(Pustejovsky <a href="#ref-pustejovsky2019cr">2019</a>)</span>. We show two approaches to such adjustment.</p>
 <p>First, the design-based <code>difference_in_means()</code> function in R:<a href="references.html#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a></p>
-<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb176-1" title="1"><span class="co">## CR2 via difference in means</span></a>
-<a class="sourceLine" id="cb176-2" title="2">estAndSE4a &lt;-<span class="st"> </span><span class="kw">difference_in_means</span>(Y<span class="op">~</span>Zcluster, <span class="dt">data=</span>datCluster, <span class="dt">clusters=</span>cluster)</a>
-<a class="sourceLine" id="cb176-3" title="3">estAndSE4a</a></code></pre></div>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb177-1" title="1"><span class="co">## CR2 via difference in means</span></a>
+<a class="sourceLine" id="cb177-2" title="2">estAndSE4a &lt;-<span class="st"> </span><span class="kw">difference_in_means</span>(Y<span class="op">~</span>Zcluster, <span class="dt">data=</span>datCluster, <span class="dt">clusters=</span>cluster)</a>
+<a class="sourceLine" id="cb177-3" title="3">estAndSE4a</a></code></pre></div>
 <pre><code>Design:  Clustered 
          Estimate Std. Error t value Pr(&gt;|t|) CI Lower CI Upper   DF
 Zcluster   -15597       8336  -1.871   0.1232   -37356     6162 4.76</code></pre>
