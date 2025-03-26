@@ -227,17 +227,15 @@ This page provides a basic introduction to what the OES SOP hopes to accomplish.
 
 ## Help us improve our work! {-}
 
-Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our [Google Form (only for OES team members)](https://forms.gle/TqxZB1H6KvGrVPQf6), or as [Issues](https://github.com/gsa-oes/sop/issues) or [pull requests](https://help.github.com/articles/creating-a-pull-request/) on Github.
+Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our [Google Form (only for OES team members)](https://forms.gle/TqxZB1H6KvGrVPQf6), or as [Issues](https://github.com/BillSchultzOES/oes-sop-public/issues) or [pull requests](https://github.com/BillSchultzOES/oes-sop-public/pulls) on the SOP's Github.
 
-<!-- This next copied from https://github.com/hadley/adv-r/blob/master/Introduction.Rmd -->
+The corresponding author and current maintainer is Bill Schultz. Feel free to just reach out to him with questions: william.schultz@gsa.gov. Since joining this project, Bill has helped to update the backend code, text, and example code throughout, including all of the Stata examples.
 
-## Special thanks to: {-}
+Additionally, special thanks are owed to:
 
-- Jake Bowers, Ryan Moore, Lula Chen, Paul Testa, and Nate Higgins for drafting the first edition
+- Jake Bowers, Ryan Moore, Lula Chen, Paul Testa, and Nate Higgins for drafting the first edition of this SOP
 
-- Miles Williams for updating the backend code that allows this document to work
-
-- Bill Schultz for further updates to the backend code, text updates, and example code updates, leading to the second (current) edition. *Current Maintainer*. Contact Bill with questions: william.schultz@gsa.gov.
+- Miles Williams for helping to update the backend code that allows this document to work
 
 - Many other OES team members for their thoughts and contributions to this SOP over time, including Oliver McClellan and Tyler Simko.
 

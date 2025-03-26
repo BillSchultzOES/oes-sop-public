@@ -2255,11 +2255,11 @@ What we call Lin adjustment produces equivalent treatment effect estimates to a 
 
 2. Regress the outcome on controls separately within each subset
 
-3. Using the control subset model, calculated a predicted control potential outcome for treated units
+3. Using the control subset model, calculated a predicted control potential outcome for all units
 
-4. Using the treated subset model, calculated a predicted treatment potential outcome for control units
+4. Using the treated subset model, calculated a predicted treatment potential outcome for all units
 
-5. Calculate the unit-level difference between the real and predicted potential outcomes
+5. Calculate the unit-level difference between these predicted potential outcomes
 
 6. Take the mean of these unit-level differences
 
