@@ -1,5 +1,7 @@
 This repository contains the Standard Operating Procedures for statistical analyses done by the Office of Evaluation Sciences in the US General Services Administration. It is currently built using R Markdown and [bookdown](https://github.com/rstudio/bookdown). Specifically, this version of the OES SOP was built using `R` 4.2.1 (2022-06-23 ucrt), `RStudio` 1.2.1335, and `pandoc` 2.6. Math is rendered using the `katex` package 1.4.1.
 
+You may encounter issues when trying to make changes using newer versions of R. In that case, it may be necessary to install R 4.2.1 to work on the SOP (on Windows, e.g., you can set the R version you want RStudio to use). We'll eventually update the R version used to build this document, but for now we need this compatible with 4.2.1. You should also make sure you have an appropriate version of Rtools installed.
+
 # Package management
 
 To control package versions used in the SOP, we're relying on [renv](https://rstudio.github.io/renv/articles/renv.html). See that vignette for more details on what `renv` does and how it works.
