@@ -642,37 +642,36 @@ the General Services Administration</a> (the OES), tends to do statistical analy
 <div id="purposes-of-this-document" class="section level2 unnumbered">
 <h2 class="unnumbered">Purposes of this document</h2>
 <p><em>First</em>, this document educates new team members about the decisions past team members have made regarding research design and analysis. It also serves as a place to record decisions for <a href="http://dx.doi.org/10.4067/S0718-090X2016000300011">our
-own future selves</a>, and helps us harness the power that arises from our disciplinary diversity. That
-is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document, thus, helps explain why we have landed on those decisions (for now), and also illustrates how to implement them.</p>
+own future selves</a>. That is, current and past team members have made decisions about how to approach statistical analyses that may differ from those that are common in any given academic discipline. This document helps explain why we have landed on those decisions (for now), and also illustrates how to implement them.</p>
 <p><em>Second</em>, this document records decisions that we have made in the absence of pre-analysis plans, or in the context of circumstances unforeseen by our pre-analysis planning. Projects will sometimes encounter good reasons to make different decisions than those we describe here. But the SOP represents our methodological thinking in &#x201C;all else equal&#x201D; situations.</p>
 <p><em>Third</em>, on a related note, this document should help us write better analysis plans and speed our practice of re-analysis. (Our team insists on a blind re-analysis of every study as a quality control for our results before they are reported to our agency partners.)</p>
-<p><em>Fourth</em>, and finally, this document should help other teams working to learn about the causal impacts of policy interventions. We hope this contributes to the US government&#x2019;s own work pursuing evidence-based public policy. But we also hope that it helps teams doing work similar to our own in other settings.</p>
+<p><em>Fourth</em>, and finally, this document will hopefully help other teams working to learn about the causal impacts of policy interventions.</p>
 </div>
 <div id="nature-and-limitations-of-this-document" class="section level2 unnumbered">
 <h2 class="unnumbered">Nature and limitations of this document</h2>
 <div id="we-mostly-focus-on-randomized-field-experiments." class="section level3 unnumbered">
 <h3 class="unnumbered">We (mostly) focus on randomized field experiments.</h3>
-<p>This document focuses on design and analysis of randomized field experiments. Although we include some discussion about non-randomized studies, often known as observational studies, until now, our team has focused primarily on randomized field experiments. We plan to include more discussion of observational studies as we pursue more in the future.</p>
+<p>This document focuses on design and analysis of randomized field experiments. Although we may include some discussion of non-randomized studies, often known as observational studies, until now, our team has focused primarily on randomized field experiments. We plan to include more discussion of observational studies as we pursue more in the future.</p>
 </div>
 <div id="we-mostly-present-examples-using-r" class="section level3 unnumbered">
 <h3 class="unnumbered">We (mostly) present examples using R</h3>
-<p>We use the <a href="http://r-project.org">R</a> statistical analysis language in this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) the locus of development for many of the latest new statistical techniques for social and behavioral scientists.</p>
-<p>Of course, members of our team also use other software like Stata, SAS, SPSS, and Python. To help improve accessibility to Stata users in particular, almost all of the R code in this SOP is accompanied by code showing how the same task, or something similar, could be accomplished in Stata. But reported results and figures are generated based only on the R code.</p>
+<p>We use the <a href="http://r-project.org">R</a> statistical analysis language in this document because it is (a) one of the two industry standards in the field of data science (along with Python), (b) free, open source, and multiplatform, and (c) a locus of development for many of the latest statistical techniques for social and behavioral scientists.</p>
+<p>Of course, members of our team also use other software like Stata, SAS, SPSS, and Python. To help provide better guidance for Stata users in particular, almost all of the R code in this SOP is accompanied by code showing how the same task, or something similar, could be accomplished in Stata. But reported results and figures are generated based only on the R code.</p>
 </div>
 </div>
 <div id="structure" class="section level2 unnumbered">
 <h2 class="unnumbered">Structure</h2>
 <p>This page provides a basic introduction to what the OES SOP hopes to accomplish. The rest of the document can be thought of as consisting of two parts:</p>
 <ul>
-<li><p><em>For policymakers and agency partners</em> - Chapters 1-3 provide a higher level overview of how statistical tests can inform policy learning, our priorities when designing tests, and how we prefer to justify the tests we use. This provides more context for how OES make analysis decisions and what we aim to learn from impact evaluations. Chapter 3 goes into more technical detail than Chapters 1 and 2, overlapping with the next part of this document.</p></li>
-<li><p><em>For OES team members</em> - Chapters 3 and onward are intended to serve as a reference for design and analysis decisions that need to be made at stages of our project process. Chapter 3 reviews a randomization based framework for statistical decision-making that motivates many of the recommendations in later chapters. Chapter 4 is for teams making decisions about how to randomly assignment treatment or ensure that randomization occurred as planned. Chapter 5 is for teams making decisions about how to analyze their data. Finally, Chapter 6 is for teams interested in performing <em>ex ante</em> power simulations before making design choices.</p></li>
+<li><p><em>For policymakers and agency partners</em> - Chapters 1-3 provide a high level overview of how statistical tests can inform policy learning, our priorities when designing tests, and how we prefer to justify the tests we use. This provides more context for how OES make analysis decisions and what we aim to learn from impact evaluations. Chapter 3 goes into more technical detail than Chapters 1 and 2, overlapping with the next part of this document.</p></li>
+<li><p><em>For OES team members</em> - Chapters 3 and onward are intended to serve as a reference for design and analysis decisions that need to be made at different stages of our project process. Chapter 3 reviews a randomization based framework for statistical decision-making that motivates many of the recommendations in later chapters. Chapter 4 provides guidance for decision-making about how to randomly assignment treatment or ensure that randomization occurred as planned. Chapter 5 provides guidance about how to analyze data after we collect it. Finally, Chapter 6 provides guidance on performing <em>ex ante</em> power simulations before making design choices.</p></li>
 </ul>
 </div>
 <div id="help-us-improve-our-work" class="section level2 unnumbered">
 <h2 class="unnumbered">Help us improve our work!</h2>
 <p>Since we hope to improve our analytic workflow with every project, this document should be seen as provisional &#x2014; as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our <a href="https://forms.gle/TqxZB1H6KvGrVPQf6">Google Form (only for OES team members)</a>, or as <a href="https://github.com/BillSchultzOES/oes-sop-public/issues">Issues</a> or <a href="https://github.com/BillSchultzOES/oes-sop-public/pulls">pull requests</a> on the SOP&#x2019;s Github.</p>
-<p>The corresponding author and current maintainer is Bill Schultz. Feel free to just reach out to him with questions: <a href="mailto:william.schultz@gsa.gov" class="email">william.schultz@gsa.gov</a>. Since joining this project, Bill has helped to update the backend code, text, and example code throughout, including all of the Stata examples.</p>
-<p>Additionally, special thanks are owed to:</p>
+<p>The corresponding author and current maintainer is Bill Schultz. Feel free to just reach out to him with questions: <a href="mailto:william.schultz@gsa.gov" class="email">william.schultz@gsa.gov</a>. Since joining this project, Bill has helped to update the back-end code, text, and example code throughout, including all of the Stata examples.</p>
+<p>Special thanks are owed to:</p>
 <ul>
 <li><p>Jake Bowers, Ryan Moore, Lula Chen, Paul Testa, and Nate Higgins for drafting the first edition of this SOP</p></li>
 <li><p>Miles Williams for helping to update the backend code that allows this document to work</p></li>
@@ -681,7 +680,7 @@ is, current and past team members have made decisions about how to approach stat
 </div>
 <div id="technical-details" class="section level2 unnumbered">
 <h2 class="unnumbered">Technical details</h2>
-<p>This book was written in <a href="http://bookdown.org/">bookdown</a>. The complete source is available from <a href="https://github.com/gsa-oes/sop">GitHub</a>. This version of the book was built with R version 4.2.1 (2022-06-23 ucrt) and the following packages.</p>
+<p>This book was written in <a href="http://bookdown.org/">bookdown</a>. The complete source is available from <a href="https://github.com/BillSchultzOES/oes-sop-public">GitHub</a>. This version of the book was built with R version 4.2.1 (2022-06-23 ucrt) and the following packages.</p>
 <table>
 <colgroup>
 <col width="15%">
