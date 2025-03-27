@@ -25,7 +25,7 @@
 <meta name="author" content="OES Methods Team">
 
 
-<meta name="date" content="2024-12-10">
+<meta name="date" content="2025-03-26">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,6 +34,7 @@
   
 <link rel="prev" href="appendix.html">
 
+<script src="libs/header-attrs/header-attrs.js"></script>
 <script src="libs/jquery/jquery.min.js"></script>
 <link href="libs/gitbook/css/style.css" rel="stylesheet">
 <link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet">
@@ -428,26 +429,28 @@ gtag("config", "G-RCGKRS9FGR");
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -456,9 +459,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -507,91 +510,106 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">The OES SOP</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Overview</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#purposes-of-this-document"><i class="fa fa-check"></i>Purposes of this document</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#nature-and-limitations-of-this-document"><i class="fa fa-check"></i>Nature and limitations of this document</a><ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-focus-on-randomized-field-experiments."><i class="fa fa-check"></i>We (mostly) focus on randomized field experiments.</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#we-mostly-present-examples-using-r"><i class="fa fa-check"></i>We (mostly) present examples using R</a></li>
+<li><a href="index.html#overview" id="toc-overview">Overview</a>
+<ul>
+<li><a href="index.html#purposes-of-this-document" id="toc-purposes-of-this-document">Purposes of this document</a></li>
+<li><a href="index.html#nature-and-limitations-of-this-document" id="toc-nature-and-limitations-of-this-document">Nature and limitations of this document</a>
+<ul>
+<li><a href="index.html#we-mostly-focus-on-randomized-field-experiments." id="toc-we-mostly-focus-on-randomized-field-experiments.">We (mostly) focus on randomized field experiments.</a></li>
+<li><a href="index.html#we-mostly-present-examples-using-r" id="toc-we-mostly-present-examples-using-r">We (mostly) present examples using R</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure"><i class="fa fa-check"></i>Structure</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#help-us-improve-our-work"><i class="fa fa-check"></i>Help us improve our work!</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#special-thanks-to"><i class="fa fa-check"></i>Special thanks to:</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#technical-details"><i class="fa fa-check"></i>Technical details</a></li>
+<li><a href="index.html#structure" id="toc-structure">Structure</a></li>
+<li><a href="index.html#help-us-improve-our-work" id="toc-help-us-improve-our-work">Help us improve our work!</a></li>
+<li><a href="index.html#technical-details" id="toc-technical-details">Technical details</a></li>
 </ul></li>
-<li class="chapter" data-level="1" data-path="using-tests-to-inform-policy.html"><a href="using-tests-to-inform-policy.html"><i class="fa fa-check"></i><b>1</b> Using tests to inform policy</a></li>
-<li class="chapter" data-level="2" data-path="key-design-criteria.html"><a href="key-design-criteria.html"><i class="fa fa-check"></i><b>2</b> Key design criteria</a><ul>
-<li class="chapter" data-level="2.1" data-path="key-design-criteria.html"><a href="key-design-criteria.html#high-statistical-power"><i class="fa fa-check"></i><b>2.1</b> High statistical power</a></li>
-<li class="chapter" data-level="2.2" data-path="key-design-criteria.html"><a href="key-design-criteria.html#controlled-error-rates"><i class="fa fa-check"></i><b>2.2</b> Controlled error rates</a></li>
-<li class="chapter" data-level="2.3" data-path="key-design-criteria.html"><a href="key-design-criteria.html#unbiased-estimators"><i class="fa fa-check"></i><b>2.3</b> Unbiased estimators</a></li>
+<li><a href="using-tests-to-inform-policy.html#using-tests-to-inform-policy" id="toc-using-tests-to-inform-policy"><span class="toc-section-number">1</span> Using tests to inform policy</a></li>
+<li><a href="key-design-criteria.html#key-design-criteria" id="toc-key-design-criteria"><span class="toc-section-number">2</span> Key design criteria</a>
+<ul>
+<li><a href="key-design-criteria.html#high-statistical-power" id="toc-high-statistical-power"><span class="toc-section-number">2.1</span> High statistical power</a></li>
+<li><a href="key-design-criteria.html#controlled-error-rates" id="toc-controlled-error-rates"><span class="toc-section-number">2.2</span> Controlled error rates</a></li>
+<li><a href="key-design-criteria.html#unbiased-estimators" id="toc-unbiased-estimators"><span class="toc-section-number">2.3</span> Unbiased estimators</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="design-based-inference.html"><a href="design-based-inference.html"><i class="fa fa-check"></i><b>3</b> Design based inference</a><ul>
-<li class="chapter" data-level="3.1" data-path="design-based-inference.html"><a href="design-based-inference.html#randinfex"><i class="fa fa-check"></i><b>3.1</b> An example using simulated data</a><ul>
-<li class="chapter" data-level="3.1.1" data-path="design-based-inference.html"><a href="design-based-inference.html#randomization-based-standard-errors"><i class="fa fa-check"></i><b>3.1.1</b> Randomization-based standard errors</a></li>
-<li class="chapter" data-level="3.1.2" data-path="design-based-inference.html"><a href="design-based-inference.html#randomization-based-confidence-intervals"><i class="fa fa-check"></i><b>3.1.2</b> Randomization-based confidence intervals</a></li>
+<li><a href="design-based-inference.html#design-based-inference" id="toc-design-based-inference"><span class="toc-section-number">3</span> Design based inference</a>
+<ul>
+<li><a href="design-based-inference.html#randinfex" id="toc-randinfex"><span class="toc-section-number">3.1</span> An example using simulated data</a>
+<ul>
+<li><a href="design-based-inference.html#randomization-based-standard-errors" id="toc-randomization-based-standard-errors"><span class="toc-section-number">3.1.1</span> Randomization-based standard errors</a></li>
+<li><a href="design-based-inference.html#randomization-based-confidence-intervals" id="toc-randomization-based-confidence-intervals"><span class="toc-section-number">3.1.2</span> Randomization-based confidence intervals</a></li>
 </ul></li>
-<li class="chapter" data-level="3.2" data-path="design-based-inference.html"><a href="design-based-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><i class="fa fa-check"></i><b>3.2</b> Summary: What does a design based approach mean for policy evaluation?</a></li>
+<li><a href="design-based-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation" id="toc-summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><span class="toc-section-number">3.2</span> Summary: What does a design based approach mean for policy evaluation?</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="randomization-choices.html"><a href="randomization-choices.html"><i class="fa fa-check"></i><b>4</b> Randomization choices</a><ul>
-<li class="chapter" data-level="4.1" data-path="randomization-choices.html"><a href="randomization-choices.html#coin-flipping-vs-urn-drawing-randomization"><i class="fa fa-check"></i><b>4.1</b> Coin flipping vs urn-drawing randomization</a></li>
-<li class="chapter" data-level="4.2" data-path="randomization-choices.html"><a href="randomization-choices.html#randomization-into-2-or-more-groups"><i class="fa fa-check"></i><b>4.2</b> Randomization into 2 or more groups</a></li>
-<li class="chapter" data-level="4.3" data-path="randomization-choices.html"><a href="randomization-choices.html#factorial-designs"><i class="fa fa-check"></i><b>4.3</b> Factorial designs</a></li>
-<li class="chapter" data-level="4.4" data-path="randomization-choices.html"><a href="randomization-choices.html#block-random-assignment"><i class="fa fa-check"></i><b>4.4</b> Block random assignment</a><ul>
-<li class="chapter" data-level="4.4.1" data-path="randomization-choices.html"><a href="randomization-choices.html#the-benefits-of-blocking"><i class="fa fa-check"></i><b>4.4.1</b> The benefits of blocking</a></li>
-<li class="chapter" data-level="4.4.2" data-path="randomization-choices.html"><a href="randomization-choices.html#using-a-few-covariates-to-create-blocks"><i class="fa fa-check"></i><b>4.4.2</b> Using a few covariates to create blocks</a></li>
-<li class="chapter" data-level="4.4.3" data-path="randomization-choices.html"><a href="randomization-choices.html#blocking-using-many-covariates"><i class="fa fa-check"></i><b>4.4.3</b> Blocking using many covariates</a></li>
-<li class="chapter" data-level="4.4.4" data-path="randomization-choices.html"><a href="randomization-choices.html#disadvantages"><i class="fa fa-check"></i><b>4.4.4</b> Disadvantages</a></li>
+<li><a href="randomization-choices.html#randomization-choices" id="toc-randomization-choices"><span class="toc-section-number">4</span> Randomization choices</a>
+<ul>
+<li><a href="randomization-choices.html#coin-flipping-vs-urn-drawing-randomization" id="toc-coin-flipping-vs-urn-drawing-randomization"><span class="toc-section-number">4.1</span> Coin flipping vs urn-drawing randomization</a></li>
+<li><a href="randomization-choices.html#randomization-into-2-or-more-groups" id="toc-randomization-into-2-or-more-groups"><span class="toc-section-number">4.2</span> Randomization into 2 or more groups</a></li>
+<li><a href="randomization-choices.html#factorial-designs" id="toc-factorial-designs"><span class="toc-section-number">4.3</span> Factorial designs</a></li>
+<li><a href="randomization-choices.html#block-random-assignment" id="toc-block-random-assignment"><span class="toc-section-number">4.4</span> Block random assignment</a>
+<ul>
+<li><a href="randomization-choices.html#the-benefits-of-blocking" id="toc-the-benefits-of-blocking"><span class="toc-section-number">4.4.1</span> The benefits of blocking</a></li>
+<li><a href="randomization-choices.html#using-a-few-covariates-to-create-blocks" id="toc-using-a-few-covariates-to-create-blocks"><span class="toc-section-number">4.4.2</span> Using a few covariates to create blocks</a></li>
+<li><a href="randomization-choices.html#blocking-using-many-covariates" id="toc-blocking-using-many-covariates"><span class="toc-section-number">4.4.3</span> Blocking using many covariates</a></li>
+<li><a href="randomization-choices.html#disadvantages" id="toc-disadvantages"><span class="toc-section-number">4.4.4</span> Disadvantages</a></li>
 </ul></li>
-<li class="chapter" data-level="4.5" data-path="randomization-choices.html"><a href="randomization-choices.html#cluster-random-assignment"><i class="fa fa-check"></i><b>4.5</b> Cluster random assignment</a></li>
-<li class="chapter" data-level="4.6" data-path="randomization-choices.html"><a href="randomization-choices.html#other-randomized-designs"><i class="fa fa-check"></i><b>4.6</b> Other randomized designs</a></li>
-<li class="chapter" data-level="4.7" data-path="randomization-choices.html"><a href="randomization-choices.html#as-if-random-assignment"><i class="fa fa-check"></i><b>4.7</b> As-if random assignment</a></li>
-<li class="chapter" data-level="4.8" data-path="randomization-choices.html"><a href="randomization-choices.html#assessing-randomization-balance-testing"><i class="fa fa-check"></i><b>4.8</b> Assessing randomization (balance testing)</a><ul>
-<li class="chapter" data-level="4.8.1" data-path="randomization-choices.html"><a href="randomization-choices.html#separate-tests-for-each-covariate"><i class="fa fa-check"></i><b>4.8.1</b> Separate tests for each covariate</a></li>
-<li class="chapter" data-level="4.8.2" data-path="randomization-choices.html"><a href="randomization-choices.html#omnibus-tests"><i class="fa fa-check"></i><b>4.8.2</b> Omnibus tests</a></li>
-<li class="chapter" data-level="4.8.3" data-path="randomization-choices.html"><a href="randomization-choices.html#summary"><i class="fa fa-check"></i><b>4.8.3</b> Summary</a></li>
-<li class="chapter" data-level="4.8.4" data-path="randomization-choices.html"><a href="randomization-choices.html#coded-examples"><i class="fa fa-check"></i><b>4.8.4</b> Coded examples</a></li>
-<li class="chapter" data-level="4.8.5" data-path="randomization-choices.html"><a href="randomization-choices.html#what-to-do-with-failed-randomization-assessments"><i class="fa fa-check"></i><b>4.8.5</b> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="5" data-path="analysis-choices.html"><a href="analysis-choices.html"><i class="fa fa-check"></i><b>5</b> Analysis choices</a><ul>
-<li class="chapter" data-level="5.1" data-path="analysis-choices.html"><a href="analysis-choices.html#completely-randomized-trials"><i class="fa fa-check"></i><b>5.1</b> Completely randomized trials</a><ul>
-<li class="chapter" data-level="5.1.1" data-path="analysis-choices.html"><a href="analysis-choices.html#two-arms"><i class="fa fa-check"></i><b>5.1.1</b> Two arms</a></li>
-</ul></li>
-<li class="chapter" data-level="5.2" data-path="analysis-choices.html"><a href="analysis-choices.html#multiple-tests"><i class="fa fa-check"></i><b>5.2</b> Multiple tests</a><ul>
-<li class="chapter" data-level="5.2.1" data-path="analysis-choices.html"><a href="analysis-choices.html#multiple-arms"><i class="fa fa-check"></i><b>5.2.1</b> Multiple arms</a></li>
-<li class="chapter" data-level="5.2.2" data-path="analysis-choices.html"><a href="analysis-choices.html#multiple-outcomes"><i class="fa fa-check"></i><b>5.2.2</b> Multiple outcomes</a></li>
-<li class="chapter" data-level="5.2.3" data-path="analysis-choices.html"><a href="analysis-choices.html#when-is-this-necessary"><i class="fa fa-check"></i><b>5.2.3</b> When is this necessary?</a></li>
-</ul></li>
-<li class="chapter" data-level="5.3" data-path="analysis-choices.html"><a href="analysis-choices.html#covariance-adjustment"><i class="fa fa-check"></i><b>5.3</b> Covariance adjustment</a><ul>
-<li class="chapter" data-level="5.3.1" data-path="analysis-choices.html"><a href="analysis-choices.html#possible-bias-in-the-least-squares-ate-estimator-with-covariates"><i class="fa fa-check"></i><b>5.3.1</b> Possible bias in the least squares ATE estimator with covariates</a></li>
-<li class="chapter" data-level="5.3.2" data-path="analysis-choices.html"><a href="analysis-choices.html#illustrating-the-lin-approach-to-covariance-adjustment"><i class="fa fa-check"></i><b>5.3.2</b> Illustrating the Lin Approach to Covariance Adjustment</a></li>
-<li class="chapter" data-level="5.3.3" data-path="analysis-choices.html"><a href="analysis-choices.html#another-way-to-think-about-lin-adjustment"><i class="fa fa-check"></i><b>5.3.3</b> Another way to think about Lin adjustment</a></li>
-<li class="chapter" data-level="5.3.4" data-path="analysis-choices.html"><a href="analysis-choices.html#the-rosenbaum-approach-to-covariance-adjustment"><i class="fa fa-check"></i><b>5.3.4</b> The Rosenbaum Approach to Covariance Adjustment</a></li>
-</ul></li>
-<li class="chapter" data-level="5.4" data-path="analysis-choices.html"><a href="analysis-choices.html#how-to-choose-covariates-for-covariance-adjustment"><i class="fa fa-check"></i><b>5.4</b> How to choose covariates for covariance adjustment?</a></li>
-<li class="chapter" data-level="5.5" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandanalysis"><i class="fa fa-check"></i><b>5.5</b> Block-randomized trials</a><ul>
-<li class="chapter" data-level="5.5.1" data-path="analysis-choices.html"><a href="analysis-choices.html#testing-binary-outcomes-under-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables"><i class="fa fa-check"></i><b>5.5.1</b> Testing binary outcomes under block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables</a></li>
-<li class="chapter" data-level="5.5.2" data-path="analysis-choices.html"><a href="analysis-choices.html#blockrandate"><i class="fa fa-check"></i><b>5.5.2</b> Estimating an overall average treatment effect</a></li>
-</ul></li>
-<li class="chapter" data-level="5.6" data-path="analysis-choices.html"><a href="analysis-choices.html#clusterrandanalysis"><i class="fa fa-check"></i><b>5.6</b> Cluster-randomized trials</a><ul>
-<li class="chapter" data-level="5.6.1" data-path="analysis-choices.html"><a href="analysis-choices.html#bias-when-cluster-size-is-correlated-with-potential-outcomes"><i class="fa fa-check"></i><b>5.6.1</b> Bias when cluster size is correlated with potential outcomes</a></li>
-<li class="chapter" data-level="5.6.2" data-path="analysis-choices.html"><a href="analysis-choices.html#incorrect-false-positive-rates-from-tests-and-confidence-intervals"><i class="fa fa-check"></i><b>5.6.2</b> Incorrect false positive rates from tests and confidence intervals</a></li>
+<li><a href="randomization-choices.html#cluster-random-assignment" id="toc-cluster-random-assignment"><span class="toc-section-number">4.5</span> Cluster random assignment</a></li>
+<li><a href="randomization-choices.html#other-randomized-designs" id="toc-other-randomized-designs"><span class="toc-section-number">4.6</span> Other randomized designs</a></li>
+<li><a href="randomization-choices.html#as-if-random-assignment" id="toc-as-if-random-assignment"><span class="toc-section-number">4.7</span> As-if random assignment</a></li>
+<li><a href="randomization-choices.html#assessing-randomization-balance-testing" id="toc-assessing-randomization-balance-testing"><span class="toc-section-number">4.8</span> Assessing randomization (balance testing)</a>
+<ul>
+<li><a href="randomization-choices.html#separate-tests-for-each-covariate" id="toc-separate-tests-for-each-covariate"><span class="toc-section-number">4.8.1</span> Separate tests for each covariate</a></li>
+<li><a href="randomization-choices.html#omnibus-tests" id="toc-omnibus-tests"><span class="toc-section-number">4.8.2</span> Omnibus tests</a></li>
+<li><a href="randomization-choices.html#summary" id="toc-summary"><span class="toc-section-number">4.8.3</span> Summary</a></li>
+<li><a href="randomization-choices.html#coded-examples" id="toc-coded-examples"><span class="toc-section-number">4.8.4</span> Coded examples</a></li>
+<li><a href="randomization-choices.html#what-to-do-with-failed-randomization-assessments" id="toc-what-to-do-with-failed-randomization-assessments"><span class="toc-section-number">4.8.5</span> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="poweranalysis.html"><a href="poweranalysis.html"><i class="fa fa-check"></i><b>6</b> Power analysis</a><ul>
-<li class="chapter" data-level="6.1" data-path="poweranalysis.html"><a href="poweranalysis.html#an-example-of-the-off-the-shelf-approach"><i class="fa fa-check"></i><b>6.1</b> An example of the off-the-shelf approach</a></li>
-<li class="chapter" data-level="6.2" data-path="poweranalysis.html"><a href="poweranalysis.html#an-example-of-the-simulation-approach"><i class="fa fa-check"></i><b>6.2</b> An example of the simulation approach</a></li>
-<li class="chapter" data-level="6.3" data-path="poweranalysis.html"><a href="poweranalysis.html#when-to-use-which-approach"><i class="fa fa-check"></i><b>6.3</b> When to use which approach</a></li>
-<li class="chapter" data-level="6.4" data-path="poweranalysis.html"><a href="poweranalysis.html#additional-examples-of-the-simulation-approach"><i class="fa fa-check"></i><b>6.4</b> Additional examples of the simulation approach</a><ul>
-<li class="chapter" data-level="6.4.1" data-path="poweranalysis.html"><a href="poweranalysis.html#a-two-by-two-design-with-interaction"><i class="fa fa-check"></i><b>6.4.1</b> A two-by-two design with interaction</a></li>
-<li class="chapter" data-level="6.4.2" data-path="poweranalysis.html"><a href="poweranalysis.html#covariate-adjustment-with-the-lin-estimator"><i class="fa fa-check"></i><b>6.4.2</b> Covariate adjustment with the Lin estimator</a></li>
-<li class="chapter" data-level="6.4.3" data-path="poweranalysis.html"><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools"><i class="fa fa-check"></i><b>6.4.3</b> Incorporating DeclareDesign into OES Power Tools</a></li>
+<li><a href="analysis-choices.html#analysis-choices" id="toc-analysis-choices"><span class="toc-section-number">5</span> Analysis choices</a>
+<ul>
+<li><a href="analysis-choices.html#completely-randomized-trials" id="toc-completely-randomized-trials"><span class="toc-section-number">5.1</span> Completely randomized trials</a>
+<ul>
+<li><a href="analysis-choices.html#two-arms" id="toc-two-arms"><span class="toc-section-number">5.1.1</span> Two arms</a></li>
 </ul></li>
-<li class="chapter" data-level="6.5" data-path="poweranalysis.html"><a href="poweranalysis.html#approximating-power-ex-post"><i class="fa fa-check"></i><b>6.5</b> Approximating power ex-post</a></li>
+<li><a href="analysis-choices.html#multiple-tests" id="toc-multiple-tests"><span class="toc-section-number">5.2</span> Multiple tests</a>
+<ul>
+<li><a href="analysis-choices.html#multiple-arms" id="toc-multiple-arms"><span class="toc-section-number">5.2.1</span> Multiple arms</a></li>
+<li><a href="analysis-choices.html#multiple-outcomes" id="toc-multiple-outcomes"><span class="toc-section-number">5.2.2</span> Multiple outcomes</a></li>
+<li><a href="analysis-choices.html#when-is-this-necessary" id="toc-when-is-this-necessary"><span class="toc-section-number">5.2.3</span> When is this necessary?</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="codeindex.html"><a href="codeindex.html"><i class="fa fa-check"></i><b>7</b> Code example index</a></li>
-<li class="chapter" data-level="8" data-path="methodindex.html"><a href="methodindex.html"><i class="fa fa-check"></i><b>8</b> Methods topic index</a></li>
-<li class="chapter" data-level="9" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>9</b> Appendix</a></li>
-<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li><a href="analysis-choices.html#covariance-adjustment" id="toc-covariance-adjustment"><span class="toc-section-number">5.3</span> Covariance adjustment</a>
+<ul>
+<li><a href="analysis-choices.html#possible-bias-in-the-least-squares-ate-estimator-with-covariates" id="toc-possible-bias-in-the-least-squares-ate-estimator-with-covariates"><span class="toc-section-number">5.3.1</span> Possible bias in the least squares ATE estimator with covariates</a></li>
+<li><a href="analysis-choices.html#illustrating-the-lin-approach-to-covariance-adjustment" id="toc-illustrating-the-lin-approach-to-covariance-adjustment"><span class="toc-section-number">5.3.2</span> Illustrating the Lin Approach to Covariance Adjustment</a></li>
+<li><a href="analysis-choices.html#another-way-to-think-about-lin-adjustment" id="toc-another-way-to-think-about-lin-adjustment"><span class="toc-section-number">5.3.3</span> Another way to think about Lin adjustment</a></li>
+<li><a href="analysis-choices.html#the-rosenbaum-approach-to-covariance-adjustment" id="toc-the-rosenbaum-approach-to-covariance-adjustment"><span class="toc-section-number">5.3.4</span> The Rosenbaum Approach to Covariance Adjustment</a></li>
+</ul></li>
+<li><a href="analysis-choices.html#how-to-choose-covariates-for-covariance-adjustment" id="toc-how-to-choose-covariates-for-covariance-adjustment"><span class="toc-section-number">5.4</span> How to choose covariates for covariance adjustment?</a></li>
+<li><a href="analysis-choices.html#blockrandanalysis" id="toc-blockrandanalysis"><span class="toc-section-number">5.5</span> Block-randomized trials</a>
+<ul>
+<li><a href="analysis-choices.html#testing-binary-outcomes-under-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables" id="toc-testing-binary-outcomes-under-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables"><span class="toc-section-number">5.5.1</span> Testing binary outcomes under block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables</a></li>
+<li><a href="analysis-choices.html#blockrandate" id="toc-blockrandate"><span class="toc-section-number">5.5.2</span> Estimating an overall average treatment effect</a></li>
+</ul></li>
+<li><a href="analysis-choices.html#clusterrandanalysis" id="toc-clusterrandanalysis"><span class="toc-section-number">5.6</span> Cluster-randomized trials</a>
+<ul>
+<li><a href="analysis-choices.html#bias-when-cluster-size-is-correlated-with-potential-outcomes" id="toc-bias-when-cluster-size-is-correlated-with-potential-outcomes"><span class="toc-section-number">5.6.1</span> Bias when cluster size is correlated with potential outcomes</a></li>
+<li><a href="analysis-choices.html#incorrect-false-positive-rates-from-tests-and-confidence-intervals" id="toc-incorrect-false-positive-rates-from-tests-and-confidence-intervals"><span class="toc-section-number">5.6.2</span> Incorrect false positive rates from tests and confidence intervals</a></li>
+</ul></li>
+</ul></li>
+<li><a href="poweranalysis.html#poweranalysis" id="toc-poweranalysis"><span class="toc-section-number">6</span> Power analysis</a>
+<ul>
+<li><a href="poweranalysis.html#an-example-of-the-off-the-shelf-approach" id="toc-an-example-of-the-off-the-shelf-approach"><span class="toc-section-number">6.1</span> An example of the off-the-shelf approach</a></li>
+<li><a href="poweranalysis.html#an-example-of-the-simulation-approach" id="toc-an-example-of-the-simulation-approach"><span class="toc-section-number">6.2</span> An example of the simulation approach</a></li>
+<li><a href="poweranalysis.html#when-to-use-which-approach" id="toc-when-to-use-which-approach"><span class="toc-section-number">6.3</span> When to use which approach</a></li>
+<li><a href="poweranalysis.html#additional-examples-of-the-simulation-approach" id="toc-additional-examples-of-the-simulation-approach"><span class="toc-section-number">6.4</span> Additional examples of the simulation approach</a>
+<ul>
+<li><a href="poweranalysis.html#a-two-by-two-design-with-interaction" id="toc-a-two-by-two-design-with-interaction"><span class="toc-section-number">6.4.1</span> A two-by-two design with interaction</a></li>
+<li><a href="poweranalysis.html#covariate-adjustment-with-the-lin-estimator" id="toc-covariate-adjustment-with-the-lin-estimator"><span class="toc-section-number">6.4.2</span> Covariate adjustment with the Lin estimator</a></li>
+<li><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools" id="toc-incorporating-declaredesign-into-oes-power-tools"><span class="toc-section-number">6.4.3</span> Incorporating DeclareDesign into OES Power Tools</a></li>
+</ul></li>
+<li><a href="poweranalysis.html#approximating-power-ex-post" id="toc-approximating-power-ex-post"><span class="toc-section-number">6.5</span> Approximating power ex-post</a></li>
+</ul></li>
+<li><a href="codeindex.html#codeindex" id="toc-codeindex"><span class="toc-section-number">7</span> Code example index</a></li>
+<li><a href="methodindex.html#methodindex" id="toc-methodindex"><span class="toc-section-number">8</span> Methods topic index</a></li>
+<li><a href="appendix.html#appendix" id="toc-appendix"><span class="toc-section-number">9</span> Appendix</a></li>
+<li><a href="references.html#references" id="toc-references">References</a></li>
 <li class="divider"></li>
 <li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
 
@@ -613,259 +631,224 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
             <section class="normal" id="section-">
 <div id="references" class="section level1 unnumbered">
-<h1>References</h1>
+<h1 class="unnumbered">References</h1>
 
-<div id="refs" class="references">
-<div>
-<p>Abadie, Alberto, Susan Athey, Guido W Imbens, and Jeffrey M Wooldridge. 2023. &#x201C;When Should You Adjust Standard Errors for Clustering?&#x201D; <em>The Quarterly Journal of Economics</em> 138 (1): 1&#x2013;35.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-abadie2023should" class="csl-entry">
+Abadie, Alberto, Susan Athey, Guido W Imbens, and Jeffrey M Wooldridge. 2023. <span>&#x201C;When Should You Adjust Standard Errors for Clustering?&#x201D;</span> <em>The Quarterly Journal of Economics</em> 138 (1): 1&#x2013;35.
 </div>
-<div>
-<p>Angrist, Joshua D, and J&#xF6;rn-Steffen Pischke. 2009. <em>Mostly Harmless Econometrics: An Empiricist&#x2019;s Companion</em>. Princeton university press.</p>
+<div id="ref-angrist2009mostly" class="csl-entry">
+Angrist, Joshua D, and J&#xF6;rn-Steffen Pischke. 2009. <em>Mostly Harmless Econometrics: An Empiricist&#x2019;s Companion</em>. Princeton university press.
 </div>
-<div>
-<p>Aronow, Peter M, and Benjamin T Miller. 2019. <em>Foundations of Agnostic Statistics</em>. Cambridge University Press.</p>
+<div id="ref-aronow2019foundations" class="csl-entry">
+Aronow, Peter M, and Benjamin T Miller. 2019. <em>Foundations of Agnostic Statistics</em>. Cambridge University Press.
 </div>
-<div>
-<p>Blair, Graeme, Jasper Cooper, Alexander Coppock, Macartan Humphreys, and Luke Sonnet. 2022. <em>Estimatr: Fast Estimators for Design-Based Inference</em>. <a href="https://CRAN.R-project.org/package=estimatr">https://CRAN.R-project.org/package=estimatr</a>.</p>
+<div id="ref-R-estimatr" class="csl-entry">
+Blair, Graeme, Jasper Cooper, Alexander Coppock, Macartan Humphreys, and Luke Sonnet. 2022. <em>Estimatr: Fast Estimators for Design-Based Inference</em>.
 </div>
-<div>
-<p>Bloom, Howard S. 1995. &#x201C;Minimum Detectable Effects: A Simple Way to Report the Statistical Power of Experimental Designs.&#x201D; <em>Evaluation Review</em> 19 (5): 547&#x2013;56.</p>
+<div id="ref-bloom1995minimum" class="csl-entry">
+Bloom, Howard S. 1995. <span>&#x201C;Minimum Detectable Effects: A Simple Way to Report the Statistical Power of Experimental Designs.&#x201D;</span> <em>Evaluation Review</em> 19 (5): 547&#x2013;56.
 </div>
-<div>
-<p>Bowers, Jake. 2011. &#x201C;Making Effects Manifest in Randomized Experiments.&#x201D; In <em>Cambridge Handbook of Experimental Political Science</em>, edited by James N. Druckman, Donald P. Green, James H. Kuklinski, and Arthur Lupia. New York, NY: Cambridge University Press.</p>
+<div id="ref-bowers2011mem" class="csl-entry">
+Bowers, Jake. 2011. <span>&#x201C;Making Effects Manifest in Randomized Experiments.&#x201D;</span> In <em>Cambridge Handbook of Experimental Political Science</em>, edited by James N. Druckman, Donald P. Green, James H. Kuklinski, and Arthur Lupia. New York, NY: Cambridge University Press.
 </div>
-<div>
-<p>Bowers, Jake, Mark Fredrickson, and Ben Hansen. 2016. <em>RItools: Randomization Inference Tools</em>.</p>
+<div id="ref-bowers_ritools_2016" class="csl-entry">
+Bowers, Jake, Mark Fredrickson, and Ben Hansen. 2016. <em>RItools: Randomization Inference Tools</em>.
 </div>
-<div>
-<p>Bowers, Jake, and Paul F. Testa. 2019. &#x201C;Better Government, Better Science: The Promise of and Challenges Facing the Evidence-Informed Policy Movement.&#x201D; <em>Annual Review of Political Science</em> 22.</p>
+<div id="ref-bowers2019better" class="csl-entry">
+Bowers, Jake, and Paul F. Testa. 2019. <span>&#x201C;Better Government, Better Science: The Promise of and Challenges Facing the Evidence-Informed Policy Movement.&#x201D;</span> <em>Annual Review of Political Science</em> 22.
 </div>
-<div>
-<p>Cameron, A Colin, and Pravin K Trivedi. 2005. <em>Microeconometrics: Methods and Applications</em>. Cambridge university press.</p>
+<div id="ref-cameron2005microeconometrics" class="csl-entry">
+Cameron, A Colin, and Pravin K Trivedi. 2005. <em>Microeconometrics: Methods and Applications</em>. Cambridge university press.
 </div>
-<div>
-<p>Cochran, William G. 1954. &#x201C;Some Methods for Strengthening the Common &#x3C7; 2 Tests.&#x201D; <em>Biometrics</em> 10 (4): 417.</p>
+<div id="ref-cochran_methods_1954" class="csl-entry">
+Cochran, William G. 1954. <span>&#x201C;Some <span>Methods</span> for <span>Strengthening</span> the <span>Common</span> &#x3C7; 2 <span>Tests</span>.&#x201D;</span> <em>Biometrics</em> 10 (4): 417.
 </div>
-<div>
-<p>Conneely, Karen N, and Michael Boehnke. 2007. &#x201C;So Many Correlated Tests, so Little Time! Rapid Adjustment of P Values for Multiple Correlated Tests.&#x201D; <em>The American Journal of Human Genetics</em> 81 (6): 1158&#x2013;68.</p>
+<div id="ref-conneely2007so" class="csl-entry">
+Conneely, Karen N, and Michael Boehnke. 2007. <span>&#x201C;So Many Correlated Tests, so Little Time! Rapid Adjustment of p Values for Multiple Correlated Tests.&#x201D;</span> <em>The American Journal of Human Genetics</em> 81 (6): 1158&#x2013;68.
 </div>
-<div>
-<p>Coppock, Alexander. 2022a. <em>Randomizr: Easy-to-Use Tools for Common Forms of Random Assignment and Sampling</em>. <a href="https://CRAN.R-project.org/package=randomizr">https://CRAN.R-project.org/package=randomizr</a>.</p>
+<div id="ref-R-randomizr" class="csl-entry">
+Coppock, Alexander. 2022a. <em>Randomizr: Easy-to-Use Tools for Common Forms of Random Assignment and Sampling</em>.
 </div>
-<div>
-<p>&#x2014;&#x2014;&#x2014;. 2022b. <em>Ri2: Randomization Inference for Randomized Experiments</em>. <a href="https://CRAN.R-project.org/package=ri2">https://CRAN.R-project.org/package=ri2</a>.</p>
+<div id="ref-R-ri2" class="csl-entry">
+&#x2014;&#x2014;&#x2014;. 2022b. <em>Ri2: Randomization Inference for Randomized Experiments</em>.
 </div>
-<div>
-<p>Dunning, Thad. 2012. <em>Natural Experiments in the Social Sciences: A Design-Based Approach</em>. Strategies for Social Inquiry. New York, NY: Cambridge University Press.</p>
+<div id="ref-dunning_natural_2012" class="csl-entry">
+Dunning, Thad. 2012. <em>Natural <span>Experiments</span> in the <span>Social</span> <span>Sciences</span>: <span>A</span> <span>Design</span>-<span>Based</span> <span>Approach</span></em>. Strategies for <span>Social</span> <span>Inquiry</span>. New York, NY: Cambridge University Press.
 </div>
-<div>
-<p>Esarey, Justin, and Andrew Menger. 2019. &#x201C;Practical and Effective Approaches to Dealing with Clustered Data.&#x201D; <em>Political Science Research and Methods</em> 7 (3): 541&#x2013;59.</p>
+<div id="ref-esarey2019practical" class="csl-entry">
+Esarey, Justin, and Andrew Menger. 2019. <span>&#x201C;Practical and Effective Approaches to Dealing with Clustered Data.&#x201D;</span> <em>Political Science Research and Methods</em> 7 (3): 541&#x2013;59.
 </div>
-<div>
-<p>Fisher, Ronald A. 1935. <em>The Design of Experiments</em>. Edinburgh: Oliver; Boyd.</p>
+<div id="ref-fisher_design_1935" class="csl-entry">
+Fisher, Ronald A. 1935. <em>The <span>Design</span> of <span>Experiments</span></em>. Edinburgh: Oliver; Boyd.
 </div>
-<div>
-<p>Freedman, David A. 2008a. &#x201C;On regression adjustments to experimental data.&#x201D; <em>Advances in Applied Mathematics</em> 40 (2): 180&#x2013;93.</p>
+<div id="ref-freedman2008rae" class="csl-entry">
+Freedman, David A. 2008a. <span>&#x201C;<span class="nocase">On regression adjustments to experimental data</span>.&#x201D;</span> <em>Advances in Applied Mathematics</em> 40 (2): 180&#x2013;93.
 </div>
-<div>
-<p>&#x2014;&#x2014;&#x2014;. 2008b. &#x201C;Randomization Does Not Justify Logistic Regression.&#x201D; <em>Statistical Science</em> 23 (2): 237&#x2013;49.</p>
+<div id="ref-freedman2008randomization" class="csl-entry">
+&#x2014;&#x2014;&#x2014;. 2008b. <span>&#x201C;Randomization Does Not Justify Logistic Regression.&#x201D;</span> <em>Statistical Science</em> 23 (2): 237&#x2013;49.
 </div>
-<div>
-<p>Gelman, Andrew, and Jennifer Hill. 2006. <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge university press.</p>
+<div id="ref-gelman2006data" class="csl-entry">
+Gelman, Andrew, and Jennifer Hill. 2006. <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge university press.
 </div>
-<div>
-<p>Gerber, Alan S., and Donald P. Green. 2012. <em>Field Experiments: Design, Analysis, and Interpretation</em>. New York, NY: W. W. Norton &amp; Company.</p>
+<div id="ref-gerber_field_2012" class="csl-entry">
+Gerber, Alan S., and Donald P. Green. 2012. <em>Field <span>Experiments</span>: <span>Design</span>, <span>Analysis</span>, and <span>Interpretation</span></em>. New York, NY: W. W. Norton &amp; Company.
 </div>
-<div>
-<p>Gomila, Robin. 2021. &#x201C;Logistic or Linear? Estimating Causal Effects of Experimental Treatments on Binary Outcomes Using Regression Analysis.&#x201D; <em>Journal of Experimental Psychology: General</em> 150 (4): 700.</p>
+<div id="ref-gomila2021logistic" class="csl-entry">
+Gomila, Robin. 2021. <span>&#x201C;Logistic or Linear? Estimating Causal Effects of Experimental Treatments on Binary Outcomes Using Regression Analysis.&#x201D;</span> <em>Journal of Experimental Psychology: General</em> 150 (4): 700.
 </div>
-<div>
-<p>Greifer, Noah. 2023. &#x201C;Estimating Effects After Weighting.&#x201D; Estimating Effects After Weighting. https://ngreifer. github. io/WeightIt&#xA0;&#x2026;.</p>
+<div id="ref-greifer2023estimating" class="csl-entry">
+Greifer, Noah. 2023. <span>&#x201C;Estimating Effects After Weighting.&#x201D;</span> Estimating Effects After Weighting. https://ngreifer. github. io/WeightIt&#xA0;&#x2026;.
 </div>
-<div>
-<p>Guo, Kevin, and Guillaume Basse. 2023. &#x201C;The Generalized Oaxaca-Blinder Estimator.&#x201D; <em>Journal of the American Statistical Association</em> 118 (541): 524&#x2013;36.</p>
+<div id="ref-guo2023generalized" class="csl-entry">
+Guo, Kevin, and Guillaume Basse. 2023. <span>&#x201C;The Generalized Oaxaca-Blinder Estimator.&#x201D;</span> <em>Journal of the American Statistical Association</em> 118 (541): 524&#x2013;36.
 </div>
-<div>
-<p>Hansen, Ben B., and Jake Bowers. 2008. &#x201C;Covariate Balance in Simple, Stratified and Clustered Comparative Studies.&#x201D; <em>Statistical Science</em> 23 (2): 219&#x2013;36.</p>
+<div id="ref-hansen_covariate_2008" class="csl-entry">
+Hansen, Ben B., and Jake Bowers. 2008. <span>&#x201C;Covariate Balance in Simple, Stratified and Clustered Comparative Studies.&#x201D;</span> <em>Statistical Science</em> 23 (2): 219&#x2013;36.
 </div>
-<div>
-<p>Hartman, Erin, and F Daniel Hidalgo. 2018. &#x201C;An Equivalence Approach to Balance and Placebo Tests.&#x201D; <em>American Journal of Political Science</em> 62 (4): 1000&#x2013;1013.</p>
+<div id="ref-hartman2018equivalence" class="csl-entry">
+Hartman, Erin, and F Daniel Hidalgo. 2018. <span>&#x201C;An Equivalence Approach to Balance and Placebo Tests.&#x201D;</span> <em>American Journal of Political Science</em> 62 (4): 1000&#x2013;1013.
 </div>
-<div>
-<p>Holland, Paul W. 1986. &#x201C;Statistics and Causal Inference (with Discussion).&#x201D; <em>Journal of the American Statistical Association</em> 81: 945&#x2013;70.</p>
+<div id="ref-holland:1986a" class="csl-entry">
+Holland, Paul W. 1986. <span>&#x201C;Statistics and Causal Inference (with Discussion).&#x201D;</span> <em>Journal of the American Statistical Association</em> 81: 945&#x2013;70.
 </div>
-<div>
-<p>Hothorn, Torsten, Henric Winell, Kurt Hornik, Mark A. van de Wiel, and Achim Zeileis. 2021. <em>Coin: Conditional Inference Procedures in a Permutation Test Framework</em>. <a href="http://coin.r-forge.r-project.org">http://coin.r-forge.r-project.org</a>.</p>
+<div id="ref-R-coin" class="csl-entry">
+Hothorn, Torsten, Henric Winell, Kurt Hornik, Mark A. van de Wiel, and Achim Zeileis. 2021. <em>Coin: Conditional Inference Procedures in a Permutation Test Framework</em>. <a href="http://coin.r-forge.r-project.org">http://coin.r-forge.r-project.org</a>.
 </div>
-<div>
-<p>Imai, Kosuke, Gary King, and Elizabeth A Stuart. 2008. &#x201C;Misunderstandings Between Experimentalists and Observationalists About Causal Inference.&#x201D; <em>Journal of the Royal Statistical Society Series A: Statistics in Society</em> 171 (2): 481&#x2013;502.</p>
+<div id="ref-imai2008misunderstandings" class="csl-entry">
+Imai, Kosuke, Gary King, and Elizabeth A Stuart. 2008. <span>&#x201C;Misunderstandings Between Experimentalists and Observationalists about Causal Inference.&#x201D;</span> <em>Journal of the Royal Statistical Society Series A: Statistics in Society</em> 171 (2): 481&#x2013;502.
 </div>
-<div>
-<p>Imbens, Guido W. 2004. &#x201C;Nonparametric Estimation of Average Treatment Effects Under Exogeneity: A Review.&#x201D; <em>Review of Economics and Statistics</em> 86 (1): 4&#x2013;29.</p>
+<div id="ref-imbens2004nonparametric" class="csl-entry">
+Imbens, Guido W. 2004. <span>&#x201C;Nonparametric Estimation of Average Treatment Effects Under Exogeneity: A Review.&#x201D;</span> <em>Review of Economics and Statistics</em> 86 (1): 4&#x2013;29.
 </div>
-<div>
-<p>Ioannidis, John PA, Tom D Stanley, and Hristos Doucouliagos. 2017. &#x201C;The Power of Bias in Economics Research.&#x201D; Oxford University Press Oxford, UK.</p>
+<div id="ref-ioannidis2017power" class="csl-entry">
+Ioannidis, John PA, Tom D Stanley, and Hristos Doucouliagos. 2017. <span>&#x201C;The Power of Bias in Economics Research.&#x201D;</span> Oxford University Press Oxford, UK.
 </div>
-<div>
-<p>Kerwin, Jason, Nada Rostom, and Olivier Sterck. 2024. &#x201C;Striking the Right Balance: Why Standard Balance Tests over-Reject the Null, and How to Fix It.&#x201D; Institute of Labor Economics (IZA).</p>
+<div id="ref-kerwin2024striking" class="csl-entry">
+Kerwin, Jason, Nada Rostom, and Olivier Sterck. 2024. <span>&#x201C;Striking the Right Balance: Why Standard Balance Tests over-Reject the Null, and How to Fix It.&#x201D;</span> Institute of Labor Economics (IZA).
 </div>
-<div>
-<p>Lin, Winston. 2013. &#x201C;Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman&#x2019;s Critique.&#x201D; <em>The Annals of Applied Statistics</em> 7 (1): 295&#x2013;318.</p>
+<div id="ref-lin_agnostic_2013" class="csl-entry">
+Lin, Winston. 2013. <span>&#x201C;Agnostic Notes on Regression Adjustments to Experimental Data: <span>Reexamining</span> <span>Freedman</span>&#x2019;s Critique.&#x201D;</span> <em>The Annals of Applied Statistics</em> 7 (1): 295&#x2013;318.
 </div>
-<div>
-<p>Mantel, N, and W Haenszel. 1959. &#x201C;Statistical Aspects of the Analysis of Data from Retrospective Studies of Disease.&#x201D; <em>Journal of the National Cancer Institute</em> 22: 719&#x2013;48.</p>
+<div id="ref-mantel_statistical_1959" class="csl-entry">
+Mantel, N, and W Haenszel. 1959. <span>&#x201C;Statistical Aspects of the Analysis of Data from Retrospective Studies of Disease.&#x201D;</span> <em>Journal of the National Cancer Institute</em> 22: 719&#x2013;48.
 </div>
-<div>
-<p>Middleton, Joel A, and Peter M Aronow. 2015. &#x201C;Unbiased Estimation of the Average Treatment Effect in Cluster-Randomized Experiments.&#x201D; <em>Statistics, Politics, and Policy</em> 6 (1&#x2013;2): 39&#x2013;75.</p>
+<div id="ref-middleton2015unbiased" class="csl-entry">
+Middleton, Joel A, and Peter M Aronow. 2015. <span>&#x201C;Unbiased Estimation of the Average Treatment Effect in Cluster-Randomized Experiments.&#x201D;</span> <em>Statistics, Politics, and Policy</em> 6 (1&#x2013;2): 39&#x2013;75.
 </div>
-<div>
-<p>Miratrix, Luke W, Jasjeet S Sekhon, and Bin Yu. 2013. &#x201C;Adjusting Treatment Effect Estimates by Post-Stratification in Randomized Experiments.&#x201D; <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 75 (2): 369&#x2013;96.</p>
+<div id="ref-miratrix2013adjusting" class="csl-entry">
+Miratrix, Luke W, Jasjeet S Sekhon, and Bin Yu. 2013. <span>&#x201C;Adjusting Treatment Effect Estimates by Post-Stratification in Randomized Experiments.&#x201D;</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 75 (2): 369&#x2013;96.
 </div>
-<div>
-<p>Moore, Ryan T. 2012. &#x201C;Multivariate Continuous Blocking to Improve Political Science Experiments.&#x201D; <em>Political Analysis</em> 20 (4): 460&#x2013;79.</p>
+<div id="ref-moore2012multivariate" class="csl-entry">
+Moore, Ryan T. 2012. <span>&#x201C;Multivariate Continuous Blocking to Improve Political Science Experiments.&#x201D;</span> <em>Political Analysis</em> 20 (4): 460&#x2013;79.
 </div>
-<div>
-<p>Moore, Ryan T., and Keith Schnakenberg. 2016. <em>BlockTools: Blocking, Assignment, and Diagnosing Interference in Randomized Experiments</em>. <a href="http://www.ryantmoore.org/html/software.blockTools.html">http://www.ryantmoore.org/html/software.blockTools.html</a>.</p>
+<div id="ref-moore2016bT063" class="csl-entry">
+Moore, Ryan T., and Keith Schnakenberg. 2016. <em>blockTools: Blocking, Assignment, and Diagnosing Interference in Randomized Experiments</em>. <a href="http://www.ryantmoore.org/html/software.blockTools.html">http://www.ryantmoore.org/html/software.blockTools.html</a>.
 </div>
-<div>
-<p>Muralidharan, Karthik, Mauricio Romero, and Kaspar W&#xFC;thrich. 2023. &#x201C;Factorial Designs, Model Selection, and (Incorrect) Inference in Randomized Experiments.&#x201D; <em>Review of Economics and Statistics</em>, 1&#x2013;44.</p>
+<div id="ref-muralidharan2023factorial" class="csl-entry">
+Muralidharan, Karthik, Mauricio Romero, and Kaspar W&#xFC;thrich. 2023. <span>&#x201C;Factorial Designs, Model Selection, and (Incorrect) Inference in Randomized Experiments.&#x201D;</span> <em>Review of Economics and Statistics</em>, 1&#x2013;44.
 </div>
-<div>
-<p>Negi, Akanksha, and Jeffrey M Wooldridge. 2021. &#x201C;Revisiting Regression Adjustment in Experiments with Heterogeneous Treatment Effects.&#x201D; <em>Econometric Reviews</em> 40 (5): 504&#x2013;34.</p>
+<div id="ref-negi2021revisiting" class="csl-entry">
+Negi, Akanksha, and Jeffrey M Wooldridge. 2021. <span>&#x201C;Revisiting Regression Adjustment in Experiments with Heterogeneous Treatment Effects.&#x201D;</span> <em>Econometric Reviews</em> 40 (5): 504&#x2013;34.
 </div>
-<div>
-<p>Neyman, Jerzy. 1923. &#x201C;On the Application of Probability Theory to Agricultural Experiments: Essay on Principles, Section 9.&#x201D; <em>Annals of Agricultural Sciences</em>, 101&#x2013;51 (in Polish).</p>
+<div id="ref-neyman_application_1923" class="csl-entry">
+Neyman, Jerzy. 1923. <span>&#x201C;On the Application of Probability Theory to Agricultural Experiments: <span>Essay</span> on Principles, Section 9.&#x201D;</span> <em>Annals of Agricultural Sciences</em>, 101&#x2013;151 (in Polish).
 </div>
-<div>
-<p>Oberfichtner, Michael, and Harald Tauchmann. 2021. &#x201C;Stacked Linear Regression Analysis to Facilitate Testing of Hypotheses Across Ols Regressions.&#x201D; <em>The Stata Journal</em> 21 (2): 411&#x2013;29.</p>
+<div id="ref-oberfichtner2021stacked" class="csl-entry">
+Oberfichtner, Michael, and Harald Tauchmann. 2021. <span>&#x201C;Stacked Linear Regression Analysis to Facilitate Testing of Hypotheses Across OLS Regressions.&#x201D;</span> <em>The Stata Journal</em> 21 (2): 411&#x2013;29.
 </div>
-<div>
-<p>Pustejovsky, James. 2019. <em>ClubSandwich: Cluster-Robust (Sandwich) Variance Estimators with Small-Sample Corrections</em>. <a href="https://CRAN.R-project.org/package=clubSandwich">https://CRAN.R-project.org/package=clubSandwich</a>.</p>
+<div id="ref-pustejovsky2019cr" class="csl-entry">
+Pustejovsky, James. 2019. <em>clubSandwich: Cluster-Robust (Sandwich) Variance Estimators with Small-Sample Corrections</em>. <a href="https://CRAN.R-project.org/package=clubSandwich">https://CRAN.R-project.org/package=clubSandwich</a>.
 </div>
-<div>
-<p>Rainey, Carlisle. 2014. &#x201C;Arguing for a Negligible Effect.&#x201D; <em>American Journal of Political Science</em> 58 (4): 1083&#x2013;91.</p>
+<div id="ref-rainey2014arguing" class="csl-entry">
+Rainey, Carlisle. 2014. <span>&#x201C;Arguing for a Negligible Effect.&#x201D;</span> <em>American Journal of Political Science</em> 58 (4): 1083&#x2013;91.
 </div>
-<div>
-<p>Reichardt, Charles S, and Harry F Gollob. 1999. &#x201C;Justifying the Use and Increasing the Power of at Test for a Randomized Experiment with a Convenience Sample.&#x201D; <em>Psychological Methods</em> 4 (1): 117.</p>
+<div id="ref-reichardt1999justifying" class="csl-entry">
+Reichardt, Charles S, and Harry F Gollob. 1999. <span>&#x201C;Justifying the Use and Increasing the Power of at Test for a Randomized Experiment with a Convenience Sample.&#x201D;</span> <em>Psychological Methods</em> 4 (1): 117.
 </div>
-<div>
-<p>Robins, James M, Miguel Angel Hernan, and Babette Brumback. 2000. &#x201C;Marginal Structural Models and Causal Inference in Epidemiology.&#x201D; <em>Epidemiology</em>. Lww.</p>
+<div id="ref-robins2000marginal" class="csl-entry">
+Robins, James M, Miguel Angel Hernan, and Babette Brumback. 2000. <span>&#x201C;Marginal Structural Models and Causal Inference in Epidemiology.&#x201D;</span> <em>Epidemiology</em>. Lww.
 </div>
-<div>
-<p>Rosenbaum, Paul R. 2008. &#x201C;Testing hypotheses in order.&#x201D; <em>Biometrika</em> 95: 248&#x2013;52.</p>
+<div id="ref-rosenbaum2012testing" class="csl-entry">
+Rosenbaum, Paul R. 2012. <span>&#x201C;Testing One Hypothesis Twice in Observational Studies.&#x201D;</span> <em>Biometrika</em> 99 (4): 763&#x2013;74.
 </div>
-<div>
-<p>&#x2014;&#x2014;&#x2014;. 2017. <em>Observation and experiment : an introduction to causal inference</em>. Cambridge, MA: Harvard University Press.</p>
+<div id="ref-rosenbaum:2002a" class="csl-entry">
+Rosenbaum, Paul R. 2002. <span>&#x201C;Covariance Adjustment in Randomized Experiments and Observational Studies.&#x201D;</span> <em>Statistical Science</em> 17 (3): 286&#x2013;327.
 </div>
-<div>
-<p>Rosenbaum, Paul R. 2012. &#x201C;Testing One Hypothesis Twice in Observational Studies.&#x201D; <em>Biometrika</em> 99 (4): 763&#x2013;74.</p>
+<div id="ref-rosenbaum2008a" class="csl-entry">
+&#x2014;&#x2014;&#x2014;. 2008. <span>&#x201C;<span class="nocase">Testing hypotheses in order</span>.&#x201D;</span> <em>Biometrika</em> 95: 248&#x2013;52.
 </div>
-<div>
-<p>&#x2014;&#x2014;&#x2014;. 2002. &#x201C;Covariance Adjustment in Randomized Experiments and Observational Studies.&#x201D; <em>Statistical Science</em> 17 (3): 286&#x2013;327.</p>
+<div id="ref-rosenbaum2017" class="csl-entry">
+&#x2014;&#x2014;&#x2014;. 2017. <em><span class="nocase">Observation and experiment : an introduction to causal inference</span></em>. Cambridge, MA: Harvard University Press.
 </div>
-<div>
-<p>Rubin, Donald B. 1986. &#x201C;Comment: Which Ifs Have Causal Answers.&#x201D; <em>Journal of the American Statistical Association</em> 81 (396): 961&#x2013;62.</p>
+<div id="ref-rubin1986comment" class="csl-entry">
+Rubin, Donald B. 1986. <span>&#x201C;Comment: Which Ifs Have Causal Answers.&#x201D;</span> <em>Journal of the American Statistical Association</em> 81 (396): 961&#x2013;62.
 </div>
-<div>
-<p>Rubin, Mark. 2024. &#x201C;Inconsistent Multiple Testing Corrections: The Fallacy of Using Family-Based Error Rates to Make Inferences About Individual Hypotheses.&#x201D; <em>Methods in Psychology</em>, 100140.</p>
+<div id="ref-rubin2024inconsistent" class="csl-entry">
+Rubin, Mark. 2024. <span>&#x201C;Inconsistent Multiple Testing Corrections: The Fallacy of Using Family-Based Error Rates to Make Inferences about Individual Hypotheses.&#x201D;</span> <em>Methods in Psychology</em>, 100140.
 </div>
-<div>
-<p>Samii, Cyrus, and Peter M. Aronow. 2012. &#x201C;On Equivalences Between Design-Based and Regression-Based Estimators for Random Experiments.&#x201D; <em>Statistics and Probability Letters</em> 82: 365&#x2013;70.</p>
+<div id="ref-samii_equivalencies_2012" class="csl-entry">
+Samii, Cyrus, and Peter M. Aronow. 2012. <span>&#x201C;On Equivalences Between Design-Based and Regression-Based Estimators for Random Experiments.&#x201D;</span> <em>Statistics and Probability Letters</em> 82: 365&#x2013;70.
 </div>
-<div>
-<p>Small, D.S., K.G. Volpp, and P.R. Rosenbaum. 2011. &#x201C;Structured Testing of 2<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&#xD7;</mo></mrow><annotation encoding="application/x-tex">\times</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord">&#xD7;</span></span></span></span> 2 Factorial Effects: An Analytic Plan Requiring Fewer Observations.&#x201D; <em>The American Statistician</em> 65 (1): 11&#x2013;15.</p>
+<div id="ref-small2011structured" class="csl-entry">
+Small, D. S., K. G. Volpp, and P. R. Rosenbaum. 2011. <span>&#x201C;Structured Testing of 2<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&#xD7;</mo></mrow><annotation encoding="application/x-tex">\times</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord">&#xD7;</span></span></span></span> 2 Factorial Effects: An Analytic Plan Requiring Fewer Observations.&#x201D;</span> <em>The American Statistician</em> 65 (1): 11&#x2013;15.
 </div>
-<div>
-<p>Snowden, Jonathan M, Sherri Rose, and Kathleen M Mortimer. 2011. &#x201C;Implementation of G-Computation on a Simulated Data Set: Demonstration of a Causal Inference Technique.&#x201D; <em>American Journal of Epidemiology</em> 173 (7): 731&#x2013;38.</p>
+<div id="ref-snowden2011implementation" class="csl-entry">
+Snowden, Jonathan M, Sherri Rose, and Kathleen M Mortimer. 2011. <span>&#x201C;Implementation of g-Computation on a Simulated Data Set: Demonstration of a Causal Inference Technique.&#x201D;</span> <em>American Journal of Epidemiology</em> 173 (7): 731&#x2013;38.
 </div>
-<div>
-<p>Stuart, Elizabeth A. 2010. &#x201C;Matching Methods for Causal Inference: A Review and a Look Forward.&#x201D; <em>Statistical Science: A Review Journal of the Institute of Mathematical Statistics</em> 25 (1): 1.</p>
+<div id="ref-stuart2010matching" class="csl-entry">
+Stuart, Elizabeth A. 2010. <span>&#x201C;Matching Methods for Causal Inference: A Review and a Look Forward.&#x201D;</span> <em>Statistical Science: A Review Journal of the Institute of Mathematical Statistics</em> 25 (1): 1.
 </div>
-<div>
-<p>Weesie, Jeroen. 2000. &#x201C;Seemlingly Unrelated Estimation and the Cluster-Adjusted Sandwich Estimator.&#x201D; <em>Stata Technical Bulletin</em> 9 (52).</p>
+<div id="ref-weesie2000seemlingly" class="csl-entry">
+Weesie, Jeroen. 2000. <span>&#x201C;Seemlingly Unrelated Estimation and the Cluster-Adjusted Sandwich Estimator.&#x201D;</span> <em>Stata Technical Bulletin</em> 9 (52).
 </div>
-<div>
-<p>Zou, Hui. 2006. &#x201C;The Adaptive Lasso and Its Oracle Properties.&#x201D; <em>Journal of the American Statistical Association</em> 101 (476): 1418&#x2013;29.</p>
+<div id="ref-zou2006adaptive" class="csl-entry">
+Zou, Hui. 2006. <span>&#x201C;The Adaptive Lasso and Its Oracle Properties.&#x201D;</span> <em>Journal of the American Statistical Association</em> 101 (476): 1418&#x2013;29.
 </div>
 </div>
 </div>
-<div class="footnotes">
+<div class="footnotes footnotes-end-of-document">
 <hr>
 <ol>
-<li id="fn1"><p>We call this document a standard operating procedure (SOP) because we are inspired by the <a href="https://github.com/acoppock/Green-Lab-SOP">Green, Lin and Coppock SOP</a>.<a href="index.html#fnref1" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn2"><p>This latter rate is referring to statistical power, discussed above.<a href="key-design-criteria.html#fnref2" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn3"><p>See <a href="https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/" class="uri">https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/</a> for a demonstration that the difference-in-means between the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.<a href="design-based-inference.html#fnref3" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn4"><p>As discussed above, under a design based approach, random noise is assumed to be introduced by treatment assignment decisions. Under more common sampling-based inference procedures, it is instead assumed to be introduced by the process of sampling from a larger population.<a href="design-based-inference.html#fnref4" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn5"><p>Though applications of design based inference often rely on hypothetical permutations of treatment rather than asymptotic (i.e., large-sample) justifications, asymptotic approximations can be used as a basis for design based statistical procedures as well.<a href="design-based-inference.html#fnref5" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn6"><p>We develop the recommendations themselves following <a href="https://oes.gsa.gov/methods/">processes</a> described in more detail on our website.<a href="randomization-choices.html#fnref6" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn7"><p>But see <span class="citation">Small, Volpp, and Rosenbaum (<a href="#ref-small2011structured">2011</a>)</span>, for instance, for a way to increase the power of tests for such questions. This approach is not currently part of our standard practice.<a href="randomization-choices.html#fnref7" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn8"><p>As the authors discuss, this could be framed as either an internal or external validity concern.<a href="randomization-choices.html#fnref8" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn9"><p>Some studies instead employ &#x201C;post-stratification,&#x201D; where simple or complete randomization might be used to assign treatment, but the data are still analyzed <em>as-if they were blocked</em>. See <span class="citation">Miratrix, Sekhon, and Yu (<a href="#ref-miratrix2013adjusting">2013</a>)</span>, for instance, for more discussion of this strategy. Post-stratification is more likely than blocking to increase variance (relative to a simple difference in means) when there is not actually any between-strata variation in potential outcomes. Post-stratification with too many strata may also have variance costs, which is again less likely when treatment assignment is blocked.<a href="randomization-choices.html#fnref9" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn10"><p>We use &#x201C;block&#x201D; rather than &#x201C;strata&#x201D; throughout this document to refer to groups of experimental units that are fixed <em>before random assignment occurs</em>.<a href="randomization-choices.html#fnref10" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn11"><p>If there are no available covariates, we can at least evaluate whether the distribution of treated units appears consistent with our intended strategy.<a href="randomization-choices.html#fnref11" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn12"><p>This is also useful when interpreting &#x201C;null effects&#x201D; for a study&#x2019;s primary outcome measure. An equivalence test provides a more principled way to judge whether a statistically insignificant difference is attributable to a true null (no imbalance) or a lack of power to detect meaningful imbalance.<a href="randomization-choices.html#fnref12" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn13"><p>It&#x2019;s sometimes helpful to go further and look at things like Kolmogorov-Smirnov statistics, Q-Q plots, or statistics for various polynomial transformations of continuous covariates.<a href="randomization-choices.html#fnref13" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn14"><p>As <span class="citation">Rubin (<a href="#ref-rubin1986comment">1986</a>)</span> discusses, the stable unit treatment value assumption (SUTVA) holds trivially when testing the sharp null via randomization inference. But this is not the case when estimating average treatment effects or testing the weak null. For instance, this can be useful for thinking through the difficult problem of evaluating impacts of &#x201C;attributes&#x201D; rather than manipulable treatments.<a href="analysis-choices.html#fnref14" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn15"><p>Imagine testing two hypotheses with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3B1;</mi><mo>=</mo><mi mathvariant="normal">.</mi><mn>05</mn></mrow><annotation encoding="application/x-tex">\alpha = .05</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">&#x3B1;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">.05</span></span></span></span>, but the assumed reference distributions for the test statistics were identical: by accident, we ran the same exact code twice. In that case, we are really just doing one test and so we haven&#x2019;t changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.<a href="analysis-choices.html#fnref15" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn16"><p>We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.<a href="analysis-choices.html#fnref16" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn17"><p>Generally, we would use simulation methods based on randomization inference; see the coded examples below. Though this is less common in social science, studies in other disciplines sometimes simulate the joint distribution of the test statistics instead <span class="citation">(Conneely and Boehnke <a href="#ref-conneely2007so">2007</a>)</span>. This might require either estimating or assuming the correlation between test statistics under the true null.<a href="analysis-choices.html#fnref17" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn18"><p>We focus on the classic Tukey HSD procedure for this illustration, which assumes equally sized groups. There are modifications to apply this procedure in other settings, such as the Tukey-Kramer test.<a href="analysis-choices.html#fnref18" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn19"><p>For another method we don&#x2019;t discuss, see <span class="citation">Rosenbaum (<a href="#ref-rosenbaum2012testing">2012</a>)</span>.<a href="analysis-choices.html#fnref19" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn20"><p><span class="citation">Oberfichtner and Tauchmann (<a href="#ref-oberfichtner2021stacked">2021</a>)</span> note that stacked regression should produce the same coefficient estimates as separate models for each outcome, and <em>asymptotically</em> the same standard errors. However, in finite samples, degree of freedom corrections may be necessary. We put this issue aside to illustrate the basics of how stacked regression works. In practice, it may be easiest to implement this method using software like Stata&#x2019;s <code>stackreg</code> or <code>suest</code> that perform these corrections automatically.<a href="analysis-choices.html#fnref20" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn21"><p>This is more likely as the probability of treatment gets further from 0.5, or if the relationship between covariates and treatment effect heterogeneity is stronger than the relationship between covariates and the potential outcomes. See <span class="citation">Lin (<a href="#ref-lin_agnostic_2013">2013</a>)</span> p.&#xA0;304, remark <em>v</em>.<a href="analysis-choices.html#fnref21" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn22"><p>Lin adjustment might also help mitigate bias in some cases; for instance, if the only covariates are dummies for mutually exclusive subgroups like block fixed effects <span class="citation">(Lin <a href="#ref-lin_agnostic_2013">2013</a>; Miratrix, Sekhon, and Yu <a href="#ref-miratrix2013adjusting">2013</a>)</span>.<a href="analysis-choices.html#fnref22" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn23"><p>The covariates outside the treatment interactions do not actually need to be mean-centered, but the version of each covariate in the interaction term does. E.g., in Equation 4, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>&#x3B2;</mi><mn>2</mn></msub><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>&#x2212;</mo><mover accent="true"><mi>X</mi><mo>&#x2C9;</mo></mover><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\beta_2 (X_i - \bar{X})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05278em;">&#x3B2;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0528em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0701em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> could be replaced by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>&#x3B2;</mi><mn>2</mn></msub><msub><mi>X</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\beta_2 X_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05278em;">&#x3B2;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0528em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>, but <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mi>i</mi></msub><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>&#x2212;</mo><mover accent="true"><mi>X</mi><mo>&#x2C9;</mo></mover><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Z_i (X_i - \bar{X})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0701em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> must be kept as-is. It is often easier to simply only use mean-centered covariates in Lin adjustment here to avoid confusion.<a href="analysis-choices.html#fnref23" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn24"><p>For more, see also <a href="https://book.declaredesign.org/introduction/preface.html">this accompanying book</a>.<a href="analysis-choices.html#fnref24" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn25"><p>The idea is to limit model dependence, i.e.&#xA0;lingering error due to &#x201C;incorrectly&#x201D; modeling the relationship between covariates and the outcome in either treatment group. As discussed above, this is not a concern if our model is saturated with controls for every combination of treatment and covariate values.<a href="analysis-choices.html#fnref25" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn26"><p>As discussed above, by &#x201C;binary outcome,&#x201D; we mean that there are only two possible values, and we have recorded one or the other. Usually, we use indicator variables (0, 1) to record these outcomes.<a href="analysis-choices.html#fnref26" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn27"><p>We illustrate the equivalence between <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>&#x3C4;</mi><mo>&#x2C9;</mo></mover></mrow><annotation encoding="application/x-tex">\bar{\tau}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5678em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">&#x3C4;</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2222em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>&#x3C4;</mi><mo>&#x2C9;</mo></mover><mrow><mi>n</mi><mi>b</mi><mi>w</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\bar{\tau}_{nbwt}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7178em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">&#x3C4;</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2222em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1132em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">nb</span><span class="mord mathnormal mtight">wt</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> in our code below: the comparison between <code>trueATE1</code> and <code>trueATE2</code>.<a href="analysis-choices.html#fnref27" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn28"><p>A block of 100 units would have a harmonic weight of 25 with a treatment probability of 0.5 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>100</mn><mo>&#xD7;</mo><mn>0.5</mn><mo>&#xD7;</mo><mn>0.5</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(100 \times 0.5 \times 0.5)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.5</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.5</span><span class="mclose">)</span></span></span></span>, but a harmonic weight of 18.75 under an alternative treatment probability of 0.25 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>100</mn><mo>&#xD7;</mo><mn>0.25</mn><mo>&#xD7;</mo><mn>0.75</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(100 \times 0.25 \times 0.75)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.25</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.75</span><span class="mclose">)</span></span></span></span>. Within-block treatment effect estimates are then multiplied by the <em>inverses</em> of these harmonic weights, so blocks with higher harmonic weights contribute relatively less to the overall average.<a href="analysis-choices.html#fnref28" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn29"><p>I.e., we are not employing the least squares dummy variable, or LSDV, method of including fixed effects in a linear regression. For our purposes here, including fixed effects in the regression via a <em>within-estimator</em> instead would yield the same results <span class="citation">(Cameron and Trivedi <a href="#ref-cameron2005microeconometrics">2005</a>)</span>.<a href="analysis-choices.html#fnref29" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn30"><p>See also <span class="citation">Miratrix, Sekhon, and Yu (<a href="#ref-miratrix2013adjusting">2013</a>)</span><a href="analysis-choices.html#fnref30" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn31"><p>See Section 5 of <span class="citation">Hansen and Bowers (<a href="#ref-hansen_covariate_2008">2008</a>)</span> for proof that this kind of weighting is optimal from the perspective of precision.<a href="analysis-choices.html#fnref31" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn32"><p>We&#x2019;ve omitted power, since all the estimators in this example have a power of approximately 100%<a href="analysis-choices.html#fnref32" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn33"><p>It&#x2019;s also possible to have trials where treatment is influenced <em>but not entirely determined</em> at the cluster level.<a href="analysis-choices.html#fnref33" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn34"><p>When treatment assignment is <em>influenced by clustering</em> but not completely determined at the cluster level, standard error adjustments for clustering will tend to be too conservative. See <span class="citation">Abadie et al. (<a href="#ref-abadie2023should">2023</a>)</span> for more discussion of this and some potential solutions.<a href="analysis-choices.html#fnref34" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn35"><p>See the <code>estimatr</code> <a href="https://declaredesign.org/r/estimatr/articles/mathematical-notes.html">mathematical notes</a> for more detail on how this is implemented.<a href="analysis-choices.html#fnref35" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn36"><p>See <span class="citation">Gelman and Hill (<a href="#ref-gelman2006data">2006</a>)</span>, section 20.3, page 443.<a href="poweranalysis.html#fnref36" class="footnote-back">&#x21A9;</a></p></li>
-<li id="fn37"><p>As discussed in Chapter 3, this &#x201C;chance&#x201D; or &#x201C;noise&#x201D; might arise from sampling from a larger population, or from noise introduced by the different random assignments we could observe in a fixed sample.<a href="poweranalysis.html#fnref37" class="footnote-back">&#x21A9;</a></p></li>
+<li id="fn1"><p>We call this document a standard operating procedure (SOP) because we are inspired by the <a href="https://github.com/acoppock/Green-Lab-SOP">Green, Lin and Coppock SOP</a>.<a href="index.html#fnref1" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn2"><p>This latter rate is referring to statistical power, discussed above.<a href="key-design-criteria.html#fnref2" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn3"><p>See <a href="https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/" class="uri">https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/</a> for a demonstration that the difference-in-means between the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.<a href="design-based-inference.html#fnref3" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn4"><p>As discussed above, under a design based approach, random noise is assumed to be introduced by treatment assignment decisions. Under more common sampling-based inference procedures, it is instead assumed to be introduced by the process of sampling from a larger population.<a href="design-based-inference.html#fnref4" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn5"><p>Though applications of design based inference often rely on hypothetical permutations of treatment rather than asymptotic (i.e., large-sample) justifications, asymptotic approximations can be used as a basis for design based statistical procedures as well.<a href="design-based-inference.html#fnref5" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn6"><p>We develop the recommendations themselves following <a href="https://oes.gsa.gov/methods/">processes</a> described in more detail on our website.<a href="randomization-choices.html#fnref6" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn7"><p>But see <span class="citation">Small, Volpp, and Rosenbaum (<a href="references.html#ref-small2011structured" role="doc-biblioref">2011</a>)</span>, for instance, for a way to increase the power of tests for such questions. This approach is not currently part of our standard practice.<a href="randomization-choices.html#fnref7" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn8"><p>As the authors discuss, this could be framed as either an internal or external validity concern.<a href="randomization-choices.html#fnref8" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn9"><p>Some studies instead employ &#x201C;post-stratification,&#x201D; where simple or complete randomization might be used to assign treatment, but the data are still analyzed <em>as-if they were blocked</em>. See <span class="citation">Miratrix, Sekhon, and Yu (<a href="references.html#ref-miratrix2013adjusting" role="doc-biblioref">2013</a>)</span>, for instance, for more discussion of this strategy. Post-stratification is more likely than blocking to increase variance (relative to a simple difference in means) when there is not actually any between-strata variation in potential outcomes. Post-stratification with too many strata may also have variance costs, which is again less likely when treatment assignment is blocked.<a href="randomization-choices.html#fnref9" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn10"><p>We use &#x201C;block&#x201D; rather than &#x201C;strata&#x201D; throughout this document to refer to groups of experimental units that are fixed <em>before random assignment occurs</em>.<a href="randomization-choices.html#fnref10" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn11"><p>If there are no available covariates, we can at least evaluate whether the distribution of treated units appears consistent with our intended strategy.<a href="randomization-choices.html#fnref11" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn12"><p>This is also useful when interpreting &#x201C;null effects&#x201D; for a study&#x2019;s primary outcome measure. An equivalence test provides a more principled way to judge whether a statistically insignificant difference is attributable to a true null (no imbalance) or a lack of power to detect meaningful imbalance.<a href="randomization-choices.html#fnref12" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn13"><p>It&#x2019;s sometimes helpful to go further and look at things like Kolmogorov-Smirnov statistics, Q-Q plots, or statistics for various polynomial transformations of continuous covariates.<a href="randomization-choices.html#fnref13" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn14"><p>As <span class="citation">D. B. Rubin (<a href="references.html#ref-rubin1986comment" role="doc-biblioref">1986</a>)</span> discusses, the stable unit treatment value assumption (SUTVA) holds trivially when testing the sharp null via randomization inference. But this is not the case when estimating average treatment effects or testing the weak null. For instance, this can be useful for thinking through the difficult problem of evaluating impacts of &#x201C;attributes&#x201D; rather than manipulable treatments.<a href="analysis-choices.html#fnref14" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn15"><p>Imagine testing two hypotheses with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>&#x3B1;</mi><mo>=</mo><mi mathvariant="normal">.</mi><mn>05</mn></mrow><annotation encoding="application/x-tex">\alpha = .05</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">&#x3B1;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">.05</span></span></span></span>, but the assumed reference distributions for the test statistics were identical: by accident, we ran the same exact code twice. In that case, we are really just doing one test and so we haven&#x2019;t changed our probability of rejecting a true null hypothesis for either test. If the two tests were instead correlated at .99, we would have changed this probability but only very slightly, since both tests would basically still be the same.<a href="analysis-choices.html#fnref15" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn16"><p>We generally seek to control the FWER, but sometimes consider controlling the false discovery rate, or FDR, instead. Holding the FDR at 20%, for example, implies trying to ensure that only 20% of reported test results (or 1 in 5) are a false positive. This contrasts with adjustments to control the FWER, which focus on the probability of observing one or more false positives across tests.<a href="analysis-choices.html#fnref16" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn17"><p>Generally, we would use simulation methods based on randomization inference; see the coded examples below. Though this is less common in social science, studies in other disciplines sometimes simulate the joint distribution of the test statistics instead <span class="citation">(<a href="references.html#ref-conneely2007so" role="doc-biblioref">Conneely and Boehnke 2007</a>)</span>. This might require either estimating or assuming the correlation between test statistics under the true null.<a href="analysis-choices.html#fnref17" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn18"><p>We focus on the classic Tukey HSD procedure for this illustration, which assumes equally sized groups. There are modifications to apply this procedure in other settings, such as the Tukey-Kramer test.<a href="analysis-choices.html#fnref18" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn19"><p>For another method we don&#x2019;t discuss, see <span class="citation">Paul R. Rosenbaum (<a href="references.html#ref-rosenbaum2012testing" role="doc-biblioref">2012</a>)</span>.<a href="analysis-choices.html#fnref19" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn20"><p><span class="citation">Oberfichtner and Tauchmann (<a href="references.html#ref-oberfichtner2021stacked" role="doc-biblioref">2021</a>)</span> note that stacked regression should produce the same coefficient estimates as separate models for each outcome, and <em>asymptotically</em> the same standard errors. However, in finite samples, degree of freedom corrections may be necessary. We put this issue aside to illustrate the basics of how stacked regression works. In practice, it may be easiest to implement this method using software like Stata&#x2019;s <code>stackreg</code> or <code>suest</code> that perform these corrections automatically.<a href="analysis-choices.html#fnref20" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn21"><p>This is more likely as the probability of treatment gets further from 0.5, or if the relationship between covariates and treatment effect heterogeneity is stronger than the relationship between covariates and the potential outcomes. See <span class="citation">Lin (<a href="references.html#ref-lin_agnostic_2013" role="doc-biblioref">2013</a>)</span> p.&#xA0;304, remark <em>v</em>.<a href="analysis-choices.html#fnref21" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn22"><p>Lin adjustment might also help mitigate bias in some cases; for instance, if the only covariates are dummies for mutually exclusive subgroups like block fixed effects <span class="citation">(<a href="references.html#ref-lin_agnostic_2013" role="doc-biblioref">Lin 2013</a>; <a href="references.html#ref-miratrix2013adjusting" role="doc-biblioref">Miratrix, Sekhon, and Yu 2013</a>)</span>.<a href="analysis-choices.html#fnref22" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn23"><p>The covariates outside the treatment interactions do not actually need to be mean-centered, but the version of each covariate in the interaction term does. E.g., in Equation 4, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>&#x3B2;</mi><mn>2</mn></msub><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>&#x2212;</mo><mover accent="true"><mi>X</mi><mo>&#x2C9;</mo></mover><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\beta_2 (X_i - \bar{X})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05278em;">&#x3B2;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0528em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0701em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> could be replaced by <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>&#x3B2;</mi><mn>2</mn></msub><msub><mi>X</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\beta_2 X_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05278em;">&#x3B2;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0528em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>, but <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mi>i</mi></msub><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>&#x2212;</mo><mover accent="true"><mi>X</mi><mo>&#x2C9;</mo></mover><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Z_i (X_i - \bar{X})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0715em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0701em;vertical-align:-0.25em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1667em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> must be kept as-is. It is often easier to simply only use mean-centered covariates in Lin adjustment here to avoid confusion.<a href="analysis-choices.html#fnref23" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn24"><p>For more, see also <a href="https://book.declaredesign.org/introduction/preface.html">this accompanying book</a>.<a href="analysis-choices.html#fnref24" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn25"><p>This is the standard approach. Tnstead of imputing all potential outcomes, in principle you could also impute only the missing potential outcomes. In some situations this could be preferable, though generally the standard approach will be more efficient.<a href="analysis-choices.html#fnref25" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn26"><p>The idea is to limit model dependence, i.e.&#xA0;lingering error due to &#x201C;incorrectly&#x201D; modeling the relationship between covariates and the outcome in either treatment group. As discussed above, this is not a concern if our model is saturated with controls for every combination of treatment and covariate values.<a href="analysis-choices.html#fnref26" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn27"><p>As discussed above, by &#x201C;binary outcome,&#x201D; we mean that there are only two possible values, and we have recorded one or the other. Usually, we use indicator variables (0, 1) to record these outcomes.<a href="analysis-choices.html#fnref27" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn28"><p>We illustrate the equivalence between <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>&#x3C4;</mi><mo>&#x2C9;</mo></mover></mrow><annotation encoding="application/x-tex">\bar{\tau}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5678em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">&#x3C4;</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2222em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>&#x3C4;</mi><mo>&#x2C9;</mo></mover><mrow><mi>n</mi><mi>b</mi><mi>w</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\bar{\tau}_{nbwt}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7178em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.5678em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.1132em;">&#x3C4;</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2222em;"><span class="mord">&#x2C9;</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1132em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">nb</span><span class="mord mathnormal mtight">wt</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> in our code below: the comparison between <code>trueATE1</code> and <code>trueATE2</code>.<a href="analysis-choices.html#fnref28" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn29"><p>A block of 100 units would have a harmonic weight of 25 with a treatment probability of 0.5 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>100</mn><mo>&#xD7;</mo><mn>0.5</mn><mo>&#xD7;</mo><mn>0.5</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(100 \times 0.5 \times 0.5)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.5</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.5</span><span class="mclose">)</span></span></span></span>, but a harmonic weight of 18.75 under an alternative treatment probability of 0.25 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>100</mn><mo>&#xD7;</mo><mn>0.25</mn><mo>&#xD7;</mo><mn>0.75</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(100 \times 0.25 \times 0.75)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">100</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">0.25</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">0.75</span><span class="mclose">)</span></span></span></span>. Within-block treatment effect estimates are then multiplied by the <em>inverses</em> of these harmonic weights, so blocks with higher harmonic weights contribute relatively less to the overall average.<a href="analysis-choices.html#fnref29" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn30"><p>I.e., we are not employing the least squares dummy variable, or LSDV, method of including fixed effects in a linear regression. For our purposes here, including fixed effects in the regression via a <em>within-estimator</em> instead would yield the same results <span class="citation">(<a href="references.html#ref-cameron2005microeconometrics" role="doc-biblioref">Cameron and Trivedi 2005</a>)</span>.<a href="analysis-choices.html#fnref30" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn31"><p>See also <span class="citation">Miratrix, Sekhon, and Yu (<a href="references.html#ref-miratrix2013adjusting" role="doc-biblioref">2013</a>)</span><a href="analysis-choices.html#fnref31" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn32"><p>See Section 5 of <span class="citation">Hansen and Bowers (<a href="references.html#ref-hansen_covariate_2008" role="doc-biblioref">2008</a>)</span> for proof that this kind of weighting is optimal from the perspective of precision.<a href="analysis-choices.html#fnref32" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn33"><p>We&#x2019;ve omitted power, since all the estimators in this example have a power of approximately 100%<a href="analysis-choices.html#fnref33" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn34"><p>It&#x2019;s also possible to have trials where treatment is influenced <em>but not entirely determined</em> at the cluster level.<a href="analysis-choices.html#fnref34" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn35"><p>When treatment assignment is <em>influenced by clustering</em> but not completely determined at the cluster level, standard error adjustments for clustering will tend to be too conservative. See <span class="citation">Abadie et al. (<a href="references.html#ref-abadie2023should" role="doc-biblioref">2023</a>)</span> for more discussion of this and some potential solutions.<a href="analysis-choices.html#fnref35" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn36"><p>See the <code>estimatr</code> <a href="https://declaredesign.org/r/estimatr/articles/mathematical-notes.html">mathematical notes</a> for more detail on how this is implemented.<a href="analysis-choices.html#fnref36" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn37"><p>See <span class="citation">Gelman and Hill (<a href="references.html#ref-gelman2006data" role="doc-biblioref">2006</a>)</span>, section 20.3, page 443.<a href="poweranalysis.html#fnref37" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
+<li id="fn38"><p>As discussed in Chapter 3, this &#x201C;chance&#x201D; or &#x201C;noise&#x201D; might arise from sampling from a larger population, or from noise introduced by the different random assignments we could observe in a fixed sample.<a href="poweranalysis.html#fnref38" class="footnote-back">&#x21A9;&#xFE0E;</a></p></li>
 </ol>
-</div>
-<h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-small2011structured">
-<p>Small, D.S., K.G. Volpp, and P.R. Rosenbaum. 2011. &#x201C;Structured Testing of 2<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&#xD7;</mo></mrow><annotation encoding="application/x-tex">\times</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord">&#xD7;</span></span></span></span> 2 Factorial Effects: An Analytic Plan Requiring Fewer Observations.&#x201D; <em>The American Statistician</em> 65 (1): 11&#x2013;15.</p>
-</div>
-<div id="ref-miratrix2013adjusting">
-<p>Miratrix, Luke W, Jasjeet S Sekhon, and Bin Yu. 2013. &#x201C;Adjusting Treatment Effect Estimates by Post-Stratification in Randomized Experiments.&#x201D; <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 75 (2): 369&#x2013;96.</p>
-</div>
-<div id="ref-rubin1986comment">
-<p>Rubin, Donald B. 1986. &#x201C;Comment: Which Ifs Have Causal Answers.&#x201D; <em>Journal of the American Statistical Association</em> 81 (396): 961&#x2013;62.</p>
-</div>
-<div id="ref-conneely2007so">
-<p>Conneely, Karen N, and Michael Boehnke. 2007. &#x201C;So Many Correlated Tests, so Little Time! Rapid Adjustment of P Values for Multiple Correlated Tests.&#x201D; <em>The American Journal of Human Genetics</em> 81 (6): 1158&#x2013;68.</p>
-</div>
-<div id="ref-rosenbaum2012testing">
-<p>Rosenbaum, Paul R. 2012. &#x201C;Testing One Hypothesis Twice in Observational Studies.&#x201D; <em>Biometrika</em> 99 (4): 763&#x2013;74.</p>
-</div>
-<div id="ref-oberfichtner2021stacked">
-<p>Oberfichtner, Michael, and Harald Tauchmann. 2021. &#x201C;Stacked Linear Regression Analysis to Facilitate Testing of Hypotheses Across Ols Regressions.&#x201D; <em>The Stata Journal</em> 21 (2): 411&#x2013;29.</p>
-</div>
-<div id="ref-lin_agnostic_2013">
-<p>Lin, Winston. 2013. &#x201C;Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman&#x2019;s Critique.&#x201D; <em>The Annals of Applied Statistics</em> 7 (1): 295&#x2013;318.</p>
-</div>
-<div id="ref-cameron2005microeconometrics">
-<p>Cameron, A Colin, and Pravin K Trivedi. 2005. <em>Microeconometrics: Methods and Applications</em>. Cambridge university press.</p>
-</div>
-<div id="ref-hansen_covariate_2008">
-<p>Hansen, Ben B., and Jake Bowers. 2008. &#x201C;Covariate Balance in Simple, Stratified and Clustered Comparative Studies.&#x201D; <em>Statistical Science</em> 23 (2): 219&#x2013;36.</p>
-</div>
-<div id="ref-abadie2023should">
-<p>Abadie, Alberto, Susan Athey, Guido W Imbens, and Jeffrey M Wooldridge. 2023. &#x201C;When Should You Adjust Standard Errors for Clustering?&#x201D; <em>The Quarterly Journal of Economics</em> 138 (1): 1&#x2013;35.</p>
-</div>
-<div id="ref-gelman2006data">
-<p>Gelman, Andrew, and Jennifer Hill. 2006. <em>Data Analysis Using Regression and Multilevel/Hierarchical Models</em>. Cambridge university press.</p>
-</div>
 </div>
             </section>
 
