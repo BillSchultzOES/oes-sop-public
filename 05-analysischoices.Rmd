@@ -2307,11 +2307,9 @@ preserve
 
 	** Perform G-computation
 	qui reg y cov2 if z == 0
-	predict g_y0 if z == 1, xb
-	replace g_y0 = y if z == 0
+	predict g_y0, xb
 	qui reg y cov2 if z == 1
-	predict g_y1 if z == 0, xb
-	replace g_y1 = y if z == 1
+	predict g_y1, xb
 	gen g_diff = g_y1 - g_y0
 	qui sum g_diff, meanonly
 	global gcomp_gcomp = r(mean)
