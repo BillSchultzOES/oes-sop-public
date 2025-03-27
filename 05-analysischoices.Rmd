@@ -2249,7 +2249,7 @@ Our team does not often run into such an extreme version of this problem because
 
 ### Another way to think about Lin adjustment
 
-What we call Lin adjustment produces equivalent treatment effect estimates to a different procedure that has been called things like the "oaxaca-blinder estimator" [@guo2023generalized], "full regression adjustment" [@negi2021revisiting], or "G-computation" [@snowden2011implementation; @greifer2023estimating]. In a simple two-arm randomized trial, it proceeds as follows:^[This is the standard approach. Tnstead of imputing all potential outcomes, in principle you could also impute only the missing potential outcomes. In some situations this could be preferable, though generally the standard approach will be more efficient.]
+What we call Lin adjustment produces equivalent treatment effect estimates to a different procedure that has been called things like the "oaxaca-blinder estimator" [@guo2023generalized], "full regression adjustment" [@negi2021revisiting], or "G-computation" [@snowden2011implementation; @greifer2023estimating]. In a simple two-arm randomized trial, it proceeds as follows:^[This is the standard approach. Instead of imputing all potential outcomes, in principle you could also impute only the missing potential outcomes. In some situations this could be preferable, though generally the standard approach will be more efficient.]
 
 1. Create separate subsets of treated and control units
 
