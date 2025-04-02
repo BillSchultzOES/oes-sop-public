@@ -87,6 +87,20 @@ cnum <- 0
 We can compare the output of `power.t.test()` to the output from a
 simulation-based (i.e., computational) approach, which we illustrate below. Our example relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility for simulating some more complicated designs.
 
+### How do we structure the simulation?
+
+Before we get to that template code, note that there are a few ways we could use a simulation to think about a design's statistical power:
+
+- Simulate a design in which the null hypothesis is true many times, and estimate a treatment effect for each simulated dataset, yielding a distribution of test statistics (e.g., a t-static) under a true null. Use this null distribution, alongside estimates from each model, to calculate power for different possible effect sizes.
+
+- Simulate a design with specific built in treatment effect; i.e., simulate a design with specific potential outcomes. Estimate a treatment effect for this simulated design, and repeat many times, using the results to calculate power for this one effect size. Repeat this entire process again for many other possible effect sizes.
+
+The first approach is faster because we only have to do one round of simulations under a true null hypothesis. *This is what we do for most of the simulations in this chapter (and in our template)*. It's often a good place to start for cases that are complicated enough to need simulation, but not so complicated that we need to explicitly model the potential outcomes.
+
+The second approach is more time consuming because we have to do a separate round of simulations for every effect size we're interested in. However, this might be necessary to accurately answer our design questions, for instance when we want to estimate power for one treatment effect in a design while another is held at a particular value. We show an example of this second approach in one of our examples below (simulating the efficiency benefits of Lin adjustment).
+
+### Simulation template code
+
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch6R1')">R code</button>
 <button class="tablinks" onclick="unrolltab(event, 'ch6Stata1')">Stata code</button>
