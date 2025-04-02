@@ -2,19 +2,17 @@
 
 Most policy evaluations using administrative data or surveys report the results of their studies using **estimators** and **hypothesis tests**. We briefly define each for clarity.
 
-* *Estimators*: Although we can never know the true causal effect of a new policy on our beneficiaries (see Chapter 1), we can choose a method that provides us a best guess. E.g.: "The average amount saved for retirement by people in the treatment group was \$1000 more than the average amount in the control group, so our estimate of the average treatment effect is \$1000."
+* *Estimators*: Although we can never know the true causal effect of a new policy (see Chapter 1), we can choose a method that provides us a best guess. E.g.: "The average amount saved for retirement by people in the treatment group was \$1000 more than the average amount in the control group, so our estimate of the average treatment effect is \$1000."
 
-* *Hypothesis tests*: We can also test the plausibility of a particular hunch or hypothesis. Commonly, these tests focus on plausibility of the null hypothesis of no effect. E.g.: "We can reject the null hypothesis of no effect at a $5\%$ significance level given an estimated p-value of $2\%$." Confidence intervals can be used to summarize hypothesis tests, so we think of them as tests rather than estimators.
+* *Hypothesis tests*: We can also test the plausibility of a particular hunch or **hypothesis**. Commonly, in program evaluation we focus on plausibility of the null hypothesis of no effect. E.g.: "We can reject the null hypothesis of no effect at a $5\%$ significance level given an estimated p-value of $2\%$." Ideally, we want to provide evidence that it is sufficiently unlikely for our result to be an artifact of random noise alone. Confidence intervals can be used to summarize hypothesis tests, so we generally think of them as tests rather than estimators.
 
 When we are asked *why* we used some method for calculating an
 average treatment effect, $p$-value, or confidence interval, we often say that our statistical analysis choices are based on the *design* of our
-studies. When applied to randomized experiments, this principle can be written
-simply as: "analyze as you randomize." We provide an example of this
-principle in practice below, and the intuition behind it is to model unexplained variation in the data as noise introduced by random treatment assignment.
+studies. When applied to randomized experiments, this principle can be written simply as: "analyze as you randomize." We provide an example of this principle in practice below. The intuition is to model unexplained variation in the data as noise introduced by random treatment assignment.
 
 This idea, often known as randomization based or **design based inference**, was proposed by two of the founders of modern statistics. Jerzy Neyman's 1923 paper showed how to use randomization to learn about what we would currently call "average treatment effects" [@neyman_application_1923], and Ronald A.  Fisher's 1935 book showed how to use randomization to test hypotheses about what we would currently call "treatment effects" [@fisher_design_1935]. We favor design based justifications because we know exactly how a study was designed---after all, we and our agency collaborators chose the sample size, experimental arms, and outcome data.
 
-Of course, there are other ways to justify statistical procedures, too. We don't exclude any reasonable approach in our work. It is standard for researchers in many applied fields to instead motivate their tests using the idea of sampling from a larger (possibly infinite) population. This often depends on theoretical models of an estimator's behavior as sample size increases indefinitely ("asymptotic" theory). OES projects frequently employ sampling-justified procedures as well. Moreover, some common procedures like the calculation of HC2 standard errors (discussed below) can be justified under either design based or sampling based statistical inference.
+Of course, there are other ways to justify statistical procedures, too. It is standard for researchers in many applied fields to instead motivate their tests using the idea of sampling from a larger (possibly infinite) population. This approach is more likely to depend on theoretical models of an estimator's behavior as sample size increases indefinitely ("asymptotic" theory). OES projects frequently employ sampling-justified procedures as well. Importantly, some common procedures like the calculation of HC2 standard errors (discussed below) can be justified under either design based or sampling based statistical inference.
 
 ## An example using simulated data {#randinfex}
 
@@ -107,7 +105,7 @@ stripchart(list(y0,y1), add=TRUE, vertical=TRUE)
 stripchart(list(mean(y0), mean(y1)), add=TRUE, vertical=TRUE, pch=19, cex=2)})
 ```
 
-In this simulated data, we know the true average treatment effect (ATE) because we know both of the underlying true potential outcomes. The control potential outcome, $y_{i|Z_i=0}$, is written in the code as `y0`, meaning "the response person $i$ would provide if he/she were in the status quo or control group". The treatment potential outcome,  $y_{i|Z_i = 1}$, is written in the code as `y1`, meaing "the response person $i$ would provide if he/she were in the new policy or treatment group." We use $Z_i$ to refer to the experimental arm. In this case $Z_i=0$ for people in the status quo group and $Z_i=1$ for people in the new policy group. The **true average treatment effect** for each person is then the difference between that person's potential outcomes under each treatment condition.
+In this simulated data, we know the true average treatment effect (ATE) because we know both of the underlying true potential outcomes. The control potential outcome, $y_{i|Z_i=0}$, is written in the code as `y0`, meaning "the response person $i$ would provide if he/she were in the status quo or control group". The treatment potential outcome,  $y_{i|Z_i = 1}$, is written in the code as `y1`, meaning "the response person $i$ would provide if he/she were in the new policy or treatment group." We use $Z_i$ to refer to the experimental arm. In this case $Z_i=0$ for people in the status quo group and $Z_i=1$ for people in the new policy group. The **true treatment effect** for each person is then the difference between that person's potential outcomes under each treatment condition.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R3')">R code</button>
@@ -136,7 +134,7 @@ trueATE <- with(dat1, mean(y1) - mean(y0))
 trueATE
 ```
 
-At this point, we have one *realized* experiment (defined by randomly assigning half of the people to treatment and half to control). And we know that the observed difference of means of the outcome, $Y$, between treated and control groups is an unbiased estimator of the true ATE (by virtue of random assignment to treatment).^[See https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/ for a demonstration that the difference-in-means between the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.] We can calculate this in a few ways: we can just calculate the difference of means, or we can take advantage of the fact that an ordinary least squares linear regression produces the same estimate when the explanatory variable is a binary treatment indicator.
+At this point, we have one *realized* experiment (defined by randomly assigning half of the people to treatment and half to control). The observed difference of means of the outcome, $Y$, between treated and control groups is an unbiased estimator of the true **ATE**, or the true "average treatment effect" (by virtue of random assignment to treatment).^[See https://egap.org/resource/10-types-of-treatment-effect-you-should-know-about/ for a demonstration that the difference-in-means between the observed treatment and control groups is an unbiased estimator of the average treatment effect itself, and what it means to be unbiased.] We can calculate this in a few ways: we can just calculate the difference of means, or we can take advantage of the fact that an ordinary least squares linear regression produces the same estimate when the explanatory variable is a binary treatment indicator.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R4')">R code</button>
@@ -175,9 +173,9 @@ c(estimatedATEv1=estATE1, estimatedATEv2=estATE2)
 
 ###  Randomization-based standard errors
 
-How much would these estimates of the average treatment effect vary due to "random noise" if we repeated an experiment on the same group of people multiple times (randomly re-assigning treatment each time)? The **standard error** of an estimate of the average treatment effect is one answer to this question. As the expected variation due to random noise gets larger relative to the size of our treatment effect estimate, we should become increasingly cautious about the risk that our finding is actually an artifact of random noise.^[As discussed above, under a design based approach, random noise is assumed to be introduced by treatment assignment decisions. Under more common sampling-based inference procedures, it is instead assumed to be introduced by the process of sampling from a larger population.]
+How much would these estimates of the average treatment effect vary due to "random noise" if we repeated an experiment on the same group of people multiple times, randomly re-assigning treatment each time? The **standard error** of an estimate of the average treatment effect is one answer to this question. As the expected variation due to random noise gets larger relative to the size of our treatment effect estimate, we should become increasingly cautious about the risk that our finding is actually an artifact of random noise.^[As discussed above, under a design based approach, random noise is assumed to be introduced by treatment assignment decisions. Under more common sampling-based inference procedures, it is instead assumed to be introduced by the process of sampling from a larger population.]
 
-Below, we simulate a simple, individual-level experiment to help provide more intuition about what the standard error captures. We randomly re-assign treatment many times, save the resulting treatment effect estimates from each re-randomization, and calculate the standard deviation across them. This provides information about how far we should expect any one re-randomized treatment effect estimate to be from their mean.
+Below, we simulate a simple experiment to help provide more intuition about what the standard error captures. We randomly re-assign treatment many times, save the resulting treatment effect estimates from each re-randomization, and calculate the standard deviation across them. This provides information about how far we should expect any one re-randomized treatment effect estimate to be from their mean.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R5')">R code</button>
@@ -276,7 +274,7 @@ seEstATEsim <- sd(simpleResults)
 seEstATEsim
 ```
 
-While this is useful for illustration, we do not need to rely on simulation to develop a design-based standard error estimator. @gerber_field_2012 and @dunning_natural_2012 walk through the following expression for a "feasible" (see below) design based standard error of a simple average treatment effect estimator (e.g., a difference in means based on randomly assigned treatment). If we write $T$ as the set of all $m$ treated units and $C$ as the set of all $n-m$ non-treated units, we then have:
+While this is useful for illustration, we do not need to rely on simulation to estimate design based standard errors. @gerber_field_2012 and @dunning_natural_2012 walk through the following expression for a **feasible design based standard error** of an average treatment effect estimate (e.g., a simple difference in means based on randomly assigned treatment). It's called a "feasible" standard error because although it's not exactly the same as the true design based standard error, it's an approximation that we can calculate with a real sample. If we write $T$ as the set of all $m$ treated units and $C$ as the set of all $n-m$ non-treated units, we then have:
 
 $$
 \widehat{SE}(\tau) = \sqrt{\frac{s^2(Y_{i,i \in T})}{m} + \frac{s^2(Y_{i,i \in C})}{(n-m)}}
@@ -284,9 +282,9 @@ $$
 
 where $s^2(x)$ is the sample variance such that $s^2(x) = (1/(n-1))\sum^n_{i = 1}(x_i-\bar{x})^2$.
 
-Since this expression is something we can calculate with a real sample, it's called a **feasible standard error**. In contrast, we cannot calculate the *true* design based standard error with a real sample, since it depends on knowing the covariance between each unit's potential outcomes (which is unobservable in real data). However, we *can* calculate this for our example, since we generated the data ourselves. Though we don't write it out here, you can see an expression for the true design based standard error in the code below.
+In contrast, we cannot generally calculate the *true* design based standard error using a simple expression like this. I.e., we generally cannot apply a straightforward equation to a realized dataset and calculate exactly how far, on average, any re-randomized ATE will be from the mean across possible randomizations. There is a known expression for this (and you can see it in our code below)! However, it depends on the covariance between each unit's potential outcomes, which is unobservable in real data. We *can* calculate this in our example for illustration, though, since we generated the data ourselves.
 
-The feasible SE is designed to be *at least as large* as the true standard error on average. This means it is intentionally conservative. To illustrate these different calculation methods, we can compare the results of our simulation above to those of the feasible standard error expression. We can also compare both to the true standard error.
+To make up for this, the feasible SE is derived to be greater than or equal to (but not smaller than) the true standard error on average. It is intentionally conservative. To illustrate these different calculation methods, we can compare the results of our simulation above to those of the feasible standard error expression. And we can also compare both to the true standard error.
 
 We already have the simulated SE from the code above. Next, let's calculate the true SE. 
 
@@ -392,7 +390,7 @@ fvarestATE <- (N/(N-1)) * ( (varYt/nt) + (varYc/nc) )
 estSEEstATE <- sqrt(fvarestATE)
 ```
 
-Importantly, the feasible SE *is not* the standard error OLS regression provides by default. Among other things, default OLS SES are calculated under an *iid* errors assumption ("identically and independently distributed"). The feasible SE relaxes the "identically" part. Let's record the OLS SE for illustration.
+Importantly, this feasible design-based SE *is not* equivalent the standard error OLS regression provides by default. Among other things, default OLS SES are calculated under an *iid* errors assumption ("identically and independently distributed"). The feasible SE relaxes the "identically" part. Let's record the OLS SE for illustration.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R8')">R code</button>
@@ -424,7 +422,7 @@ lm1 <- lm(Y~Z, data=dat1)
 iidSE <-  sqrt(diag(vcov(lm1)))[["Z"]]
 ```
 
-Finally, we'll calculate one more alternative called the *HC2 standard error*, which [@lin_agnostic_2013] shows to be a design based SE for treatment effects estimated via OLS regression, potentially including additional control variables (i.e., an alternative to the feasible SE for a simple difference in means above). Like the feasible SE above, HC2 errors should be conservative relative to the true SE. Note that under sampling based inference, the HC2 standard errors can instead be justified as a way of relaxing the assumption of "identically" distributed errors across. In other words, it is robust to a problem called "heteroscedasticity," or "heteroscedasticity-consistent" (hence the HC in its name).
+Finally, we'll calculate one more alternative called the *HC2 standard error*, which [@lin_agnostic_2013] shows to be a design based SE for treatment effects estimated via OLS regression, potentially including additional control variables. I.e., it is an alternative to the feasible expression above, and one that can be easily computed for OLS coefficients using standard statistical software. Like the feasible SE in our expression above (which is specifically for a difference in means without any covariate adjustment), HC2 errors for an OLS coefficient should be conservative relative to the true SE. Note that under a sampling based approach to inference, the HC2 standard errors can instead be justified as a way of relaxing the assumption of "identically" distributed errors across. In other words, it is robust to a problem called "heteroscedasticity," or "heteroscedasticity-consistent" (hence the HC in its name).
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R9')">R code</button>
@@ -454,7 +452,7 @@ global HC2SE = _se[z] // Or: sqrt(e(V)["z","z"])
 HC2SE <- sqrt(diag(vcovHC(lm1, type = "HC2")))[["Z"]]
 ```
 
-All those SE estimates in hand, let's review differences between the true standard error, the feasible standard error, the HC2 (Neyman) standard error, the standard error arising from direct repetition of the experiment, and the OLS standard error.
+All those SE estimates in hand, let's review differences between the true standard error, the feasible standard error, the HC2 standard error, the standard error arising from direct repetition of the experiment, and the OLS standard error.
 
 The HC2 OLS SE is intended to be conservative relative to the true SE (at least as large or larger on average). This is the case in our example. HC2 is similar to the feasible SE outlined above, and both are larger than the true SE. We also illustrate the accuracy of our earlier SE simulation as a way of thinking more intuitively about what the standard error represents. Lastly, recall that our design involves different outcome variances for the treated group and the control group. We would therefore expect what we are calling the OLS IID SE to be at least somewhat inaccurate (different variances across treatment groups means that errors are not "identically" distributed). However, as you can see below, this inaccuracy is still sometimes negligible in practice.
 
@@ -513,17 +511,17 @@ sePerfFn <- function(Z,y1,y0){
 	Znew <- sample(Z)
 	Ynew <- Znew * y1 + (1-Znew) * y0
 	lm1 <- lm(Ynew~Znew)
-	iidSE <-  sqrt(diag(vcov(lm1)))[["Znew"]]
-	NeymanSE <- sqrt(diag(vcovHC(lm1,type = "HC2")))[["Znew"]]
+	olsIIDse <-  sqrt(diag(vcov(lm1)))[["Znew"]]
+	HC2SE <- sqrt(diag(vcovHC(lm1,type = "HC2")))[["Znew"]]
 	return(c(estATE=coef(lm1)[["Znew"]],
-		 estSEiid=iidSE,
-		 estSENeyman=NeymanSE))
+		 olsIIDse=olsIIDse,
+		 HC2SE=HC2SE))
 }
 
 ## Perform a simulation using this function
 set.seed(12345)
 sePerformance <- with(dat1, replicate(sims, sePerfFn(Z = Z, y1 = y1, y0 = y0)))
-ExpectedSEs <- apply(sePerformance[c("estSEiid", "estSENeyman"),], 1, mean)
+ExpectedSEs <- apply(sePerformance[c("olsIIDse", "HC2SE"),], 1, mean)
 c(ExpectedSEs, trueSE=seEstATETrue, simSE=sd(sePerformance["estATE",]))
 ```
 :::
@@ -549,12 +547,12 @@ program define sePerfFn, rclass sortpreserve
 	qui gen `Ynew' = (`Znew' * `treat_outcome') + ((1 - `Znew') * `control_outcome')
 	
 	qui reg `Ynew' `Znew' // Regression now instead of ttest
-	local iidSE = _se[`Znew']
+	local olsIIDSE = _se[`Znew']
 	qui reg `Ynew' `Znew', vce(hc2)
-	local NeymanSE = _se[`Znew']
+	local HC2SE = _se[`Znew']
 	
-	return scalar iidSE = `iidSE' // Prepare output
-	return scalar NeymanSE = `NeymanSE'
+	return scalar olsIIDSE = `olsIIDSE' // Prepare output
+	return scalar HC2SE = `HC2SE'
 	return scalar estATE = _b[`Znew']
 
 end
@@ -564,19 +562,19 @@ set seed 12345
 
 preserve
 	qui simulate ///
-	iidSE = r(iidSE) NeymanSE = r(NeymanSE) estATE = r(estATE), ///
+	olsIIDSE = r(olsIIDSE) HC2SE = r(HC2SE) estATE = r(estATE), ///
 	reps($sims): ///
 	sePerfFn z, control_outcome(y0) treat_outcome(y1)
 	qui sum estATE
 	global simSE = r(sd)
-	qui sum iidSE
-	global estSEiid = r(mean)
-	qui sum NeymanSE
-	global estSENeyman = r(mean)
+	qui sum olsIIDSE
+	global olsIIDSE = r(mean)
+	qui sum HC2SE
+	global HC2SE = r(mean)
 restore
 
-di "Expected IID SE: $estSEiid"
-di "Expected Neyman SE: $estSENeyman"
+di "Expected IID SE: $olsIIDSE"
+di "Expected Neyman SE: $HC2SE"
 di "SIM SE: $simSE"
 di "True SE: $seEstATETrue"
 ```
@@ -591,23 +589,23 @@ sePerfFn <- function(Z,y1,y0){
 	Znew <- sample(Z)
 	Ynew <- Znew * y1 + (1-Znew) * y0
 	lm1 <- lm(Ynew~Znew)
-	iidSE <-  sqrt(diag(vcov(lm1)))[["Znew"]]
-	NeymanSE <- sqrt(diag(vcovHC(lm1,type = "HC2")))[["Znew"]]
+	olsIIDse <-  sqrt(diag(vcov(lm1)))[["Znew"]]
+	HC2SE <- sqrt(diag(vcovHC(lm1,type = "HC2")))[["Znew"]]
 	return(c(estATE=coef(lm1)[["Znew"]],
-		 estSEiid=iidSE,
-		 estSENeyman=NeymanSE))
+		 olsIIDse=olsIIDse,
+		 HC2SE=HC2SE))
 }
 
 ## Perform a simulation using this function
 set.seed(12345)
 sePerformance <- with(dat1, replicate(sims, sePerfFn(Z = Z, y1 = y1, y0 = y0)))
-ExpectedSEs <- apply(sePerformance[c("estSEiid", "estSENeyman"),], 1, mean)
+ExpectedSEs <- apply(sePerformance[c("olsIIDse", "HC2SE"),], 1, mean)
 c(ExpectedSEs, trueSE=seEstATETrue, simSE=sd(sePerformance["estATE",]))
 ```
 
 ###  Randomization-based confidence intervals
 
-When we have a two arm trial (and a relatively large sample size), we can estimate the ATE, calculate design based standard errors, and then use them to create large-sample justified confidence intervals through either of the following approaches:^[Though applications of design based inference often rely on hypothetical permutations of treatment rather than asymptotic (i.e., large-sample) justifications, asymptotic approximations can be used as a basis for design based statistical procedures as well.]
+When we have a large enough sample size in an RCT, we can estimate the ATE, calculate design based standard errors, and then use them to create large-sample justified confidence intervals through either of the following approaches. Though researchers using design based inference may often rely on manually simulating treatment many times to calculate a p-value (**randomization inference**, below), asymptotic approximations like those sampling based inference typically relies on (theoretical findings about an estimator's behavior as sample size increases indefinitely) can be used in design based statistical inference as well.^[Now, instead of imagining that we're taking a larger and larger sample from the population, we're imagining randomly assigning treatment in a bigger and bigger sample.] In fact, this is the setting in which [@lin_agnostic_2013] shows that HC2 errors are a feasible design based standard error (HC2 errors may not be appropriately conservative if a sample is too small).
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R12')">R code</button>
@@ -685,17 +683,31 @@ row.names(out) <- c("Approach 1 (diff. means)", "Approach 2 (OLS)")
 out
 ```
 
-We can also compute confidence intervals using randomization inference through an entirely simulation-based procedure: test inversion. It proceeds as follows for a simple two-arm trial:
+Above, we mention something called "randomization inference." This is an alternative approach to calculating p-values and performing a hypothesis test for randomized trials entirely through simulation (without calculating a standard error). It's similar to the example we use to open this chapter. We can use randomization inference in a study any time treatment assignment itself was randomized. It may be appropriate even in samples that are too small to justify calculating standard errors based on large sample approximations. It also sometimes lets us sidestep tricky problems like choosing how to cluster errors when there is imperfect cluster level assignment [@abadie2023should]. Like [bootstrapping](https://openintro-ims.netlify.app/foundations-bootstrapping) (not currently discussed in this SOP), the core advantage of randomization inference is it's flexibility to handle cases where there isn't a clear or easy way to calculate analytical standard errors (i.e., based on an equation someone has already derived).
+
+We talk about randomization inference more in Chapters 4 and 5 (with coded examples). But to provide a quick walk through here of the simplest version:
+
+- Start by estimating an ATE using your real data: $\tau_{real}$
+
+- Randomly generate a new treatment variable, $treat_{i}^{r}$, using the exact same procedure you used to generate the first one (i.e., generate an alternative treatment assignment you could have used instead).
+
+- Estimate a treatment effect for this permuted treatment variable, $\tau_{r}$. Save it.
+
+- Repeat that process many times, yielding a distribution of $\tau_{r}$ values.
+
+- Finally, to get a two-sided p-value, calculate the proportion of times the absolute value of any $\tau_{r}$ is greater than or equal to the absolute value of $\tau_{real}$: $\frac{1}{n} \sum \mathcal{1}(|\tau_{r}| \geq |\tau_{real}|)$.
+
+Because this method doesn't yield a standard error, we can't calculate a confidence interval the same way we did above. But you can still estimate a confidence interval when using randomization inference! It's just more involved. This is sometimes called an **inverted hypothesis test**:
 
 - Choose a "grid" of values to consider, $G$, generally symmetric around 0 (e.g., [-0.5, 0.5]).
 
 - For each $g \in G$, construct a new outcome measure: $y_{i}^{g} = y_{i} - g \times treat_{i}$, and estimate a treatment effect, $\tau_{g}$. Then, calculate a p-value for $\tau_{g}$ using randomization inference:
 
-  - We talk more about calculating p-values using treatment permutation in chapters 4 and 5.
+  - Repeat the procedure we outline above, randomly permuting treatment many times and estimating a treatment effect on $y_{i}^{g}$ each time, comparing the simulated distribution of effects to $\tau_{g}$ to calculate a p-value. 
   
-  - Briefly: you randomly permute (i.e., re-randomize) treatment, yielding $treat_{i}^{r}$, estimate the treatment effect of interest, $\tau_{r}$, and repeat that process many times. At the end, you calculate the proportion of times the absolute value of $\tau_{r}$ was greater than or equal to the absolute value of $\tau_{g}$: $\frac{1}{n} \sum \mathcal{1}(|\tau_{r}| \geq |\tau_{g}|)$. This is your p-value for a given $g$.
+  - This is your p-value for a given $g$.
   
-- Compare the p-values of each $g \in G$. The highest and lowest values of $g$ that yield p-values greater than (e.g.) 0.05 are our simulated 95% confidence interval.
+- Finally, look at the p-values across all $g \in G$. The highest and lowest values of $g$ that yield p-values greater than 0.05 are our simulated 95% confidence interval.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch3R13')">R code</button>
@@ -850,8 +862,10 @@ res <- res[ res[,2] > 0.05, ]
 c( min(res[,1]), max(res[,1]) )
 ```
 
+Notice that this CI is narrower than the other CIs above. This isn't a coincidence. Standard statistical inference using large sample justified standard errors normally evaluates the compatibility of our data with the **weak null hypothesis** of no treatment effect *on average*. Randomization inference instead evaluates the compatibility of our data with the **sharp null hypothesis** of no effect *at all for any unit.* Especially in small samples, we might have more power against the sharp null than the weak null (policy relevance is also a factor in choosing the null that it is more interesting to evaluate). We discuss this again in Chapter 5.
+
 ## Summary: What does a design based approach mean for policy evaluation?
 
 Let's review some important terms. Hypothesis tests produce $p$-values telling us how much information we have against a null hypothesis. Estimators produce guesses about the size of some causal effect like the average treatment effect (i.e., "estimates"). Standard errors summarize how our estimates might vary from experiment to experiment by random chance, though we can only observe one experiment in practice. Confidence intervals tell us which ranges of null hypotheses are more versus less consistent with our data.
 
-In the frequentist approach to probability (the only approach we consider in this SOP), the properties of both $p$-values and standard errors arise from some process of repetition. Statistics textbooks often encourage us to imagine that this process of repetition involves repeated sampling from a larger (potentially infinite) population. But most OES work involves a pool of people who do not represent a well-defined population, nor do we tend to have a strong probability model of how these people and not others entered our sample. Instead, we have a known process of random assignment to an experimental intervention within a fixed sample. This often makes a randomization based approach to inference natural for our work, and helps our work be easiest to explain and interepret for our policy partners.
+In the frequentist approach to probability (the only approach we consider in this SOP), the properties of both $p$-values and standard errors arise from some process of repetition. Statistics textbooks often encourage us to imagine that this process of repetition involves repeated sampling from a larger (potentially infinite) population. But most OES work involves a pool of people who do not represent a well-defined population, nor do we tend to have a strong probability model of how these people and not others entered our sample. Instead, we have a known process of random assignment to an experimental intervention within a fixed sample. This often makes a randomization based approach to inference natural for our work, and helps our work be easiest to explain and interpret for our policy partners.

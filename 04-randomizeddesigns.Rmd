@@ -8,9 +8,9 @@ After working together with our agency partners to translate insights from the s
 
 ## Coin flipping vs urn-drawing randomization
 
-Many discussions of RCTs begin by talking about the intervention being assigned to units (people,  schools, offices, districts) "by the flip of a coin," or **simple** random assignment. Each unit's assignment to treatment occurs separately, and there is no *ex ante* guarantee as to exactly what the final number of treated or control units will be. We don't always use this method in practice, even though it is a useful way to introduce the idea that RCTs guarantee fair access to a new policy.
+Many discussions of RCTs begin by talking about the intervention being assigned to units (people,  schools, offices, districts) "by the flip of a coin," or **simple random assignment**. Each unit's assignment to treatment occurs separately, and there is no *ex ante* guarantee as to exactly what the final number of treated or control units will be. We don't always use this method in practice, even though it is a useful way to introduce the idea that RCTs guarantee fair access to a new policy.^["Fair" in the sense that everyone has an equal chance of receiving treatment. But we could imagine thinking about fairness in other ways, too.]
 
-The following code contrasts coin-flipping style random assignment with drawing-from-an-urn style, or **complete** random assignment (where a fixed number of units are randomly chosen for treatment). Coin-flipping based experiments are still valid and tell us about the underlying counterfactuals, but they can have less statistical power, so we try to avoid them where possible.
+The following code contrasts coin-flipping style random assignment with drawing-from-an-urn style, or **complete random assignment** (where a fixed number of units are randomly chosen for treatment). Coin-flipping based experiments are still valid and tell us about the underlying counterfactuals, but they might have less statistical power, so we try to avoid them where possible.
 
 Notice that the simple random assignment implemented in the code below results in more observations in the treatment group (group `T`) than in the control group (group `C`). Complete random assignment will always assign 5 units to the treatment, 5 to the control.
 
@@ -134,9 +134,9 @@ table(trt_urn)
 
 ## Randomization into 2 or more groups
 
-We often use the `randomizr` R package [@R-randomizr] for simple designs
-rather than the base R `sample` function because `randomizr` does some
-quality control checks. Notice that we implement a check on our code below with the `stopifnot` command: the code will stop and issue a warning if we didn't actually assign 1/4 of the observations to the treatment condition. Here, we assign the units first to 2 arms with equal probability (`Z2armEqual`). Then, to show how the code works, we assign them to 2 arms where one arm has only a $\frac{1}{4}$ probability of receiving treatment (e.g., imagine a design with an expensive intervention). Last, we assign them based on a design with 4 different arms, each with equal probability (e.g., one control group and three different treatments under consideration). We often use $Z$ to refer to the variable recording our intervention arms.
+Instead of manually coding assignment ourselves using the base R `sample` function (or an equivalent procedure in Stata), we can use the `randomizr` package [@R-randomizr] (available for both R and Stata) for many kinds of simpler randomization designs. An advantage of using `randomizr` for the examples in this SOP is that it automatically does some quality control checks, which saves us the trouble of writing out such checks ourselves for all of our coded examples.
+
+For instance, notice that we implement a check on our code below with the `stopifnot` command: the code will stop and issue a warning if we didn't actually assign 1/4 of the observations to the treatment condition. Here, we assign the units first to 2 arms with equal probability (`Z2armEqual`). Then, to show how the code works, we assign them to 2 arms where one arm has only a $\frac{1}{4}$ probability of receiving treatment (e.g., imagine a design with an expensive intervention). Last, we assign them based on a design with 4 different arms, each with equal probability (e.g., one control group and three different treatments under consideration). We'll generally use $Z$ in this document to refer to the variable recording our intervention arms.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch4R2')">R code</button>
@@ -609,9 +609,9 @@ blockingDescEval
 
 Block-randomized assignment and analysis can help reduce both estimation error and non-treatment-related variability in our data. It may also be useful for ensuring equal distribution of treatment arms within less common subgroups in our sample, which can be especially important for preserving our statistical power when estimating heterogenous treatment effects.
 
-However, there are some practical disadvantages to consider. Block-randomized assignment can make treatment administration more complicated, both in terms of implementation by our partners and determining how we should incorporate blocking into our estimation strategy. Especially when a project needs to be rolled out on a short timeline, including a more complex blocking scheme might not be realistic.
+However, there are some practical disadvantages to consider. Block-randomized assignment can make treatment administration more complicated, both in terms of implementation by our partners and determining how we should incorporate blocking into our estimation strategy. Especially when a project needs to be rolled out on a short timeline, developing a complex blocking scheme might not be realistic.
 
-It may often be reasonable to conclude that the benefits of blocking are not worth the extra effort it entails. Adjusting for prognostic (i.e., correlated with $Y$) covariates during the analysis stage may provide sufficient improvements in precision, especially in cases where we expect a design to already be reasonably powered under simple or complete random assignment or where we do not expect subgroup analyses (particularly for rare subgroups) to be a key component of an evaluation. But note that in smaller samples without block-randomized assignment, there might be a relatively greater risk of increasing variance by, e.g., adjusting for non-prognostic covariates [@miratrix2013adjusting].
+This concern in mind, remember that the benefits of blocking are not always worth the extra effort it entails. Adjusting for prognostic (i.e., correlated with $Y$) covariates during the analysis stage may provide sufficient improvements in precision, especially in cases where we expect a design to already be reasonably powered under simple or complete random assignment and where we do not expect subgroup analyses (particularly for rare subgroups) to be a key component of an evaluation. On the other hand, in smaller samples without block-randomized assignment, there is a greater risk of increasing variance when adjusting for non-prognostic covariates [@miratrix2013adjusting]. If we think we'll need to use covariates to improve power in a small sample, blocking might be more important.
 
 ## Cluster random assignment
 
@@ -681,11 +681,11 @@ We list examples of a few as-if random assignment procedures we have employed be
 
 ## Assessing randomization (balance testing)
 
-If we have covariates, we can evaluate the implementation of random assignment by exploring covariate differences across treatment arms.^[If there are no available covariates, we can at least evaluate whether the distribution of treated units appears consistent with our intended strategy.] The goal is to ensure that our data seem consistent with our intended randomization strategy [@imai2008misunderstandings]. Since we want to draw conclusions about the realized sample and not some broader population, it's important to think carefully about what we hope to learn from statistical significance tests. This often leads us to prefer omnibus tests of joint balance relying on randomization inference (see chapter 3), even if the evaluation itself will not rely on randomization inference. We lay out our reasoning in the sections below.
+If we have covariates, we can evaluate the implementation of random assignment by exploring covariate differences across treatment arms.^[If there are no available covariates, we can at least evaluate whether the distribution of treated units appears consistent with our intended strategy.] The ultimate goal is to ensure that our data seem consistent with our intended randomization strategy [@imai2008misunderstandings]. Since we want to draw conclusions about the realized sample here and not some broader population, it's important to think carefully about what we hope to learn from statistical significance tests when evaluating balance. That issue in mind, though this varies across projects, we often find it valuable to evaluate balance using what we call "omnibus tests" relying on randomization inference (see chapter 3)---even if the evaluation itself will not ultimately rely on randomization inference. We lay out our reasoning in the next few subsections.
 
 ### Separate tests for each covariate
 
-To see some issues significance testing raises when evaluating balance, consider the common practice of performing separate difference-in-means tests for each covariate. This is reasonable in some cases, but it could also raise "multiple testing" concerns (see Chapter 5). Briefly, it would be easy to discover one or a few covariates with noticeable mean differences due to random chance rather than real implementation problems. That is, in a well-operating experiment, we would expect some baseline imbalances for individual covariates---roughly 5 in 100.
+To see some problems that traditional significance testing raises when evaluating balance, consider the common practice of performing separate difference-in-means tests for each covariate. This is reasonable in some cases, but it could also raise "multiple testing" concerns (see Chapter 5 for more on this). Briefly, it would be easy to discover one or a few covariates with noticeable mean differences due to random chance rather than real implementation problems. That is, in a well-operating experiment relying on standard inference procedures, we would expect some baseline imbalances for individual covariates---roughly 5 in 100.
 
 The relationship between sample size and statistical significance is also important to remember. If a sample is too small, large imbalances (indicating real problems with treatment administration) may still be statistically insignificant. In other words, the balance test is too underpowered to be informative. And on the other hand, when working with large samples, negligible mean differences may still be significant, leading to spurious conclusions of imbalance. (This issue is relevant, to some degree, for any randomization assessment relying on significance testing, not just separate difference-in-means tests.)
 
@@ -695,9 +695,9 @@ When comparing individual covariates across treatment arms is necessary, one str
 
 Instead of making separate comparisons for each covariate, we can instead judge whether a sample appears sufficiently incompatible with the joint (or "omnibus") null hypothesis of no average covariate differences between treatment arms. This helps sidestep the multiple testing concern noted above. This kind of test is often implemented [in practice](https://blogs.worldbank.org/en/impactevaluations/tools-trade-joint-test-orthogonality-when-testing-balance) by OLS regressing a treatment indicator on a set of covariates and then calculating a p-value based on the model's overall F-statistic. Failing to find a significant difference in an *omnibus F-test* does not "prove" that there are no imbalances. But finding a statistically significant difference tells you that a closer look at covariate balance is needed.
 
-An omnibus test can also be performed using a [Wald test](https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqhow-are-the-likelihood-ratio-wald-and-lagrange-multiplier-score-tests-different-andor-similar/). The idea is to compare an *unrestricted* model regressing treatment on the set of covariates with a *restricted* model including only an intercept. The Wald test then provides evidence on the null hypothesis that the unrestricted model does not fit the data appreciably better. This method is useful, for instance, when estimating balance while adjusting for block fixed effects. Here, both models would include block fixed effects, and the restricted model would simply drop the covariates (but is no longer be intercept-only). The Wald test more easily accommodates standard error modifications (e.g.: HC2) than similar alternatives like a likelihood ratio (LR) test.
+An omnibus test can also be performed using a [Wald test](https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqhow-are-the-likelihood-ratio-wald-and-lagrange-multiplier-score-tests-different-andor-similar/). The idea is to compare an *unrestricted* model regressing treatment on the set of covariates with a *restricted* model including only an intercept. The Wald test then provides evidence on the plausibility of the null hypothesis that the unrestricted model does not fit the data appreciably better. This method is useful, for instance, when estimating balance while adjusting for block fixed effects. Here, both models would include block fixed effects, and the restricted model would simply drop the covariates (but is no longer be intercept-only). A Wald test more easily accommodates standard error modifications (e.g.: HC2) than similar alternatives like a likelihood ratio (LR) test.
 
-Omnibus balance tests are often conducted in a typical sampling-based inference framework, but design-based inference is likely more appropriate for balance-testing. Failing to reject the null hypothesis in a randomization-based setting implies that observed imbalances are not sufficiently distinguishable from the distribution of imbalance estimates we'd expect in a well-run experiment. When evaluating a randomized intervention, this is exactly what we hope to learn from balance checks! Moreover, omnibus tests based on randomly permuting treatment may control the Type-I error rate (limiting spurious conclusions that a sample is imbalanced) in small-to-moderate samples better [@kerwin2024striking; @hansen_covariate_2008]. See @hansen_covariate_2008 for more discussion of this issue and an introduction to an alternative omnibus balance statistic $(d^{2})$.
+Omnibus balance tests are often conducted in the common sampling-based inference framework. But design-based inference, and randomization-inference in particular, is often more appropriate for balance-testing. Failing to reject the joint null of no imbalance when using randomization inference implies that observed imbalances are not sufficiently distinguishable from the imbalance estimates we'd typically expect in a well-run experiment. This is *exactly what we hope to learn from balance checks*! Moreover, omnibus tests based on randomly permuting treatment may control the Type-I error rate (limiting spurious conclusions that a sample is imbalanced) in small-to-moderate samples better [@kerwin2024striking; @hansen_covariate_2008]. See @hansen_covariate_2008 for more discussion and an introduction to an alternative omnibus balance statistic $(d^{2})$.
 
 ### Summary
 
@@ -705,11 +705,11 @@ We typically prefer to perform some form of omnibus balance test (ideally using 
 
 It can be important for balance testing procedures to account for any clustering or blocking employed when assigning treatment [@hansen_covariate_2008]. For blocking, this might imply calculating balance within blocks. For clustering, this may imply exploring whether a comparison of cluster-level aggregates (rather than a comparison of individual units) provides evidence of treatment administration problems. Or it might imply just accounting for within-cluster dependence when performing significance tests.
 
-Modifications like this are straightforward when estimating an omnibus balance statistic using a regression model (examples below). But they can also be incorporated into covariate-by-covariate statistics. For instance, in a blocked design, it may be reasonable to calculate separate standardized mean differences within each block (dividing within-block differences by the overall sample standard deviation) and then take a weighted average across blocks (where block-level estimates are weighted by their share of the overall sample size).
+Modifications like this are straightforward when estimating an omnibus balance statistic using a regression model (examples of each are below). But they can also be incorporated into covariate-by-covariate statistics. For instance, in a blocked design, it may be reasonable to calculate separate standardized mean differences within each block (dividing within-block differences by the overall sample standard deviation) and then take a weighted average across blocks (where block-level estimates are weighted by their share of the overall sample size).
 
 ### Coded examples
 
-We provide R and Stata examples of several procedures discussed above. In all cases, we evaluate balance for two covariates---`cov1` and `cov2`---under one of the randomized designs discussed earlier in this chapter: complete randomization (`Z2armEqual`), clustered randomization (`Zcluster`), or blocked randomization (`ZblockV2`). First, we illustrate methods for calculating standardized mean differences (SMDs; mean difference divided by pooled SD) and variance ratios (VRs) for each covariate under different randomization designs. Although there are canned packages in R (e.g., `cobalt`) and Stata (e.g., `tebalance`) that can perform some of these calculations, we show how to do them manually.
+We provide R and Stata examples of several procedures discussed above. In all cases, we evaluate balance for two covariates---`cov1` and `cov2`---under one of the randomized designs discussed earlier in this chapter: complete randomization (`Z2armEqual`), clustered randomization (`Zcluster`), or blocked randomization (`ZblockV2`). First, we illustrate methods for calculating standardized mean differences (SMDs; mean difference divided by pooled SD) and variance ratios (VRs) for each covariate under different randomization designs. Although there are canned packages in R (e.g., `cobalt`) and Stata (e.g., `tebalance`) that can perform some of these calculations (and in practice it's worth exploring these options first), we've written out some template code for reference that performs them all manually.
 
 ```{r, eval = F, echo = F, include = F}
 # To use in the stata code
@@ -1073,7 +1073,9 @@ Applying common heuristics that SMDs should be less than about 0.25 while VRs sh
 
 Again, it depends whether it is sufficient to evaluate balance in a blocked/clustered design as if complete random assignment were used, or whether it is important to do more to adapt the balance test to the randomization design. But evaluating overall balance in these settings can yield misleading conclusions [@hansen_covariate_2008].
 
-Next, we illustrate methods for performing an omnibus Wald test under each randomization design, with examples of inference based on either standard asymptotic approximations or based on permutations of treatment assignment (i.e., randomization inference). Again, while there are canned packages to perform tasks like simulating the randomization distribution (see Chapter 5), we perform this manually for illustration.
+Next, we illustrate methods for performing an omnibus Wald test under each randomization design, with examples of inference based on either standard asymptotic approximations or based on permutations of treatment assignment (i.e., randomization inference). Again, while there are canned packages to perform tasks like simulating the randomization distribution (see Chapter 5), we perform this manually for illustration, since OES projects often encounter cases where canned packages don't quite do what we need.
+
+Eagle-eyed readers might notice that, in Chapter 3, we calculated two-sided randomization inference p-values by comparing the absolute value of our test statistic (in that case an average treatment effect) with the absolute value of its simulated distribution under permutations of treatment. Here, because the F-statistic a Wald test yields can only be positive (and not negative), we calculate a one-sided randomization inference p-value to more closely represent how the analytic (non-randomization-inference) Wald-test p-values are calculated. To do this, we just drop the part where we first calculate absolute values of all the statistics. This doesn't change the results here, since there are no negative values anyway. But with a test statistic that can be negative, like an average treatment effect, this is how you might perform a one-sided randomization inference test.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch4R11')">R code</button>
@@ -1104,7 +1106,7 @@ ri_dist <- sapply(
     waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
     }
   )
-wald$ri_p <- c(NA, mean(abs(wald$F[2]) <= abs(ri_dist)))
+wald$ri_p <- c(NA, mean(wald$F[2] <= ri_dist))
 
 ## Cluster RA omnibus balance check (error adjust only)
 bmod0b <- lm(Zcluster ~ cov1 + cov2, data=dat1_)
@@ -1121,7 +1123,7 @@ ri_dist <- sapply(
     waldtest(unrestr, restr, vcov = vcovCL(unrestr, cluster = dat1_$buildingID, type = "HC2"))$F[2]
     }
   )
-waldb$ri_p <- c(NA, mean(abs(waldb$F[2]) <= abs(ri_dist)))
+waldb$ri_p <- c(NA, mean(waldb$F[2] <= ri_dist))
 
 ## Cluster RA balance check: Wald test
 by_groups <- list(dat1_$buildingID, dat1_$Zcluster)
@@ -1142,7 +1144,7 @@ ri_dist <- sapply(
     waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
     }
   )
-wald_cl$ri_p <- c(NA, mean(abs(wald_cl$F[2]) <= abs(ri_dist)))
+wald_cl$ri_p <- c(NA, mean(wald_cl$F[2] <= ri_dist))
 
 ## Blocked RA omnibus balance check
 bmod4 <- lm(ZblockV2 ~ cov1 + cov2 + blockV2, data=dat1_)
@@ -1159,7 +1161,7 @@ ri_dist <- sapply(
     waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
     }
   )
-wald_bl$ri_p <- c(NA, mean(abs(wald_bl$F[2]) <= abs(ri_dist)))
+wald_bl$ri_p <- c(NA, mean(wald_bl$F[2] <= ri_dist))
 
 ## Organize
 omnibus <- data.frame(
@@ -1342,7 +1344,7 @@ ri_dist <- sapply(
     waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
     }
   )
-wald$ri_p <- c(NA, mean(abs(wald$F[2]) <= abs(ri_dist)))
+wald$ri_p <- c(NA, mean(wald$F[2] <= ri_dist))
 
 ## Cluster RA omnibus balance check (error adjust only)
 bmod0b <- lm(Zcluster ~ cov1 + cov2, data=dat1_)
@@ -1359,7 +1361,7 @@ ri_dist <- sapply(
     waldtest(unrestr, restr, vcov = vcovCL(unrestr, cluster = dat1_$buildingID, type = "HC2"))$F[2]
     }
   )
-waldb$ri_p <- c(NA, mean(abs(waldb$F[2]) <= abs(ri_dist)))
+waldb$ri_p <- c(NA, mean(waldb$F[2] <= ri_dist))
 
 ## Cluster RA balance check: Wald test
 by_groups <- list(dat1_$buildingID, dat1_$Zcluster)
@@ -1380,7 +1382,7 @@ ri_dist <- sapply(
     waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
     }
   )
-wald_cl$ri_p <- c(NA, mean(abs(wald_cl$F[2]) <= abs(ri_dist)))
+wald_cl$ri_p <- c(NA, mean(wald_cl$F[2] <= ri_dist))
 
 ## Blocked RA omnibus balance check
 bmod4 <- lm(ZblockV2 ~ cov1 + cov2 + blockV2, data=dat1_)
@@ -1397,7 +1399,7 @@ ri_dist <- sapply(
     waldtest(unrestr, restr, vcov = vcovHC(unrestr, type = "HC2"))$F[2]
     }
   )
-wald_bl$ri_p <- c(NA, mean(abs(wald_bl$F[2]) <= abs(ri_dist)))
+wald_bl$ri_p <- c(NA, mean(wald_bl$F[2] <= ri_dist))
 
 ## Organize
 omnibus <- data.frame(
@@ -1414,7 +1416,7 @@ omnibus
 
 In these examples, both standard asymptotic and randomization-based inference yield similar conclusions in terms of failing to reject the joint null of overall imbalance (where "overall imbalance" is quantified using the F-statistic from a Wald test). Given the small sample size in this example, though we do not see sufficient evidence to reject the joint null, concerns that the omnibus test could be under-powered might still support evaluating covariate-by-covariate statistics as we do above for supplementary evidence. 
 
-Finally, while we do not report results in text, we also illustrate how to perform the $d^2$ omnibus test mentioned above for a few different randomization designs. This is implemented in R using the function `balanceTest()` from the package `RItools` [@hansen_covariate_2008; @bowers_ritools_2016]. In Stata, this is implemented through a command that calls the R package and applies it to the data in memory (so it still requires an R installation on the user's computer). This function provides significance test results based on large-sample approximations to the "permutation" or "randomization" distribution of $d^2$ statistic, but its randomization distribution could be computed manually as in our examples above. You can think of the $d^2$ test statistic as a summary measure of mean differences across each covariate.
+Finally, while we do not report results in text, we also illustrate how to perform the $d^2$ omnibus test mentioned above for a few different randomization designs. This is implemented in R using the function `balanceTest()` from the package `RItools` [@hansen_covariate_2008; @bowers_ritools_2016]. In Stata, this is implemented through a command that calls the R package and applies it to the data in memory (so it still requires an R installation on the user's computer). The function itself provides significance test results based on a large-sample approximation to the distribution of $d^2$ statistics across many randomizations, but its randomization distribution could be computed simulated as in our examples above. You can think of the $d^2$ test statistic as a summary measure of mean differences across each covariate that is also sensitive to imbalances in combinations of covariates.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch4R9')">R code</button>
@@ -1462,7 +1464,7 @@ xbalance zblockV2 blockV2 cov1 cov2
 
 Observing a $p$-value of less than .05 in an omnibus test ought to trigger extra scrutiny about implementation and/or how the data were recorded. For example, we might respond by contacting our agency partner to learn more about how random numbers were generated or how random assignment code was used (particularly if we didn't perform the random assignment ourselves). In many circumstances, this follow-up investigation might suggest that random assignment was implemented correctly, and that our understanding of the design or the data was simply incorrect (i.e., the balance test was not performed correctly). But sometimes, a follow-up investigation may not turn up any misunderstandings at all. In those situations, we will need to determine whether our rejection of the null hypothesis of appropriate random assignment is a false positive, or evidence of a more systematic problem.
 
-If our rejection of the null hypothesis appears to be driven by one or more covariates that are substantively important---say, the variable `age` looks very imbalanced between treated and control groups in a health-related randomized trial---then we might present both the unadjusted results and a separate set of results that adjust for the covariate(s) in question (e.g., through a stratified difference-in-means estimator, or by using them as controls in a linear regression). Large differences between the adjusted and unadjusted estimates might help us interpret our findings: estimating separate effects within different age groups, for example, might tell us something useful about the particular context of a study and inform the conclusions we draw.
+If our rejection of the null hypothesis appears to be driven by one or more covariates that are substantively important---say, the variable `age` looks very imbalanced between treated and control groups in a health-related randomized trial---then we might present both the unadjusted results and a separate set of results that adjust for the covariate(s) in question (e.g., through a stratified difference-in-means estimator, or by using them as controls in a linear regression). Large differences between the adjusted and unadjusted estimates might help us interpret our findings: estimating separate effects within different age groups, for example, might tell us something useful about the particular context of a study and inform the conclusions we draw. Unfortunately, considerations of this will sometimes tell us that whatever error occurred during randomization skews our results too much to let us draw clear conclusions.
 
 ```{r savedat1, echo=FALSE}
 write.csv(dat1,file="dat1_with_designs.csv")
