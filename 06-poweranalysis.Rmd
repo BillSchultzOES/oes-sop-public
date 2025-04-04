@@ -85,11 +85,11 @@ cnum <- 0
 ```
 
 We can compare the output of `power.t.test()` to the output from a
-simulation-based (i.e., computational) approach. We have one example below, and several more throughout this chapter. Our simulation examples relies on manually-written functions that could be adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility when simulating more complicated designs.
+simulation-based (i.e., computational) approach. We have one example below, and several more throughout this chapter. Our simulation examples relies on template code we put together that could be adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility when simulating more complicated designs.
 
 ### How do we structure the simulation?
 
-Before we get to that template code, though, there are a few ways we could use a simulation to think about a design's statistical power:
+Before we get to that template code, though, keep in mind that there are a few ways we could use a simulation to think about a design's statistical power:
 
 - Simulate a design in which the null hypothesis is true many times, and estimate a treatment effect for each simulated dataset, yielding a distribution of test statistics (e.g., a t-static) under a true null. Use that null distribution, alongside coefficient/SE estimates from each model, to calculate power for different possible effect sizes.
 
