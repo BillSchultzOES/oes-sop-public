@@ -1,5 +1,5 @@
 ---
-title: OES Methodological Standard Operating Procedures
+title: OES Methodological Standard Operating Procedure
 author: OES Methods Team
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 site: bookdown::bookdown_site
@@ -8,6 +8,8 @@ output:
   bookdown::gitbook:
     math_method: r-katex
     highlight: default
+    config:
+      sharing: null
 documentclass: book
 bibliography: ["sop.bib", "packages.bib"]
 link-citations: yes

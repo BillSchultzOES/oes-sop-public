@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>OES Methodological Standard Operating Procedures</title>
+  <title>OES Methodological Standard Operating Procedure</title>
   <meta name="description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
   <meta name="generator" content="bookdown &lt;!--bookdown:version--&gt; and GitBook 2.6.7">
 
-  <meta property="og:title" content="OES Methodological Standard Operating Procedures">
+  <meta property="og:title" content="OES Methodological Standard Operating Procedure">
   <meta property="og:type" content="book">
   
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="gsa-oes/sop">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="OES Methodological Standard Operating Procedures">
+  <meta name="twitter:title" content="OES Methodological Standard Operating Procedure">
   
   <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
   
@@ -626,7 +626,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">OES Methodological Standard Operating Procedures</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">OES Methodological Standard Operating Procedure</a>
           </h1>
         </div>
 
@@ -691,16 +691,16 @@ plethora of <a href="https://www.stata.com/features/power-and-sample-size/">rele
 <!-- Used (and iteratively updated) in the {oes_code_tab} snippets below. -->
 <!-- set chapter number and reset count -->
 <p>We can compare the output of <code>power.t.test()</code> to the output from a
-simulation-based (i.e., computational) approach, which we illustrate below. Our example relies on manually-written functions that could be copied and adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility for simulating some more complicated designs.</p>
+simulation-based (i.e., computational) approach. We have one example below, and several more throughout this chapter. Our simulation examples relies on manually-written functions that could be adapted by OES team members to the needs of different projects. This code is more detailed than we need for simple power analysis problems, but it provides useful flexibility when simulating more complicated designs.</p>
 <div id="how-do-we-structure-the-simulation" class="section level3" number="6.2.1">
 <h3><span class="header-section-number">6.2.1</span> How do we structure the simulation?</h3>
-<p>Before we get to that template code, note that there are a few ways we could use a simulation to think about a design&#x2019;s statistical power:</p>
+<p>Before we get to that template code, though, there are a few ways we could use a simulation to think about a design&#x2019;s statistical power:</p>
 <ul>
-<li><p>Simulate a design in which the null hypothesis is true many times, and estimate a treatment effect for each simulated dataset, yielding a distribution of test statistics (e.g., a t-static) under a true null. Use this null distribution, alongside estimates from each model, to calculate power for different possible effect sizes.</p></li>
+<li><p>Simulate a design in which the null hypothesis is true many times, and estimate a treatment effect for each simulated dataset, yielding a distribution of test statistics (e.g., a t-static) under a true null. Use that null distribution, alongside coefficient/SE estimates from each model, to calculate power for different possible effect sizes.</p></li>
 <li><p>Simulate a design with specific built in treatment effect; i.e., simulate a design with specific potential outcomes. Estimate a treatment effect for this simulated design, and repeat many times, using the results to calculate power for this one effect size. Repeat this entire process again for many other possible effect sizes.</p></li>
 </ul>
-<p>The first approach is faster because we only have to do one round of simulations under a true null hypothesis. <em>This is what we do for most of the simulations in this chapter (and in our template)</em>. It&#x2019;s often a good place to start for cases that are complicated enough to need simulation, but not so complicated that we need to explicitly model the potential outcomes.</p>
-<p>The second approach is more time consuming because we have to do a separate round of simulations for every effect size we&#x2019;re interested in. However, this might be necessary to accurately answer our design questions, for instance when we want to estimate power for one treatment effect in a design while another is held at a particular value. We show an example of this second approach in one of our examples below (simulating the efficiency benefits of Lin adjustment).</p>
+<p>The first approach is faster because we only have to do one round of simulations under a true null hypothesis. <em>This is what we do in our primary template code and most of the simulations in this chapter</em>. It&#x2019;s often a good place to start for cases that are just complicated enough to need simulation, but not so complicated that we need to explicitly model the potential outcomes.</p>
+<p>The second approach is more time consuming because we have to do a separate round of simulations for every effect size we&#x2019;re interested in. However, this might be necessary to accurately answer our design questions, for instance when we want to estimate power for one treatment effect in a design while another is held at a particular value. We show an example of this second approach in one of our examples below (simulating the efficiency benefits of Lin adjustment under treatment effect heterogeneity).</p>
 </div>
 <div id="simulation-template-code" class="section level3" number="6.2.2">
 <h3><span class="header-section-number">6.2.2</span> Simulation template code</h3>
@@ -2192,17 +2192,7 @@ data in the figure below:</p>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"google": false,
-"linkedin": false,
-"weibo": false,
-"instapper": false,
-"vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
-},
+"sharing": null,
 "fontsettings": {
 "theme": "white",
 "family": "sans",
