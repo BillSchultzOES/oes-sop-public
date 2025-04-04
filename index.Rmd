@@ -1,5 +1,5 @@
 ---
-title: OES Standard Operating Procedures for The Design and Statistical Analysis of Experiments
+title: OES Methodological Standard Operating Procedures
 author: OES Methods Team
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 site: bookdown::bookdown_site
@@ -191,7 +191,7 @@ readr::write_lines(htmlhead, path = "header.html")
 # Overview {-}
 
 This document explains how our team, the [Office of Evaluation Sciences in
-the General Services Administration](https://oes.gsa.gov/) (the OES), tends to do statistical analysis. It also explains why we do what we do. ^[We call this document a standard operating procedure (SOP) because we are inspired by the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).] The research integrity processes OES follows are already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.
+the General Services Administration](https://oes.gsa.gov/) (the OES), tends to do statistical analysis of randomized experiments. It also explains why we do what we do. ^[We call this document a standard operating procedure (SOP) because we are inspired by the [Green, Lin and Coppock SOP](https://github.com/acoppock/Green-Lab-SOP).] The research integrity processes OES follows are already documented on our [Evaluation Resources Web Page](https://oes.gsa.gov/methods/). For example, on that page we provide templates for our research design and analysis pre-registration process. Here, we instead get into the nitty gritty of our statistical work.
 
 ## Purposes of this document {-}
 
@@ -228,9 +228,9 @@ This page provides a basic introduction to what the OES SOP hopes to accomplish.
 
 Since we hope to improve our analytic workflow with every project, this document should be seen as provisional --- as a record and a guide for our continuous learning and improvement. We invite comments in the form of submissions to our [Google Form (only for OES team members)](https://forms.gle/TqxZB1H6KvGrVPQf6), or as [Issues](https://github.com/BillSchultzOES/oes-sop-public/issues) or [pull requests](https://github.com/BillSchultzOES/oes-sop-public/pulls) on the SOP's Github.
 
-The corresponding author and current maintainer is Bill Schultz. Feel free to just reach out to him with questions: william.schultz@gsa.gov. Since joining this project, Bill has helped to update the back-end code, text, and example code throughout, including all of the Stata examples.
+The corresponding author and current maintainer is Bill Schultz. Feel free to just reach out to him with questions: william.schultz@gsa.gov. Since taking responsibility for this project Bill has updated the back-end code, helped to rewrite the text, and revised code examples throughout. This includes drafting new sections of this document on balance testing and multiple testing corrections, and also coming up with all of the parallel Stata examples.
 
-Special thanks are owed to:
+Additionally, special thanks are owed to:
 
 - Jake Bowers, Ryan Moore, Lula Chen, Paul Testa, and Nate Higgins for drafting the first edition of this SOP
 
