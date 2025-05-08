@@ -33,7 +33,7 @@
   
   
 <link rel="prev" href="analysis-choices.html">
-<link rel="next" href="codeindex.html">
+<link rel="next" href="translating.html">
 <script src="libs/header-attrs/header-attrs.js"></script>
 <script src="libs/jquery/jquery.min.js"></script>
 <link href="libs/gitbook/css/style.css" rel="stylesheet">
@@ -430,7 +430,7 @@ gtag("config", "G-RCGKRS9FGR");
 
 <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -441,7 +441,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -467,7 +467,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
+code span.bu { } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -480,7 +480,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.im { } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -610,9 +610,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li><a href="poweranalysis.html#approximating-power-ex-post" id="toc-approximating-power-ex-post"><span class="toc-section-number">6.5</span> Approximating power ex-post</a></li>
 </ul></li>
-<li><a href="codeindex.html#codeindex" id="toc-codeindex"><span class="toc-section-number">7</span> Code example index</a></li>
-<li><a href="methodindex.html#methodindex" id="toc-methodindex"><span class="toc-section-number">8</span> Methods topic index</a></li>
-<li><a href="appendix.html#appendix" id="toc-appendix"><span class="toc-section-number">9</span> Appendix</a></li>
+<li><a href="translating.html#translating" id="toc-translating"><span class="toc-section-number">7</span> Communicating evidence</a>
+<ul>
+<li><a href="translating.html#talking-about-common-estimates" id="toc-talking-about-common-estimates"><span class="toc-section-number">7.1</span> Talking about common estimates</a>
+<ul>
+<li><a href="translating.html#average-treatment-effects" id="toc-average-treatment-effects"><span class="toc-section-number">7.1.1</span> Average treatment effects</a></li>
+<li><a href="translating.html#p-values" id="toc-p-values"><span class="toc-section-number">7.1.2</span> p-values</a></li>
+<li><a href="translating.html#confidence-intervals" id="toc-confidence-intervals"><span class="toc-section-number">7.1.3</span> Confidence intervals</a></li>
+</ul></li>
+<li><a href="translating.html#making-sense-of-statistically-insignificant-results" id="toc-making-sense-of-statistically-insignificant-results"><span class="toc-section-number">7.2</span> Making sense of statistically insignificant results</a>
+<ul>
+<li><a href="translating.html#statistical-power" id="toc-statistical-power"><span class="toc-section-number">7.2.1</span> Statistical power</a></li>
+<li><a href="translating.html#equivalence-tests" id="toc-equivalence-tests"><span class="toc-section-number">7.2.2</span> Equivalence tests</a></li>
+</ul></li>
+<li><a href="translating.html#efficacy-vs-toxicity" id="toc-efficacy-vs-toxicity"><span class="toc-section-number">7.3</span> Efficacy vs toxicity</a></li>
+<li><a href="translating.html#costbenefit-calculations" id="toc-costbenefit-calculations"><span class="toc-section-number">7.4</span> Cost/benefit calculations</a></li>
+</ul></li>
+<li><a href="codeindex.html#codeindex" id="toc-codeindex"><span class="toc-section-number">8</span> Code example index</a></li>
+<li><a href="methodindex.html#methodindex" id="toc-methodindex"><span class="toc-section-number">9</span> Methods topic index</a></li>
+<li><a href="appendix.html#appendix" id="toc-appendix"><span class="toc-section-number">10</span> Appendix</a></li>
 <li><a href="references.html#references" id="toc-references">References</a></li>
 <li class="divider"></li>
 <li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
@@ -651,10 +667,10 @@ with, two of which must be specified by the user. The third is then calculated a
 <p>Note that there is also the parameter <code>sd</code>, representing the standard deviation of the outcome. This is set to 1 by default unless <code>power.t.test()</code> is instructed otherwise.</p>
 <p>Say, for example, you want to know the MDE for a two-arm study with 1,000
 participants, of which half are assigned to treatment. Using <code>power.t.test()</code> you would specify:</p>
-<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="poweranalysis.html#cb188-1" tabindex="-1"></a><span class="fu">power.t.test</span>(</span>
-<span id="cb188-2"><a href="poweranalysis.html#cb188-2" tabindex="-1"></a>  <span class="at">n =</span> <span class="dv">500</span>, <span class="co"># The number of observations per treatment arm</span></span>
-<span id="cb188-3"><a href="poweranalysis.html#cb188-3" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.8</span> <span class="co"># The traditional power threshold of 80%</span></span>
-<span id="cb188-4"><a href="poweranalysis.html#cb188-4" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="poweranalysis.html#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="fu">power.t.test</span>(</span>
+<span id="cb188-2"><a href="poweranalysis.html#cb188-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">n =</span> <span class="dv">500</span>, <span class="co"># The number of observations per treatment arm</span></span>
+<span id="cb188-3"><a href="poweranalysis.html#cb188-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">power =</span> <span class="fl">0.8</span> <span class="co"># The traditional power threshold of 80%</span></span>
+<span id="cb188-4"><a href="poweranalysis.html#cb188-4" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <pre><code>
      Two-sample t test power calculation 
 
@@ -667,16 +683,16 @@ participants, of which half are assigned to treatment. Using <code>power.t.test(
 
 NOTE: n is number in *each* group</code></pre>
 <p>If all we wanted to extract was the MDE, we could instead write:</p>
-<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="poweranalysis.html#cb190-1" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">n =</span> <span class="dv">500</span>, <span class="at">power =</span> <span class="fl">0.8</span>)<span class="sc">$</span>delta</span></code></pre></div>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="poweranalysis.html#cb190-1" aria-hidden="true" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">n =</span> <span class="dv">500</span>, <span class="at">power =</span> <span class="fl">0.8</span>)<span class="sc">$</span>delta</span></code></pre></div>
 <pre><code>[1] 0.1774</code></pre>
 <p>If we request the sample size instead, we can illustrate that this is applying an expression like the one we mention above: <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false">(</mo><mn>5.6</mn><mi mathvariant="normal">/</mi><mn>0.1773605</mn><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>&#x2248;</mo><mn>1000</mn></mrow><annotation encoding="application/x-tex">n = (5.6/0.1773605)^{2} \approx 1000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1141em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">5.6/0.1773605</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&#x2248;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1000</span></span></span></span></span></p>
 <p>And now via R code:</p>
-<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="poweranalysis.html#cb192-1" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">delta =</span> <span class="fl">0.1773605</span>, <span class="at">power =</span> <span class="fl">0.8</span>)<span class="sc">$</span>n <span class="sc">*</span> <span class="dv">2</span></span></code></pre></div>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="poweranalysis.html#cb192-1" aria-hidden="true" tabindex="-1"></a><span class="fu">power.t.test</span>(<span class="at">delta =</span> <span class="fl">0.1773605</span>, <span class="at">power =</span> <span class="fl">0.8</span>)<span class="sc">$</span>n <span class="sc">*</span> <span class="dv">2</span></span></code></pre></div>
 <pre><code>[1] 1000</code></pre>
 <p>If you need to, you can adjust other parameters, like the standard deviation of the outcome, the level of the test, or whether the test is one-sided rather than two-sided. There are also other functions available for different types of outcomes. For example, if you have a binary response, you can use <code>power.prop.test()</code> to calculate power for a similar kind of simple difference in proportions test.</p>
 <p>An equivalent approach in Stata would be as follows:</p>
-<div class="sourceCode" id="cb194"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb194-1"><a href="poweranalysis.html#cb194-1" tabindex="-1"></a>power twomeans 0, power(0.8) n(1000) <span class="fu">sd</span>(1)</span>
-<span id="cb194-2"><a href="poweranalysis.html#cb194-2" tabindex="-1"></a><span class="kw">di</span> <span class="fu">r</span>(delta) <span class="co">// See: return list</span></span></code></pre></div>
+<div class="sourceCode" id="cb194"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb194-1"><a href="poweranalysis.html#cb194-1" aria-hidden="true" tabindex="-1"></a>power twomeans 0, power(0.8) n(1000) <span class="fu">sd</span>(1)</span>
+<span id="cb194-2"><a href="poweranalysis.html#cb194-2" aria-hidden="true" tabindex="-1"></a><span class="kw">di</span> <span class="fu">r</span>(delta) <span class="co">// See: return list</span></span></code></pre></div>
 <p>Stata users can learn more about available off-the-shelf tools by checking out Stata&#x2019;s
 plethora of <a href="https://www.stata.com/features/power-and-sample-size/">relevant help files</a>. Meanwhile, R users could start by consulting the <code>pwrss</code>&#x2019;s packages <a href="https://cran.r-project.org/web/packages/pwrss/vignettes/examples.html">guide</a>.</p>
 </div>
@@ -1471,13 +1487,13 @@ delta_steps(0.005) // Increments to apply</code></pre>
 <p>The final product&#x2014;<code>pwr_eval_sim</code> above in the R code&#x2014;reports the power for each of the user-specified effect sizes (<code>delta</code>) and model terms (<code>vars</code>) specified when calling <code>estimate()</code>. The output can be used to plot power curves or to compute minimum detectable effects.</p>
 <p>These functions help make the process of performing computational power analysis easier, while still providing ample room for flexibility in both design and estimation strategy. For example, <code>replicate_design()</code> in the R code is a wrapper for <code>fabricate()</code> in the <a href="https://declaredesign.org/r/fabricatr/">fabricatr</a> package. This gives users the ability to generate multi-level or nested data-generating processes, specify additional covariates, or determine whether treatment randomization is done within blocks or by clusters.</p>
 <p>By default, estimates in R are returned using <code>lm_robust()</code> from the <a href="https://declaredesign.org/r/estimatr/">estimatr</a> package, but alternative estimators can be specified through further modifications to the code. Say, for example, you have a binary response and a set of covariates, and your design calls for using logistic regression. You could generate estimates for such a design as follows:</p>
-<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="poweranalysis.html#cb201-1" tabindex="-1"></a><span class="do">## Define logit estimator function</span></span>
-<span id="cb201-2"><a href="poweranalysis.html#cb201-2" tabindex="-1"></a>logit <span class="ot">&lt;-</span> <span class="cf">function</span>(...){ <span class="fu">glm</span>(..., <span class="at">family =</span> binomial)}</span>
-<span id="cb201-3"><a href="poweranalysis.html#cb201-3" tabindex="-1"></a></span>
-<span id="cb201-4"><a href="poweranalysis.html#cb201-4" tabindex="-1"></a><span class="do">## Pass this to the estimate() function above</span></span>
-<span id="cb201-5"><a href="poweranalysis.html#cb201-5" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">estimate</span>(</span>
-<span id="cb201-6"><a href="poweranalysis.html#cb201-6" tabindex="-1"></a>  y <span class="sc">~</span> x <span class="sc">+</span> z1 <span class="sc">+</span> z2, <span class="at">data =</span> rep, <span class="at">estimator =</span> logit</span>
-<span id="cb201-7"><a href="poweranalysis.html#cb201-7" tabindex="-1"></a>  ) </span></code></pre></div>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb201-1"><a href="poweranalysis.html#cb201-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Define logit estimator function</span></span>
+<span id="cb201-2"><a href="poweranalysis.html#cb201-2" aria-hidden="true" tabindex="-1"></a>logit <span class="ot">&lt;-</span> <span class="cf">function</span>(...){ <span class="fu">glm</span>(..., <span class="at">family =</span> binomial)}</span>
+<span id="cb201-3"><a href="poweranalysis.html#cb201-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb201-4"><a href="poweranalysis.html#cb201-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Pass this to the estimate() function above</span></span>
+<span id="cb201-5"><a href="poweranalysis.html#cb201-5" aria-hidden="true" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">estimate</span>(</span>
+<span id="cb201-6"><a href="poweranalysis.html#cb201-6" aria-hidden="true" tabindex="-1"></a>  y <span class="sc">~</span> x <span class="sc">+</span> z1 <span class="sc">+</span> z2, <span class="at">data =</span> rep, <span class="at">estimator =</span> logit</span>
+<span id="cb201-7"><a href="poweranalysis.html#cb201-7" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div>
 <p>Other tools for power simulation exist as well. For instance, throughout this SOP, we have used <a href="https://declaredesign.org/r/declaredesign/articles/DeclareDesign_101.html">DeclareDesign</a> to simulate hypothetical research designs and compare their performance. And there is no shortage of further simulation
 examples that can be found online (or in our internal records of past OES project code) for more specialized use-cases.</p>
 </div>
@@ -1668,7 +1684,7 @@ yline(0.8) title(&quot;Power for a 2x2 Design&quot;)</code></pre>
 </div>
 <div id="covariate-adjustment-with-the-lin-estimator" class="section level3" number="6.4.2">
 <h3><span class="header-section-number">6.4.2</span> Covariate adjustment with the Lin estimator</h3>
-<p>Another scenario where computational power analysis is worth the investment is if a design calls for covariate adjustment. This is common in OES projects, and, in many instances, the <span class="citation">Lin (<a href="references.html#ref-lin_agnostic_2013">2013</a>)</span> saturated regression estimator is the solution we choose. Employing an off-the-shelf method here is
+<p>Another scenario where computational power analysis is worth the investment is if a design calls for covariate adjustment. This is common in OES projects, and, in many instances, the <span class="citation">Lin (<a href="references.html#ref-lin_agnostic_2013" role="doc-biblioref">2013</a>)</span> saturated regression estimator is the solution we choose. Employing an off-the-shelf method here is
 possible, but would likely require investing time doing background research. Alternatively, we could simply replicate, estimate, and
 evaluate such a design computationally. The results will be roughly just as accurate, without requiring a review of the methods literature.</p>
 <p>Suppose we have a sample of 100 observations and a continuous outcome
@@ -2009,159 +2025,159 @@ title(&quot;Power with Lin adjustment&quot;) yline(0.8)</code></pre>
 
 </div>
 </div>
-<p>We chose parameters to limit processing time, so the results are a bit noisy (you could reduce this by adding replications for each effect size). Nonetheless, for this data generating process, it&#x2019;s clear that the Lin estimator provides substantial improvements in power over the unadjusted difference in means, while standard covariate adjustment provides smaller improvements in power. This is, of course, true by design. In real projects, the differences between these covariate adjustment strategies may be negligible. But it is useful to remember that <span class="citation">Lin (<a href="references.html#ref-lin_agnostic_2013">2013</a>)</span> adjustment is more likely to be valuable with imbalanced treatment assignment and substantial effect heterogeneity. See our discussion in the Analysis Choices chapter.</p>
+<p>We chose parameters to limit processing time, so the results are a bit noisy (you could reduce this by adding replications for each effect size). Nonetheless, for this data generating process, it&#x2019;s clear that the Lin estimator provides substantial improvements in power over the unadjusted difference in means, while standard covariate adjustment provides smaller improvements in power. This is, of course, true by design. In real projects, the differences between these covariate adjustment strategies may be negligible. But it is useful to remember that <span class="citation">Lin (<a href="references.html#ref-lin_agnostic_2013" role="doc-biblioref">2013</a>)</span> adjustment is more likely to be valuable with imbalanced treatment assignment and substantial effect heterogeneity. See our discussion in the Analysis Choices chapter.</p>
 <p><img src="OES_SOP_files/figure-html/unnamed-chunk-188-1.png" width=".9\textwidth"></p>
 </div>
 <div id="incorporating-declaredesign-into-oes-power-tools" class="section level3" number="6.4.3">
 <h3><span class="header-section-number">6.4.3</span> Incorporating DeclareDesign into OES Power Tools</h3>
 <p>In R, we can also use <code>DeclareDesign</code> within this <strong>Replicate</strong>, <strong>Estimate</strong>, <strong>Evaluate</strong> framework. This involves using <code>DeclareDesign</code> to draw estimates, and then feeding the results into the OES <code>evaluate_power()</code> function. We compare the <code>DeclareDesign</code> approach to the OES <code>Replicate</code> and <code>Estimate</code> steps below.</p>
 <p>First, we simulate a simple design with the OES tools introduced above:</p>
-<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="poweranalysis.html#cb210-1" tabindex="-1"></a>eval <span class="ot">&lt;-</span> </span>
-<span id="cb210-2"><a href="poweranalysis.html#cb210-2" tabindex="-1"></a>  </span>
-<span id="cb210-3"><a href="poweranalysis.html#cb210-3" tabindex="-1"></a>  <span class="fu">replicate_design</span>(</span>
-<span id="cb210-4"><a href="poweranalysis.html#cb210-4" tabindex="-1"></a>    <span class="at">R =</span> <span class="dv">1000</span>,</span>
-<span id="cb210-5"><a href="poweranalysis.html#cb210-5" tabindex="-1"></a>    <span class="at">N =</span> <span class="dv">100</span>,</span>
-<span id="cb210-6"><a href="poweranalysis.html#cb210-6" tabindex="-1"></a>    <span class="at">Y =</span> <span class="fu">rnorm</span>(N),</span>
-<span id="cb210-7"><a href="poweranalysis.html#cb210-7" tabindex="-1"></a>    <span class="at">Z =</span> <span class="fu">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
-<span id="cb210-8"><a href="poweranalysis.html#cb210-8" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb210-9"><a href="poweranalysis.html#cb210-9" tabindex="-1"></a>  </span>
-<span id="cb210-10"><a href="poweranalysis.html#cb210-10" tabindex="-1"></a>  <span class="fu">estimate</span>(</span>
-<span id="cb210-11"><a href="poweranalysis.html#cb210-11" tabindex="-1"></a>    <span class="at">form =</span> Y <span class="sc">~</span> Z, <span class="at">vars =</span> <span class="st">&quot;Z&quot;</span></span>
-<span id="cb210-12"><a href="poweranalysis.html#cb210-12" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb210-13"><a href="poweranalysis.html#cb210-13" tabindex="-1"></a>  </span>
-<span id="cb210-14"><a href="poweranalysis.html#cb210-14" tabindex="-1"></a>  <span class="fu">evaluate_power</span>(</span>
-<span id="cb210-15"><a href="poweranalysis.html#cb210-15" tabindex="-1"></a>    <span class="at">delta =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="at">len =</span> <span class="dv">10</span>)</span>
-<span id="cb210-16"><a href="poweranalysis.html#cb210-16" tabindex="-1"></a>    )</span></code></pre></div>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="poweranalysis.html#cb210-1" aria-hidden="true" tabindex="-1"></a>eval <span class="ot">&lt;-</span> </span>
+<span id="cb210-2"><a href="poweranalysis.html#cb210-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb210-3"><a href="poweranalysis.html#cb210-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replicate_design</span>(</span>
+<span id="cb210-4"><a href="poweranalysis.html#cb210-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">R =</span> <span class="dv">1000</span>,</span>
+<span id="cb210-5"><a href="poweranalysis.html#cb210-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="dv">100</span>,</span>
+<span id="cb210-6"><a href="poweranalysis.html#cb210-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Y =</span> <span class="fu">rnorm</span>(N),</span>
+<span id="cb210-7"><a href="poweranalysis.html#cb210-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Z =</span> <span class="fu">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb210-8"><a href="poweranalysis.html#cb210-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb210-9"><a href="poweranalysis.html#cb210-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb210-10"><a href="poweranalysis.html#cb210-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">estimate</span>(</span>
+<span id="cb210-11"><a href="poweranalysis.html#cb210-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">form =</span> Y <span class="sc">~</span> Z, <span class="at">vars =</span> <span class="st">&quot;Z&quot;</span></span>
+<span id="cb210-12"><a href="poweranalysis.html#cb210-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb210-13"><a href="poweranalysis.html#cb210-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb210-14"><a href="poweranalysis.html#cb210-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">evaluate_power</span>(</span>
+<span id="cb210-15"><a href="poweranalysis.html#cb210-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="at">len =</span> <span class="dv">10</span>)</span>
+<span id="cb210-16"><a href="poweranalysis.html#cb210-16" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
 <p>Then, we do the same with <code>DeclareDesign</code>, declaring a population, potential outcomes, assignments, a target quantity of interest, and an estimator:</p>
-<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="poweranalysis.html#cb211-1" tabindex="-1"></a>design <span class="ot">&lt;-</span></span>
-<span id="cb211-2"><a href="poweranalysis.html#cb211-2" tabindex="-1"></a>  </span>
-<span id="cb211-3"><a href="poweranalysis.html#cb211-3" tabindex="-1"></a>  <span class="fu">declare_population</span>(</span>
-<span id="cb211-4"><a href="poweranalysis.html#cb211-4" tabindex="-1"></a>    <span class="at">N =</span> <span class="dv">100</span>,</span>
-<span id="cb211-5"><a href="poweranalysis.html#cb211-5" tabindex="-1"></a>    <span class="at">U =</span> <span class="fu">rnorm</span>(N),</span>
-<span id="cb211-6"><a href="poweranalysis.html#cb211-6" tabindex="-1"></a>    <span class="fu">potential_outcomes</span>(Y <span class="sc">~</span> U)</span>
-<span id="cb211-7"><a href="poweranalysis.html#cb211-7" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb211-8"><a href="poweranalysis.html#cb211-8" tabindex="-1"></a>  </span>
-<span id="cb211-9"><a href="poweranalysis.html#cb211-9" tabindex="-1"></a>  <span class="fu">declare_assignment</span>(<span class="at">Z =</span> <span class="fu">simple_ra</span>(N, <span class="at">prob =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
-<span id="cb211-10"><a href="poweranalysis.html#cb211-10" tabindex="-1"></a>  </span>
-<span id="cb211-11"><a href="poweranalysis.html#cb211-11" tabindex="-1"></a>  <span class="fu">declare_inquiry</span>(<span class="at">ATE =</span> <span class="fu">mean</span>(Y_Z_1 <span class="sc">-</span> Y_Z_0)) <span class="sc">+</span></span>
-<span id="cb211-12"><a href="poweranalysis.html#cb211-12" tabindex="-1"></a>  </span>
-<span id="cb211-13"><a href="poweranalysis.html#cb211-13" tabindex="-1"></a>  <span class="fu">declare_measurement</span>(<span class="at">Y =</span> <span class="fu">reveal_outcomes</span>(Y <span class="sc">~</span> Z)) <span class="sc">+</span></span>
-<span id="cb211-14"><a href="poweranalysis.html#cb211-14" tabindex="-1"></a>  </span>
-<span id="cb211-15"><a href="poweranalysis.html#cb211-15" tabindex="-1"></a>  <span class="fu">declare_estimator</span>(</span>
-<span id="cb211-16"><a href="poweranalysis.html#cb211-16" tabindex="-1"></a>    Y <span class="sc">~</span> Z,</span>
-<span id="cb211-17"><a href="poweranalysis.html#cb211-17" tabindex="-1"></a>    <span class="at">inquiry =</span> <span class="st">&quot;ATE&quot;</span>,</span>
-<span id="cb211-18"><a href="poweranalysis.html#cb211-18" tabindex="-1"></a>    <span class="at">.method =</span> lm_robust</span>
-<span id="cb211-19"><a href="poweranalysis.html#cb211-19" tabindex="-1"></a>    )</span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb211-1"><a href="poweranalysis.html#cb211-1" aria-hidden="true" tabindex="-1"></a>design <span class="ot">&lt;-</span></span>
+<span id="cb211-2"><a href="poweranalysis.html#cb211-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb211-3"><a href="poweranalysis.html#cb211-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">declare_population</span>(</span>
+<span id="cb211-4"><a href="poweranalysis.html#cb211-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="dv">100</span>,</span>
+<span id="cb211-5"><a href="poweranalysis.html#cb211-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">U =</span> <span class="fu">rnorm</span>(N),</span>
+<span id="cb211-6"><a href="poweranalysis.html#cb211-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">potential_outcomes</span>(Y <span class="sc">~</span> U)</span>
+<span id="cb211-7"><a href="poweranalysis.html#cb211-7" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb211-8"><a href="poweranalysis.html#cb211-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb211-9"><a href="poweranalysis.html#cb211-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">declare_assignment</span>(<span class="at">Z =</span> <span class="fu">simple_ra</span>(N, <span class="at">prob =</span> <span class="fl">0.5</span>)) <span class="sc">+</span></span>
+<span id="cb211-10"><a href="poweranalysis.html#cb211-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb211-11"><a href="poweranalysis.html#cb211-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">declare_inquiry</span>(<span class="at">ATE =</span> <span class="fu">mean</span>(Y_Z_1 <span class="sc">-</span> Y_Z_0)) <span class="sc">+</span></span>
+<span id="cb211-12"><a href="poweranalysis.html#cb211-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb211-13"><a href="poweranalysis.html#cb211-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">declare_measurement</span>(<span class="at">Y =</span> <span class="fu">reveal_outcomes</span>(Y <span class="sc">~</span> Z)) <span class="sc">+</span></span>
+<span id="cb211-14"><a href="poweranalysis.html#cb211-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb211-15"><a href="poweranalysis.html#cb211-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">declare_estimator</span>(</span>
+<span id="cb211-16"><a href="poweranalysis.html#cb211-16" aria-hidden="true" tabindex="-1"></a>    Y <span class="sc">~</span> Z,</span>
+<span id="cb211-17"><a href="poweranalysis.html#cb211-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">inquiry =</span> <span class="st">&quot;ATE&quot;</span>,</span>
+<span id="cb211-18"><a href="poweranalysis.html#cb211-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">.method =</span> lm_robust</span>
+<span id="cb211-19"><a href="poweranalysis.html#cb211-19" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
 <p>We then use draws from this design within the OES tools:</p>
-<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="poweranalysis.html#cb212-1" tabindex="-1"></a>dd_eval <span class="ot">&lt;-</span></span>
-<span id="cb212-2"><a href="poweranalysis.html#cb212-2" tabindex="-1"></a>  </span>
-<span id="cb212-3"><a href="poweranalysis.html#cb212-3" tabindex="-1"></a>  <span class="fu">replicate</span>(</span>
-<span id="cb212-4"><a href="poweranalysis.html#cb212-4" tabindex="-1"></a>    <span class="at">n =</span> <span class="dv">1000</span>,</span>
-<span id="cb212-5"><a href="poweranalysis.html#cb212-5" tabindex="-1"></a>    <span class="at">expr =</span> <span class="fu">draw_estimates</span>(design) <span class="sc">%&gt;%</span> list</span>
-<span id="cb212-6"><a href="poweranalysis.html#cb212-6" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb212-7"><a href="poweranalysis.html#cb212-7" tabindex="-1"></a>  </span>
-<span id="cb212-8"><a href="poweranalysis.html#cb212-8" tabindex="-1"></a>  <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb212-9"><a href="poweranalysis.html#cb212-9" tabindex="-1"></a>  </span>
-<span id="cb212-10"><a href="poweranalysis.html#cb212-10" tabindex="-1"></a>  <span class="fu">evaluate_power</span>(</span>
-<span id="cb212-11"><a href="poweranalysis.html#cb212-11" tabindex="-1"></a>    <span class="at">delta =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="at">len =</span> <span class="dv">10</span>)</span>
-<span id="cb212-12"><a href="poweranalysis.html#cb212-12" tabindex="-1"></a>    )</span></code></pre></div>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="poweranalysis.html#cb212-1" aria-hidden="true" tabindex="-1"></a>dd_eval <span class="ot">&lt;-</span></span>
+<span id="cb212-2"><a href="poweranalysis.html#cb212-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb212-3"><a href="poweranalysis.html#cb212-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replicate</span>(</span>
+<span id="cb212-4"><a href="poweranalysis.html#cb212-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="dv">1000</span>,</span>
+<span id="cb212-5"><a href="poweranalysis.html#cb212-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">expr =</span> <span class="fu">draw_estimates</span>(design) <span class="sc">%&gt;%</span> list</span>
+<span id="cb212-6"><a href="poweranalysis.html#cb212-6" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb212-7"><a href="poweranalysis.html#cb212-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb212-8"><a href="poweranalysis.html#cb212-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb212-9"><a href="poweranalysis.html#cb212-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb212-10"><a href="poweranalysis.html#cb212-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">evaluate_power</span>(</span>
+<span id="cb212-11"><a href="poweranalysis.html#cb212-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">delta =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="at">len =</span> <span class="dv">10</span>)</span>
+<span id="cb212-12"><a href="poweranalysis.html#cb212-12" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
 <p>We show the similarity between the two approaches to generating the simulated
 data in the figure below:</p>
-<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="poweranalysis.html#cb213-1" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
-<span id="cb213-2"><a href="poweranalysis.html#cb213-2" tabindex="-1"></a>  eval <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">method =</span> <span class="st">&quot;OES Power Tools&quot;</span>),</span>
-<span id="cb213-3"><a href="poweranalysis.html#cb213-3" tabindex="-1"></a>  dd_eval <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">method =</span> <span class="st">&quot;DeclareDesign&quot;</span>)</span>
-<span id="cb213-4"><a href="poweranalysis.html#cb213-4" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb213-5"><a href="poweranalysis.html#cb213-5" tabindex="-1"></a>  </span>
-<span id="cb213-6"><a href="poweranalysis.html#cb213-6" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb213-7"><a href="poweranalysis.html#cb213-7" tabindex="-1"></a>  </span>
-<span id="cb213-8"><a href="poweranalysis.html#cb213-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
-<span id="cb213-9"><a href="poweranalysis.html#cb213-9" tabindex="-1"></a>    <span class="fu">aes</span>(delta, power, <span class="at">linetype =</span> method)</span>
-<span id="cb213-10"><a href="poweranalysis.html#cb213-10" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb213-11"><a href="poweranalysis.html#cb213-11" tabindex="-1"></a>  </span>
-<span id="cb213-12"><a href="poweranalysis.html#cb213-12" tabindex="-1"></a>  <span class="fu">scale_linetype_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb213-13"><a href="poweranalysis.html#cb213-13" tabindex="-1"></a>  </span>
-<span id="cb213-14"><a href="poweranalysis.html#cb213-14" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb213-15"><a href="poweranalysis.html#cb213-15" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">expression</span>(delta),</span>
-<span id="cb213-16"><a href="poweranalysis.html#cb213-16" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Power&quot;</span>,</span>
-<span id="cb213-17"><a href="poweranalysis.html#cb213-17" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="cn">NULL</span></span>
-<span id="cb213-18"><a href="poweranalysis.html#cb213-18" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb213-19"><a href="poweranalysis.html#cb213-19" tabindex="-1"></a>  </span>
-<span id="cb213-20"><a href="poweranalysis.html#cb213-20" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(</span>
-<span id="cb213-21"><a href="poweranalysis.html#cb213-21" tabindex="-1"></a>    <span class="at">n.breaks =</span> <span class="dv">6</span></span>
-<span id="cb213-22"><a href="poweranalysis.html#cb213-22" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb213-23"><a href="poweranalysis.html#cb213-23" tabindex="-1"></a>  </span>
-<span id="cb213-24"><a href="poweranalysis.html#cb213-24" tabindex="-1"></a>  <span class="fu">geom_hline</span>(</span>
-<span id="cb213-25"><a href="poweranalysis.html#cb213-25" tabindex="-1"></a>    <span class="at">yintercept =</span> <span class="fl">0.8</span>,</span>
-<span id="cb213-26"><a href="poweranalysis.html#cb213-26" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">&quot;grey25&quot;</span>,</span>
-<span id="cb213-27"><a href="poweranalysis.html#cb213-27" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">1</span>,</span>
-<span id="cb213-28"><a href="poweranalysis.html#cb213-28" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.8</span></span>
-<span id="cb213-29"><a href="poweranalysis.html#cb213-29" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb213-30"><a href="poweranalysis.html#cb213-30" tabindex="-1"></a>  </span>
-<span id="cb213-31"><a href="poweranalysis.html#cb213-31" tabindex="-1"></a>  ggridges<span class="sc">::</span><span class="fu">theme_ridges</span>(</span>
-<span id="cb213-32"><a href="poweranalysis.html#cb213-32" tabindex="-1"></a>    <span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb213-33"><a href="poweranalysis.html#cb213-33" tabindex="-1"></a>    <span class="at">font_size =</span> <span class="dv">10</span></span>
-<span id="cb213-34"><a href="poweranalysis.html#cb213-34" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb213-35"><a href="poweranalysis.html#cb213-35" tabindex="-1"></a>  </span>
-<span id="cb213-36"><a href="poweranalysis.html#cb213-36" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb213-37"><a href="poweranalysis.html#cb213-37" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span></span>
-<span id="cb213-38"><a href="poweranalysis.html#cb213-38" tabindex="-1"></a>    )</span></code></pre></div>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb213-1"><a href="poweranalysis.html#cb213-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
+<span id="cb213-2"><a href="poweranalysis.html#cb213-2" aria-hidden="true" tabindex="-1"></a>  eval <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">method =</span> <span class="st">&quot;OES Power Tools&quot;</span>),</span>
+<span id="cb213-3"><a href="poweranalysis.html#cb213-3" aria-hidden="true" tabindex="-1"></a>  dd_eval <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">method =</span> <span class="st">&quot;DeclareDesign&quot;</span>)</span>
+<span id="cb213-4"><a href="poweranalysis.html#cb213-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb213-5"><a href="poweranalysis.html#cb213-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb213-6"><a href="poweranalysis.html#cb213-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb213-7"><a href="poweranalysis.html#cb213-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb213-8"><a href="poweranalysis.html#cb213-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
+<span id="cb213-9"><a href="poweranalysis.html#cb213-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(delta, power, <span class="at">linetype =</span> method)</span>
+<span id="cb213-10"><a href="poweranalysis.html#cb213-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb213-11"><a href="poweranalysis.html#cb213-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb213-12"><a href="poweranalysis.html#cb213-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linetype_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;solid&quot;</span>, <span class="st">&quot;longdash&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb213-13"><a href="poweranalysis.html#cb213-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb213-14"><a href="poweranalysis.html#cb213-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb213-15"><a href="poweranalysis.html#cb213-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">expression</span>(delta),</span>
+<span id="cb213-16"><a href="poweranalysis.html#cb213-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Power&quot;</span>,</span>
+<span id="cb213-17"><a href="poweranalysis.html#cb213-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">linetype =</span> <span class="cn">NULL</span></span>
+<span id="cb213-18"><a href="poweranalysis.html#cb213-18" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb213-19"><a href="poweranalysis.html#cb213-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb213-20"><a href="poweranalysis.html#cb213-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb213-21"><a href="poweranalysis.html#cb213-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">n.breaks =</span> <span class="dv">6</span></span>
+<span id="cb213-22"><a href="poweranalysis.html#cb213-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb213-23"><a href="poweranalysis.html#cb213-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb213-24"><a href="poweranalysis.html#cb213-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(</span>
+<span id="cb213-25"><a href="poweranalysis.html#cb213-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">yintercept =</span> <span class="fl">0.8</span>,</span>
+<span id="cb213-26"><a href="poweranalysis.html#cb213-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">&quot;grey25&quot;</span>,</span>
+<span id="cb213-27"><a href="poweranalysis.html#cb213-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">1</span>,</span>
+<span id="cb213-28"><a href="poweranalysis.html#cb213-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.8</span></span>
+<span id="cb213-29"><a href="poweranalysis.html#cb213-29" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb213-30"><a href="poweranalysis.html#cb213-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb213-31"><a href="poweranalysis.html#cb213-31" aria-hidden="true" tabindex="-1"></a>  ggridges<span class="sc">::</span><span class="fu">theme_ridges</span>(</span>
+<span id="cb213-32"><a href="poweranalysis.html#cb213-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">center_axis_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb213-33"><a href="poweranalysis.html#cb213-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">font_size =</span> <span class="dv">10</span></span>
+<span id="cb213-34"><a href="poweranalysis.html#cb213-34" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb213-35"><a href="poweranalysis.html#cb213-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb213-36"><a href="poweranalysis.html#cb213-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb213-37"><a href="poweranalysis.html#cb213-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span></span>
+<span id="cb213-38"><a href="poweranalysis.html#cb213-38" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
 <p><img src="OES_SOP_files/figure-html/unnamed-chunk-192-1.png" width=".9\textwidth"></p>
 </div>
 </div>
 <div id="approximating-power-ex-post" class="section level2" number="6.5">
 <h2><span class="header-section-number">6.5</span> Approximating power ex-post</h2>
 <p>We conclude this chapter by discussing a slightly different topic. Sometimes, once an analysis is finished, we might want a sense of what treatment effects we <em>would have been</em> sufficiently powered to detect. For reasons outlined in <a href="https://blogs.worldbank.org/en/impactevaluations/why-ex-post-power-using-estimated-effect-sizes-bad-ex-post-mde-not">this World Bank blog post</a>, it is problematic to estimate power for an observed effect size. However, it can be useful to approximate what our minimum detectable effect at 80% power was, for comparison with the <a href="https://lakens.github.io/statistical_inferences/09-equivalencetest.html#sec-sesoi">smallest effect of substantive interest, or SESI</a>.</p>
-<p>This is particularly useful for making sense of statistically insignificant results, and is similar to the logic behind equivalence testing <span class="citation">(<a href="references.html#ref-hartman2018equivalence">Hartman and Hidalgo 2018</a>; <a href="references.html#ref-rainey2014arguing">Rainey 2014</a>)</span>. If the MDE-80 is smaller than the SESI, this implies that our study had acceptable power to detect all possible true effect sizes large enough to be of interest (which should make us more confident in a &#x201C;no effect&#x201D; interpretation). In contrast, if the MDE-80 is much larger than the SESI, this implies that there are possible true effect sizes that are policy relevant but too small for our study to detect (which should make us less confident in a &#x201C;no effect&#x201D; interpretation).</p>
-<p>Rather than conducting another simulation, a useful heuristic for an <em>approximate</em> ex-post MDE at 80% power is the estimated standard error of the treatment effect multiplied by 2.8 (for a two-sided test): <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>D</mi><msub><mi>E</mi><mn>80</mn></msub><mo>=</mo><mover accent="true"><mrow><mi>S</mi><mi>E</mi></mrow><mo>^</mo></mover><mo>&#xD7;</mo><mn>2.8</mn></mrow><annotation encoding="application/x-tex">MDE_{80} = \hat{SE} \times 2.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">80</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0301em;vertical-align:-0.0833em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">^</span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2.8</span></span></span></span> <span class="citation">(<a href="references.html#ref-ioannidis2017power">Ioannidis, Stanley, and Doucouliagos 2017</a>; <a href="references.html#ref-bloom1995minimum">Bloom 1995</a>)</span>. The actual MDE-80 is the real SE times 2.8. But plugging in our sample estimate can often still be informative. Remember that the usefulness of this rests on the accuracy of our estimated standard errors.</p>
-<p>Why does this work? See <span class="citation">Bloom (<a href="references.html#ref-bloom1995minimum">1995</a>)</span> for more context. To explain, we need to review some basics of statistical inference first. We generally judge a finding as &#x201C;statistically significant&#x201D; if the absolute value of its <em>test statistic</em>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi mathvariant="normal">/</mi><mi>S</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">effect/SE</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">ec</span><span class="mord mathnormal">t</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span></span>, is greater than or equal to 1.96. Under an assumption that the null is true&#x2014;and an assumption that the standard normal, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{N}(0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>, is an appropriate model of the test statistics we could observe under a true null (e.g., central limit theorem)&#x2014;random chance alone will only produce a test statistic at least as far from 0 as 1.96 about 5% of the time.<a href="references.html#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a></p>
+<p>This is particularly useful for making sense of statistically insignificant results, and is similar to the logic behind equivalence testing <span class="citation">(<a href="references.html#ref-hartman2018equivalence" role="doc-biblioref">Hartman and Hidalgo 2018</a>; <a href="references.html#ref-rainey2014arguing" role="doc-biblioref">Rainey 2014</a>)</span>. If the MDE-80 is smaller than the SESI, this implies that our study had acceptable power to detect all possible true effect sizes large enough to be of interest (which should make us more confident in a &#x201C;no effect&#x201D; interpretation). In contrast, if the MDE-80 is much larger than the SESI, this implies that there are possible true effect sizes that are policy relevant but too small for our study to detect (which should make us less confident in a &#x201C;no effect&#x201D; interpretation).</p>
+<p>Rather than conducting another simulation, a useful heuristic for an <em>approximate</em> ex-post MDE at 80% power is the estimated standard error of the treatment effect multiplied by 2.8 (for a two-sided test): <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>D</mi><msub><mi>E</mi><mn>80</mn></msub><mo>=</mo><mover accent="true"><mrow><mi>S</mi><mi>E</mi></mrow><mo>^</mo></mover><mo>&#xD7;</mo><mn>2.8</mn></mrow><annotation encoding="application/x-tex">MDE_{80} = \hat{SE} \times 2.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0576em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">80</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0301em;vertical-align:-0.0833em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">^</span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2.8</span></span></span></span> <span class="citation">(<a href="references.html#ref-ioannidis2017power" role="doc-biblioref">Ioannidis, Stanley, and Doucouliagos 2017</a>; <a href="references.html#ref-bloom1995minimum" role="doc-biblioref">Bloom 1995</a>)</span>. The actual MDE-80 is the real SE times 2.8. But plugging in our sample estimate can often still be informative. Remember that the usefulness of this rests on the accuracy of our estimated standard errors.</p>
+<p>Why does this work? See <span class="citation">Bloom (<a href="references.html#ref-bloom1995minimum" role="doc-biblioref">1995</a>)</span> for more context. To explain, we need to review some basics of statistical inference first. We generally judge a finding as &#x201C;statistically significant&#x201D; if the absolute value of its <em>test statistic</em>, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi mathvariant="normal">/</mi><mi>S</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">effect/SE</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">ec</span><span class="mord mathnormal">t</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span></span>, is greater than or equal to 1.96. Under an assumption that the null is true&#x2014;and an assumption that the standard normal, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{N}(0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>, is an appropriate model of the test statistics we could observe under a true null (e.g., central limit theorem)&#x2014;random chance alone will only produce a test statistic at least as far from 0 as 1.96 about 5% of the time.<a href="references.html#fn41" class="footnote-ref" id="fnref41"><sup>41</sup></a></p>
 <p>Now, what if there is a positive treatment effect? In that case, the true distribution of test statistics we might observe by random chance is shifted to the right away from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{N}(0,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>. If it is shifted to the right by 2.8, yielding <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="script">N</mi><mo stretchy="false">(</mo><mn>2.8</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{N}(2.8,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathcal" style="margin-right:0.14736em;">N</span><span class="mopen">(</span><span class="mord">2.8</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>, then 80% of the values we might observe will now be above the 1.96 significance threshold. In other words, if the true treatment effect yields a test statistic of exactly 2.8, it is just big enough for us to have an 80% chance of concluding that the treatment effect is statistically significant. And since <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi mathvariant="normal">/</mi><mi>S</mi><mi>E</mi><mo>=</mo><mn>2.8</mn></mrow><annotation encoding="application/x-tex">effect/SE=2.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">ec</span><span class="mord mathnormal">t</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2.8</span></span></span></span>, the smallest effect we could detect with 80% power is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>c</mi><mi>t</mi><mo>=</mo><mi>S</mi><mi>E</mi><mo>&#xD7;</mo><mn>2.8</mn></mrow><annotation encoding="application/x-tex">effect = SE \times 2.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">e</span><span class="mord mathnormal" style="margin-right:0.10764em;">ff</span><span class="mord mathnormal">ec</span><span class="mord mathnormal">t</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2.8</span></span></span></span>.</p>
 <p>We provide a quick R simulation below illustrating that the utility of this heuristic. Specifically, we compute power for a simple design using tools presented above. We then compare this to the ex-post calculation results for each of many randomly drawn datasets. The results are promising! But again, the accuracy of this heuristic will vary from setting to setting, so it should be used cautiously.</p>
-<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="poweranalysis.html#cb214-1" tabindex="-1"></a><span class="do">## Parameters</span></span>
-<span id="cb214-2"><a href="poweranalysis.html#cb214-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20405</span>)</span>
-<span id="cb214-3"><a href="poweranalysis.html#cb214-3" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb214-4"><a href="poweranalysis.html#cb214-4" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
-<span id="cb214-5"><a href="poweranalysis.html#cb214-5" tabindex="-1"></a></span>
-<span id="cb214-6"><a href="poweranalysis.html#cb214-6" tabindex="-1"></a><span class="do">## First, simulate the design many times</span></span>
-<span id="cb214-7"><a href="poweranalysis.html#cb214-7" tabindex="-1"></a>sim_power_data <span class="ot">&lt;-</span></span>
-<span id="cb214-8"><a href="poweranalysis.html#cb214-8" tabindex="-1"></a>  </span>
-<span id="cb214-9"><a href="poweranalysis.html#cb214-9" tabindex="-1"></a>  <span class="fu">replicate_design</span>(</span>
-<span id="cb214-10"><a href="poweranalysis.html#cb214-10" tabindex="-1"></a>    <span class="at">N =</span> n,</span>
-<span id="cb214-11"><a href="poweranalysis.html#cb214-11" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">rnorm</span>(N),</span>
-<span id="cb214-12"><a href="poweranalysis.html#cb214-12" tabindex="-1"></a>    <span class="at">x =</span> randomizr<span class="sc">::</span><span class="fu">complete_ra</span>(N, <span class="at">m =</span> N <span class="sc">/</span> <span class="dv">2</span>)</span>
-<span id="cb214-13"><a href="poweranalysis.html#cb214-13" tabindex="-1"></a>    )</span>
-<span id="cb214-14"><a href="poweranalysis.html#cb214-14" tabindex="-1"></a></span>
-<span id="cb214-15"><a href="poweranalysis.html#cb214-15" tabindex="-1"></a><span class="do">## Then, calculate a MDE using that simulated data (2-4 above)</span></span>
-<span id="cb214-16"><a href="poweranalysis.html#cb214-16" tabindex="-1"></a>sim_results <span class="ot">&lt;-</span></span>
-<span id="cb214-17"><a href="poweranalysis.html#cb214-17" tabindex="-1"></a>  </span>
-<span id="cb214-18"><a href="poweranalysis.html#cb214-18" tabindex="-1"></a>  sim_power_data <span class="sc">%&gt;%</span></span>
-<span id="cb214-19"><a href="poweranalysis.html#cb214-19" tabindex="-1"></a>  </span>
-<span id="cb214-20"><a href="poweranalysis.html#cb214-20" tabindex="-1"></a>  <span class="fu">estimate</span>(<span class="at">form =</span> y <span class="sc">~</span> x, <span class="at">vars =</span> <span class="st">&quot;x&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb214-21"><a href="poweranalysis.html#cb214-21" tabindex="-1"></a>  </span>
-<span id="cb214-22"><a href="poweranalysis.html#cb214-22" tabindex="-1"></a>  <span class="fu">evaluate_mde</span>(<span class="at">delta =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">how_granular =</span> <span class="fl">0.001</span>)</span>
-<span id="cb214-23"><a href="poweranalysis.html#cb214-23" tabindex="-1"></a>  </span>
-<span id="cb214-24"><a href="poweranalysis.html#cb214-24" tabindex="-1"></a><span class="do">## MDE from a standard power simulation</span></span>
-<span id="cb214-25"><a href="poweranalysis.html#cb214-25" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;Simulated MDE&quot;</span>)</span>
-<span id="cb214-26"><a href="poweranalysis.html#cb214-26" tabindex="-1"></a>sim_results<span class="sc">$</span>MDE</span>
-<span id="cb214-27"><a href="poweranalysis.html#cb214-27" tabindex="-1"></a></span>
-<span id="cb214-28"><a href="poweranalysis.html#cb214-28" tabindex="-1"></a><span class="do">## For each of those simulated datasets,</span></span>
-<span id="cb214-29"><a href="poweranalysis.html#cb214-29" tabindex="-1"></a><span class="do">## apply the ex-post MDE-80 approach instead.</span></span>
-<span id="cb214-30"><a href="poweranalysis.html#cb214-30" tabindex="-1"></a>expost_results <span class="ot">&lt;-</span></span>
-<span id="cb214-31"><a href="poweranalysis.html#cb214-31" tabindex="-1"></a>  </span>
-<span id="cb214-32"><a href="poweranalysis.html#cb214-32" tabindex="-1"></a>  sim_power_data <span class="sc">%&gt;%</span></span>
-<span id="cb214-33"><a href="poweranalysis.html#cb214-33" tabindex="-1"></a>  </span>
-<span id="cb214-34"><a href="poweranalysis.html#cb214-34" tabindex="-1"></a>  <span class="fu">estimate</span>(<span class="at">form =</span> y <span class="sc">~</span> x, <span class="at">vars =</span> <span class="st">&quot;x&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb214-35"><a href="poweranalysis.html#cb214-35" tabindex="-1"></a>  </span>
-<span id="cb214-36"><a href="poweranalysis.html#cb214-36" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mde =</span> std.error <span class="sc">*</span> <span class="fl">2.8</span>)</span>
-<span id="cb214-37"><a href="poweranalysis.html#cb214-37" tabindex="-1"></a></span>
-<span id="cb214-38"><a href="poweranalysis.html#cb214-38" tabindex="-1"></a><span class="do">## Evaluate ex-post results across</span></span>
-<span id="cb214-39"><a href="poweranalysis.html#cb214-39" tabindex="-1"></a><span class="do">## simulated datsets; how close</span></span>
-<span id="cb214-40"><a href="poweranalysis.html#cb214-40" tabindex="-1"></a><span class="do">## is it in different random draws?</span></span>
-<span id="cb214-41"><a href="poweranalysis.html#cb214-41" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;heuristic range (min, max)&quot;</span>)</span>
-<span id="cb214-42"><a href="poweranalysis.html#cb214-42" tabindex="-1"></a><span class="fu">range</span>(expost_results<span class="sc">$</span>mde)</span>
-<span id="cb214-43"><a href="poweranalysis.html#cb214-43" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;heuristic standard deviation&quot;</span>)</span>
-<span id="cb214-44"><a href="poweranalysis.html#cb214-44" tabindex="-1"></a><span class="fu">sd</span>(expost_results<span class="sc">$</span>mde)</span>
-<span id="cb214-45"><a href="poweranalysis.html#cb214-45" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;mean heuristic value&quot;</span>)</span>
-<span id="cb214-46"><a href="poweranalysis.html#cb214-46" tabindex="-1"></a><span class="fu">mean</span>(expost_results<span class="sc">$</span>mde)</span></code></pre></div>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="poweranalysis.html#cb214-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Parameters</span></span>
+<span id="cb214-2"><a href="poweranalysis.html#cb214-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20405</span>)</span>
+<span id="cb214-3"><a href="poweranalysis.html#cb214-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb214-4"><a href="poweranalysis.html#cb214-4" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
+<span id="cb214-5"><a href="poweranalysis.html#cb214-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb214-6"><a href="poweranalysis.html#cb214-6" aria-hidden="true" tabindex="-1"></a><span class="do">## First, simulate the design many times</span></span>
+<span id="cb214-7"><a href="poweranalysis.html#cb214-7" aria-hidden="true" tabindex="-1"></a>sim_power_data <span class="ot">&lt;-</span></span>
+<span id="cb214-8"><a href="poweranalysis.html#cb214-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb214-9"><a href="poweranalysis.html#cb214-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">replicate_design</span>(</span>
+<span id="cb214-10"><a href="poweranalysis.html#cb214-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> n,</span>
+<span id="cb214-11"><a href="poweranalysis.html#cb214-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">rnorm</span>(N),</span>
+<span id="cb214-12"><a href="poweranalysis.html#cb214-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> randomizr<span class="sc">::</span><span class="fu">complete_ra</span>(N, <span class="at">m =</span> N <span class="sc">/</span> <span class="dv">2</span>)</span>
+<span id="cb214-13"><a href="poweranalysis.html#cb214-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb214-14"><a href="poweranalysis.html#cb214-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb214-15"><a href="poweranalysis.html#cb214-15" aria-hidden="true" tabindex="-1"></a><span class="do">## Then, calculate a MDE using that simulated data (2-4 above)</span></span>
+<span id="cb214-16"><a href="poweranalysis.html#cb214-16" aria-hidden="true" tabindex="-1"></a>sim_results <span class="ot">&lt;-</span></span>
+<span id="cb214-17"><a href="poweranalysis.html#cb214-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb214-18"><a href="poweranalysis.html#cb214-18" aria-hidden="true" tabindex="-1"></a>  sim_power_data <span class="sc">%&gt;%</span></span>
+<span id="cb214-19"><a href="poweranalysis.html#cb214-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb214-20"><a href="poweranalysis.html#cb214-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">estimate</span>(<span class="at">form =</span> y <span class="sc">~</span> x, <span class="at">vars =</span> <span class="st">&quot;x&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb214-21"><a href="poweranalysis.html#cb214-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb214-22"><a href="poweranalysis.html#cb214-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">evaluate_mde</span>(<span class="at">delta =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">how_granular =</span> <span class="fl">0.001</span>)</span>
+<span id="cb214-23"><a href="poweranalysis.html#cb214-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb214-24"><a href="poweranalysis.html#cb214-24" aria-hidden="true" tabindex="-1"></a><span class="do">## MDE from a standard power simulation</span></span>
+<span id="cb214-25"><a href="poweranalysis.html#cb214-25" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;Simulated MDE&quot;</span>)</span>
+<span id="cb214-26"><a href="poweranalysis.html#cb214-26" aria-hidden="true" tabindex="-1"></a>sim_results<span class="sc">$</span>MDE</span>
+<span id="cb214-27"><a href="poweranalysis.html#cb214-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb214-28"><a href="poweranalysis.html#cb214-28" aria-hidden="true" tabindex="-1"></a><span class="do">## For each of those simulated datasets,</span></span>
+<span id="cb214-29"><a href="poweranalysis.html#cb214-29" aria-hidden="true" tabindex="-1"></a><span class="do">## apply the ex-post MDE-80 approach instead.</span></span>
+<span id="cb214-30"><a href="poweranalysis.html#cb214-30" aria-hidden="true" tabindex="-1"></a>expost_results <span class="ot">&lt;-</span></span>
+<span id="cb214-31"><a href="poweranalysis.html#cb214-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb214-32"><a href="poweranalysis.html#cb214-32" aria-hidden="true" tabindex="-1"></a>  sim_power_data <span class="sc">%&gt;%</span></span>
+<span id="cb214-33"><a href="poweranalysis.html#cb214-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb214-34"><a href="poweranalysis.html#cb214-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">estimate</span>(<span class="at">form =</span> y <span class="sc">~</span> x, <span class="at">vars =</span> <span class="st">&quot;x&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb214-35"><a href="poweranalysis.html#cb214-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb214-36"><a href="poweranalysis.html#cb214-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mde =</span> std.error <span class="sc">*</span> <span class="fl">2.8</span>)</span>
+<span id="cb214-37"><a href="poweranalysis.html#cb214-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb214-38"><a href="poweranalysis.html#cb214-38" aria-hidden="true" tabindex="-1"></a><span class="do">## Evaluate ex-post results across</span></span>
+<span id="cb214-39"><a href="poweranalysis.html#cb214-39" aria-hidden="true" tabindex="-1"></a><span class="do">## simulated datsets; how close</span></span>
+<span id="cb214-40"><a href="poweranalysis.html#cb214-40" aria-hidden="true" tabindex="-1"></a><span class="do">## is it in different random draws?</span></span>
+<span id="cb214-41"><a href="poweranalysis.html#cb214-41" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;heuristic range (min, max)&quot;</span>)</span>
+<span id="cb214-42"><a href="poweranalysis.html#cb214-42" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(expost_results<span class="sc">$</span>mde)</span>
+<span id="cb214-43"><a href="poweranalysis.html#cb214-43" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;heuristic standard deviation&quot;</span>)</span>
+<span id="cb214-44"><a href="poweranalysis.html#cb214-44" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(expost_results<span class="sc">$</span>mde)</span>
+<span id="cb214-45"><a href="poweranalysis.html#cb214-45" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;mean heuristic value&quot;</span>)</span>
+<span id="cb214-46"><a href="poweranalysis.html#cb214-46" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(expost_results<span class="sc">$</span>mde)</span></code></pre></div>
 <pre><code>[1] &quot;Simulated MDE&quot;
 [1] 0.17
 [1] &quot;heuristic range (min, max)&quot;
@@ -2179,7 +2195,7 @@ data in the figure below:</p>
         </div>
       </div>
 <a href="analysis-choices.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="codeindex.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="translating.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook/js/app.min.js"></script>

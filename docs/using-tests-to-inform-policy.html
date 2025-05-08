@@ -430,7 +430,7 @@ gtag("config", "G-RCGKRS9FGR");
 
 <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -441,7 +441,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -467,7 +467,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
+code span.bu { } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -480,7 +480,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.im { } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -610,9 +610,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li><a href="poweranalysis.html#approximating-power-ex-post" id="toc-approximating-power-ex-post"><span class="toc-section-number">6.5</span> Approximating power ex-post</a></li>
 </ul></li>
-<li><a href="codeindex.html#codeindex" id="toc-codeindex"><span class="toc-section-number">7</span> Code example index</a></li>
-<li><a href="methodindex.html#methodindex" id="toc-methodindex"><span class="toc-section-number">8</span> Methods topic index</a></li>
-<li><a href="appendix.html#appendix" id="toc-appendix"><span class="toc-section-number">9</span> Appendix</a></li>
+<li><a href="translating.html#translating" id="toc-translating"><span class="toc-section-number">7</span> Communicating evidence</a>
+<ul>
+<li><a href="translating.html#talking-about-common-estimates" id="toc-talking-about-common-estimates"><span class="toc-section-number">7.1</span> Talking about common estimates</a>
+<ul>
+<li><a href="translating.html#average-treatment-effects" id="toc-average-treatment-effects"><span class="toc-section-number">7.1.1</span> Average treatment effects</a></li>
+<li><a href="translating.html#p-values" id="toc-p-values"><span class="toc-section-number">7.1.2</span> p-values</a></li>
+<li><a href="translating.html#confidence-intervals" id="toc-confidence-intervals"><span class="toc-section-number">7.1.3</span> Confidence intervals</a></li>
+</ul></li>
+<li><a href="translating.html#making-sense-of-statistically-insignificant-results" id="toc-making-sense-of-statistically-insignificant-results"><span class="toc-section-number">7.2</span> Making sense of statistically insignificant results</a>
+<ul>
+<li><a href="translating.html#statistical-power" id="toc-statistical-power"><span class="toc-section-number">7.2.1</span> Statistical power</a></li>
+<li><a href="translating.html#equivalence-tests" id="toc-equivalence-tests"><span class="toc-section-number">7.2.2</span> Equivalence tests</a></li>
+</ul></li>
+<li><a href="translating.html#efficacy-vs-toxicity" id="toc-efficacy-vs-toxicity"><span class="toc-section-number">7.3</span> Efficacy vs toxicity</a></li>
+<li><a href="translating.html#costbenefit-calculations" id="toc-costbenefit-calculations"><span class="toc-section-number">7.4</span> Cost/benefit calculations</a></li>
+</ul></li>
+<li><a href="codeindex.html#codeindex" id="toc-codeindex"><span class="toc-section-number">8</span> Code example index</a></li>
+<li><a href="methodindex.html#methodindex" id="toc-methodindex"><span class="toc-section-number">9</span> Methods topic index</a></li>
+<li><a href="appendix.html#appendix" id="toc-appendix"><span class="toc-section-number">10</span> Appendix</a></li>
 <li><a href="references.html#references" id="toc-references">References</a></li>
 <li class="divider"></li>
 <li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
@@ -637,14 +653,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="using-tests-to-inform-policy" class="section level1" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Using tests to inform policy</h1>
 <p>Most of this SOP dives into our statistical decision making. It assumes that the reader has heard of hypothesis tests and statistical estimators. Here, we first explain in broad terms how statistical tests and estimators are useful for policy learning.</p>
-<p>&#x201C;Evidence-based policy&#x201D; can refer to both &#x201C;evidence-as-insight&#x201D; (designing new policies based on prior empirical evidence) and &#x201C;evidence-as-evaluation&#x201D; (carefully designing studies to learn about how and whether a new policy works). For more on this distinction, see <span class="citation">Bowers and Testa (<a href="references.html#ref-bowers2019better">2019</a>)</span>. Our team aims to help partners with both the <strong>designing</strong> and <strong>learning</strong> elements of evidence-based policy. However, <em>the OES SOP focuses on the learning part of our work</em>.</p>
+<p>&#x201C;Evidence-based policy&#x201D; can refer to both &#x201C;evidence-as-insight&#x201D; (designing new policies based on prior empirical evidence) and &#x201C;evidence-as-evaluation&#x201D; (carefully designing studies to learn about how and whether a new policy works). For more on this distinction, see <span class="citation">Bowers and Testa (<a href="references.html#ref-bowers2019better" role="doc-biblioref">2019</a>)</span>. Our team aims to help partners with both the <strong>designing</strong> and <strong>learning</strong> elements of evidence-based policy. However, <em>the OES SOP focuses on the learning part of our work</em>.</p>
 <p>How would we know whether and how a new policy worked? In an ideal and
 unrealistic case, we would know that a new policy altered the behavior of a single person, John, by comparing his decisions both with and without the new policy <em>at the same moment in time</em> (i.e., if we could observe two different realities at once). If we saw that John&#x2019;s decisions were better under the new policy than under the status quo, we would say that the new policy <em>caused</em> John to make better decisions.</p>
-<p>Since no one can observe John in two different situations at once &#x2014; say, making health decisions with and without access to a new procedure for visiting the doctor &#x2014; researchers try to find other people who represent how John would have acted without being exposed to the new policy. <span class="citation">Holland (<a href="references.html#ref-holland:1986a">1986</a>)</span> calls this the &#x201C;fundamental problem of causal inference&#x201D; and explains more formally when we might believe that other people are a good approximations for how John would have acted without the new policy. For example, if access to the new policy is randomized, it is easier to argue that that the two groups (new policy vs status quo) are good &#x201C;counterfactuals&#x201D; for each other. Our team tends to think about the causal effects of a policy in counterfactual terms.</p>
+<p>Since no one can observe John in two different situations at once &#x2014; say, making health decisions with and without access to a new procedure for visiting the doctor &#x2014; researchers try to find other people who represent how John would have acted without being exposed to the new policy. <span class="citation">Holland (<a href="references.html#ref-holland:1986a" role="doc-biblioref">1986</a>)</span> calls this the &#x201C;fundamental problem of causal inference&#x201D; and explains more formally when we might believe that other people are a good approximations for how John would have acted without the new policy. For example, if access to the new policy is randomized, it is easier to argue that that the two groups (new policy vs status quo) are good &#x201C;counterfactuals&#x201D; for each other. Our team tends to think about the causal effects of a policy in counterfactual terms.</p>
 <p>This in mind, we often use randomized experiments to create groups of people who represent behavior under <em>both</em> the new policy and the status quo. In medical experiments, these two groups tend to be called the &#x201C;treatment group&#x201D; and the &#x201C;control group.&#x201D; Social scientists often use that same language even if we are often not really providing a new treatment, but are, instead, offering a new communication or decision-making structure. If we pilot a new policy by offering it to people chosen at random, we can use what we see from one group to learn about what would likely have happened if the control group had received the new policy instead, or if the treatment group had not received it.</p>
 <p>In any given sample, we won&#x2019;t know <em>exactly</em> how the treatment group would have behaved if they had been assigned to the control group instead. For example, imagine we pulled 500 out of 1000 names from a hat and assigned those 500 people to receive treatment. Any &#x201C;treated&#x201D; sample we observe is just one of many possible sets of 500 people we could have drawn. If we were to do the experiment again, and pulled a different 500 names at random, this second experiment will also have a randomly assigned treatment group, but the second 500 people will be at least a little different from the first 500 people. It is important to ask questions about how this influences our findings (&#x201C;statistical uncertainty&#x201D;). How much could our result differ by chance, just due to pulling a different 500 people from the hat, rather than due to a real treatment effect?</p>
 <p>Our team draws on statistical theory to estimate the causal effect of a new policy and its associated statistical uncertainty. We also use statistical theory to answer questions like &#x201C;Is this effect meaningfully distinguishable from zero?&#x201D; or &#x201C;How many people do we need to observe in order to distinguish a positive effect from a zero effect?&#x201D; The rest of this document presents decisions we have made about the particulars of estimators and tests, as well as other tricky decisions that we have had to confront&#x2014;like how we can learn from pre-intervention data to design experiments that provide more precise results.</p>
-<p>For more on the basics of how statistics helps us answer questions about causal effects, we recommend chapters 1&#x2013;3 of <span class="citation">Gerber and Green (<a href="references.html#ref-gerber_field_2012">2012</a>)</span> (which focuses on randomized experiments) and the first part of <span class="citation">Paul R. Rosenbaum (<a href="references.html#ref-rosenbaum2017">2017</a>)</span> (which focuses on both experiments and research designs without randomization). Another good treatment comes from the opening chapters of <span class="citation">Angrist and Pischke (<a href="references.html#ref-angrist2009mostly">2009</a>)</span>.</p>
+<p>For more on the basics of how statistics helps us answer questions about causal effects, we recommend chapters 1&#x2013;3 of <span class="citation">Gerber and Green (<a href="references.html#ref-gerber_field_2012" role="doc-biblioref">2012</a>)</span> (which focuses on randomized experiments) and the first part of <span class="citation">Paul R. Rosenbaum (<a href="references.html#ref-rosenbaum2017" role="doc-biblioref">2017</a>)</span> (which focuses on both experiments and research designs without randomization). Another good treatment comes from the opening chapters of <span class="citation">Angrist and Pischke (<a href="references.html#ref-angrist2009mostly" role="doc-biblioref">2009</a>)</span>.</p>
 
 </div>
             </section>

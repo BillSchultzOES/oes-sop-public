@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>OES Methodological Standard Operating Procedure</title>
+  <meta name="description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  <meta name="generator" content="bookdown &lt;!--bookdown:version--&gt; and GitBook 2.6.7">
+
+  <meta property="og:title" content="OES Methodological Standard Operating Procedure">
+  <meta property="og:type" content="book">
+  
+  
+  <meta property="og:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  <meta name="github-repo" content="gsa-oes/sop">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="OES Methodological Standard Operating Procedure">
+  
+  <meta name="twitter:description" content="These are the current standard operating procedures for statistical analysis of the Office of Evaluation Sciences in the GSA">
+  
+
+<meta name="author" content="OES Methods Team">
+
+
+<meta name="date" content="2025-05-08">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="poweranalysis.html">
+<link rel="next" href="codeindex.html">
+<script src="libs/header-attrs/header-attrs.js"></script>
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet">
+
+
+
+
+
+
+
+<script src="libs/clipboard/clipboard.min.js"></script>
+<link href="libs/primer-tooltips/build.css" rel="stylesheet">
+<link href="libs/klippy/css/klippy.min.css" rel="stylesheet">
+<script src="libs/klippy/js/klippy.min.js"></script>
+<script src="libs/kePrint/kePrint.js"></script>
+<link href="libs/lightable/lightable.css" rel="stylesheet">
+
+<script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.cpp, pre.sql, pre.stan, pre.stata, pre.python, pre.bash');
+  rCodeBlocks.each(function() {
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+<script>
+function unrolltab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RCGKRS9FGR"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag("js", new Date());
+
+gtag("config", "G-RCGKRS9FGR");
+</script>
+<script>gtag("event", "view_item");</script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.16.3/dist/katex.min.css" data-external="1"></head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">The OES SOP</a></li>
+
+<li class="divider"></li>
+<li><a href="index.html#overview" id="toc-overview">Overview</a>
+<ul>
+<li><a href="index.html#purposes-of-this-document" id="toc-purposes-of-this-document">Purposes of this document</a></li>
+<li><a href="index.html#nature-and-limitations-of-this-document" id="toc-nature-and-limitations-of-this-document">Nature and limitations of this document</a>
+<ul>
+<li><a href="index.html#we-mostly-focus-on-randomized-field-experiments." id="toc-we-mostly-focus-on-randomized-field-experiments.">We (mostly) focus on randomized field experiments.</a></li>
+<li><a href="index.html#we-mostly-present-examples-using-r" id="toc-we-mostly-present-examples-using-r">We (mostly) present examples using R</a></li>
+</ul></li>
+<li><a href="index.html#structure" id="toc-structure">Structure</a></li>
+<li><a href="index.html#help-us-improve-our-work" id="toc-help-us-improve-our-work">Help us improve our work!</a></li>
+<li><a href="index.html#technical-details" id="toc-technical-details">Technical details</a></li>
+</ul></li>
+<li><a href="using-tests-to-inform-policy.html#using-tests-to-inform-policy" id="toc-using-tests-to-inform-policy"><span class="toc-section-number">1</span> Using tests to inform policy</a></li>
+<li><a href="key-design-criteria.html#key-design-criteria" id="toc-key-design-criteria"><span class="toc-section-number">2</span> Key design criteria</a>
+<ul>
+<li><a href="key-design-criteria.html#high-statistical-power" id="toc-high-statistical-power"><span class="toc-section-number">2.1</span> High statistical power</a></li>
+<li><a href="key-design-criteria.html#controlled-error-rates" id="toc-controlled-error-rates"><span class="toc-section-number">2.2</span> Controlled error rates</a></li>
+<li><a href="key-design-criteria.html#unbiased-estimators" id="toc-unbiased-estimators"><span class="toc-section-number">2.3</span> Unbiased estimators</a></li>
+</ul></li>
+<li><a href="design-based-inference.html#design-based-inference" id="toc-design-based-inference"><span class="toc-section-number">3</span> Design based inference</a>
+<ul>
+<li><a href="design-based-inference.html#randinfex" id="toc-randinfex"><span class="toc-section-number">3.1</span> An example using simulated data</a>
+<ul>
+<li><a href="design-based-inference.html#randomization-based-standard-errors" id="toc-randomization-based-standard-errors"><span class="toc-section-number">3.1.1</span> Randomization-based standard errors</a></li>
+<li><a href="design-based-inference.html#randomization-based-confidence-intervals" id="toc-randomization-based-confidence-intervals"><span class="toc-section-number">3.1.2</span> Randomization-based confidence intervals</a></li>
+</ul></li>
+<li><a href="design-based-inference.html#summary-what-does-a-design-based-approach-mean-for-policy-evaluation" id="toc-summary-what-does-a-design-based-approach-mean-for-policy-evaluation"><span class="toc-section-number">3.2</span> Summary: What does a design based approach mean for policy evaluation?</a></li>
+</ul></li>
+<li><a href="randomization-choices.html#randomization-choices" id="toc-randomization-choices"><span class="toc-section-number">4</span> Randomization choices</a>
+<ul>
+<li><a href="randomization-choices.html#coin-flipping-vs-urn-drawing-randomization" id="toc-coin-flipping-vs-urn-drawing-randomization"><span class="toc-section-number">4.1</span> Coin flipping vs urn-drawing randomization</a></li>
+<li><a href="randomization-choices.html#randomization-into-2-or-more-groups" id="toc-randomization-into-2-or-more-groups"><span class="toc-section-number">4.2</span> Randomization into 2 or more groups</a></li>
+<li><a href="randomization-choices.html#factorial-designs" id="toc-factorial-designs"><span class="toc-section-number">4.3</span> Factorial designs</a></li>
+<li><a href="randomization-choices.html#block-random-assignment" id="toc-block-random-assignment"><span class="toc-section-number">4.4</span> Block random assignment</a>
+<ul>
+<li><a href="randomization-choices.html#the-benefits-of-blocking" id="toc-the-benefits-of-blocking"><span class="toc-section-number">4.4.1</span> The benefits of blocking</a></li>
+<li><a href="randomization-choices.html#using-a-few-covariates-to-create-blocks" id="toc-using-a-few-covariates-to-create-blocks"><span class="toc-section-number">4.4.2</span> Using a few covariates to create blocks</a></li>
+<li><a href="randomization-choices.html#blocking-using-many-covariates" id="toc-blocking-using-many-covariates"><span class="toc-section-number">4.4.3</span> Blocking using many covariates</a></li>
+<li><a href="randomization-choices.html#disadvantages" id="toc-disadvantages"><span class="toc-section-number">4.4.4</span> Disadvantages</a></li>
+</ul></li>
+<li><a href="randomization-choices.html#cluster-random-assignment" id="toc-cluster-random-assignment"><span class="toc-section-number">4.5</span> Cluster random assignment</a></li>
+<li><a href="randomization-choices.html#other-randomized-designs" id="toc-other-randomized-designs"><span class="toc-section-number">4.6</span> Other randomized designs</a></li>
+<li><a href="randomization-choices.html#as-if-random-assignment" id="toc-as-if-random-assignment"><span class="toc-section-number">4.7</span> As-if random assignment</a></li>
+<li><a href="randomization-choices.html#assessing-randomization-balance-testing" id="toc-assessing-randomization-balance-testing"><span class="toc-section-number">4.8</span> Assessing randomization (balance testing)</a>
+<ul>
+<li><a href="randomization-choices.html#separate-tests-for-each-covariate" id="toc-separate-tests-for-each-covariate"><span class="toc-section-number">4.8.1</span> Separate tests for each covariate</a></li>
+<li><a href="randomization-choices.html#omnibus-tests" id="toc-omnibus-tests"><span class="toc-section-number">4.8.2</span> Omnibus tests</a></li>
+<li><a href="randomization-choices.html#summary" id="toc-summary"><span class="toc-section-number">4.8.3</span> Summary</a></li>
+<li><a href="randomization-choices.html#coded-examples" id="toc-coded-examples"><span class="toc-section-number">4.8.4</span> Coded examples</a></li>
+<li><a href="randomization-choices.html#what-to-do-with-failed-randomization-assessments" id="toc-what-to-do-with-failed-randomization-assessments"><span class="toc-section-number">4.8.5</span> What to do with &#x201C;failed&#x201D; randomization assessments?</a></li>
+</ul></li>
+</ul></li>
+<li><a href="analysis-choices.html#analysis-choices" id="toc-analysis-choices"><span class="toc-section-number">5</span> Analysis choices</a>
+<ul>
+<li><a href="analysis-choices.html#completely-randomized-trials" id="toc-completely-randomized-trials"><span class="toc-section-number">5.1</span> Completely randomized trials</a>
+<ul>
+<li><a href="analysis-choices.html#two-arms" id="toc-two-arms"><span class="toc-section-number">5.1.1</span> Two arms</a></li>
+</ul></li>
+<li><a href="analysis-choices.html#multiple-tests" id="toc-multiple-tests"><span class="toc-section-number">5.2</span> Multiple tests</a>
+<ul>
+<li><a href="analysis-choices.html#multiple-arms" id="toc-multiple-arms"><span class="toc-section-number">5.2.1</span> Multiple arms</a></li>
+<li><a href="analysis-choices.html#multiple-outcomes" id="toc-multiple-outcomes"><span class="toc-section-number">5.2.2</span> Multiple outcomes</a></li>
+<li><a href="analysis-choices.html#when-is-this-necessary" id="toc-when-is-this-necessary"><span class="toc-section-number">5.2.3</span> When is this necessary?</a></li>
+</ul></li>
+<li><a href="analysis-choices.html#covariance-adjustment" id="toc-covariance-adjustment"><span class="toc-section-number">5.3</span> Covariance adjustment</a>
+<ul>
+<li><a href="analysis-choices.html#possible-bias-in-the-least-squares-ate-estimator-with-covariates" id="toc-possible-bias-in-the-least-squares-ate-estimator-with-covariates"><span class="toc-section-number">5.3.1</span> Possible bias in the least squares ATE estimator with covariates</a></li>
+<li><a href="analysis-choices.html#illustrating-the-lin-approach-to-covariance-adjustment" id="toc-illustrating-the-lin-approach-to-covariance-adjustment"><span class="toc-section-number">5.3.2</span> Illustrating the Lin Approach to Covariance Adjustment</a></li>
+<li><a href="analysis-choices.html#another-way-to-think-about-lin-adjustment" id="toc-another-way-to-think-about-lin-adjustment"><span class="toc-section-number">5.3.3</span> Another way to think about Lin adjustment</a></li>
+<li><a href="analysis-choices.html#the-rosenbaum-approach-to-covariance-adjustment" id="toc-the-rosenbaum-approach-to-covariance-adjustment"><span class="toc-section-number">5.3.4</span> The Rosenbaum Approach to Covariance Adjustment</a></li>
+</ul></li>
+<li><a href="analysis-choices.html#how-to-choose-covariates-for-covariance-adjustment" id="toc-how-to-choose-covariates-for-covariance-adjustment"><span class="toc-section-number">5.4</span> How to choose covariates for covariance adjustment?</a></li>
+<li><a href="analysis-choices.html#blockrandanalysis" id="toc-blockrandanalysis"><span class="toc-section-number">5.5</span> Block-randomized trials</a>
+<ul>
+<li><a href="analysis-choices.html#testing-binary-outcomes-under-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables" id="toc-testing-binary-outcomes-under-block-randomization-cochran-mantel-haenszel-cmh-test-for-k-x-2-x-2-tables"><span class="toc-section-number">5.5.1</span> Testing binary outcomes under block randomization: Cochran-Mantel-Haenszel (CMH) test for K X 2 X 2 tables</a></li>
+<li><a href="analysis-choices.html#blockrandate" id="toc-blockrandate"><span class="toc-section-number">5.5.2</span> Estimating an overall average treatment effect</a></li>
+</ul></li>
+<li><a href="analysis-choices.html#clusterrandanalysis" id="toc-clusterrandanalysis"><span class="toc-section-number">5.6</span> Cluster-randomized trials</a>
+<ul>
+<li><a href="analysis-choices.html#bias-when-cluster-size-is-correlated-with-potential-outcomes" id="toc-bias-when-cluster-size-is-correlated-with-potential-outcomes"><span class="toc-section-number">5.6.1</span> Bias when cluster size is correlated with potential outcomes</a></li>
+<li><a href="analysis-choices.html#incorrect-false-positive-rates-from-tests-and-confidence-intervals" id="toc-incorrect-false-positive-rates-from-tests-and-confidence-intervals"><span class="toc-section-number">5.6.2</span> Incorrect false positive rates from tests and confidence intervals</a></li>
+</ul></li>
+</ul></li>
+<li><a href="poweranalysis.html#poweranalysis" id="toc-poweranalysis"><span class="toc-section-number">6</span> Power analysis</a>
+<ul>
+<li><a href="poweranalysis.html#an-example-of-the-off-the-shelf-approach" id="toc-an-example-of-the-off-the-shelf-approach"><span class="toc-section-number">6.1</span> An example of the off-the-shelf approach</a></li>
+<li><a href="poweranalysis.html#an-example-of-the-simulation-approach" id="toc-an-example-of-the-simulation-approach"><span class="toc-section-number">6.2</span> An example of the simulation approach</a>
+<ul>
+<li><a href="poweranalysis.html#how-do-we-structure-the-simulation" id="toc-how-do-we-structure-the-simulation"><span class="toc-section-number">6.2.1</span> How do we structure the simulation?</a></li>
+<li><a href="poweranalysis.html#simulation-template-code" id="toc-simulation-template-code"><span class="toc-section-number">6.2.2</span> Simulation template code</a></li>
+</ul></li>
+<li><a href="poweranalysis.html#when-to-use-which-approach" id="toc-when-to-use-which-approach"><span class="toc-section-number">6.3</span> When to use which approach</a></li>
+<li><a href="poweranalysis.html#additional-examples-of-the-simulation-approach" id="toc-additional-examples-of-the-simulation-approach"><span class="toc-section-number">6.4</span> Additional examples of the simulation approach</a>
+<ul>
+<li><a href="poweranalysis.html#a-two-by-two-design-with-interaction" id="toc-a-two-by-two-design-with-interaction"><span class="toc-section-number">6.4.1</span> A two-by-two design with interaction</a></li>
+<li><a href="poweranalysis.html#covariate-adjustment-with-the-lin-estimator" id="toc-covariate-adjustment-with-the-lin-estimator"><span class="toc-section-number">6.4.2</span> Covariate adjustment with the Lin estimator</a></li>
+<li><a href="poweranalysis.html#incorporating-declaredesign-into-oes-power-tools" id="toc-incorporating-declaredesign-into-oes-power-tools"><span class="toc-section-number">6.4.3</span> Incorporating DeclareDesign into OES Power Tools</a></li>
+</ul></li>
+<li><a href="poweranalysis.html#approximating-power-ex-post" id="toc-approximating-power-ex-post"><span class="toc-section-number">6.5</span> Approximating power ex-post</a></li>
+</ul></li>
+<li><a href="translating.html#translating" id="toc-translating"><span class="toc-section-number">7</span> Communicating evidence</a>
+<ul>
+<li><a href="translating.html#talking-about-common-estimates" id="toc-talking-about-common-estimates"><span class="toc-section-number">7.1</span> Talking about common estimates</a>
+<ul>
+<li><a href="translating.html#average-treatment-effects" id="toc-average-treatment-effects"><span class="toc-section-number">7.1.1</span> Average treatment effects</a></li>
+<li><a href="translating.html#p-values" id="toc-p-values"><span class="toc-section-number">7.1.2</span> p-values</a></li>
+<li><a href="translating.html#confidence-intervals" id="toc-confidence-intervals"><span class="toc-section-number">7.1.3</span> Confidence intervals</a></li>
+</ul></li>
+<li><a href="translating.html#making-sense-of-statistically-insignificant-results" id="toc-making-sense-of-statistically-insignificant-results"><span class="toc-section-number">7.2</span> Making sense of statistically insignificant results</a>
+<ul>
+<li><a href="translating.html#statistical-power" id="toc-statistical-power"><span class="toc-section-number">7.2.1</span> Statistical power</a></li>
+<li><a href="translating.html#equivalence-tests" id="toc-equivalence-tests"><span class="toc-section-number">7.2.2</span> Equivalence tests</a></li>
+</ul></li>
+<li><a href="translating.html#efficacy-vs-toxicity" id="toc-efficacy-vs-toxicity"><span class="toc-section-number">7.3</span> Efficacy vs toxicity</a></li>
+<li><a href="translating.html#costbenefit-calculations" id="toc-costbenefit-calculations"><span class="toc-section-number">7.4</span> Cost/benefit calculations</a></li>
+</ul></li>
+<li><a href="codeindex.html#codeindex" id="toc-codeindex"><span class="toc-section-number">8</span> Code example index</a></li>
+<li><a href="methodindex.html#methodindex" id="toc-methodindex"><span class="toc-section-number">9</span> Methods topic index</a></li>
+<li><a href="appendix.html#appendix" id="toc-appendix"><span class="toc-section-number">10</span> Appendix</a></li>
+<li><a href="references.html#references" id="toc-references">References</a></li>
+<li class="divider"></li>
+<li><a href="https://oes.gsa.gov" target="blank">Published by the OES</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">OES Methodological Standard Operating Procedure</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="translating" class="section level1" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Communicating evidence</h1>
+<!-- Adds copy code button -->
+<script>
+  addClassKlippyToPreCode();
+  addClassKlippyTo("pre.r, pre.markdown");
+  addKlippy('right', 'top', 'auto', '1', 'Copy code', 'Copied!');
+</script>
+<!-- Used (and iteratively updated) in the {oes_code_tab} snippets below. -->
+<!-- set chapter number and reset count -->
+<p>Some claim to &#x201C;let the data speak.&#x201D; But evaluators can&#x2019;t just report results from a statistical test and call it a day. The data might speak, but we still have to translate. Deciding how to best distill evidence and communicate it to an audience with other skill sets and responsibilities is not always straightforward. What conclusions can we support based on our tests, and which can we not support? Is a non-technical summary sacrificing accuracy in a meaningful way? We think about these kinds of questions often. They also motivate high-profile discussions about how applied researchers should be evaluating statistical evidence in the first place <span class="citation">(<a href="references.html#ref-mcshane2019abandon" role="doc-biblioref">McShane et al. 2019</a>; <a href="references.html#ref-amrhein2019scientists" role="doc-biblioref">Amrhein, Greenland, and McShane 2019</a>)</span>.</p>
+<p>This chapter reviews a few related topics that frequently come up in our work:</p>
+<ul>
+<li><p>How we tend to talk about common quantities we estimate</p></li>
+<li><p>How we make sense of &#x201C;null&#x201D; results</p></li>
+<li><p>Testing for effectiveness vs testing for a lack of negative effects</p></li>
+<li><p>Incorporating cost estimates into our interpretations of evidence</p></li>
+</ul>
+<p>As with other chapters, this content is subject to change, and the goal is not to require OES team members to present evidence in a particular way. Instead, the goal is just to help OES Team Members coordinate around a common language, and to provide examples of how we have thought about these issues in the past.</p>
+<div id="talking-about-common-estimates" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Talking about common estimates</h2>
+<p>Earlier chapters discuss a few quantities we commonly calculate and report as part of an evaluation:</p>
+<ul>
+<li><p>Average treatment effect estimates</p></li>
+<li><p>p-values</p></li>
+<li><p>Confidence intervals</p></li>
+</ul>
+<p>It is important for credibility to remember (1) the <em>correct technical definition</em> of each. But it is also important to not lose sight of (2) <em>what we hope to learn from them</em>, or why we&#x2019;re calculating these quantities in the first place. When there&#x2019;s enough of a gap between these things, it might mean that we need to re-think something about our evaluation.</p>
+<p>In the subsections below, we review (1) and (2) for all three quantities. The primary aim is to serve as a reference so that team members can more easily coordinate around how we want to discuss these estimates in different situations. We also want to help OES team members think about when they might want to deviate and report other summaries of our data instead.</p>
+<div id="average-treatment-effects" class="section level3" number="7.1.1">
+<h3><span class="header-section-number">7.1.1</span> Average treatment effects</h3>
+<div id="what-is-it" class="section level4" number="7.1.1.1">
+<h4><span class="header-section-number">7.1.1.1</span> What is it?</h4>
+<p>Refer back to the first chapter for a simpler introduction, or <span class="citation">Holland (<a href="references.html#ref-holland:1986a" role="doc-biblioref">1986</a>)</span> for a more academic one. Imagine the same person in two different counter-factual scenarios: a world where they experience some policy change (the treated &#x201C;potential outcome&#x201D;), and an alternative world in which they don&#x2019;t (the control &#x201C;potential outcome&#x201D;).</p>
+<p>Here are potential outcomes for the first six &#x201C;people&#x201D; in the example dataset we&#x2019;ll use in this chapter. The variables <code>y0</code> and <code>y1</code> are control and treated potential outcomes, respectively, while <code>Z</code> is a person&#x2019;s treatment status, <code>Y</code> is the actual outcome we observe given treatment, and <code>tau</code> is the true treatment effect for any one person.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7R1&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Stata1&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Hide1&apos;)">
+Hide
+</button>
+<div id="ch7R1" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Create an ATE variable
+dat1$tau &lt;- dat1$y1 - dat1$y0
+
+## Plot the first 6 rows
+dat1[1:6,c(&quot;y1&quot;,&quot;y0&quot;,&quot;Y&quot;,&quot;Z&quot;,&quot;tau&quot;)]</code></pre>
+</div>
+<div id="ch7Stata1" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Create an ATE variable
+gen tau = y1 - y0
+
+** Plot the first 6 rows
+list y1 y0 y z tau in 1/6</code></pre>
+</div>
+<div id="ch7Hide1" class="tabcontent">
+
+</div>
+</div>
+<pre><code>      y1     y0      Y Z   tau
+1  6.123  0.000  0.000 0 6.123
+2  2.741  0.000  0.000 0 2.741
+3  7.215  0.000  0.000 0 7.215
+4  6.708  2.056  2.056 0 4.652
+5  5.654  0.000  5.654 1 5.654
+6 15.561 10.409 10.409 0 5.152</code></pre>
+<p>We can&#x2019;t observe anyone under treatment and control simultaneously. Instead, we estimate the difference between the average <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi></mrow><annotation encoding="application/x-tex">Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span></span></span></span> among the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> people that actually receive treatment&#x2014;<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mi>m</mi></mfrac><msubsup><mo>&#x2211;</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></msubsup><msub><mi>Y</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">\frac{1}{m}\sum_{j=1}^{m}Y_{j}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2809em;vertical-align:-0.4358em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">&#x2211;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8043em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">m</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.4358em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span></span></span></span>&#x2014;and the average <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi></mrow><annotation encoding="application/x-tex">Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span></span></span></span> among the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>&#x2212;</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">n-m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> people that don&#x2019;t&#x2014;<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mrow><mi>n</mi><mo>&#x2212;</mo><mi>m</mi></mrow></mfrac><msubsup><mo>&#x2211;</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>n</mi><mo>&#x2212;</mo><mi>m</mi></mrow></msubsup><msub><mi>Y</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">\frac{1}{n-m}\sum_{k=1}^{n-m}Y_{k}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.3146em;vertical-align:-0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">&#x2212;</span><span class="mord mathnormal mtight">m</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">&#x2211;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9112em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">&#x2212;</span><span class="mord mathnormal mtight">m</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>. Assuming we have a well-designed study otherwise (chapters 3-5), this should let us estimate the average <code>tau</code> across people in our dataset <em>with some degree of random error</em>. This is the <strong>average treatment effect</strong> (ATE), <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mi>n</mi></mfrac><msubsup><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><msub><mi>&#x3C4;</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\frac{1}{n} \sum_{i=1}^{n} \tau_{i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">&#x2211;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8043em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.1132em;">&#x3C4;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.1132em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7R2&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Stata2&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Hide2&apos;)">
+Hide
+</button>
+<div id="ch7R2" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Actual average treatment effect
+print(&quot;Actual ATE&quot;)
+mean(dat1$tau)
+
+## Sample estimate of the ATE: manually
+print(&quot;Sample estimate of ATE&quot;)
+mean(dat1$Y[dat1$Z==1]) - mean(dat1$Y[dat1$Z==0])
+
+## Sample estimate of the ATE: regression
+#as.numeric(lm(Y ~ Z, data = dat1)$coefficients[2])</code></pre>
+</div>
+<div id="ch7Stata2" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Actual average treatment effect
+di &quot;Actual ATE&quot;
+qui sum tau, meanonly
+di &quot;`r(mean)&apos;&quot;
+
+** Sample estimate of the ATE: manually
+di &quot;Sample estimate of ATE&quot;
+qui sum y if z==1, meanonly
+local mean_z1 = `r(mean)&apos;
+qui sum y if z==0, meanonly
+local mean_z0 = `r(mean)&apos;
+di &quot;`mean_z1&apos;-`mean_z0&apos;&quot;
+
+** Sample estimate of the ATE: regression
+*qui reg y z
+*di _b[z]</code></pre>
+</div>
+<div id="ch7Hide2" class="tabcontent">
+
+</div>
+</div>
+<pre><code>[1] &quot;Actual ATE&quot;
+[1] 5.453
+[1] &quot;Sample estimate of ATE&quot;
+[1] 4.637</code></pre>
+<p>In this example, while the true ATE is 5.4525, the average difference between treated and non-treated people is 4.6374. In a well-designed study we&#x2019;d expect treated and non-treated people to still differ some just by random chance regardless of what the true individual-level treatment effects are. This means there&#x2019;s likely at least a little random noise in our ATE estimate (in real data we can&#x2019;t just take the mean of <code>tau</code> directly). The next two quantities help us think about what this potential random noise might mean for our confidence in our findings.</p>
+</div>
+<div id="why-do-we-calculate-it" class="section level4" number="7.1.1.2">
+<h4><span class="header-section-number">7.1.1.2</span> Why do we calculate it?</h4>
+<p>Often, we&#x2019;d like to do more than just say &#x201C;the policy works&#x201D; or &#x201C;the policy doesn&#x2019;t work.&#x201D; We&#x2019;d like to provide some kind of measure of how well it works. This can be important for policy learning: we&#x2019;d like to be able to say not just &#x201C;the procedural reform made application processing costs cheaper,&#x201D; but &#x201C;the procedural reform cut processing costs by $0.50 per application, <em>on average</em>.&#x201D; An average treatment effect is the most common method of quantifying how well policy programs work in fields like political science and economics. It&#x2019;s usually the method we apply.</p>
+<p>The ATE is the dominant way of quantifying effects for a &#x201C;typical person.&#x201D; But there are other ways of understanding what a &#x201C;typical person&#x201D; is. For instance, what if our outcome measure is very skewed, and so we&#x2019;re less interested in the average effect, but more interested in the median effect? In that case we might want to estimate something like a quantile regression that targets percentile effects directly.</p>
+<p>Also, sometimes we actually might not be interested in a typical effect. Maybe we really do just want to know whether there was any kind of change in the distribution of outcomes across the treatment/control groups. This is one strategy we could follow if we&#x2019;re evaluating whether a new policy has any negative consequences that might be masked by only evaluating average differences. In that case, we might be interested in tests that sacrifice providing a single number summary in return for helping us detect other types of changes in the outcome distribution <span class="citation">(<a href="references.html#ref-bowers2013reasoning" role="doc-biblioref">Bowers, Fredrickson, and Panagopoulos 2013</a>; <a href="references.html#ref-lin2017placement" role="doc-biblioref">Lin et al. 2017</a>)</span>.</p>
+<p>Here are a few examples of tests we might use in that last situation:</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7R3&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Stata3&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Hide3&apos;)">
+Hide
+</button>
+<div id="ch7R3" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## E.g., a Kolmogorov-Smirnov test for a
+## difference in outcome distributions.
+print(&quot;KS test for a difference in distributions&quot;)
+ks.test(Y ~ Z, data = dat1)
+
+## E.g., a rank-based test for a &quot;location shift&quot;
+## in the distribution of Y.
+print(&quot;MWU rank-based test of a shift in distributions&quot;)
+wilcox.test(Y ~ Z, data = dat1)</code></pre>
+</div>
+<div id="ch7Stata3" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** E.g., a Kolmogorov-Smirnov test for a
+** difference in outcome distributions.
+di &quot;KS test for a difference in distributions&quot;
+ksmirnov y, by(z)
+
+** E.g., a rank-based test for a &quot;location shift&quot;
+** in the distribution of Y.
+di &quot;MWU rank-based test of a shift in distributions&quot;
+ranksum y, by(z)</code></pre>
+</div>
+<div id="ch7Hide3" class="tabcontent">
+
+</div>
+</div>
+<pre><code>[1] &quot;KS test for a difference in distributions&quot;
+
+    Exact two-sample Kolmogorov-Smirnov test
+
+data:  Y by Z
+D = 0.6, p-value = 5e-07
+alternative hypothesis: two-sided
+
+[1] &quot;MWU rank-based test of a shift in distributions&quot;
+
+    Wilcoxon rank sum test with continuity correction
+
+data:  Y by Z
+W = 360, p-value = 1e-06
+alternative hypothesis: true location shift is not equal to 0</code></pre>
+</div>
+<div id="how-do-we-report-it" class="section level4" number="7.1.1.3">
+<h4><span class="header-section-number">7.1.1.3</span> How do we report it?</h4>
+<p>We&#x2019;ve found it easiest to communicate ATE estimates by starting with a baseline (&#x201C;status quo&#x201D;) estimate of the average value of the outcome, providing an initial reference level. We then report how much this outcome increases, on average, when the intervention is administered. Contrasting the typical baseline outcome with how much change the intervention introduces often helps make these numbers more concrete. It also helps with interpreting how &#x201C;large&#x201D; our ATE is.</p>
+<p>In our data example, we estimate an average or &#x201C;typical&#x201D; status quo outcome of 2.132. We then estimate that the intervention increases this by 4.637 on average. That change represents a more than 200% increase above the baseline (more than twice as much)!</p>
+<p>You can see a method of computing those estimates in the following example code:</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7R4&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Stata4&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Hide4&apos;)">
+Hide
+</button>
+<div id="ch7R4" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Baseline outcome rate.
+## Assuming we might have control
+## variables, let&apos;s compute this manually
+## instead of using the regression intercept.
+print(&quot;Average baseline outcome&quot;)
+mean(dat1$Y[dat1$Z==0])
+
+## Sample ATE estimate
+mod &lt;- lm(Y ~ Z, data = dat1)
+print(&quot;Sample ATE estimate&quot;)
+as.numeric(mod$coefficients[&quot;Z&quot;])
+
+## Percent change in baseline due to treatment
+print(&quot;Percent change&quot;)
+as.numeric(mod$coefficients[&quot;Z&quot;]/mean(dat1$Y[dat1$Z==0]) * 100)</code></pre>
+</div>
+<div id="ch7Stata4" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Baseline outcome rate.
+** Assuming we might have control
+** variables, let&apos;s compute this manually
+** instead of using the regression intercept.
+di &quot;Average baseline outcome&quot;
+qui sum y if z == 0, meanonly
+local mean_z0 = `r(mean)&apos;
+di &quot;`mean_z0&apos;&quot;
+
+** Sample ATE estimate
+di &quot;Sample ATE estimate&quot;
+qui reg y z
+di _b[z]
+local ate = _b[z]
+
+** Percent change in baseline due to treatment
+local p_chng = `ate&apos;/`mean_z0&apos;*100
+di &quot;Percent change&quot;</code></pre>
+</div>
+<div id="ch7Hide4" class="tabcontent">
+
+</div>
+</div>
+<pre><code>[1] &quot;Average baseline outcome&quot;
+[1] 2.132
+[1] &quot;Sample ATE estimate&quot;
+[1] 4.637
+[1] &quot;Percent change&quot;
+[1] 217.5</code></pre>
+</div>
+</div>
+<div id="p-values" class="section level3" number="7.1.2">
+<h3><span class="header-section-number">7.1.2</span> p-values</h3>
+<div id="what-is-it-1" class="section level4" number="7.1.2.1">
+<h4><span class="header-section-number">7.1.2.1</span> What is it?</h4>
+<p>The p-value is one of the primary ways applied researchers think about how random noise in their ATE estimates might undermine their confidence in their findings. There is a lot of work on the details of correctly interpreting p-values and understanding how they are calculated <span class="citation">(<a href="references.html#ref-greenland2019valid" role="doc-biblioref">Greenland 2019</a>; <a href="references.html#ref-lakens2021practical" role="doc-biblioref">Lakens 2021</a>)</span>. We won&#x2019;t try to replicate a statistics textbook. But we will quickly go over this, since it&#x2019;s important for making sense of the sections below on interpreting null results or tests for &#x201C;toxicity.&#x201D;</p>
+<p>We get one real ATE estimate from our sample. But there is some random noise in this estimate, and so our estimate is just one draw from a larger distribution of estimates that <em>we could have possibly seen</em>. Typically, researchers imagine that this random noise comes from sampling units to study from a broader population, or even imagining the laws of nature themselves as the underlying &#x201C;super-population&#x201D; we want to learn about (in either case, that larger distribution of estimates we could have seen would be called the &#x201C;sampling distribution&#x201D;). Or instead, as discussed in chapter 3, we can think of random assignment as the source of random noise (that larger distribution is then the &#x201C;randomization distribution&#x201D;).</p>
+<p>Let&#x2019;s focus on traditional sampling-based inference. Assume we&#x2019;re testing a null hypothesis that the true average treatment effect is 0 (this is the default is most software commonly used in policy research). A <strong>two-sided p-value</strong> (or two-tailed) quantifies the percent of values in the sampling distribution that are as far from 0 as our ATE estimate (or further), assuming the null hypothesis is true. In other words, <em>under a true null of no average treatment effect</em>, what is the probability that random noise alone would produce evidence of an average treatment effect at least as strong as ours?<a href="references.html#fn42" class="footnote-ref" id="fnref42"><sup>42</sup></a></p>
+<p>The p-value doesn&#x2019;t tell us the probability that our finding <em>in particular</em> is a result of random noise. It only informs us about how often random noise alone, under a true null, could produce evidence like ours. See <a href="https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconceptions">here</a> for more discussion of some common misconceptions about p-values. It is very easy to accidentally explain this incorrectly!</p>
+<p>Below is an illustration of computing p-values, manually or using programs in R/Stata that do it for us:</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7R5&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Stata5&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Hide5&apos;)">
+Hide
+</button>
+<div id="ch7R5" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Fit a regression model
+mod &lt;- lm(Y ~ Z, data = dat1)
+df &lt;- mod$df.residual
+
+## Get estimates with HC2 errors instead of default SEs.
+ct &lt;- coeftest(mod, vcov. = vcovHC(mod, &quot;HC2&quot;))
+
+## Compute t-stat from coef and SE
+t &lt;- ct[2,1]/ct[2,2]
+
+## Compare to its null (of 0) sampling distribution.
+## Compute two-sided p-value.
+p &lt;- 2 * pt(-1 * abs(t), df, lower.tail = TRUE)
+
+## Same result we get from the model!
+stopifnot(identical(ct[2,4], p))
+
+# View
+p</code></pre>
+</div>
+<div id="ch7Stata5" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Fit a regression model
+qui reg y z
+local df = `e(df_r)&apos;
+
+** Get estimates with HC2 errors instead of default SEs.
+qui reg y z, vce(HC2)
+
+** Compute t-stat from coef and SE
+local t = _b[z]/_se[z]
+
+** Compare to its null (of 0) sampling distribution.
+** Compute two-sided p-value.
+local p = (2 * ttail(`df&apos;, abs(`t&apos;)))
+
+* View
+di &quot;`p&apos;&quot;</code></pre>
+</div>
+<div id="ch7Hide5" class="tabcontent">
+
+</div>
+</div>
+<pre><code>[1] 2.147e-05</code></pre>
+</div>
+<div id="why-do-we-calculate-it-1" class="section level4" number="7.1.2.2">
+<h4><span class="header-section-number">7.1.2.2</span> Why do we calculate it?</h4>
+<p>We want to get a sense of whether the potential for random noise in our ATE estimates should make us doubt the accuracy of our findings. Researchers commonly accomplish this by comparing their p-values to a <em>significance threshold</em>, traditionally 0.05. If a p-value is less than that heuristic value, the finding is classified as &#x201C;statistically significant.&#x201D; Ultimately, we calculate p-values not because it is common to interpret them directly, but because it is a rule-of-thumb researchers follow to decide what findings should be hesitantly be treated as the truth.</p>
+<p>We report results within this framework, sometimes called &#x201C;null hypothesis significance testing&#x201D; (NHST), because it is common in the academic fields most of us come from&#x2014;it is important for policy learning for academic researchers and program evaluators to interpret statistical evidence using similar procedures. That said, we are also sympathetic to concerns with significance testing raised in some of the sources cited throughout this chapter. When appropriate, we are open to other methods of evaluating the plausibility of our findings given concerns about random noise in data.</p>
+</div>
+<div id="how-do-we-report-it-1" class="section level4" number="7.1.2.3">
+<h4><span class="header-section-number">7.1.2.3</span> How do we report it?</h4>
+<p>We generally report the p-values themselves, whether they are one-tailed or two-tailed, how they were calculated (if using an alternative inference procedure like randomization inference), and whether they indicate that our finding is statistically significant. Beyond this, we often do not interpret them further.</p>
+<p>That said, p-values can be thought of as a measure of the relative &#x201C;compatibility&#x201D; of our data and analysis with the null hypothesis of no average treatment effect <span class="citation">(<a href="references.html#ref-amrhein2022rewriting" role="doc-biblioref">Amrhein and Greenland 2022</a>)</span>, or as measures of evidence against (or divergence from) the null hypothesis <span class="citation">(<a href="references.html#ref-greenland2023divergence" role="doc-biblioref">Greenland 2023</a>)</span>. A p-value of 0.9 means we estimate a 90% chance that random noise alone could produce evidence of an average treatment effect in our sample at least as strong as our effect estimate under a true null. This means our data and analysis are highly compatible with the null hypothesis, and could easily have appeared under a true null. There could sometimes be cases where it&#x2019;s useful for OES projects to interpret p-values directly in this way.</p>
+</div>
+</div>
+<div id="confidence-intervals" class="section level3" number="7.1.3">
+<h3><span class="header-section-number">7.1.3</span> Confidence intervals</h3>
+<div id="what-is-it-2" class="section level4" number="7.1.3.1">
+<h4><span class="header-section-number">7.1.3.1</span> What is it?</h4>
+<p>See the p-value section first. Like p-values, confidence intervals are easy to accidentally explain wrong.</p>
+<p>Let&#x2019;s start with the traditional definition. When we calculate a 95% confidence interval for our ATE estimate, we are saying that if we calculated a similar confidence interval around each estimate in the sampling distribution, 95% of them would contain the true average treatment effect (the true average of <code>tau</code> across units as in our example above). This <em>does not mean that our confidence interval specifically has a 95% chance of containing the truth</em>! It just means that a calculation procedure like this contains the truth 95% of the time (it is a property of the procedure and not the result). Among other things, confidence intervals summarize what we learn from looking at p-values: if a 95% confidence interval crosses 0 (includes positive and negative values), a finding is not statistically significant under the common 0.05 threshold.</p>
+<p>That technically correct definition is often hard to think about, and generally never useful for communicating our results! A more useful alternative definition is that the <strong>confidence interval</strong> represents the range of null hypotheses we cannot reject with 95% confidence. For example, a confidence interval of -0.05 to 0.05 indicates that, if we tested a null hypothesis that the average treatment effect is 0.3 (instead of a null of 0), we would see a p-value less than 0.05: our evidence against this null is sufficiently strong that we can reject it with 95% confidence. In contrast, we would not be able to provide sufficient evidence to reject a null hypothesis of -0.025 with 95% confidence. Again, this phrase &#x201C;with 95% confidence&#x201D; is a property of the procedure used to produce the result, and not the result itself.</p>
+<p>Here&#x2019;s an example of computing a confidence interval, both manually and using programs that do it automatically.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7R6&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Stata6&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Hide6&apos;)">
+Hide
+</button>
+<div id="ch7R6" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Get CI based on HC2 SEs
+ci &lt;- coefci(mod, vcov. = vcovHC(mod, &quot;HC2&quot;))
+
+## Compute manually for comparison
+ci2 &lt;- c(
+  ct[2,1] - (ct[2,2]*qt(0.975, df)),
+  ct[2,1] + (ct[2,2]*qt(0.975, df))
+  )
+
+## Same result we get from the model!
+stopifnot(identical(as.numeric(ci[2,]), ci2))
+
+# View
+ci2</code></pre>
+</div>
+<div id="ch7Stata6" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Get CI based on HC2 SEs
+qui reg y z, vce(HC2)
+local df = `e(df_r)&apos;
+local ci_low = r(table)[&quot;ll&quot;,&quot;z&quot;]
+local ci_up = r(table)[&quot;ul&quot;,&quot;z&quot;]
+
+** Compute manually for comparison
+local crit_val = invttail(`df&apos;, 0.025)
+local ci_low2 = _b[Z] - (_se[z]*`crit_val&apos;)
+local ci_up2 = _b[Z] + (_se[z]*`crit_val&apos;)
+
+** View
+di &quot;`ci_low2&apos; to `ci_up2&apos;&quot;</code></pre>
+</div>
+<div id="ch7Hide6" class="tabcontent">
+
+</div>
+</div>
+<pre><code>[1] 2.576 6.699</code></pre>
+</div>
+<div id="why-do-we-calculate-it-2" class="section level4" number="7.1.3.2">
+<h4><span class="header-section-number">7.1.3.2</span> Why do we calculate it?</h4>
+<p>Given concerns about random noise in our ATE estimate, we want an informal <em>best guess</em> for the range of values in which the truth might fall: &#x201C;There may be some random noise in our estimate, but applying a method that contains the truth a vast majority of the time, our best guess is that the real effect falls in this range.&#x201D; As with p-values, we calculate this because it is a common way for researchers in applied fields to evaluate statistical evidence. This is an area where it&#x2019;s especially important to keep the technical definition and the motivation separate. This way of thinking about why we calculate confidence intervals often leads people to incorrectly treat them as having a 95% chance of containing the truth.</p>
+<p>We might also calculate a 95% confidence interval for its second interpretation: because we want to know the range of null hypotheses we can or can&#x2019;t reject with 95% confidence. If a value is outside this interval, it means that we are sufficiently confident (under standard heuristics for evaluating statistical evidence) that we can &#x201C;rule it out&#x201D; as a likely candidate for the truth.<a href="references.html#fn43" class="footnote-ref" id="fnref43"><sup>43</sup></a> On the other hand, if a value is in this confidence interval, we should treat it as a likely candidate for the true average treatment effect: we cannot not &#x201C;rule it out&#x201D; under standard heuristics for evaluating evidence.</p>
+<p>This second reason for calculating confidence intervals is useful for making sense of statistically significant results as well. Let&#x2019;s say our outcome measure is application acceptance, and we estimate that an informational intervention increases the probability that a person&#x2019;s application is accepted by 0.2, on average (+20pp). The 95% confidence interval is [0.001, 0.399]. This result is statistically significant, but the interval indicates that we should consider null hypotheses ranging from a .1pp increase to a nearly 40pp increase as plausible candidates for the truth. This is a wide range for a behavioral study! We can confidently provide evidence against treatment effects as large as, say, 60pp, and we can confidently provide evidence that the treatment effect is positive (not negative or null). But we cannot confidently say whether the true effect is negligible (e.g.: 0.1pp) or substantial (e.g: 30pp).</p>
+</div>
+<div id="how-do-we-report-it-2" class="section level4" number="7.1.3.3">
+<h4><span class="header-section-number">7.1.3.3</span> How do we report it?</h4>
+<p>As with p-values, when we are concerned about avoiding technical detail, we generally report confidence intervals without much more interpretation. However, interpretation exercises like our example above could often be useful for helping us to decide how we frame our ATE estimates. At some point, a statistically significant confidence interval may be so wide that rather than say an estimated effect is large or small, we can only really confidently say that an effect is positive (and it would be misleading to imply otherwise). Additionally, we do sometimes provide more interpretation of the values in a confidence interval, directly or indirectly, when evaluating null results. See the next section.</p>
+</div>
+</div>
+</div>
+<div id="making-sense-of-statistically-insignificant-results" class="section level2" number="7.2">
+<h2><span class="header-section-number">7.2</span> Making sense of statistically insignificant results</h2>
+<p>Statistical insignificance is not necessarily sufficient to support a claim of &#x201C;no treatment effect.&#x201D; This is something many applied fields have come to appreciate better in recent years. Statistical insignificance MIGHT indicate a lack of a treatment effect. But it might also indicate that our study simply has too little statistical power to detect a meaningful, real effect we would care about&#x2014;our <strong>minimum detectable effect (MDE)</strong> at 80% power is simply greater than the <strong>smallest effect of substantive interest (SESI)</strong>. See the last section of the power chapter for a little more on those terms.</p>
+<p>Thinking through this requires making judgements about the effect sizes that would be meaningful for our partners, or that are too small to be meaningful/actionable. <em>Due to random noise in our ATE estimates, we will never estimate an effect of exactly 0, even when there is no treatment effect</em>. An inherent part of evaluating statistical evidence in program evaluation is deciding whether a finding is actionable. When we see a statistically insignificant finding we need to determine whether it is more consistent with a &#x201C;no meaningful effect&#x201D; interpretation or an &#x201C;inconclusive&#x201D; interpretation. This shapes how we will frame findings for our partners.</p>
+<p>It&#x2019;s easy to think of an &#x201C;inconclusive&#x201D; result as a failure. But even these kinds of findings may still tell us something useful: currently available data do not let us determine whether an intervention is effective. This may imply a need for more research and data collection, or for policy implementation decisions to proceed cautiously, perhaps on some other grounds. As long as an evaluation is conducted carefully and transparently, <em>we always learn something useful</em>.</p>
+<p>Below, we walk through two ways of determining which conclusion is more consistent with statistically insignificant evidence from our evaluation. Either approach is fine to use in practice. They solve the same problem. The choice comes down to what makes more sense to you (or which you think a partner might prefer).</p>
+<div id="statistical-power" class="section level3" number="7.2.1">
+<h3><span class="header-section-number">7.2.1</span> Statistical power</h3>
+<p>We can approximate the MDE-80 from our statistical results using a trick outlined at the end of the last chapter&#x2014;what is the smallest effect, roughly, that we would have been able to detect at 80% power (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2.8</mn><mo>&#xD7;</mo><mi>S</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">2.8 \times SE</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2.8</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span></span>)? We can compare this to what we think the SESI is based on discussions with partners. If MDE-80 &gt; SESI, then we likely cannot support a claim of &#x201C;no meaningful effect&#x201D; based on our results: there are interesting effect sizes that are simply smaller than those we can detect with sufficient power and we cannot rule them out.<a href="references.html#fn44" class="footnote-ref" id="fnref44"><sup>44</sup></a> The best we can do is use confidence intervals to determine what range of possible true effects we can rule out with 95% confidence, which helps narrow the remaining possibilities (this could still be useful for our partners).</p>
+<p>Things are trickier when MDE-80 &lt; SESI. Consider an evaluation of a binary outcome representing application acceptance, which we hoped to increase with an informational evaluation. Our confidence interval ranges from -0.005 to 0.015. This is insignificant. But can we say there&#x2019;s no meaningful effect?</p>
+<p>Assume we estimate an approximate MDE-80 of 0.005, a 0.5pp increase in acceptance. If our partner indicates that the SESI is 1pp, this means that we were sufficiently powered to detect effects smaller than those that our partner considers meaningful. On first glance, we might decide this supports a true null. On the other hand, our confidence interval suggests that we shouldn&#x2019;t rule out values as large as +1.5pp as possible candidates for the truth, which includes substantively meaningful values (greater than the SESI). We might then conclude that while our evaluation provides evidence against increases greater than 1.5pp, and also suggests a null effect is most likely, we cannot entirely rule out small (close to the SESI) increases in award acceptance.</p>
+<p>We suggest the following decision procedure when faced with a statistically insignificant result:</p>
+<ul>
+<li><p>Get an estimate of MDE-80, approximated either by a preliminary power analysis or a post-hoc calculation using the standard error (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2.8</mn><mo>&#xD7;</mo><mi>S</mi><mi>E</mi></mrow><annotation encoding="application/x-tex">2.8 \times SE</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2.8</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">SE</span></span></span></span>)</p></li>
+<li><p>Make a judgement call about the SESI, based either on discussions with the partner or our own thinking (e.g., based on findings of other studies)</p></li>
+<li><p>If MDE-80 &gt; SESI, we can&#x2019;t treat our evaluation as supporting a claim of no effect at all. But looking at the 95% confidence interval helps us understand the range of possibilities we can tentative rule out.</p></li>
+<li><p>If MDE-80 &lt; SESI, we should lean towards a &#x201C;no meaningful effect&#x201D; interpretation, but we should still look at the 95% confidence interval to think this through.</p></li>
+</ul>
+<p>Here&#x2019;s a coded example where the MDE-80 &lt; SESI, which helps us justify a &#x201C;no meaningful effect&#x201D; interpretation. But we want to check the confidence interval as well. In this case, the confidence interval supports a no-effect interpretation as well.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7R7&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Stata7&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Hide7&apos;)">
+Hide
+</button>
+<div id="ch7R7" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## Generate a treatment variable that is
+## not associated with the outcome in any way.
+set.seed(1234)
+dat1$nullZ &lt;- sample(c(rep(1,50),rep(0,50)), nrow(dat1), replace = FALSE)
+
+## Regress the outcome on this null treatment indicator.
+mod &lt;- lm(Y ~ nullZ, data = dat1)
+
+## Get statistical results based on HC2 errors.
+ct &lt;- coeftest(mod, vcov. = vcovHC(mod, &quot;HC2&quot;))
+ci &lt;- coefci(mod, vcov. = vcovHC(mod, &quot;HC2&quot;), level = 0.95)
+
+## Get rough approximation of ex-post MDE.
+## If, say, the SESI was 3, then this is
+## greater than the MDE, which is good.
+## But we still want to check the confidence interval.
+print(&quot;E.g.: SESI = 3&quot;)
+print(paste0(&quot;MDE80 = &quot;, round(ct[&quot;nullZ&quot;,&quot;Std. Error&quot;]*2.8,3) ))
+print(paste0(&quot;CI = &quot;,paste0(round(ci[&quot;nullZ&quot;,],3),collapse = &quot; to &quot;)))</code></pre>
+</div>
+<div id="ch7Stata7" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** Generate a treatment variable that is
+** not associated with the outcome in any way.
+set seed 1234
+gen u = runiform()
+gsort u
+gen nullZ = 1 in 1/50
+replace nullZ = 0 if missing(nullZ)
+
+** Regress the outcome on this null treatment indicator.
+qui reg y nullZ, vce(hc2)
+local ci_low = r(table)[&quot;ll&quot;,&quot;nullZ&quot;]
+local ci_up = r(table)[&quot;ul&quot;,&quot;nullZ&quot;]
+
+** Get rough approximation of ex-post MDE.
+** If, say, the SESI was 3, then this is
+** greater than the MDE, which is good.
+** But we still want to check the confidence interval.
+local mde = _se[nullZ]*2.8
+di &quot;E.g.: SESI = 3&quot;
+di &quot;MDE80 = `mde&apos;&quot;
+di &quot;CI = `ci_low&apos; to `ci_up&apos;&quot;</code></pre>
+</div>
+<div id="ch7Hide7" class="tabcontent">
+
+</div>
+</div>
+<pre><code>[1] &quot;E.g.: SESI = 3&quot;
+[1] &quot;MDE80 = 2.443&quot;
+[1] &quot;CI = -1.343 to 2.12&quot;</code></pre>
+</div>
+<div id="equivalence-tests" class="section level3" number="7.2.2">
+<h3><span class="header-section-number">7.2.2</span> Equivalence tests</h3>
+<p>An alternative way of approaching the same problem is to use a procedure called <strong>equivalence testing</strong> <span class="citation">(<a href="references.html#ref-hartman2018equivalence" role="doc-biblioref">Hartman and Hidalgo 2018</a>; <a href="references.html#ref-rainey2014arguing" role="doc-biblioref">Rainey 2014</a>)</span>. The idea is to perform a formal test of the claim that our estimated treatment effect is so small that it is effectively 0. As usual in Frequentist statistics, we argue for this claim by evaluating the evidence against its opposite: that there is a meaningful treatment effect.</p>
+<p>The logic here is easy to stumble over! When testing FOR an effect&#x2014;what we normally do&#x2014;we evaluate whether we see sufficient evidence against the null hypothesis of no treatment effect. But in equivalence testing our priorities are reversed: we want to determine whether we can confidently reject a null hypothesis of some meaningful effect. The underlying concern, as discussed above, is that we see a statistically insignificant result in our test FOR an effect due to insufficient power rather than because there is really no effect.</p>
+<p>There are a few ways you can go about performing an equivalence test in practice. The most common procedure is called a <strong>two one-sided test (TOST)</strong>. <span class="citation">Hartman and Hidalgo (<a href="references.html#ref-hartman2018equivalence" role="doc-biblioref">2018</a>)</span>, for instance, suggest an alternative that might have better properties, but we&#x2019;ll focus on the TOST procedure. It starts by choosing an <strong>equivalence region</strong>. This is a region of effect sizes that we think are so small as to be effectively 0 and not actionable for our agency partner (i.e., the SESI, on either side of 0). Again, this decision inherently requires subjective judgement calls and should usually be discussed with the partner directly. Once we have defined an equivalence region, we test the null hypothesis that the treatment effect is outside of this equivalence region&#x2014;either above it (a meaningful positive treatment effect) or below it (a meaningful negative treatment effect).</p>
+<p>As you might have guessed, we can do this by performing two one-sided tests. The first is a one-sided test of whether the treatment effect is greater than an assumed null equal to the lower bound of the equivalence region (evidence against the null of a meaningful negative effect). The second is a one-sided test of whether the treatment effect is less than an assumed null equal to the upper bound of the equivalence region (evidence against the null of a meaningful positive effect). The maximum of these is the overall p-value for the TOST procedure. If it is below 0.05, we can reject the null of a meaningful effect with 95% confidence. We show an example in the code chunk below.</p>
+<p>We lay out what the TOST procedure is aiming to accomplish above for reference. However, in practice, there is a useful shortcut to avoid those separate p-value calculations: construct a 90% confidence interval for your treatment effect, and <em>determine if this CI is entirely within the equivalence region</em>. If so, a TOST would yield a p-value less than 0.05 (rejecting the null of a meaningful effect at a 95% confidence level). For more on this approach and some intuition for why it works, see <span class="citation">Rainey (<a href="references.html#ref-rainey2014arguing" role="doc-biblioref">2014</a>)</span>. We generally prefer this method of thinking through the results of an equivalence test for a few reasons: it requires minimal changes from quantities we would calculate anyway;<a href="references.html#fn45" class="footnote-ref" id="fnref45"><sup>45</sup></a> and it makes the logic underlying our conclusions more transparent. If someone reviewing our materials has a different opinion about what the equivalence region should be, they can easily compare our CI to their own preferred equivalence region instead.</p>
+<p>Here&#x2019;s a coded example, based on our example above, where we perform a TOST procedure using both methods (formal calculation and the 90% CI shortcut) to show that they support the same conclusion.</p>
+<div class="tab">
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7R8&apos;)">
+R code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Stata8&apos;)">
+Stata code
+</button>
+<button class="tablinks" onclick="unrolltab(event, &apos;ch7Hide8&apos;)">
+Hide
+</button>
+<div id="ch7R8" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>## 90% CI
+ci90 &lt;- coefci(mod, vcov. = vcovHC(mod, &quot;HC2&quot;), level = 0.90)
+
+## Define equivalence region so that
+## it is right on the edge of CI upper bound.
+eq &lt;- c(-1.85, 1.85)
+print(paste0(&quot;90% CI = &quot;,paste0(round(ci90[&quot;nullZ&quot;,],3),collapse = &quot; to &quot;)))
+print(paste0(&quot;EQ region =  &quot;,paste0(eq,collapse = &quot; to &quot;)))
+
+## First TOST one-sided p-value
+p1 &lt;- (mod$coefficients[&quot;nullZ&quot;] - eq[1])/ct[&quot;nullZ&quot;, &quot;Std. Error&quot;]
+p1 &lt;- pt(p1, mod$df, lower.tail = FALSE)
+
+## Second TOST one-sided p-value
+p2 &lt;- (mod$coefficients[&quot;nullZ&quot;] - eq[2])/ct[&quot;nullZ&quot;, &quot;Std. Error&quot;]
+p2 &lt;- pt(p2, mod$df, lower.tail = TRUE)
+
+## TOST overall p-value (95% confidence).
+## Borderline, since 90% CI is almost at 
+## edge of equivalence region!
+print(paste0(&quot;TOST p-value = &quot;, round(max(p1,p2),3)))</code></pre>
+</div>
+<div id="ch7Stata8" class="tabcontent">
+<p><br></p>
+<pre class="text"><code>** 90% CI
+qui reg y nullz, vce(hc2) level(90)
+local df = `e(df_r)&apos;
+local ci_low = r(table)[&quot;ll&quot;,&quot;nullZ&quot;]
+local ci_up = r(table)[&quot;ul&quot;,&quot;nullZ&quot;]
+
+** Define equivalence region so that
+** it is right on the edge of CI upper bound.
+local eq_low = -2.4
+local eq_high = 2.4
+di &quot;90% CI = `ci_low&apos; to `ci_up&apos;&quot;
+di &quot;EQ region = `eq_low&apos; to `eq_high&apos;&quot;
+
+** First TOST one-sided p-value
+local p1 = (_b[nullZ] - `eq_low&apos;)/_se[nullZ]
+local p1 = ttail(`df&apos;, abs(`p1&apos;))
+
+** Second TOST one-sided p-value
+local p2 = (_b[nullZ] - `eq_high&apos;)/_se[nullZ]
+local p2 = ttail(`df&apos;, `p2&apos;)
+
+** TOST overall p-value (95% confidence).
+** Borderline, since 90% CI is almost at 
+** edge of equivalence region!
+local both_pvals `p1&apos; `p2&apos;
+local max : subinstr local both_pvals &quot; &quot; &quot;,&quot;, all
+local max = max(`max&apos;)
+di &quot;TOST p-value = `max&apos;&quot;</code></pre>
+</div>
+<div id="ch7Hide8" class="tabcontent">
+
+</div>
+</div>
+<pre><code>[1] &quot;90% CI = -1.06 to 1.837&quot;
+[1] &quot;EQ region =  -1.85 to 1.85&quot;
+[1] &quot;TOST p-value = 0.049&quot;</code></pre>
+</div>
+</div>
+<div id="efficacy-vs-toxicity" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> Efficacy vs toxicity</h2>
+<p>In the early phases of a clinical trial, in addition to testing a medication&#x2019;s possible efficacy, medical researchers look for evidence of an unacceptable rate of &#x201C;serious adverse events.&#x201D; This is sometimes referred to as an evaluation of <strong>toxicity.</strong> Even an effective medication may have unintended side effects so serious that they prevent it from ever reaching the market (or at least restrict the patients to whom it can be prescribed).</p>
+<p>We can apply a similar idea to program evaluations in the public policy sphere. Instead of evaluating whether a policy change has positive impacts (as we would normally do), our priority might sometimes be providing evidence against negative impacts. For instance, a partner might be considering a new procedure for processing program applications that provides significant cost savings. We might help them perform an evaluation to ensure that it does not lead to a meaningful decline in acceptance rates.</p>
+<p>Evaluating toxicity raises statistical issues similar to those raised in the equivalence testing section. Our priority here is not evaluating the efficacy of the treatment (determining whether we can confidently reject a null hypothesis of no average effect). Instead, we simply want to make sure that treatment does not cause an average decline in the outcome. In tests for toxicity, we instead determine whether we can reject the null hypothesis of a meaningful NEGATIVE treatment effect.</p>
+<p>This corresponds to one of the two p-values we would calculate for a TOST procedure. To quote our text above: &#x201C;<em>a one-sided test of whether the treatment effect is greater than an assumed null equal to the lower bound of the equivalence region (evidence against the null of a meaningful negative effect)</em>&#x201D;. As long as the lower bound of the equivalence region is below zero, we generally cannot compute this p-value by dividing the two-sided p-value we see in our standard regression output by two.<a href="references.html#fn46" class="footnote-ref" id="fnref46"><sup>46</sup></a></p>
+<p>When evaluating toxicity, we recommend stating this goal explicitly in our analysis plans and abstracts. This test can then be performed by either computing the relevant one-sided p-value&#x2014;see the calculation of <code>p1</code> in our equivalence testing code chunk above&#x2014;or by constructing a 90% confidence interval as discussed in the equivalence testing section and determining whether the lower bound of this interval is within the equivalence region. In either case, as with equivalence testing, we need to make a judgement call about the difference between a &#x201C;meaningful&#x201D; and &#x201C;not meaningful&#x201D; decline in the outcome, ideally informed by discussions with our agency partners. If we do not believe it is possible to draw this distinction, or it we believe any negative effect of any sizes is unacceptable, we might default to an equivalence region with a lower bound at 0.</p>
+</div>
+<div id="costbenefit-calculations" class="section level2" number="7.4">
+<h2><span class="header-section-number">7.4</span> Cost/benefit calculations</h2>
+<p>Under construction!</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="poweranalysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="codeindex.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": null,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/gsa-oes/sop/edit/master/Book/07-communicating.RMD",
+"text": "Edit"
+},
+"download": ["OES_SOP.pdf", "OES_SOP.epub"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
