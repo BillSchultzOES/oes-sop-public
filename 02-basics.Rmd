@@ -1,7 +1,7 @@
 
 # Key design criteria
 
-Here, we briefly define and describe some of the things we prioritize when choosing statistical procedures or designing evaluations. To summarize, we want to observe a reasonably precise estimate of a policy intervention's impacts (i.e., with a small margin of error). We also want to use statistical tests that will rarely mislead us---i.e., will rarely give a false positive or false negative result---and we want to estimate policy impacts without bias (i.e., without systematically over-estimating or under-estimating the truth). These properties depend on both the initial design of the study and the choices we make when calculating results.
+Here, we briefly define and describe some of the things we prioritize when choosing statistical procedures or designing evaluations. To summarize, we want to observe a reasonably precise estimate of a policy intervention's impacts (with a small margin of error). We also want to use statistical tests that will rarely mislead us---i.e., will rarely give a false positive or false negative result---and we want to estimate policy impacts without bias (without systematically over-estimating or under-estimating the truth). These properties depend on both the initial design of the study and the choices we make when calculating results.
 
 ## High statistical power
 

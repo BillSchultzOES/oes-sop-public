@@ -1,0 +1,167 @@
+```{r setupdat07, echo=FALSE}
+# Read in the dat1 file created from 03-randomizeddesigns.Rmd
+if(!exists("dat1")){ dat1 <- read.csv(here::here('dat1_with_designs.csv')) }
+
+dat1$rankY <- rank(dat1$Y)
+ndat1 <- nrow(dat1)
+
+dat1$y1s <- dat1$y1 / sd(dat1$y1)
+dat1$y0s <- dat1$y0 / sd(dat1$y0)
+
+trueates <- mean(dat1$y1s) - mean(dat1$y0s)
+trueate <- mean(dat1$y1) - mean(dat1$y0)
+```
+
+# Communicating evidence {#translating}
+
+Some claim to "let the data speak for itself." But in reality, evaluators can't just report results from a statistical test and call it a day. The data might speak, but we still have to translate. And deciding how to best distill empirical evidence and communicate it to a non-specialist audience with other priorities is not always straightforward. What conclusions can we support based on our tests, and which can we not support? Is a non-technical summary of those conclusions sacrificing accuracy in a meaningful way? We think about these kinds of questions often. They also motivate high-profile discussions about how applied researchers should be evaluating statistical evidence in the first place, such as concerns about relying on statistical "significance" testing [@mcshane2019abandon;@amrhein2019scientists].
+
+This chapter reviews a few related topics that frequently come up in our work:
+
+- How we talk about common quantities we estimate
+
+- How we make sense of "null" results
+
+- Testing for effectiveness vs testing for "toxicity"
+
+- Incorporating cost estimates into our interpretations of evidence
+
+We may add more over time. As with other chapters, this content is subject to change, and the goal is not to require OES team members to talk about or explain evidence in a particular way. Instead, the goal is just to help OES Team Members coordinate around a common language, and to provide examples of how past projects have thought about these issues (or how we encourage teams to think about them moving forward).
+
+## Talking about common estimates
+
+Earlier chapters discuss a few quantities we commonly calculate and report as part of an evaluation: average treatment effect estimates, p-values, and confidence intervals. It is important for credibility to remember the **correct technical definition** of each. But it is also important to not lose sight of **what we hope to learn from them**, or why we're calculating these quantities in the first place. When there's enough of a gap between these things, it might mean that we need to re-think how we're planning or performing our evaluation.
+
+In the subsections below, we review both points for all three quantities, with a goal of coordinating around both how we talk about what they represent, and when we might want to deviate and report other summaries of our data instead.
+
+### Average treatment effects
+
+*What is it?*: Refer back to the first chapter for a simpler introduction, or @holland:1986a for a more academic one. Imagine the same person in two different counter-factual scenarios: a world where they experience some policy change (the treated "potential outcome"), and an alternative world in which they don't (the control "potential outcome").
+
+Here are potential outcomes for the first six "people" in an example dataset we'll use in this chapter. The variables `y0` and `y1` are control and treated potential outcomes, respectively, while `Z` is a person's treatment status, `Y` is the actual outcome we observe given treatment, and `tau` is the true treatment effect for any one person.
+
+```{r}
+dat1$tau <- dat1$y1 - dat1$y0
+dat1[1:6,c("y1","y0","Y","Z","tau")]
+```
+
+We can't observe anyone under treatment and control simultaneously. Instead, we estimate an average difference between people that actually receive treatment ($m$ in total, indexed by $j$) and people that don't ($N-m$ in total, indexed by $k$): $\frac{1}{m}\sum_{j=1}^{m}Y_{j} - \frac{1}{N-m}\sum_{k=1}^{N-m}Y_{k}$. Assuming we have a well-designed study otherwise (chapters 3-5), this should let us estimate the average `tau` across people in our dataset, indexed by $i$---the **average treatment effect** (ATE), $\frac{1}{N} \sum_{i=1}^{N} \tau_{i}$---*with some degree of random error*.
+
+```{r}
+mean(dat1$tau)
+mean(dat1$Y[dat1$Z==1]) - mean(dat1$Y[dat1$Z==0])
+```
+
+In this example, while the true ATE is `r mean(dat1$tau)`, the average difference between treated and non-treated people is `r mean(dat1$Y[dat1$Z==1]) - mean(dat1$Y[dat1$Z==0])`. In a well-designed study we'd expect treated and non-treated people to still differ some just by random chance regardless of what the true individual-level treatment effects are. This means there's likely at least a little random noise in our ATE estimate (in real data we can't just take the mean of `tau` directly). The next two quantities help us think about what this potential random noise might mean for our confidence in our findings.
+
+*Why do we calculate it?*: We can perform tests for some treatment/control difference that don't provide an average treatment effect. But often, we'd like to do more than just say "the policy works" or "the policy doesn't work." We'd like to provide some kind of measure of how well it works. This is often important for policy learning: not just "the procedural reform made application processing costs cheaper," but "the procedural reform cut processing costs by $0.50 per application, *on average*." An average treatment effect is the most common method of quantifying how well policy programs work in fields like political science and economics, and it's usually the method we apply.
+
+The ATE is the dominant way of quantifying effects for a "typical person." But keep in mind that there are other ways of understanding what a "typical person" is. For instance, what if our outcome measure is very skewed, and so we're less interested in the average effect, but more interested in the median effect? In that case we might want to estimate something like a quantile regression that targets percentile effects directly.
+
+Also, sometimes we actually might not be interested in a typical effect at all, but instead want to know whether there was any kind of change in the distribution of outcomes across the treatment/control groups. This is one strategy we could follow if we're evaluating whether a new policy has any negative consequences that might be masked by only evaluating average differences. In that case, we might be interested in tests that sacrifice providing a single number summary in return for helping us detect other types of changes in the outcome distribution [@bowers2013reasoning; @lin2017placement].
+
+*How do we report it?*: We generally find it easiest to communicate ATE estimates to non-technical audiences by starting with a baseline ("status quo") estimate of the average value of the outcome measure without any intervention applied. After presenting this reference level, we tell them how much this outcome increases, on average, when the intervention is administered. Focusing on the typical baseline outcome, and then how administering the intervention changes this baseline, often helps make our results more concrete to non-specialists. This also helps with interpreting how "large" our ATE estimate is.
+
+For example, in our data example for this chapter, we estimate an average or "typical" status quo outcome of `r mean(dat1$Y[dat1$Z==0])`. We then estimate that the intervention increases this by `r mean(dat1$Y[dat1$Z==1]) - mean(dat1$Y[dat1$Z==0])` on average. This corresponds to a typical outcome value in the intervention group of `r mean(dat1$Y[dat1$Z==1])`. This represents a more than 200\% increase above the baseline.
+
+```{r}
+mean(dat1$Y[dat1$Z==0])
+mean(dat1$Y[dat1$Z==1]) - mean(dat1$Y[dat1$Z==0])
+mean(dat1$Y[dat1$Z==1])
+(mean(dat1$Y[dat1$Z==1]) - mean(dat1$Y[dat1$Z==0]))/mean(dat1$Y[dat1$Z==0])
+```
+
+### p-values
+
+*What is it?*: The p-value is one of the primary ways applied researchers think about how the possibility for random noise in their ATE estimates might undermine their confidence in their findings. There is a lot of work on the details of correctly interpreting p-values and understanding how they are calculated [greenland2019valid;@lakens2021practical]. We won't try to replicate a statistics textbook. But we will quickly go over this for reference when teams are thinking through the language in their project materials.
+
+We get one real ATE estimate from our sample. But there is some random noise in this estimate, and so our estimate is really just one draw from a larger distribution of estimates that *we could have possibly seen*. Typically, researchers imagine that this random noise comes from sampling units to study from a broader population, or even imagining the laws of nature themselves as the underlying "super-population" we want to learn about (in either case, that larger distribution of estimates we could have seen would be called the "sampling distribution"). Or instead, as discussed in chapter 3, we can think of random assignment as the source of random noise (where that larger distribution would be called the "randomization distribution").
+
+Let's focus on traditional sampling-based inference. Assume we're testing a null hypothesis that the true average treatment effect is 0 (this is the default is most software commonly used in policy research). A two-sided (or two-tailed) p-value quantifies the percent of values in the sampling distribution that are as far from 0 as our ATE estimate (or further), assuming the null hypothesis is true. In other words, *under a true null of no average effect*, what is the probability that random noise alone would produce evidence of an average treatment effect at least as strong as ours?
+
+This doesn't tell us the probability that our finding in particular is a result of random noise. It only informs us about how often random noise alone, under a true null, could produce evidence like ours. See [here](https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconceptions) for more discussion of some common misconceptions about p-values. It is very easy to accidentally explain this incorrectly!
+
+*Why do we calculate it?*: We want to get a sense of whether the potential for random noise in our ATE estimates should make us doubt the accuracy of our findings. Researchers commonly accomplish this by comparing their p-values to a *significance threshold*, traditionally 0.05. If a p-value is less than that heuristic value, the finding is classified as "statistically significant." Ultimately, we calculate p-values not because it is common to interpret them directly, but because it is a rule-of-thumb researchers follow to decide what findings should be hesitantly be treated as the truth.
+
+We report results within this framework, sometimes called "null hypothesis significance testing" (NHST), because it is common in the academic fields most of us come from---it is important for policy learning for academic researchers and program evaluators to interpret statistical evidence using similar procedures. That said, we are also sympathetic to concerns with significance testing raised in some of the sources cited throughout this chapter. When appropriate, we are open to other methods of evaluating the plausibility of our findings given concerns about random noise in data.
+
+*How do we report it?*: We generally report the p-values themselves, whether they are one-tailed or two-tailed, how they were calculated (if using an alternative inference procedure like randomization inference), and whether they indicate that our finding is statistically significant. Beyond this, we often do not interpret them further.
+
+That said, p-values can be thought of as a measure of the relative "compatibility" of our data and analysis with the null hypothesis of no average treatment effect [@amrhein2022rewriting], or as measures of evidence against (or divergence from) the null hypothesis [@greenland2023divergence]. A p-value of 0.9 means we estimate a 90\% chance that random noise alone could produce evidence of an average treatment effect in our sample at least as strong as our effect estimate under a true null. This means our data and analysis are highly compatible with the null hypothesis, and could easily have appeared under a true null. There could sometimes be cases where it's useful for OES projects to interpret p-values directly in this way.
+
+### Confidence intervals
+
+*What is it?*: See the p-value section first. Like p-values, confidence intervals are easy to accidentally explain wrong.
+
+Let's start with the traditional definition. When we calculate a 95% confidence interval for our ATE estimate, we are saying that if we calculated a similar confidence interval around each estimate in the sampling distribution, 95% of them would contain the true average treatment effect (the true average of `tau` across units as in our example above). This *does not mean that our confidence interval specifically has a 95\% chance of containing the truth*! It just means that a calculation procedure like this contains the truth 95\% of the time (it is a property of the procedure and not the result). Among other things, confidence intervals summarize what we learn from looking at p-values: if a 95\% confidence interval crosses 0 (includes positive and negative values), a finding is not statistically significant under the common 0.05 threshold.
+
+That technically correct definition is often hard to think about, and generally never useful for communicating our results! A more useful alternative definition is that the confidence interval represents the range of null hypotheses we cannot reject with 95% confidence. For example, a confidence interval of -0.05 to 0.05 indicates that, if we tested a null hypothesis that the average treatment effect is 0.3 (instead of a null of 0), we would see a p-value less than 0.05: our evidence against this null is sufficiently strong that we can reject it with 95\% confidence. In contrast, we would not be able to provide sufficient evidence to reject a null hypothesis of -0.025 with 95\% confidence. Again, this phrase "with 95\% confidence" is a property of the procedure used to produce the result, and not the result itself.
+
+*Why do we calculate it?*: Given concerns about random noise in our ATE estimate, we want an informal *best guess* for the range of values in which the truth might fall: "There may be some random noise in our estimate, but applying a method that contains the truth a vast majority of the time, our best guess is that the real effect falls in this range." As with p-values, we calculate this because it is a common way for researchers in applied fields to evaluate statistical evidence. This is an area where it's especially important to keep the technical definition and the motivation separate. This way of thinking about why we calculate confidence intervals often leads people to incorrectly treat them as having a 95\% chance of containing the truth.
+
+We might also calculate a 95\% confidence interval for its second interpretation: because we want to know the range of null hypotheses we can or can't reject with 95\% confidence. If a value is outside this interval, it means that we are sufficiently confident (under standard heuristics for evaluating statistical evidence) that we can "rule it out" as a likely candidate for the truth.^[This does not provide beyond a shadow of the doubt that these values cannot be the truth. But in the absence of other evidence, it suggests that our attention should be directed elsewhere.] On the other hand, if a value is in this confidence interval, we should treat it as a likely candidate for the true average treatment effect: we cannot not "rule it out" under standard heuristics for evaluating evidence.
+
+This second reason for calculating confidence intervals is uuseful for making sense of statistically significant results as well. Let's say our outcome measure is application acceptance, and we estimate that an informational intervention increases the probability that a person's application is accepted by 0.2, on average (+20pp). The 95\% confidence interval is [0.001, 0.399]. This result is statistically significant, but the interval indicates that we should consider null hypotheses ranging from a .1pp increase to a nearly 40pp increase as plausible candidates for the truth. This is a wide range for a behavioral study! We can confidently provide evidence against treatment effects as large as, say, 60pp, and we can confidently provide evidence that the treatment effect is positive (not negative or null). But we cannot confidently say whether the true effect is negligible (e.g.: 0.1pp) or substantial (e.g: 30pp).
+
+*How do we report it?*: As with p-values, when we are concerned about avoiding technical detail, we generally report confidence intervals without much more interpretation. However, interpretation exercises like our example above could often be useful for helping us to decide how we frame our ATE estimates. At some point, a statistically significant confidence interval may be so wide that rather than say an estimated effect is large or small, we can only really confidently say that an effect is positive (and it would be misleading to imply otherwise). Additionally, we do sometimes provide more interpretation of the values in a confidence interval, directly or indirectly, when evaluating null results. See the next section.
+
+## Making sense of statistically insignificant results
+
+When a result is statistically insignificant, this is not necessarily sufficient to support a claim of "no treatment effect." This is something many applied fields have come to appreciate better in recent years. Statistical insignificance could indicate a lack of a treatment effect. But it could also indicate that our study simply has too little statistical power to detect a meaningful, real effect we would care about---our **minimum detectable effect (MDE)** at 80% power is simply greater than the **smallest effect of substantive interest (SESI)**. See the last section of the power chapter for a little more on those terms.
+
+Thinking through this requires making judgements about the effect sizes that would be meaningful for our partners, or that are too small to be meaningful/actionable. Due to random noise in our ATE estimates, we will never estimate an effect of exactly 0, even when there is no treatment effect. An inherent part of evaluating statistical evidence in program evaluation is making judgements about whether a finding is actionable. When we see a statistically insignificant finding, we need to determine whether it is more consistent with a "no meaningful effect" interpretation or an "inconclusive" interpretation (the latter meaning that our data do not let us confidently draw any conclusion in either direction). This shapes how we will frame findings for our partners. Even "inconclusive" results may still tell us something useful: available data do not let us determine whether an intervention is "effective," and so implementation decisions need to be made cautiously, or perhaps on some other grounds.
+
+Below, we walk through two ways of determining which conclusion is more consistent with statistically insignificant evidence from our evaluation. Either approach is fine to use in practice, as they solve the same underlying problem, and the choice comes down to what makes more sense to you (or which you think a partner might prefer).
+
+### Statistical power
+
+We can roughly approximate the MDE-80 from our statistical results *ex post* using a trick outlined in the last chapter---what is the smallest effect, roughly, that we would have been able to detect at 80% power? We can then compare this to what we think the SESI is based on discussions with partners. If MDE-80 > SESI, then we likely cannot support a claim of "no meaningful effect" based on our results: there are interesting effect sizes that are simply smaller than those we can detect with sufficient power, so we cannot rule them out.^[We generally use the heuristic 80\% threshold for "sufficient" power in our evaluations, but there are times when we deviate from this.] The best we can do is use confidence intervals to determine what range of possible true effects we can rule out with 95% confidence, which helps narrow the remaining possibilities (this could still be useful for our partners).
+
+Things are trickier when MDE-80 < SESI. Consider an evaluation of a binary outcome representing application acceptance, which we hoped to increase with an informational evaluation. Our confidence interval ranges from -0.005 to 0.015. This is statistically insignificant. But can we say there's "no meaningful effect?"
+
+Assume we estimate an approximate MDE-80 of 0.005, a 0.5pp increase in acceptance. If our partner indicates that the SESI is 1pp, this means that we were sufficiently powered to detect effects smaller than those that our partner considers meaningful. On first glance, we might decide this supports a true null. On the other hand, our confidence interval suggests that we shouldn't rule out values as large as +1.5pp as possible candidates for the truth, which includes substantively meaningful values (greatr than the SESI). We might then conclude that while our evaluation provides evidence against increases greater than 1.5pp, and suggests a null effect is most likely, it could also be consistent with a modest (close to the SESI) increase in award acceptance.
+
+We suggest the following decision procedure when faced with a statistically insignificant result:
+
+- Get an estimate of MDE-80, approximated either by a preliminary power analysis or a post-hoc calculation using the standard error ($2.8 \times SE$)
+
+- Make a judgement call about the SESI, based either on discussions with the partner or our own thinking (e.g., based on findings of other studies)
+
+- If MDE-80 > SESI, we likely can't treat our evaluation as providing evidence of "no meaningful effect". But looking at the 95\% confidence interval helps us understand the range of possibilities we shouldn't rule out.
+
+- If MDE-80 < SESI, we should lean towards a "no meaningful effect" interpretation, but we should still look at the 95\% confidence interval to think this through.
+
+### Equivalence tests
+
+An alternative way of approaching the same problem is to use a procedure called **equivalence testing** [@hartman2018equivalence;@rainey2014arguing]. The idea is to perform a formal test of the claim that our estimated treatment effect is so small that it is effectively equivalent to 0. As usual, we will argue for this claim by evaluating the evidence against its opposite: that there is some substantively meaningful treatment effect. This is the reverse of what we would normally do! When testing FOR an effect we evaluate whether we see sufficient evidence against the null hypothesis of no treatment effect. In equivalence testing our priorities are reversed: we want to determine whether we see sufficient evidence to reject a null hypothesis of some meaningful effect. The underlying concern is again that we see a statistically insignificant result in our test FOR an effect due to insufficient power rather than because there is really no meaningful treatment effect.
+
+There are a few ways you can go about performing an equivalence test in practice. The most common procedure is called a **two one-sided test (TOST)**. @hartman2018equivalence, for instance, suggest an alternative that might have better properties, but we'll focus on the TOST procedure. It starts by choosing an **equivalence region**. This is a region of effect sizes that we think are so small as to be effectively 0 and potentially not actionable for our agency partner. Again, this decision inherently requires subjective judgement calls and should usually be discussed with the partner directly.
+
+Once we have defined an equivalence region, we test the null hypothesis that the true effect is outside of this equivalence region---either above it (a meaningful positive treatment effect) or below it (a meaningful negative treatment effect). As you might have guessed, we can do this by performing two one-sided tests. The first is a one-sided test of whether the treatment effect is greater than a null hypothesis corresponding to the lower bound of the equivalence region (evidence against the null of a meaningful negative effect). The second is a one-sided test of whether the treatment effect is less than a null hypothesis corresponding to the upper bound of the equivalence region (evidence against the null of a meaningful positive effect). The maximum of these is the overall p-value for the TOST procedure. If it is below 0.05, we can reject the null of a meaningful effect with 95% confidence. We show an example in the code chunk below.
+
+We lay out what the TOST procedure is aiming to accomplish above for reference. However, in practice, there is a useful shortcut to avoid those separate p-value calculations: construct a 90% confidence interval for your treatment effect, and *determine if this CI is entirely within the equivalence region*. If so, a TOST would yield a p-value less than 0.05 (rejecting the null of a meaningful effect at a 95\% confidence level). For more on this approach and some intuition for why it works, see @rainey2014arguing. We generally prefer this method of thinking through the results of an equivalence test for a few reasons: it requires minimal changes from quantities we would calculate anyway;^[By default we already calculate 95\% confidence intervals. This corresponds to a TOST at a stricter 97.5\% confidence level. If the values in this CI are already all within the equivalence region, there is no need to compute a separate 90\% interval.] and it makes the logic underlying our conclusions more transparent. If someone reviewing our materials has a different opinion about what the equivalence region should be, they can easily compare our CI to their own alternative instead.
+
+```{r}
+set.seed(1234)
+eq <- c(-1.85,1.85)
+dat1$nullZ <- sample(c(rep(1,50),rep(0,50)), nrow(dat1), replace = FALSE)
+mod <- lm(Y ~ nullZ, data = dat1)
+ct <- coeftest(mod, vcov. = vcovHC(mod, "HC2"))
+ci <- coefci(mod, vcov. = vcovHC(mod, "HC2"), level = 0.9)
+ci["nullZ",]
+p1 <- (mod$coefficients["nullZ"] - eq[1])/ct["nullZ", "Std. Error"]
+p1 <- pt(p1, mod$df, lower.tail = FALSE)
+p2 <- (mod$coefficients["nullZ"] - eq[2])/ct["nullZ", "Std. Error"]
+p2 <- pt(p2, mod$df, lower.tail = TRUE)
+max(p1,p2)
+```
+
+## Efficacy vs toxicity
+
+In the early phases of multistage clinical trials, in addition to gauging a medication's potential efficacy, researchers look for evidence of an unacceptable rate of serious adverse events or **toxicity.** Even an effective medication may have unintended side effects so serious that they prevent it from ever reaching the market (or at least restrict the patients to whom it can be prescribed). We can apply a similar idea to program evaluations in the public policy sphere. Instead of evaluating whether a policy change has positive impacts (as we would normally do), our priority might sometimes be providing evidence against particular negative impacts. For instance, a partner might be considering a new procedure for processing program applications that provides significant cost savings. We might then help them perform an evaluation to ensure that it does not lead to a meaningful decline in acceptance rates.
+
+Evaluating toxicity raises statistical issues similar to those raised in the equivalence testing section. When this is our primary goal, our priority is not evaluating the efficacy of the treatment (aiming to reject a null hypothesis of no average effect). Instead, we simply want to evaluate whether treatment causes an average decline in the outcome. In tests of toxicity, we therefore evaluate evidence against the null hypothesis of of a meaningful negative treatment effect. *This corresponds to one of the two p-values we calculate for a TOST procedure* in the equivalence testing section above: ``a one-sided test of whether the treatment effect is greater than a null hypothesis corresponding to the lower bound of the equivalence region (evidence against the null of a meaningful negative effect)." Note that we generally cannot compute this p-value for a test of toxicity by simply dividing the two-sided p-value we see in our standard regression output by two, assuming the lower bound of the equivalence region is below zero.^[A one-sided p-value from a standard test of treatment efficacy corresponds to a null hypothesis of an effect that is zero or less. But there may be negative effect sizes we consider to be "effectively zero" because they are in the equivalence region, and so using a one-sided p-value from a standard efficacy test to evaluate toxicity might be uneccesarily conservative.]
+
+When evaluating toxicity, we recommend stating this goal explicitly in our analysis plans and abstracts. This test can then be performed by either computing the relevant one-sided p-value, or by constructing a 90\% confidence interval as discussed in the equivalence testing section and determining whether the lower bound of this interval is within the equivalence region. In either case, as with equivalence testing, we need to make a judgement call about the difference between a "meaningful" and "not meaningful" decline in the outcome, ideally informed by discussions with our agency partners. If we do not believe it is possible to draw this distinction, or it we believe any negative effect of any sizes is unacceptable, we might default to an equivalence region with a lower bound at 0.
+
+## Cost/benefit calculations
