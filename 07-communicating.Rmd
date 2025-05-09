@@ -133,10 +133,10 @@ di "`r(mean)'"
 ** Sample estimate of the ATE: manually
 di "Sample estimate of ATE"
 qui sum y if z==1, meanonly
-local mean_z1 = `r(mean)'
+local mean_z1 = r(mean)
 qui sum y if z==0, meanonly
-local mean_z0 = `r(mean)'
-di "`mean_z1'-`mean_z0'"
+local mean_z0 = r(mean)
+di `mean_z1'-`mean_z0'
 
 ** Sample estimate of the ATE: regression
 *qui reg y z
@@ -261,7 +261,7 @@ as.numeric(mod$coefficients["Z"]/mean(dat1$Y[dat1$Z==0]) * 100)
 ** instead of using the regression intercept.
 di "Average baseline outcome"
 qui sum y if z == 0, meanonly
-local mean_z0 = `r(mean)'
+local mean_z0 = r(mean)
 di "`mean_z0'"
 
 ** Sample ATE estimate
@@ -272,7 +272,7 @@ local ate = _b[z]
 
 ** Percent change in baseline due to treatment
 local p_chng = `ate'/`mean_z0'*100
-di "Percent change"
+di "Percent change = `p_chng'"
 ```
 ::: 
 ::: {#ch7Hide4 .tabcontent}
@@ -344,10 +344,10 @@ p
 ```{stata, highlight = F, eval = F}
 ** Fit a regression model
 qui reg y z
-local df = `e(df_r)'
+local df = e(df_r)
 
 ** Get estimates with HC2 errors instead of default SEs.
-qui reg y z, vce(HC2)
+qui reg y z, vce(hc2)
 
 ** Compute t-stat from coef and SE
 local t = _b[z]/_se[z]
@@ -642,15 +642,15 @@ print(paste0("TOST p-value = ", round(max(p1,p2),3)))
 <br />
 ```{stata, highlight = F, eval = F}
 ** 90% CI
-qui reg y nullz, vce(hc2) level(90)
-local df = `e(df_r)'
+qui reg y nullZ, vce(hc2) level(90)
+local df = e(df_r)
 local ci_low = r(table)["ll","nullZ"]
 local ci_up = r(table)["ul","nullZ"]
 
 ** Define equivalence region so that
 ** it is right on the edge of CI upper bound.
-local eq_low = -2.4
-local eq_high = 2.4
+local eq_low = -2.25
+local eq_high = 2.25
 di "90% CI = `ci_low' to `ci_up'"
 di "EQ region = `eq_low' to `eq_high'"
 
@@ -660,7 +660,7 @@ local p1 = ttail(`df', abs(`p1'))
 
 ** Second TOST one-sided p-value
 local p2 = (_b[nullZ] - `eq_high')/_se[nullZ]
-local p2 = ttail(`df', `p2')
+local p2 = 1 - ttail(`df', `p2')
 
 ** TOST overall p-value (95% confidence).
 ** Borderline, since 90% CI is almost at 
