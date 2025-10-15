@@ -486,21 +486,23 @@ As with p-values, when we are concerned about avoiding technical detail, we gene
 
 ## Making sense of statistically insignificant results
 
-Statistical insignificance is not necessarily sufficient to support a claim of "no treatment effect." This is something many applied fields have come to appreciate better in recent years. Statistical insignificance MIGHT indicate a lack of a treatment effect. But it might also indicate that our study simply has too little statistical power to detect a meaningful, real effect we would care about---our **minimum detectable effect (MDE)** at 80% power is simply greater than the **smallest effect of substantive interest (SESI)**. See the last section of the power chapter for a little more on those terms.
+Statistical insignificance is not necessarily sufficient to support a claim of "no treatment effect." This is something many applied fields have come to appreciate better in recent years. Statistical insignificance MIGHT indicate a lack of a treatment effect. But it might also indicate that our study simply has too little statistical power to detect a real effect we would care about if we knew it was there---our **minimum detectable effect (MDE)** at 80% power is simply greater than the **smallest effect of substantive interest (SESI)**. See the last section of the power chapter for a little more on those terms.
 
-Thinking through this requires making judgements about the effect sizes that would be meaningful for our partners, or that are too small to be meaningful/actionable. *Due to random noise in our ATE estimates, we will never estimate an effect of exactly 0, even when there is no treatment effect*. An inherent part of evaluating statistical evidence in program evaluation is deciding whether a finding is actionable. When we see a statistically insignificant finding we need to determine whether it is more consistent with a "no meaningful effect" interpretation or an "inconclusive" interpretation. This shapes how we will frame findings for our partners.
+Thinking through this inherently requires making judgement calls about the effect sizes that would be meaningful for our partners, or the effect sizes that are too small to be meaningful/actionable. *Due to random noise in our ATE estimates, we will never estimate an effect of exactly 0, even when there is no treatment effect*. An important part of weighing statistical evidence in program evaluation is deciding whether a finding is actionable. When we see a statistically insignificant finding we need to determine whether it is more consistent with a "no meaningful effect" interpretation or an "inconclusive" interpretation. This shapes how we will frame findings for our partners.
 
-It's easy to think of an "inconclusive" result as a failure. But even these kinds of findings may still tell us something useful: currently available data do not let us determine whether an intervention is effective. This may imply a need for more research and data collection, or for policy implementation decisions to proceed cautiously, perhaps on some other grounds. As long as an evaluation is conducted carefully and transparently, *we always learn something useful*.
+It's easy to think of an inconclusive result as a failure. But even these kinds of findings may still tell us something useful: currently available data do not let us determine whether an intervention is effective. This may imply a need for more research and data collection, or for policy implementation decisions to proceed cautiously, perhaps on some other grounds. As long as an evaluation is conducted carefully and transparently, *we always learn something useful*.
 
-Below, we walk through two ways of determining which conclusion is more consistent with statistically insignificant evidence from our evaluation. Either approach is fine to use in practice. They solve the same problem. The choice comes down to what makes more sense to you (or which you think a partner might prefer).
+Below, we walk through two ways of determining which conclusion is more consistent with statistically insignificant evidence from our evaluation. For our purposes, either approach is fine to use. They solve more or less the same problem. The choice comes down to what makes more sense to you (or which you think a partner might prefer).
 
 ### Statistical power
 
-We can approximate the MDE-80 from our statistical results using a trick outlined at the end of the last chapter---what is the smallest effect, roughly, that we would have been able to detect at 80% power ($2.8 \times SE$)? We can compare this to what we think the SESI is based on discussions with partners. If MDE-80 > SESI, then we likely cannot support a claim of "no meaningful effect" based on our results: there are interesting effect sizes that are simply smaller than those we can detect with sufficient power and we cannot rule them out.^[We generally use the heuristic 80\% threshold for "sufficient" power in our evaluations, but there are times when we deviate from this.] The best we can do is use confidence intervals to determine what range of possible true effects we can rule out with 95% confidence, which helps narrow the remaining possibilities (this could still be useful for our partners).
+We can approximate the MDE-80 from our statistical results using a trick outlined at the end of the last chapter---what is the smallest effect, roughly, that we would have been able to detect at 80% power ($2.8 \times SE$)? We can compare this to what we think the SESI is based on discussions with partners.
+
+If MDE-80 > SESI, then we likely cannot support a claim of "no meaningful effect" based on our results: there are interesting effect sizes that are simply smaller than those we can detect with sufficient power. We cannot rule them out, even if a finding was statistically insignificant.^[We generally use the heuristic 80\% threshold for "sufficient" power in our evaluations, but there are times when we deviate from this.] The best we can do is use confidence intervals to determine what range of possible true effects we can rule out with 95% confidence, which helps narrow the remaining possibilities (this could still be useful for our partners).
 
 Things are trickier when MDE-80 < SESI. Consider an evaluation of a binary outcome representing application acceptance, which we hoped to increase with an informational evaluation. Our confidence interval ranges from -0.005 to 0.015. This is insignificant. But can we say there's no meaningful effect?
 
-Assume we estimate an approximate MDE-80 of 0.005, a 0.5pp increase in acceptance. If our partner indicates that the SESI is 1pp, this means that we were sufficiently powered to detect effects smaller than those that our partner considers meaningful. On first glance, we might decide this supports a true null. On the other hand, our confidence interval suggests that we shouldn't rule out values as large as +1.5pp as possible candidates for the truth, which includes substantively meaningful values (greater than the SESI). We might then conclude that while our evaluation provides evidence against increases greater than 1.5pp, and also suggests a null effect is most likely, we cannot entirely rule out small (close to the SESI) increases in award acceptance.
+Assume we estimate an approximate MDE-80 of 0.005, a 0.5pp increase in acceptance. If our partner indicates that the SESI is 1pp, we were sufficiently powered to detect effects smaller than those that our partner considers meaningful. On first glance, we might decide this supports a true null. On the other hand, our confidence interval suggests that we shouldn't rule out values as large as +1.5pp as possible candidates for the truth, which includes substantively meaningful values (greater than the SESI). We might then conclude that while our evaluation provides evidence against increases greater than 1.5pp, and also suggests a null effect is most likely, we cannot entirely rule out small (close to the SESI) increases in award acceptance.
 
 We suggest the following decision procedure when faced with a statistically insignificant result:
 
@@ -512,7 +514,7 @@ We suggest the following decision procedure when faced with a statistically insi
 
 - If MDE-80 < SESI, we should lean towards a "no meaningful effect" interpretation, but we should still look at the 95\% confidence interval to think this through.
 
-Here's a coded example where the MDE-80 < SESI, which helps us justify a "no meaningful effect" interpretation. But we want to check the confidence interval as well. In this case, the confidence interval supports a no-effect interpretation as well.
+Here's a coded example where the MDE-80 < SESI, which helps us justify a "no meaningful effect" interpretation. But we want to check the confidence interval as well. In this case, the confidence interval does support a no-effect interpretation.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch7R7')">R code</button>
@@ -703,7 +705,7 @@ print(paste0("TOST p-value = ", round(max(p1,p2),3)))
 
 In the early phases of a clinical trial, in addition to testing a medication's possible efficacy, medical researchers look for evidence of an unacceptable rate of "serious adverse events." This is sometimes referred to as an evaluation of **toxicity.** Even an effective medication may have unintended side effects so serious that they prevent it from ever reaching the market (or at least restrict the patients to whom it can be prescribed).
 
-We can apply a similar idea to program evaluations in the public policy sphere. Instead of evaluating whether a policy change has positive impacts (as we would normally do), our priority might sometimes be providing evidence against negative impacts. For instance, a partner might be considering a new procedure for processing program applications that provides significant cost savings. We might help them perform an evaluation to ensure that it does not lead to a meaningful decline in acceptance rates.
+We can apply a similar idea to program evaluations. Instead of evaluating whether a policy change has positive impacts (as we would normally do), our priority might sometimes be providing evidence against negative impacts. For instance, a partner might be considering a new procedure for processing program applications that provides significant cost savings. We might help them perform an evaluation to ensure that it does not lead to a meaningful decline in acceptance rates.
 
 Evaluating toxicity raises statistical issues similar to those raised in the equivalence testing section. Our priority here is not evaluating the efficacy of the treatment (determining whether we can confidently reject a null hypothesis of no average effect). Instead, we simply want to make sure that treatment does not cause an average decline in the outcome. In tests for toxicity, we instead determine whether we can reject the null hypothesis of a meaningful NEGATIVE treatment effect.
 
@@ -711,7 +713,98 @@ This corresponds to one of the two p-values we would calculate for a TOST proced
 
 When evaluating toxicity, we recommend stating this goal explicitly in our analysis plans and abstracts. This test can then be performed by either computing the relevant one-sided p-value---see the calculation of `p1` in our equivalence testing code chunk above---or by constructing a 90\% confidence interval as discussed in the equivalence testing section and determining whether the lower bound of this interval is within the equivalence region. In either case, as with equivalence testing, we need to make a judgement call about the difference between a "meaningful" and "not meaningful" decline in the outcome, ideally informed by discussions with our agency partners. If we do not believe it is possible to draw this distinction, or it we believe any negative effect of any sizes is unacceptable, we might default to an equivalence region with a lower bound at 0.
 
-## Cost/benefit calculations
+## Cost-effectiveness calculations
 
-Under construction!
+Communicating evidence often goes beyond reporting an estimated treatment effect. It may also involve interpreting a treatment effect in light of other things we know about the world. One form of this that is often relevant to our work is interpreting an RCT finding in light of what the study intervention costs. I.e., in addition to whether a policy *works*, we want to know if it *works well-enough* to be worth the costs of implementing it ("cost-effectiveness").
 
+There are several situations where formally costing a randomized intervention is important:
+
+- When the goal is comparing two or more interventions in terms of which accomplishes some goal more cheaply
+
+- When the goal is performing a formal cost benefit analysis
+
+- When a stated project goal is achieving cost savings
+
+- When we want to claim that an intervention provides a low/no cost solution
+
+Sometimes, intervention costs will indeed turn out to be negligible. But it is important to think through costing to be sure, rather than simply assume. We provide some high-level guidance below on how to think through costing when preparing to report an an evaluation's findings. We focus here on cases where the goal is costing an intervention as implemented, rather than estimating what it would cost an agency to roll an intervention out to a broader sample in the future (i.e., outside the study sample). But similar lessons apply in that setting, too.
+
+### Which costs to consider?
+
+While the needs of projects will vary, we generally focus on the **incremental cost** of implementing an intervention: these are the costs that would not have been incurred without it taking place. For instance, even if a partner agency's on-staff lawyer helped us get important legal approvals, the cost estimates for the intervention would not include the costs of our partner hiring that lawyer in the first place (though it might include the costs of pulling them away from other projects, depending on the situation).
+
+Additionally, these incremental costs should be calculated over at least roughly the same period as our impact estimates (the **same periodicity**). If we are evaluating the impacts of a mailing campaign over the span of four weeks, then we should estimate the average costs-per-mailing across that same four week period. Or, in contrast, if we can only get annual cost estimates, we should compare them to annual estimates of a program's impacts as well.
+
+Finally, we generally focus only on costs **incurred by the agency partner** implementing the evaluation. Interventions that change people's behavior when interacting with government services can have many downstream implications that might shape a full accounting of their societal costs and benefits. Our focus is typically narrower: how much did our partner spend for every unit of change in a focal outcome number (e.g., dollars spent for every additional application to a benefits program)?
+
+### What information should we record?
+
+We generally would want to record all of the following information, if applicable:
+
+- Relevant FTE (full time equivalent) hours for all agency staff involved in *incremental* implementation of the intervention
+
+- Salary/wage estimates for those same staff
+
+- The costs of all other "ingredients" that were used to prepare and implement the intervention (e.g., for a mailing intervention, this would be the costs of paper, printing/ink, shipping the mailings, etc.). To identify all of the ingredients, think: what expenditures would someone looking to replicate a study from scratch need to make [@dhaliwal2012comparative]?
+
+- The baseline costs of the "status quo" version of a program we're modifying (in cases where our intervention is not an entirely new program)
+
+For instance, one of our [past evaluations](https://oes.gsa.gov/projects/opioid-buyback/) involved updating the outreach materials distributed to post-op surgery patients at a VA hospital, aiming to increase participation in a buyback program for unused (prescribed) opioids. When [costing this intervention](https://oes.gsa.gov/blog/1804-costing/) we considered the costs of all physical materials distributed to patients, the costs of all partner agency personnel who dedicated a percent of their time towards implementing the intervention, and the costs of managing pill returns associated with the intervention (a receptacle to store returned pills in and a security camera nearby monitoring its use).
+
+### What do I calculate and report?
+
+Once you have all this data, what exactly you do with it depends on the nature of the intervention. But here are some steps to follow for two common situations we encounter in OES evaluations. In either case, we generally provide cost-effectiveness analysis (CEA) estimates in the form of a "dollars spent per unit of change in our outcome of interest." See below for an example.
+
+**If we're modifying an existing program**
+
+In this situation, we'd generally prioritize comparing two CEA estimates: one for the status quo version of the program, and one for the modified version. To do this, we take advantage of the fact that randomly assigning treatment justifies comparing two counterfactuals: what average per-unit outcome rate would we expect if everyone was in the treatment group, or if everyone was in the control group?
+
+- **(1)** Start by adding together all the costs of running the status quo version of the program. In the opioid buyback example, this worked out to $6,773$ dollars per year (putting aside fixed start-up costs, since our intervention simply modified the buy-back program once it was already up and running). Also compute a second estimate that adds the (incremental) costs incurred by our partner to roll out the program change. This was $8,260.68$ dollars per year in the opioid buyback study. In effect, you have total costs estimates of running the program with and without our intervention.
+
+- **(2)** After that, count the number of units included in your study (over the same period for which you have cost data), or the number of units interacting with the program in general (depending on the situation). In the opioid buyback study, we had annual cost estimates, so we counted the average number of patients per year undergoing surgery at the participating hospital: $208$ patients.
+
+- **(3)** Next, estimate the average per-unit value of your outcome of interest among study units not receiving the intervention (control group). This provides a baseline estimate of the costs of the status quo program. In the opioid buyback study, we estimated $2.08$ pills returned per person, on average, in the control group. Additionally, add the treatment effect estimate to this baseline for an estimate of the average per-unit value of your outcome among units receiving the intervention ($2.08 + 1.08 = 3.16$ pills per person in the treatment group).
+
+- **(4)** To compute your CEA estimate for the status quo program, take the statuo quo cost estimate from (1), and divide it by the following: the count from (2) multiplied by the baseline estimate in (3). In the opioid buyback program, this is $6,773/(2.08*208)=15.66$ dollars per pill returned under the status quo program. Finally, we do something similar to get a CEA estimate for the modified version of the program. In the opioid buyback program, this is $8,260.68/(3.16*208)=12.57$ dollars per pill returned with the addition of our intervention.
+
+Even though the intervention condition in this example was more expensive, it was ultimately still more cost-efficient! The effectiveness of the intervention means we can get the same number of pills returned for relatively less money.
+
+**If we're implementing a new program**
+
+This situation is similar to above, but simpler, so we'll spend less time spelling things out. Here, we'd generally only compute one CEA estimate. The status quo condition---no program---costs exactly $0$ dollars. The question is just whether whatever changes we observe due to treatment are worth their per unit cost. For that reason, we'll divide the cost of the intervention by the treatment effect estimate directly.
+
+- **(1)** Start by adding together the (incremental) costs incurred by our partner to roll out the new program.
+
+- **(2)** After that, record the estimated treatment effect.
+
+- **(3)** To compute your CEA estimate, take the cost estimate from (1), and divide it by the treatment effect from (2).
+
+It is often useful to enter into CEA with a sense of what different cost estimates might mean for an agency partner's decision-making: how expensive is too expensive to be worthwhile?
+
+### Cost-effectiveness or cost-benefit analysis?
+
+Sometimes, it is possible to go further and assign a monetary value to change in units of our outcome measure. I.e., we can assign a dollar value to both the impacts ("benefits") and costs of the intervention, estimating the net impacts of our intervention on the agency partner in dollars. In such cases, we might pursue a formal cost-benefit analysis (details on doing this are beyond the scope of this guide right now, but we may add more in the future).
+
+Often, though, assigning such a monetary value would be too difficult (or would rely on too many questionable assumptions). For instance, in the opioid buyback example, although there are obvious risks to people keeping unused opioids in their homes, available research does not make it easy to quantify them in terms of a precise dollar amount (e.g., healthcare costs attributable to the increased risks of opioid misuse), especially a precise dollar amount for just the agency we are partnering with. For this reason, OES evaluations typically focus on cost-effectiveness analysis. But there may certainly be cases where project teams might decide that cost-benefit analysis is worth pursuing.
+
+### Accounting for uncertainty
+
+We will not discuss implementing this here (see some of the linked resources below), but it is worth remembering that CEA estimates may carry with them significant uncertainty. First, there is the inherent uncertaintyin our treatment effect estimates (represented by our confidence intervals). Second, there is uncertainty surrounding the cost estimates themselves. Costs may vary across regions (e.g., inputs might be more expensive in California than Vermont) and over time (e.g., changes in input prices due to inflation), or might be variable functions of things outside of our control (if demand for a program increases later, this might lead to more administrative overhead than a CEA assumed).
+
+A transparent, careful analysis should consider not just producing appropriate point estimates of cost per unit of change. It should also consider the distribution of CEA estimates we might expect due to variation in costs and treatment effect uncertainty (e.g.: what values are more or less likey?). Resources linked below suggests some methods of grappling this that OES project teams should consider. Bespoke methods designed with particular projects in mind may certainly be reasonable as well.
+
+### Further resources
+
+In no particular order:
+
+- The [IES Cost Analysis Starter Kit](https://ies.ed.gov/ies/2025/01/cost-analysis-starter-kit)
+
+- An [example study](https://files.eric.ed.gov/fulltext/EJ1175679.pdf) by Fiona Hollands and Yilin Pan
+
+- The Washington State Institute for Public Policy's Benefit-Cost Results [data warehouse](https://www.wsipp.wa.gov/benefitcost)
+
+- [J-PAL's study](https://www.povertyactionlab.org/sites/default/files/research-resources/CEA%20in%20Education%202013.01.29_0.pdf) discussing their approach to comparative cost-effectiveness analysis
+
+- Guidance on [bounding cost estimates](https://www.equator-network.org/reporting-guidelines/cheers/) to account for uncertainty
+
+- This [blog post](https://rethinkpriorities.org/research-area/incorporating-and-visualizing-uncertainty-in-cost-effectiveness-analyses/) discussing interval-based vs distribution-based estimates of cost uncertainty

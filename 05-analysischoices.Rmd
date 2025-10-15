@@ -4652,7 +4652,7 @@ estAndSE4b
 
 ### Bias when cluster size is correlated with potential outcomes
 
-When clusters have unequal sizes, in addition to adjusting our standard error calculations, we might worry about bias as well [@middleton2015unbiased] (see also this [Declare Design blog post](https://declaredesign.org/blog/bias-cluster-randomized-trials.html)). Here, we demonstrate how bias could emerge in the analysis of a cluster randomized trial, as well as how to reduce that bias.
+When clusters have unequal sizes, in addition to adjusting our standard error calculations, we might worry about bias as well [@middleton2015unbiased]. See also this [Declare Design blog post](https://declaredesign.org/blog/posts/bias-cluster-randomized-trials.html). Here, we demonstrate how bias could emerge in the analysis of a cluster randomized trial, as well as how to reduce that bias.
 
 ::: {.tab} 
 <button class="tablinks" onclick="unrolltab(event, 'ch5R33')">R code</button>
@@ -4683,7 +4683,7 @@ estC5 <- declare_estimator(Y~Zcluster, inquiry=theestimand, .method=horvitz_thom
 
 ## Linear regression, CR2 errors, weight by cluster size
 estC6 <- declare_estimator(Y~Zcluster, inquiry=theestimand,
-.method=lm_robust, weights = nb, clusters=cluster, se_type="CR2", label="C6: OLS with Cluster Size Weights, CR2 SE")
+.method=lm_robust, weights=nb, clusters=cluster, se_type="CR2", label="C6: OLS with Cluster Size Weights, CR2 SE")
 
 ## Linear regression, CR2 errors, control for cluster size, variance weights
 estC7 <- declare_estimator(Y~Zcluster+nb, inquiry=theestimand,
@@ -4917,6 +4917,8 @@ thediagnosisCluster <- diagnose_design(thedesignClusterPlusEstimators, sims = si
 ```
 
 The results of our simulation show how certain approaches can yield very biased estimates, while other approaches can reduce the bias. With variaion in cluster size, the C5 and C6 estimators have the lowest bias in this particular example (with very few clusters). We also see evidence of problems with some of these standard errors --- the actual standard errors (in "SD Estimate") should be much higher than those estimated by the approaches ignoring the clustered design (C0 and C1).
+
+On the solutions implemented, note that the better-performing options include (C5) an application of the Horvitz-Thompson estimator (see Middleton and Aronow's study mentioned above for some additional improvements) and (C6) a simpler strategy in which an observation is "frequency-weighted" by its cluster size (up-weighting observations from larger clusters relatively more than those from smaller clusters). While C5 is better motivated theoretically, C6 could be useful to consider. The bias that can appear in these cases is influenced by the covariance between cluster-size and potential outcomes, but also by the 
 
 ```{r diagclustres1, echo = F}
 kable(reshape_diagnosis(thediagnosisCluster)[, c(3, 6:9, 11:12)])
