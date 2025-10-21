@@ -715,7 +715,7 @@ When evaluating toxicity, we recommend stating this goal explicitly in our analy
 
 ## Cost-effectiveness calculations
 
-Communicating evidence often goes beyond reporting an estimated treatment effect. It may also involve interpreting a treatment effect in light of other things we know about the world. One form of this that is often relevant to our work is interpreting an RCT finding in light of what the study intervention costs. I.e., in addition to whether a policy *works*, we want to know if it *works well-enough* to be worth the costs of implementing it ("cost-effectiveness").
+Communicating evidence often goes beyond reporting an estimated treatment effect. It may also involve interpreting a treatment effect in light of other things we know about the world. One form of this that is often relevant to our work is interpreting an RCT finding in light of what the study intervention costs. I.e., in addition to whether a policy *works*, we want to know if it *works well-enough* to be worth the costs of implementing it. We generally prioritize **cost-effectiveness analysis** (CEA) here: the cost of an intervention divided by its impacts. This is informative about the per-unit cost of estimated change in our study outcome.
 
 There are several situations where formally costing a randomized intervention is important:
 
@@ -785,7 +785,7 @@ It is often useful to enter into CEA with a sense of what different cost estimat
 
 Sometimes, it is possible to go further and assign a monetary value to change in units of our outcome measure. I.e., we can assign a dollar value to both the impacts ("benefits") and costs of the intervention, estimating the net impacts of our intervention on the agency partner in dollars. In such cases, we might pursue a formal cost-benefit analysis (details on doing this are beyond the scope of this guide right now, but we may add more in the future).
 
-Often, though, assigning such a monetary value would be too difficult (or would rely on too many questionable assumptions). For instance, in the opioid buyback example, although there are obvious risks to people keeping unused opioids in their homes, available research does not make it easy to quantify them in terms of a precise dollar amount (e.g., healthcare costs attributable to the increased risks of opioid misuse), especially a precise dollar amount for just the agency we are partnering with. For this reason, OES evaluations typically focus on cost-effectiveness analysis. But there may certainly be cases where project teams might decide that cost-benefit analysis is worth pursuing.
+Often, though, assigning such a monetary value would be too difficult (or would rely on too many questionable assumptions). For instance, in the opioid buyback example, although there are obvious risks to people keeping unused opioids in their homes, available research does not make it easy to quantify them in terms of a precise dollar amount (e.g., healthcare costs attributable to the increased risks of opioid misuse). For this reason, OES evaluations typically focus on cost-effectiveness analysis. But there may certainly be cases where project teams might decide that cost-benefit analysis is worth pursuing.
 
 ### Accounting for uncertainty
 
