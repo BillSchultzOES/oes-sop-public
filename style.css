@@ -61,3 +61,8 @@ pre code {
   border: none;
   margin-bottom: 4px;
 }
+
+/* Fix weird issue for some edge browswers */
+.katex math {
+  display: none !important;
+}
