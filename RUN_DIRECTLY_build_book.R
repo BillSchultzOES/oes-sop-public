@@ -35,5 +35,5 @@ download.file(
   quiet = TRUE
   )
 for (r in replace) {
-  file.copy(tmp, old_paths, overwrite = TRUE)
+  file.copy(tmp, r, overwrite = TRUE)
 }
