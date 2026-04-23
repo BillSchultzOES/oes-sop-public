@@ -120,7 +120,7 @@ And then hit `shift+tab` when your cursor is to the right of `}`. Then copy in R
 
 # Building the book
 
-Open the sop.Rproj file in RStudio. There should be a "Build" tab in the same pane as the "Environment" tab. Under "Build Book" in this tab, click on `bookdown::gitbook`, which is the format we're currently using.
+Open the sop.Rproj file in RStudio. Then open the "RUN_DIRECTLY_build_book.R" script. This R script ensures that our `renv` environment (curated set of package versions) is loaded, uses `bookdown::gitbook()` to build the SOP itself, and then updates an out-of-date jQuery dependency. At some point, we may want to migrate away from `gitbook` due to the latter issue.
 
 You might occasionally see an error in the build panel indicating that the build failed because it couldn't load a package that you aren't even using anymore (i.e., removed from the `renv` environment for this project). Try deleting the contents of the "OES_SOP_cache" directory and building again. This can happen sometimes when a chunk is "cached" (i.e., output saved to produce again later without re-running it) while some package is available, but then the book is re-built later when the package has been removed.
 
