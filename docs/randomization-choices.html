@@ -1674,7 +1674,7 @@ intervention in isolation (rather than the effects when people can communicate w
 <div id="omnibus-tests" class="section level3" number="4.8.2">
 <h3><span class="header-section-number">4.8.2</span> Omnibus tests</h3>
 <p>Instead of making separate comparisons for each covariate, we can instead judge whether a sample appears sufficiently incompatible with the joint (or &#x201C;omnibus&#x201D;) null hypothesis of no average covariate differences between treatment arms. This helps sidestep the multiple testing concern noted above. This kind of test is often implemented <a href="https://blogs.worldbank.org/en/impactevaluations/tools-trade-joint-test-orthogonality-when-testing-balance">in practice</a> by OLS regressing a treatment indicator on a set of covariates and then calculating a p-value based on the model&#x2019;s overall F-statistic. Failing to find a significant difference in an <em>omnibus F-test</em> does not &#x201C;prove&#x201D; that there are no imbalances. But finding a statistically significant difference tells you that a closer look at covariate balance is needed.</p>
-<p>An omnibus test can also be performed using a <a href="https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqhow-are-the-likelihood-ratio-wald-and-lagrange-multiplier-score-tests-different-andor-similar/">Wald test</a>. The idea is to compare an <em>unrestricted</em> model regressing treatment on the set of covariates with a <em>restricted</em> model including only an intercept. The Wald test then provides evidence on the plausibility of the null hypothesis that the unrestricted model does not fit the data appreciably better. This method is useful, for instance, when estimating balance while adjusting for block fixed effects. Here, both models would include block fixed effects, and the restricted model would simply drop the covariates (but is no longer be intercept-only). A Wald test more easily accommodates standard error modifications (e.g.: HC2) than similar alternatives like a likelihood ratio (LR) test.</p>
+<p>An omnibus test can also be performed using a <a href="https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqhow-are-the-likelihood-ratio-wald-and-lagrange-multiplier-score-tests-different-andor-similar/">Wald test</a>. The idea is to compare an <em>unrestricted</em> model regressing treatment on the set of covariates with a <em>restricted</em> model including only an intercept (or a smaller set of covariates). The Wald test then provides evidence on the plausibility of the null hypothesis that the unrestricted model does not fit the data appreciably better. This method is useful, for instance, when estimating balance while adjusting for block fixed effects. Here, both models would include block fixed effects, and the restricted model would simply drop the covariates. A Wald test more easily accommodates standard error modifications (e.g.: HC2) than similar alternatives like a likelihood ratio (LR) test.</p>
 <p>Omnibus balance tests are often conducted in the common sampling-based inference framework. But design-based inference, and randomization-inference in particular, is often more appropriate for balance-testing. Failing to reject the joint null of no imbalance when using randomization inference implies that observed imbalances are not sufficiently distinguishable from the imbalance estimates we&#x2019;d typically expect in a well-run experiment. This is <em>exactly what we hope to learn from balance checks</em>! Moreover, omnibus tests based on randomly permuting treatment may control the Type-I error rate (limiting spurious conclusions that a sample is imbalanced) in small-to-moderate samples better <span class="citation">(<a href="references.html#ref-kerwin2024striking" role="doc-biblioref">Kerwin, Rostom, and Sterck 2024</a>; <a href="references.html#ref-hansen_covariate_2008" role="doc-biblioref">Hansen and Bowers 2008</a>)</span>. See <span class="citation">Hansen and Bowers (<a href="references.html#ref-hansen_covariate_2008" role="doc-biblioref">2008</a>)</span> for more discussion and an introduction to an alternative omnibus balance statistic <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msup><mi>d</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(d^{2})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>.</p>
 </div>
 <div id="summary" class="section level3" number="4.8.3">
@@ -1709,7 +1709,7 @@ bstats_2arm &lt;- function(
   n = NULL, # total sample size; only use when d is a subset (blocking)
   tr = &quot;Z2armEqual&quot;, # treatment var name
   y = &quot;cov2&quot;, # evaluate balance for what covariate?
-  psd = sd(dat1$cov2) # what sd to use in SMDs?
+  psd = NULL # what sd to use in SMDs?
   ) {
   
   # Check whether a total sample size was specified.
@@ -1718,9 +1718,23 @@ bstats_2arm &lt;- function(
     n &lt;- nrow(d)
   }
   
+  # Code below is assuming data.frame
+  # (rather than, e.g., tibble or data.table)
+  d &lt;- as.data.frame(d)
+  
   # Get levels of treatment var, always decreasing order
   lvl &lt;- unique(d[,tr])
   lvl &lt;- sort(lvl, decreasing = T)
+  
+  # Check whether a pooled SD was specified.
+  # Default is to estimate this from d (assumes d is not subset)
+  if (is.null(psd)) {
+    tempvar &lt;- 0
+    for (l in lvl) {
+      tempvar &lt;- tempvar + var(d[d[,tr]==l,y])
+    }
+    psd &lt;- sqrt(tempvar/length(lvl))
+  }
   
   # Difference in means
   dm &lt;- mean(d[d[,tr]==lvl[1],y], na.rm = T) - 
@@ -1753,6 +1767,13 @@ bstats_2arm &lt;- function(
 btab &lt;- data.frame(var = covlist)
 for (cov in covlist) {
 
+  # get pooled sd
+  tempvar &lt;- 0
+  for (l in unique(dat1$Z2armEqual)) {
+    tempvar &lt;- tempvar + var(dat1[dat1$Z2armEqual == l,cov])
+  }
+  pooled &lt;- sqrt(tempvar/length(unique(dat1$Z2armEqual)))
+  
   # approach 1: overall mean differences and SMDs
   sel &lt;- btab$var == cov
   pooled &lt;- sd(dat1[,cov])
@@ -1850,8 +1871,14 @@ program define bstats_2arm, rclass sortpreserve byable(onecall)
     * Get psd as pooled sd of varname, if not specified.
     * Though varname indicated above, still mapped to `varlist&apos;.
     if &quot;`psd&apos;&quot;==&quot;&quot; {
-        qui sum `varlist&apos; if `touse&apos;, d
-        local psd = r(sd)
+        levelsof `tr&apos;, local(temp_tr_levels)
+      local tempvar = 0
+      foreach l of local temp_tr_levels {
+        qui sum `varlist&apos; if `touse&apos; &amp; `tr&apos;==`&quot;`l&apos;&quot;&apos;, d
+        local tempvar = `tempvar&apos; + r(Var)
+      }
+      local tempvar = sqrt(`tempvar&apos;/2)
+      local psd = `tempvar&apos;
     }
 
     * Loop through those levels, calculating

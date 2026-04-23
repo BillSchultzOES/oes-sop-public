@@ -1687,7 +1687,7 @@ yline(0.8) title(&quot;Power for a 2x2 Design&quot;)</code></pre>
 
 </div>
 </div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-182-1.png" width=".9\textwidth"></p>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-214-1.png" width=".9\textwidth"></p>
 <p>Of course, in this simple example, we could still have relied on some reasonable analytical assumptions to arrive at these estimates (see a helpful discussion <a href="https://statmodeling.stat.columbia.edu/2018/03/15/need-16-times-sample-size-estimate-interaction-estimate-main-effect/">here</a>). But running a simulation saves us the trouble.</p>
 </div>
 <div id="covariate-adjustment-with-the-lin-estimator" class="section level3" number="6.4.2">
@@ -2034,7 +2034,7 @@ title(&quot;Power with Lin adjustment&quot;) yline(0.8)</code></pre>
 </div>
 </div>
 <p>We chose parameters to limit processing time, so the results are a bit noisy (you could reduce this by adding replications for each effect size). Nonetheless, for this data generating process, it&#x2019;s clear that the Lin estimator provides substantial improvements in power over the unadjusted difference in means, while standard covariate adjustment provides smaller improvements in power. This is, of course, true by design. In real projects, the differences between these covariate adjustment strategies may be negligible. But it is useful to remember that <span class="citation">Lin (<a href="references.html#ref-lin_agnostic_2013" role="doc-biblioref">2013</a>)</span> adjustment is more likely to be valuable with imbalanced treatment assignment and substantial effect heterogeneity. See our discussion in the Analysis Choices chapter.</p>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-188-1.png" width=".9\textwidth"></p>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-220-1.png" width=".9\textwidth"></p>
 </div>
 <div id="incorporating-declaredesign-into-oes-power-tools" class="section level3" number="6.4.3">
 <h3><span class="header-section-number">6.4.3</span> Incorporating DeclareDesign into OES Power Tools</h3>
@@ -2129,7 +2129,7 @@ data in the figure below:</p>
 <span id="cb213-36"><a href="poweranalysis.html#cb213-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
 <span id="cb213-37"><a href="poweranalysis.html#cb213-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span></span>
 <span id="cb213-38"><a href="poweranalysis.html#cb213-38" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
-<p><img src="OES_SOP_files/figure-html/unnamed-chunk-192-1.png" width=".9\textwidth"></p>
+<p><img src="OES_SOP_files/figure-html/unnamed-chunk-224-1.png" width=".9\textwidth"></p>
 </div>
 </div>
 <div id="approximating-power-ex-post" class="section level2" number="6.5">
